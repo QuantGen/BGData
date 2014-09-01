@@ -514,7 +514,7 @@ getG<-function(x,n_submatrix=3,scaleCol=TRUE,verbose=TRUE,minMAF=1/100){
 
 ##  Utils
 
-simulatePED<-function(filename,n,p,propNA=.02){
+simPED<-function(filename,n,p,propNA=.02){
    fileOut<-file(filename,open='w')
    for(i in 1:n){
         timeIn<-proc.time()[3]
