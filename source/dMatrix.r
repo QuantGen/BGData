@@ -255,7 +255,8 @@ subset.rDMatrix<-function(x,i=(1:nrow(x)),j=(1:ncol(x))){
 
 ## Creates and rDMatrix or cDMatrix from a ped file
 
-setGenData<-function(fileIn,n,header,dataType,distributed.by='rows',map=data.frame(),mrkCol=NULL,folderOut=paste('genData_',fileIn,sep=''),
+setGenData<-function(fileIn,n,header,dataType,distributed.by='rows',map=data.frame(),mrkCol=NULL,
+                    folderOut=paste('genData_',sub("\\.[[:alnum:]]+$","",basename(fileIn)),sep=''),
                     returnData=TRUE,saveData=TRUE,na.strings='NA',nColSkip=6,idCol=2,verbose=FALSE,nChunks=NULL,add.map=TRUE,
                     dimorder=if(distributed.by=='rows') 2:1 else 1:2){
         ###
