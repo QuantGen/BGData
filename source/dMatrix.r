@@ -256,7 +256,8 @@ subset.rDMatrix<-function(x,i=(1:nrow(x)),j=(1:ncol(x))){
 ## Creates and rDMatrix or cDMatrix from a ped file
 
 setGenData<-function(fileIn,n,header,dataType,distributed.by='rows',map=data.frame(),mrkCol=NULL,folderOut=paste('genData_',fileIn,sep=''),
-                    returnData=TRUE,saveData=TRUE,na.strings='NA',nColSkip=6,idCol=2,verbose=FALSE,nChunks=NULL,add.map=TRUE){
+                    returnData=TRUE,saveData=TRUE,na.strings='NA',nColSkip=6,idCol=2,verbose=FALSE,nChunks=NULL,add.map=TRUE,
+                    dimorder=if(distributed.by=='rows') 2:1 else 1:2){
         ###
         # Use: creates (returns, saves or both) a genData object from an ASCII file
         # fileIn (character): the name of the ped file.
@@ -319,12 +320,12 @@ setGenData<-function(fileIn,n,header,dataType,distributed.by='rows',map=data.fra
         if(distributed.by=='columns'){
 			ini<-end+1
 			end<-min(p,ini+chunkSize-1)
-			genosList[[i]]<-ff(vmode=vMode,dim=c(n,(end-ini+1)),filename=paste(folderOut,'/geno_',i,'.bin',sep=''))
+			genosList[[i]]<-ff(vmode=vMode,dim=c(n,(end-ini+1)),dimorder=dimorder,filename=paste(folderOut,'/geno_',i,'.bin',sep=''))
 			colnames(genosList[[i]])<-mrkNames[ini:end]
 		}else{
 			ini<-end+1
 			end<-min(n,ini+chunkSize-1)
-			genosList[[i]]<-ff(vmode=vMode,dim=c((end-ini+1),p),dimorder=2:1,filename=paste(folderOut,'/geno_',i,'.bin',sep=''))
+			genosList[[i]]<-ff(vmode=vMode,dim=c((end-ini+1),p),dimorder=dimorder,filename=paste(folderOut,'/geno_',i,'.bin',sep=''))
 			colnames(genosList[[i]])<-mrkNames
 		}
     }
