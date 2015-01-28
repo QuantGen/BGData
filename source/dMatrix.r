@@ -343,16 +343,16 @@ setGenData<-function(fileIn,n,header,dataType,distributed.by='rows',map=data.fra
     for(i in 1:n){
 		#if(verbose){ cat(' Subject ',i,'\n')}
 		time1<-proc.time()
-		x<-scan(fileIn,nlines=1,what=character(),na.strings=na.strings,quiet=TRUE)
+		xSkip<-scan(fileIn,n=nColSkip,what=character(),na.strings=na.strings,quiet=TRUE)
+		x<-scan(fileIn,n=p,what=dataType,na.strings=na.strings,quiet=TRUE)
 		
-		pheno[i,]<-x[1:nColSkip]
+		pheno[i,]<-xSkip
 		
 		time2<-proc.time()
-        IDs[i]<-x[idCol]
+        IDs[i]<-xSkip[idCol]
         ## now we split x into its chunks
 		end<-0
 		time3<-proc.time()
-		x<-x[-c(1:nColSkip)]
 		
 		if(distributed.by=='columns'){
 			for(j in 1:nChunks){
