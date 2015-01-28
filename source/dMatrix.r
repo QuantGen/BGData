@@ -285,12 +285,17 @@ setGenData<-function(fileIn,n,header,dataType,distributed.by='rows',map=data.fra
 
     p<-length(scan(fileIn,what=character(),nlines=1,skip=ifelse(header,1,0),quiet=TRUE))-nColSkip
     IDs<-rep(NA,n)
+    pheno<-matrix(nrow=n,ncol=nColSkip)
 	
     if(header){
-        mrkNames<-scan(fileIn,what=character(),nlines=1,skip=0,quiet=TRUE)[-(1:nColSkip)]
+        headerLine<-scan(fileIn,what=character(),nlines=1,skip=0,quiet=TRUE)
+        phtNames<-headerLine[1:nColSkip]
+        mrkNames<-headerLine[-(1:nColSkip)]
     }else{
+        phtNames<-paste('v_',1:nColSkip,sep='')
         mrkNames<-paste('mrk_',1:p,sep='')
     }
+    colnames(pheno)<-phtNames
 
 	if(!distributed.by%in%c('columns','rows')){stop('distributed.by must be either columns or rows') }
 	
@@ -340,6 +345,8 @@ setGenData<-function(fileIn,n,header,dataType,distributed.by='rows',map=data.fra
 		time1<-proc.time()
 		x<-scan(fileIn,nlines=1,what=character(),na.strings=na.strings,quiet=TRUE)
 		
+		pheno[i,]<-x[1:nColSkip]
+		
 		time2<-proc.time()
         IDs[i]<-x[idCol]
         ## now we split x into its chunks
@@ -378,8 +385,10 @@ setGenData<-function(fileIn,n,header,dataType,distributed.by='rows',map=data.fra
 		}
 	}
 	
+	pheno<-as.data.frame(pheno,stringsAsFactors=FALSE)
+	
 	geno<-new(ifelse(distributed.by=='columns','cDMatrix','rDMatrix'),genosList)
-	genData<-new('genData',geno=geno,map=map)
+	genData<-new('genData',geno=geno,map=map,pheno=pheno)
 	
 	if((nrow(map)==0)&add.map){
 		genData@map<-data.frame(mrk=mrkNames,maf=as.numeric(NA),freqNA=as.numeric(NA),stringsAsFactors=FALSE)
