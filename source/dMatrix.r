@@ -319,13 +319,13 @@ setGenData<-function(fileIn,n,header,dataType,distributed.by='rows',map=data.fra
         if(distributed.by=='columns'){
 			ini<-end+1
 			end<-min(p,ini+chunkSize-1)
-			genosList[[i]]<-ff(vmode=vMode,dim=c((end-ini+1),n))
-			rownames(genosList[[i]])<-mrkNames[ini:end]
+			genosList[[i]]<-ff(vmode=vMode,dim=c(n,(end-ini+1)),filename=paste(folderOut,'/geno_',i,'.bin',sep=''))
+			colnames(genosList[[i]])<-mrkNames[ini:end]
 		}else{
 			ini<-end+1
 			end<-min(n,ini+chunkSize-1)
-			genosList[[i]]<-ff(vmode=vMode,dim=c(p,(end-ini+1)))
-			rownames(genosList[[i]])<-mrkNames
+			genosList[[i]]<-ff(vmode=vMode,dim=c((end-ini+1),p),dimorder=2:1,filename=paste(folderOut,'/geno_',i,'.bin',sep=''))
+			colnames(genosList[[i]])<-mrkNames
 		}
     }
 
@@ -349,13 +349,13 @@ setGenData<-function(fileIn,n,header,dataType,distributed.by='rows',map=data.fra
 		if(distributed.by=='columns'){
 			for(j in 1:nChunks){
 				ini<-end+1
-				end<-ini+nrow(genosList[[j]])-1
-				genosList[[j]][,i]<-x[ini:end]
+				end<-ini+ncol(genosList[[j]])-1
+				genosList[[j]][i,]<-x[ini:end]
 			}
 		}else{
 			tmpChunk<-ceiling(i/chunkSize)
-			tmpCol<-i-(tmpChunk-1)*chunkSize
-			genosList[[tmpChunk]][,tmpCol]<-x
+			tmpRow<-i-(tmpChunk-1)*chunkSize
+			genosList[[tmpChunk]][tmpRow,]<-x
 		}
 		
 		time4<-proc.time()
@@ -368,36 +368,24 @@ setGenData<-function(fileIn,n,header,dataType,distributed.by='rows',map=data.fra
 	    end<-0
 		for(i in 1:nChunks){
 			ini<-end+1
-			end<-min(ini+ncol(genosList[[i]])-1,n)
-			colnames(genosList[[i]])<-IDs[ini:end]
+			end<-min(ini+nrow(genosList[[i]])-1,n)
+			rownames(genosList[[i]])<-IDs[ini:end]
 		}
 	}else{
 		for(i in 1:nChunks){
-			colnames(genosList[[i]])<-IDs
+			rownames(genosList[[i]])<-IDs
 		}
 	}
-		
-	# Now we transopose
-	genosList2<-list()
-	end<-0
-	for(i in 1:nChunks){
-		timeIn<-proc.time()[3]
-		genosList2[[i]]<-t(genosList[[i]]) 
-		dataFile<-paste(folderOut,'/geno_',i,'.bin',sep='')
-		file.copy(from=filename(genosList2[[i]]),to=dataFile)
-		delete(filename(genosList2[[i]]))
-		attr(attributes(genosList2[[i]])$physical,"filename")<-dataFile
-		if(verbose){ cat('Transposed chunk ',i,' of ', nChunks,' ',round(proc.time()[3]-timeIn,1),'second/chunk','\n') }
-	}
-	rm(genosList)
-    tmp<-new(ifelse(distributed.by=='columns','cDMatrix','rDMatrix'),genosList2)
-    genData<-new('genData',geno=tmp,map=map)
+	
+	geno<-new(ifelse(distributed.by=='columns','cDMatrix','rDMatrix'),genosList)
+	genData<-new('genData',geno=geno,map=map)
 	
 	if((nrow(map)==0)&add.map){
 		genData@map<-data.frame(mrk=mrkNames,maf=as.numeric(NA),freqNA=as.numeric(NA),stringsAsFactors=FALSE)
 	}
 	if(saveData){ 
 		for(i in 1:nChunks){
+			attr(attributes(genData@geno[[i]])$physical,"pattern")<-'ff'
 			attr(attributes(genData@geno[[i]])$physical,"filename")<-paste('geno_',i,'.bin',sep='')
 		}
 		save(genData,file=paste(folderOut,'/genData.RData',sep='')) 
