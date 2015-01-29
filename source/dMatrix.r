@@ -255,9 +255,9 @@ subset.rDMatrix<-function(x,i=(1:nrow(x)),j=(1:ncol(x))){
 
 ## Creates and rDMatrix or cDMatrix from a ped file
 
-setGenData<-function(fileIn,n,header,dataType,distributed.by='rows',map=data.frame(),mrkCol=NULL,
+setGenData<-function(fileIn,n,header,dataType,distributed.by='rows',mrkCol=NULL,
                     folderOut=paste('genData_',sub("\\.[[:alnum:]]+$","",basename(fileIn)),sep=''),
-                    returnData=TRUE,saveData=TRUE,na.strings='NA',nColSkip=6,idCol=2,verbose=FALSE,nChunks=NULL,add.map=TRUE,
+                    returnData=TRUE,saveData=TRUE,na.strings='NA',nColSkip=6,idCol=2,verbose=FALSE,nChunks=NULL,
                     dimorder=if(distributed.by=='rows') 2:1 else 1:2){
         ###
         # Use: creates (returns, saves or both) a genData object from an ASCII file
@@ -387,13 +387,11 @@ setGenData<-function(fileIn,n,header,dataType,distributed.by='rows',map=data.fra
 	}
 	
 	pheno<-as.data.frame(pheno,stringsAsFactors=FALSE)
+	map<-data.frame(mrk=mrkNames,maf=as.numeric(NA),freqNA=as.numeric(NA),stringsAsFactors=FALSE)
 	
 	geno<-new(ifelse(distributed.by=='columns','cDMatrix','rDMatrix'),genosList)
 	genData<-new('genData',geno=geno,map=map,pheno=pheno)
 	
-	if((nrow(map)==0)&add.map){
-		genData@map<-data.frame(mrk=mrkNames,maf=as.numeric(NA),freqNA=as.numeric(NA),stringsAsFactors=FALSE)
-	}
 	if(saveData){ 
 		for(i in 1:nChunks){
 			attr(attributes(genData@geno[[i]])$physical,"pattern")<-'ff'
