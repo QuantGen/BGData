@@ -282,19 +282,19 @@ setGenData<-function(fileIn,n,header,dataType,distributed.by='rows',p=NULL,
     library(ff)
 
     if(header){
-        pedFile<-file(fileIn,open='r')
+        pedFile<-gzfile(fileIn,open='r')
         tmp<-scan(pedFile,nlines=1,what=character(),quiet=TRUE)
         p<-length(tmp)-nColSkip
         phtNames<-tmp[1:nColSkip]
         mrkNames<-tmp[-(1:nColSkip)]
     }else{
         if(is.null(p)){
-            detP<-file(fileIn,open='r')
+            detP<-gzfile(fileIn,open='r')
             tmp<-scan(detP,nlines=1,what=character(),quiet=TRUE)
             p<-length(tmp)-nColSkip
             close(detP)
         }
-        pedFile<-file(fileIn,open='r')
+        pedFile<-gzfile(fileIn,open='r')
         phtNames<-paste('v_',1:nColSkip,sep='')
         mrkNames<-paste('mrk_',1:p,sep='')
     }
