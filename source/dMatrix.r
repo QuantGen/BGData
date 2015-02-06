@@ -255,7 +255,7 @@ subset.rDMatrix<-function(x,i=(1:nrow(x)),j=(1:ncol(x))){
 
 ## Creates and rDMatrix or cDMatrix from a ped file
 
-setGenData<-function(fileIn,n,header,dataType,distributed.by='rows',
+setGenData<-function(fileIn,n,header,dataType,distributed.by='rows',p=NULL,
                     folderOut=paste('genData_',sub("\\.[[:alnum:]]+$","",basename(fileIn)),sep=''),
                     returnData=TRUE,na.strings='NA',nColSkip=6,idCol=2,verbose=FALSE,nChunks=NULL,
                     dimorder=if(distributed.by=='rows') 2:1 else 1:2){
@@ -281,18 +281,27 @@ setGenData<-function(fileIn,n,header,dataType,distributed.by='rows',
 
     library(ff)
 
-    p<-length(scan(fileIn,what=character(),nlines=1,skip=ifelse(header,1,0),quiet=TRUE))-nColSkip
-    IDs<-rep(NA,n)
-    pheno<-matrix(nrow=n,ncol=nColSkip)
-	
     if(header){
-        headerLine<-scan(fileIn,what=character(),nlines=1,skip=0,quiet=TRUE)
-        phtNames<-headerLine[1:nColSkip]
-        mrkNames<-headerLine[-(1:nColSkip)]
+        pedFile<-file(fileIn,open='r')
+        tmp<-scan(pedFile,nlines=1,what=character(),quiet=TRUE)
+        p<-length(tmp)-nColSkip
+        phtNames<-tmp[1:nColSkip]
+        mrkNames<-tmp[-(1:nColSkip)]
     }else{
+        if(is.null(p)){
+            detP<-file(fileIn,open='r')
+            tmp<-scan(detP,nlines=1,what=character(),quiet=TRUE)
+            p<-length(tmp)-nColSkip
+            close(detP)
+        }
+        pedFile<-file(fileIn,open='r')
         phtNames<-paste('v_',1:nColSkip,sep='')
         mrkNames<-paste('mrk_',1:p,sep='')
     }
+
+    IDs<-rep(NA,n)
+
+    pheno<-matrix(nrow=n,ncol=nColSkip)
     colnames(pheno)<-phtNames
 
 	if(!distributed.by%in%c('columns','rows')){stop('distributed.by must be either columns or rows') }
@@ -333,16 +342,11 @@ setGenData<-function(fileIn,n,header,dataType,distributed.by='rows',
 		}
     }
 
-	fileIn<-file(fileIn,open='r')
-    if(header){
-        tmp<-scan(fileIn,nlines=1,what=character(),quiet=TRUE)
-    }
-
     for(i in 1:n){
 		#if(verbose){ cat(' Subject ',i,'\n')}
 		time1<-proc.time()
-		xSkip<-scan(fileIn,n=nColSkip,what=character(),na.strings=na.strings,quiet=TRUE)
-		x<-scan(fileIn,n=p,what=dataType,na.strings=na.strings,quiet=TRUE)
+		xSkip<-scan(pedFile,n=nColSkip,what=character(),na.strings=na.strings,quiet=TRUE)
+		x<-scan(pedFile,n=p,what=dataType,na.strings=na.strings,quiet=TRUE)
 		
 		pheno[i,]<-xSkip
 		
@@ -367,7 +371,7 @@ setGenData<-function(fileIn,n,header,dataType,distributed.by='rows',
 		time4<-proc.time()
         if(verbose){ cat(' Subject ',i,'  ',round(time4[3]-time1[3],3),' sec/subject.','\n')}
     }
-	close(fileIn)
+    close(pedFile)
 
 	# Adding names
 	if(distributed.by=='rows'){
