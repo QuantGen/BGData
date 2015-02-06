@@ -255,9 +255,9 @@ subset.rDMatrix<-function(x,i=(1:nrow(x)),j=(1:ncol(x))){
 
 ## Creates and rDMatrix or cDMatrix from a ped file
 
-setGenData<-function(fileIn,n,header,dataType,distributed.by='rows',mrkCol=NULL,
+setGenData<-function(fileIn,n,header,dataType,distributed.by='rows',
                     folderOut=paste('genData_',sub("\\.[[:alnum:]]+$","",basename(fileIn)),sep=''),
-                    returnData=TRUE,saveData=TRUE,na.strings='NA',nColSkip=6,idCol=2,verbose=FALSE,nChunks=NULL,
+                    returnData=TRUE,na.strings='NA',nColSkip=6,idCol=2,verbose=FALSE,nChunks=NULL,
                     dimorder=if(distributed.by=='rows') 2:1 else 1:2){
         ###
         # Use: creates (returns, saves or both) a genData object from an ASCII file
@@ -268,13 +268,10 @@ setGenData<-function(fileIn,n,header,dataType,distributed.by='rows',mrkCol=NULL,
         # folderOut (charater): the name of the folder where to save the binary files.
         #                     NOTE: associated to this file there will be files containing the acutal data genos_*.bin
         # returnData (logical): if TRUE the function returns a list with genotypes (X), MAP file and subject information (phenos)
-        # saveData (logical): if TRUE the function saves the objects listed above into an object (genData.RData)
         # header (logical): TRUE if the 1st line of the ped file is a header
         # na.strings (character): the character string use to denote missing value.
         # nColSkip (integer): the number of columsn to be skipped.
         # idCol (integer): the column that contains the subject ID
-        # map (data.frame): map containing marker info
-        # nmax (integer): the maximum number of individuals expected. 
         # Requires: package ff
         ###
 
@@ -391,14 +388,13 @@ setGenData<-function(fileIn,n,header,dataType,distributed.by='rows',mrkCol=NULL,
 	
 	geno<-new(ifelse(distributed.by=='columns','cDMatrix','rDMatrix'),genosList)
 	genData<-new('genData',geno=geno,map=map,pheno=pheno)
-	
-	if(saveData){ 
-		for(i in 1:nChunks){
-			attr(attributes(genData@geno[[i]])$physical,"pattern")<-'ff'
-			attr(attributes(genData@geno[[i]])$physical,"filename")<-paste('geno_',i,'.bin',sep='')
-		}
-		save(genData,file=paste(folderOut,'/genData.RData',sep='')) 
-	}
+
+    for(i in 1:nChunks){
+        attr(attributes(genData@geno[[i]])$physical,"pattern")<-'ff'
+        attr(attributes(genData@geno[[i]])$physical,"filename")<-paste('geno_',i,'.bin',sep='')
+    }
+    save(genData,file=paste(folderOut,'/genData.RData',sep=''))
+
     if(returnData){ return(genData) }
 }
  
