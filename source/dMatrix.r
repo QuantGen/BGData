@@ -255,7 +255,7 @@ subset.rDMatrix<-function(x,i=(1:nrow(x)),j=(1:ncol(x))){
 
 ## Creates and rDMatrix or cDMatrix from a ped file
 
-setGenData<-function(fileIn,n,header,dataType,distributed.by='rows',mrkCol=NULL,
+setGenData<-function(fileIn,n,header,dataType,distributed.by='rows',
                     folderOut=paste('genData_',sub("\\.[[:alnum:]]+$","",basename(fileIn)),sep=''),
                     returnData=TRUE,saveData=TRUE,na.strings='NA',nColSkip=6,idCol=2,verbose=FALSE,nChunks=NULL,
                     dimorder=if(distributed.by=='rows') 2:1 else 1:2){
@@ -273,8 +273,6 @@ setGenData<-function(fileIn,n,header,dataType,distributed.by='rows',mrkCol=NULL,
         # na.strings (character): the character string use to denote missing value.
         # nColSkip (integer): the number of columsn to be skipped.
         # idCol (integer): the column that contains the subject ID
-        # map (data.frame): map containing marker info
-        # nmax (integer): the maximum number of individuals expected. 
         # Requires: package ff
         ###
 
