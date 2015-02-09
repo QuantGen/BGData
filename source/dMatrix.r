@@ -197,13 +197,18 @@ subset.cDMatrix<-function(x,i=(1:nrow(x)),j=(1:ncol(x))){
         whatChunks<-unique(INDEXES[,1])
         end<-0
         for(i in whatChunks){
-
                 TMP<-matrix(data=INDEXES[INDEXES[,1]==i,],ncol=3)
                 ini<-end+1; end<-ini+nrow(TMP)-1
                 Z[,ini:end]<-x[[i]][rows,TMP[,3]]
         }
-        if(length(originalOrder)>1){        Z<-Z[,originalOrder] }
-        return(Z)
+        if(length(originalOrder)>1){
+            Z[]<-Z[,originalOrder]
+        }
+        if(n==1||p==1){
+            return(as.vector(Z))
+        }else{
+            return(Z)
+        }
  }
 
  setMethod(f="[",signature("cDMatrix"),definition=subset.cDMatrix)
@@ -236,16 +241,18 @@ subset.rDMatrix<-function(x,i=(1:nrow(x)),j=(1:ncol(x))){
         whatChunks<-unique(INDEXES[,1])
         end<-0
         for(i in whatChunks){
-
                 TMP<-matrix(data=INDEXES[INDEXES[,1]==i,],ncol=3)
                 ini<-end+1; end<-ini+nrow(TMP)-1
                 Z[ini:end,]<-x[[i]][TMP[,3],columns]
-				
-				
         }
-        if(length(originalOrder)>1){        Z<-Z[originalOrder,] }
-
-        return(Z)
+        if(length(originalOrder)>1){
+            Z[]<-Z[originalOrder,]
+        }
+        if(n==1||p==1){
+            return(as.vector(Z))
+        }else{
+            return(Z)
+        }
  }
 
  setMethod(f="[",signature("rDMatrix"),definition=subset.rDMatrix)
