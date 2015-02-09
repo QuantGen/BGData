@@ -197,13 +197,18 @@ subset.cDMatrix<-function(x,i=(1:nrow(x)),j=(1:ncol(x))){
         whatChunks<-unique(INDEXES[,1])
         end<-0
         for(i in whatChunks){
-
                 TMP<-matrix(data=INDEXES[INDEXES[,1]==i,],ncol=3)
                 ini<-end+1; end<-ini+nrow(TMP)-1
                 Z[,ini:end]<-x[[i]][rows,TMP[,3]]
         }
-        if(length(originalOrder)>1){        Z<-Z[,originalOrder] }
-        return(Z)
+        if(length(originalOrder)>1){
+            Z[]<-Z[,originalOrder]
+        }
+        if(n==1||p==1){
+            return(as.vector(Z))
+        }else{
+            return(Z)
+        }
  }
 
  setMethod(f="[",signature("cDMatrix"),definition=subset.cDMatrix)
@@ -236,16 +241,18 @@ subset.rDMatrix<-function(x,i=(1:nrow(x)),j=(1:ncol(x))){
         whatChunks<-unique(INDEXES[,1])
         end<-0
         for(i in whatChunks){
-
                 TMP<-matrix(data=INDEXES[INDEXES[,1]==i,],ncol=3)
                 ini<-end+1; end<-ini+nrow(TMP)-1
                 Z[ini:end,]<-x[[i]][TMP[,3],columns]
-				
-				
         }
-        if(length(originalOrder)>1){        Z<-Z[originalOrder,] }
-
-        return(Z)
+        if(length(originalOrder)>1){
+            Z[]<-Z[originalOrder,]
+        }
+        if(n==1||p==1){
+            return(as.vector(Z))
+        }else{
+            return(Z)
+        }
  }
 
  setMethod(f="[",signature("rDMatrix"),definition=subset.rDMatrix)
@@ -404,6 +411,82 @@ setGenData<-function(fileIn,n,header,dataType,distributed.by='rows',p=NULL,
 }
  
 ## END OF MAKE makeGenosFF ###############################################################
+
+
+applyDMatrix<-function(X,MARGIN,FUN,chunkSize=1e3,...){
+    FUN<-match.fun(FUN)
+    if(!(class(X)%in%c('rDMatrix','cDMatrix'))){ stop('X must be either dMatrix or rMatrix') }
+
+    nCol<-ifelse(MARGIN==1,nrow(X),ncol(X))
+
+    if(MARGIN==1){
+        x<-X[1,]
+    }else{
+        x<-X[,1]
+    }
+    tmp<-FUN(x,...)
+
+    ANS<-matrix(nrow=length(tmp),ncol=nCol,NA)
+    if(MARGIN==1){
+        rownames(ANS)<-names(tmp)
+        colnames(ANS)<-rownames(X)
+    }else{
+        rownames(ANS)<-names(tmp)
+        colnames(ANS)<-colnames(X)
+    }
+
+    nChunks<-floor(nCol/chunkSize)
+    end<-0
+
+    for(i in 1:nChunks){
+        cat(i,' out of ',nChunks,' \n')
+        ini<-end+1
+        end<-ini+chunkSize-1
+        if(MARGIN==1){
+            Z<-X[ini:end,]
+        }else{
+            Z<-X[,ini:end]
+        }
+        ANS[,ini:end]<-apply(FUN=FUN,MARGIN=MARGIN, X=Z,...)
+    }
+    if(end<nCol){
+        ini<-end+1
+        end<-nCol
+        if(MARGIN==1){
+            Z<-X[ini:end,]
+        }else{
+            Z<-X[,ini:end]
+        }
+        ANS[,ini:end]<-apply(FUN=FUN,MARGIN=MARGIN, X=Z,...)
+    }
+    return(ANS)
+}
+
+colMeans.DMatrix<-function(X,chunkSize=1e3,...){
+    ANS<-applyDMatrix(X=X,MARGIN=2,FUN=mean,chunkSize=chunkSize,...)
+    return(ANS)
+}
+
+colSums.DMatrix<-function(X,chunkSize=1e3,...){
+    ANS<-applyDMatrix(X=X,MARGIN=2,FUN=sum,chunkSize=chunkSize,...)
+    return(ANS)
+}
+
+rowMeans.DMatrix<-function(X,chunkSize=1e3,...){
+    ANS<-applyDMatrix(X=X,MARGIN=1,FUN=mean,chunkSize=chunkSize,...)
+    return(ANS)
+}
+
+rowSums.DMatrix<-function(X,chunkSize=1e3,...){
+    ANS<-applyDMatrix(X=X,MARGIN=1,FUN=sum,chunkSize=chunkSize,...)
+    return(ANS)
+}
+
+summary.DMatrix<-function(X,MARGIN=2,chunkSize=1e3,...){
+    # If MARGIN==1 summaries of columns are provided, this is the default, otherwise, row-summaries are returned.
+    ANS<-applyDMatrix(X=X,MARGIN=MARGIN,FUN=summary,chunkSize=chunkSize,...)
+    return(ANS)
+}
 
 
 ## Example: GWAS using function lm
