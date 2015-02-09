@@ -388,6 +388,7 @@ setGenData<-function(fileIn,n,header,dataType,distributed.by='rows',p=NULL,
 	}
 	
 	pheno<-as.data.frame(pheno,stringsAsFactors=FALSE)
+	pheno[]<-lapply(pheno,type.convert,as.is=TRUE)
 	map<-data.frame(mrk=mrkNames,maf=as.numeric(NA),freqNA=as.numeric(NA),stringsAsFactors=FALSE)
 	
 	geno<-new(ifelse(distributed.by=='columns','cDMatrix','rDMatrix'),genosList)
