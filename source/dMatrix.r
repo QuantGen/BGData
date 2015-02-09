@@ -406,6 +406,77 @@ setGenData<-function(fileIn,n,header,dataType,distributed.by='rows',p=NULL,
 ## END OF MAKE makeGenosFF ###############################################################
 
 
+applyDMatrix<-function(X,MARGIN,FUN,chunkSize=1e3,...){
+    FUN<-match.fun(FUN)
+    if(!(class(X)%in%c('rDMatrix','cDMatrix'))){ stop('X must be either dMatrix or rMatrix') }
+
+    nCol<-ifelse(MARGIN==1,nrow(X),ncol(X))
+
+    if(MARGIN==1){
+        x<-X[1,]
+    }else{
+        x<-X[,1]
+    }
+    tmp<-FUN(x,...)
+
+    ANS<-matrix(nrow=length(tmp),ncol=nCol,NA)
+    rownames(ANS)<-names(tmp)
+    colnames(ANS)<-colnames(X)
+
+    nChunks<-floor(nCol/chunkSize)
+    end<-0
+
+    for(i in 1:nChunks){
+        cat(i,' out of ',nChunks,' \n')
+        ini<-end+1
+        end<-ini+chunkSize-1
+        if(MARGIN==1){
+            Z<-X[ini:end,]
+        }else{
+            Z<-X[,ini:end]
+        }
+        ANS[,ini:end]<-apply(FUN=FUN,MARGIN=MARGIN, X=Z,...)
+    }
+    if(end<nCol){
+        ini<-end+1
+        end<-nCol
+        if(MARGIN==1){
+            Z<-X[ini:end,]
+        }else{
+            Z<-X[,ini:end]
+        }
+        ANS[,ini:end]<-apply(FUN=FUN,MARGIN=MARGIN, X=Z,...)
+    }
+    return(ANS)
+}
+
+colMeans.DMatrx<-function(X,chunkSize=1e3,...){
+    ANS<-appplyDMatrix(X=X,MARGIN=2,FUN=mean,chunkSize=chunkSize,...)
+    return(ANS)
+}
+
+colSums.DMatrx<-function(X,chunkSize=1e3,...){
+    ANS<-appplyDMatrix(X=X,MARGIN=2,FUN=sum,chunkSize=chunkSize,...)
+    return(ANS)
+}
+
+rowMeans.DMatrx<-function(X,chunkSize=1e3,...){
+    ANS<-appplyDMatrix(X=X,MARGIN=1,FUN=mean,chunkSize=chunkSize,...)
+    return(ANS)
+}
+
+rowSums.DMatrx<-function(X,chunkSize=1e3,...){
+    ANS<-appplyDMatrix(X=X,MARGIN=1,FUN=sum,chunkSize=chunkSize,...)
+    return(ANS)
+}
+
+summary.DMatrix<-function(X,MARGIN=2,chunkSize=1e3,...){
+    # If MARGIN==1 Summies of columns are provided, this is the default, otherwise, row-summaries are returned.
+    ANS<-appplyDMatrix(X=X,MARGIN=MARGIN,FUN=sumnary,chunkSize=chunkSize,...)
+    return(ANS)
+}
+
+
 ## Example: GWAS using function lm
 
 GWAS.lm<-function(baseline.model,phen.data,id.col,gen.data,verbose=TRUE,manhattan.plot=FALSE,min.pValue=1e-10){
