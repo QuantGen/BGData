@@ -420,8 +420,13 @@ applyDMatrix<-function(X,MARGIN,FUN,chunkSize=1e3,...){
     tmp<-FUN(x,...)
 
     ANS<-matrix(nrow=length(tmp),ncol=nCol,NA)
-    rownames(ANS)<-names(tmp)
-    colnames(ANS)<-colnames(X)
+    if(MARGIN==1){
+        rownames(ANS)<-names(tmp)
+        colnames(ANS)<-rownames(X)
+    }else{
+        rownames(ANS)<-names(tmp)
+        colnames(ANS)<-colnames(X)
+    }
 
     nChunks<-floor(nCol/chunkSize)
     end<-0
