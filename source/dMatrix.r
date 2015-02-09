@@ -455,29 +455,29 @@ applyDMatrix<-function(X,MARGIN,FUN,chunkSize=1e3,...){
     return(ANS)
 }
 
-colMeans.DMatrx<-function(X,chunkSize=1e3,...){
-    ANS<-appplyDMatrix(X=X,MARGIN=2,FUN=mean,chunkSize=chunkSize,...)
+colMeans.DMatrix<-function(X,chunkSize=1e3,...){
+    ANS<-applyDMatrix(X=X,MARGIN=2,FUN=mean,chunkSize=chunkSize,...)
     return(ANS)
 }
 
-colSums.DMatrx<-function(X,chunkSize=1e3,...){
-    ANS<-appplyDMatrix(X=X,MARGIN=2,FUN=sum,chunkSize=chunkSize,...)
+colSums.DMatrix<-function(X,chunkSize=1e3,...){
+    ANS<-applyDMatrix(X=X,MARGIN=2,FUN=sum,chunkSize=chunkSize,...)
     return(ANS)
 }
 
-rowMeans.DMatrx<-function(X,chunkSize=1e3,...){
-    ANS<-appplyDMatrix(X=X,MARGIN=1,FUN=mean,chunkSize=chunkSize,...)
+rowMeans.DMatrix<-function(X,chunkSize=1e3,...){
+    ANS<-applyDMatrix(X=X,MARGIN=1,FUN=mean,chunkSize=chunkSize,...)
     return(ANS)
 }
 
-rowSums.DMatrx<-function(X,chunkSize=1e3,...){
-    ANS<-appplyDMatrix(X=X,MARGIN=1,FUN=sum,chunkSize=chunkSize,...)
+rowSums.DMatrix<-function(X,chunkSize=1e3,...){
+    ANS<-applyDMatrix(X=X,MARGIN=1,FUN=sum,chunkSize=chunkSize,...)
     return(ANS)
 }
 
 summary.DMatrix<-function(X,MARGIN=2,chunkSize=1e3,...){
-    # If MARGIN==1 Summies of columns are provided, this is the default, otherwise, row-summaries are returned.
-    ANS<-appplyDMatrix(X=X,MARGIN=MARGIN,FUN=sumnary,chunkSize=chunkSize,...)
+    # If MARGIN==1 summaries of columns are provided, this is the default, otherwise, row-summaries are returned.
+    ANS<-applyDMatrix(X=X,MARGIN=MARGIN,FUN=summary,chunkSize=chunkSize,...)
     return(ANS)
 }
 
