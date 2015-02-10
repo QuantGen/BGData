@@ -282,7 +282,10 @@ setGenData<-function(fileIn,n,header,dataType,distributed.by='rows',p=NULL,
         # Requires: package ff
         ###
 
-	dir.create(folderOut)
+    if(file.exists(folderOut)){
+        stop(paste('Output folder',folderOut,'already exists. Please remove it or pick a different one.'))
+    }
+    dir.create(folderOut)
 
     vMode<-ifelse( dataType%in%c('character','integer'),'byte','double')
 
