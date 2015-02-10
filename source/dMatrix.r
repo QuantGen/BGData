@@ -494,53 +494,66 @@ summary.DMatrix<-function(X,MARGIN=2,chunkSize=1e3,...){
 
 ## Example: GWAS using function lm
 
-GWAS.lm<-function(baseline.model,phen.data,id.col,gen.data,verbose=TRUE,manhattan.plot=FALSE,min.pValue=1e-10){
-    #verbose=TRUE
-	#phen.data=Y
-    #baseline.model=y~x1
-    #id.col=4
-    #gen.data=genData@geno
-    
-    gwas.model<-update(baseline.model,'.~z+.')
-    
-    phen.data[,id.col]<-as.character(phen.data[,id.col])
-    
-    IDs.geno<-rownames(gen.data)
-    tmp<-which(phen.data[,id.col]%in%IDs.geno)
-    if(length(tmp)==0){ stop('No subject in phen.data is present in gen.data') }
-    phen.data<-phen.data[tmp,]
-    
-    rows.geno<-which(IDs.geno%in%phen.data[,id.col])
-    
-    tmp<-order(as.integer(factor(x=phen.data[,id.col],levels=IDs.geno[rows.geno],ordered=TRUE)))
-    phen.data<-phen.data[tmp,]
-    stopifnot(all.equal(rownames(gen.data)[rows.geno],phen.data[,id.col]))
+GWAS<-function(formula,data,method,manhattan.plot=TRUE,verbose=FALSE,min.pValue=1e-10,...){
+    ##
+    # formula: the formula for the GWAS model without including the marker, e.g., y~1  or y~factor(sex)+age
+    #          all the variables in the formula must be in data@pheno
+    # data (genData) containing slots @pheno and @geno
+    # method: a descritpion of the regression method (e.g.,lm, glm...)
+    ##
 
-    p<-ncol(gen.data)
-    OUT<-matrix(nrow=p,ncol=4,NA)
-    rownames(OUT)<-colnames(gen.data)
-    colnames(OUT)<-c('Estimate','SE','t-ratio','p-value')
-    phen.data$z<-NA
+    tmp<-all(as.character(attr(terms(formula),'variables'))[-1]%in%colnames(data@pheno))
+    if(!tmp){ stop('Some of the variables in the formula do not appear in data@pheno')}
 
+    ## These checks are provisional... in general it should work for any method where summary(fm)$coef returns a matrix with estiamtes.
+    if(!method%in%c('lm','glm')){stop('Only lm and glm  have been implemented so far..')}
+
+    if(!method%in%c('lm','glm')){
+        manhattanPlot<-FALSE;
+        print('Manattan plots are implmented only for glm and lm')
+    }
+    ## end of provisional checks.
+
+    if(class(data)!='genData'){ stop('data must genData')}
+
+    FUN<-match.fun(method)
+    #attach(data@pheno)    # could subset based on NAs so that subsetting does not take place in each iteration of the GWAS loop
+    pheno<-data@pheno
+
+    tmp<-summary(FUN(formula,...))$coef
+
+    p<-ncol(data@geno)
+    OUT<-matrix(nrow=p,ncol=ncol(tmp),NA)
+    rownames(OUT)<-colnames(data@geno)
+    colnames(OUT)<-colnames(tmp)
+
+    GWAS.model<-update(as.formula(formula),'.~z+.')
+    print(GWAS.model)
     if(manhattan.plot){
-       plot(numeric()~numeric(),xlim=c(0,p),ylim=c(0,-log(min.pValue,base=10)),ylab='-log(p-value)',xlab='Marker')
+        tmp<-paste(as.character(GWAS.model[2]),as.character(GWAS.model[3]),sep='~')
+        plot(numeric()~numeric(),xlim=c(0,p),ylim=c(0,-log(min.pValue,base=10)),ylab='-log(p-value)',xlab='Marker',main=tmp)
     }
 
     for(i in 1:p){
         time.in<-proc.time()[3]
-    	phen.data$z<-gen.data[rows.geno,i]
-    	fm<-lm(gwas.model,data=phen.data)
-    	OUT[i,]<-summary(fm)$coef[2,]
-    	if(manhattan.plot){ 
-    		points(y= -log(OUT[i,4],base=10),col=2,cex=.5,x=i)
-    		x=c(i-1,i)
-    		y= -log(OUT[c(i-1,i),4],base=10)
-            if(i>1){ lines(x=x,y=y,col=4,lwd=.5) }
-    	}	
+        pheno$z<-data@geno[,i]
+        fm<-FUN(GWAS.model,data=pheno,...)
+        tmp<-summary(fm)$coef[2,]
+
+        OUT[i,]<-tmp
+        if(manhattan.plot){
+
+            x=c(i-1,i)
+            y= -log(OUT[c(i-1,i),4],base=10)
+            if(i>1){ lines(x=x,y=y,col=8,lwd=.5) }
+            points(y=-log(tmp[4],base=10),col=2,cex=.5,x=i)
+        }
         if(verbose){ cat(sep='','Marker ',i,' (',round(proc.time()[3]-time.in,2),' seconds/marker, ',round(i/p*100,3),'% done )\n') }
     }
-    return(OUT)    
+
+    return(OUT)
 }
+
 
 ## Computes a Genomic Relationship Matrix
 getG<-function(x,n_submatrix=3,scaleCol=TRUE,verbose=TRUE,minMAF=1/100){
