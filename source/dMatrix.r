@@ -502,11 +502,10 @@ GWAS<-function(formula,data,method,manhattan.plot=TRUE,verbose=FALSE,min.pValue=
     # method: a descritpion of the regression method (e.g.,lm, glm...)
     ##
 
-    tmp<-all(as.character(attr(terms(formula),'variables'))[-1]%in%colnames(data@pheno))
-    if(!tmp){ stop('Some of the variables in the formula do not appear in data@pheno')}
-
     ## These checks are provisional... in general it should work for any method where summary(fm)$coef returns a matrix with estiamtes.
-    if(!method%in%c('lm','glm')){stop('Only lm and glm  have been implemented so far..')}
+    if(!method%in%c('lm','glm','lmer')){
+        stop('Only lm, glm and lmer have been implemented so far.')
+    }
 
     if(!method%in%c('lm','glm')){
         manhattanPlot<-FALSE;
@@ -562,6 +561,9 @@ getCoefficients.lm<-function(x){
     summary(x)$coef[2,]
 }
 getCoefficients.glm<-function(x){
+    summary(x)$coef[2,]
+}
+getCoefficients.lmerMod<-function(x){
     summary(x)$coef[2,]
 }
 
