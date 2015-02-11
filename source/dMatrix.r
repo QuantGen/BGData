@@ -521,7 +521,7 @@ GWAS<-function(formula,data,method,plot=FALSE,verbose=FALSE,min.pValue=1e-10,...
     colnames(OUT)<-colnames(tmp)
 
     GWAS.model<-update(as.formula(formula),'.~z+.')
-    print(GWAS.model)
+
     if(plot){
         tmp<-paste(as.character(GWAS.model[2]),as.character(GWAS.model[3]),sep='~')
         plot(numeric()~numeric(),xlim=c(0,p),ylim=c(0,-log(min.pValue,base=10)),ylab='-log(p-value)',xlab='Marker',main=tmp)
