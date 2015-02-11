@@ -502,16 +502,9 @@ GWAS<-function(formula,data,method,manhattan.plot=TRUE,verbose=FALSE,min.pValue=
     # method: a descritpion of the regression method (e.g.,lm, glm...)
     ##
 
-    ## These checks are provisional... in general it should work for any method where summary(fm)$coef returns a matrix with estiamtes.
     if(!method%in%c('lm','glm','lmer')){
         stop('Only lm, glm and lmer have been implemented so far.')
     }
-
-    if(!method%in%c('lm','glm')){
-        manhattanPlot<-FALSE;
-        print('Manattan plots are implmented only for glm and lm')
-    }
-    ## end of provisional checks.
 
     if(class(data)!='genData'){ stop('data must genData')}
 
@@ -564,7 +557,9 @@ getCoefficients.glm<-function(x){
     summary(x)$coef[2,]
 }
 getCoefficients.lmerMod<-function(x){
-    summary(x)$coef[2,]
+    ans<-summary(x)$coef[2,]
+    ans<-c(ans,c(1-pnorm(ans[3])))
+    return(ans)
 }
 
 
