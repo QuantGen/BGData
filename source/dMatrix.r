@@ -494,7 +494,7 @@ summary.DMatrix<-function(X,MARGIN=2,chunkSize=1e3,...){
 
 ## Example: GWAS using function lm
 
-GWAS<-function(formula,data,method,manhattan.plot=TRUE,verbose=FALSE,min.pValue=1e-10,...){
+GWAS<-function(formula,data,method,manhattan.plot=FALSE,verbose=FALSE,min.pValue=1e-10,...){
     ##
     # formula: the formula for the GWAS model without including the marker, e.g., y~1  or y~factor(sex)+age
     #          all the variables in the formula must be in data@pheno
