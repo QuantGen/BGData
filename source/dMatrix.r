@@ -517,10 +517,10 @@ GWAS<-function(formula,data,method,manhattan.plot=TRUE,verbose=FALSE,min.pValue=
     if(class(data)!='genData'){ stop('data must genData')}
 
     FUN<-match.fun(method)
-    #attach(data@pheno)    # could subset based on NAs so that subsetting does not take place in each iteration of the GWAS loop
+    # could subset based on NAs so that subsetting does not take place in each iteration of the GWAS loop
     pheno<-data@pheno
 
-    tmp<-summary(FUN(formula,...))$coef
+    tmp<-summary(FUN(formula,data=pheno,...))$coef
 
     p<-ncol(data@geno)
     OUT<-matrix(nrow=p,ncol=ncol(tmp),NA)
