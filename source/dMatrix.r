@@ -494,7 +494,7 @@ summary.DMatrix<-function(X,MARGIN=2,chunkSize=1e3,...){
 
 ## Example: GWAS using function lm
 
-GWAS<-function(formula,data,method,manhattan.plot=TRUE,verbose=FALSE,min.pValue=1e-10,...){
+GWAS<-function(formula,data,method,plot=FALSE,verbose=FALSE,min.pValue=1e-10,...){
     ##
     # formula: the formula for the GWAS model without including the marker, e.g., y~1  or y~factor(sex)+age
     #          all the variables in the formula must be in data@pheno
@@ -502,34 +502,27 @@ GWAS<-function(formula,data,method,manhattan.plot=TRUE,verbose=FALSE,min.pValue=
     # method: a descritpion of the regression method (e.g.,lm, glm...)
     ##
 
-    tmp<-all(as.character(attr(terms(formula),'variables'))[-1]%in%colnames(data@pheno))
-    if(!tmp){ stop('Some of the variables in the formula do not appear in data@pheno')}
-
-    ## These checks are provisional... in general it should work for any method where summary(fm)$coef returns a matrix with estiamtes.
-    if(!method%in%c('lm','glm')){stop('Only lm and glm  have been implemented so far..')}
-
-    if(!method%in%c('lm','glm')){
-        manhattanPlot<-FALSE;
-        print('Manattan plots are implmented only for glm and lm')
+    if(!method%in%c('lm','glm','lmer')){
+        stop('Only lm, glm and lmer have been implemented so far.')
     }
-    ## end of provisional checks.
 
     if(class(data)!='genData'){ stop('data must genData')}
 
     FUN<-match.fun(method)
-    #attach(data@pheno)    # could subset based on NAs so that subsetting does not take place in each iteration of the GWAS loop
+    # could subset based on NAs so that subsetting does not take place in each iteration of the GWAS loop
     pheno<-data@pheno
 
-    tmp<-summary(FUN(formula,...))$coef
+    fm<-FUN(formula,data=pheno,...)
+    tmp<-getCoefficients(fm)
 
     p<-ncol(data@geno)
-    OUT<-matrix(nrow=p,ncol=ncol(tmp),NA)
+    OUT<-matrix(nrow=p,ncol=length(tmp),NA)
     rownames(OUT)<-colnames(data@geno)
     colnames(OUT)<-colnames(tmp)
 
     GWAS.model<-update(as.formula(formula),'.~z+.')
-    print(GWAS.model)
-    if(manhattan.plot){
+
+    if(plot){
         tmp<-paste(as.character(GWAS.model[2]),as.character(GWAS.model[3]),sep='~')
         plot(numeric()~numeric(),xlim=c(0,p),ylim=c(0,-log(min.pValue,base=10)),ylab='-log(p-value)',xlab='Marker',main=tmp)
     }
@@ -538,13 +531,12 @@ GWAS<-function(formula,data,method,manhattan.plot=TRUE,verbose=FALSE,min.pValue=
         time.in<-proc.time()[3]
         pheno$z<-data@geno[,i]
         fm<-FUN(GWAS.model,data=pheno,...)
-        tmp<-summary(fm)$coef[2,]
+        tmp<-getCoefficients(fm)
 
         OUT[i,]<-tmp
-        if(manhattan.plot){
-
+        if(plot){
             x=c(i-1,i)
-            y= -log(OUT[c(i-1,i),4],base=10)
+            y=-log(OUT[c(i-1,i),4],base=10)
             if(i>1){ lines(x=x,y=y,col=8,lwd=.5) }
             points(y=-log(tmp[4],base=10),col=2,cex=.5,x=i)
         }
@@ -552,6 +544,21 @@ GWAS<-function(formula,data,method,manhattan.plot=TRUE,verbose=FALSE,min.pValue=
     }
 
     return(OUT)
+}
+
+getCoefficients<-function(x){
+    UseMethod('getCoefficients')
+}
+getCoefficients.lm<-function(x){
+    summary(x)$coef[2,]
+}
+getCoefficients.glm<-function(x){
+    summary(x)$coef[2,]
+}
+getCoefficients.lmerMod<-function(x){
+    ans<-summary(x)$coef[2,]
+    ans<-c(ans,c(1-pnorm(ans[3])))
+    return(ans)
 }
 
 
