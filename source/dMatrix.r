@@ -520,10 +520,11 @@ GWAS<-function(formula,data,method,manhattan.plot=TRUE,verbose=FALSE,min.pValue=
     # could subset based on NAs so that subsetting does not take place in each iteration of the GWAS loop
     pheno<-data@pheno
 
-    tmp<-summary(FUN(formula,data=pheno,...))$coef
+    fm<-FUN(formula,data=pheno,...)
+    tmp<-getCoefficients(fm)
 
     p<-ncol(data@geno)
-    OUT<-matrix(nrow=p,ncol=ncol(tmp),NA)
+    OUT<-matrix(nrow=p,ncol=length(tmp),NA)
     rownames(OUT)<-colnames(data@geno)
     colnames(OUT)<-colnames(tmp)
 
@@ -538,7 +539,7 @@ GWAS<-function(formula,data,method,manhattan.plot=TRUE,verbose=FALSE,min.pValue=
         time.in<-proc.time()[3]
         pheno$z<-data@geno[,i]
         fm<-FUN(GWAS.model,data=pheno,...)
-        tmp<-summary(fm)$coef[2,]
+        tmp<-getCoefficients(fm)
 
         OUT[i,]<-tmp
         if(manhattan.plot){
@@ -552,6 +553,16 @@ GWAS<-function(formula,data,method,manhattan.plot=TRUE,verbose=FALSE,min.pValue=
     }
 
     return(OUT)
+}
+
+getCoefficients<-function(x){
+    UseMethod('getCoefficients')
+}
+getCoefficients.lm<-function(x){
+    summary(x)$coef[2,]
+}
+getCoefficients.glm<-function(x){
+    summary(x)$coef[2,]
 }
 
 
