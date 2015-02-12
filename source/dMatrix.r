@@ -36,7 +36,7 @@ dim.rDMatrix<-function(x){
 
 ## chunks: returns which columns ar contained in each chunk of a cDMatrix or rDMatrix object ##########
 chunks<-function(x){
-	if(class(x)=='cDMatrix'){
+    if(class(x)=='cDMatrix'){
         n<-length(x)
         OUT<-matrix(nrow=n,ncol=3,NA)
         colnames(OUT)<-c('chunk','col.ini','col.end')
@@ -47,7 +47,7 @@ chunks<-function(x){
                 OUT[i,]<-c(i,ini,end)
         }
     }
-	if(class(x)=='rDMatrix'){
+    if(class(x)=='rDMatrix'){
         n<-length(x)
         OUT<-matrix(nrow=n,ncol=3,NA)
         colnames(OUT)<-c('chunk','row.ini','row.end')
@@ -62,64 +62,64 @@ chunks<-function(x){
 }
 
 ## colnames method for cDMatrix and rDMatrix ###########################################################
- get.colnames.cDMatrix<-function(x){
-	out<-NULL
-	if(!is.null(colnames(x[[1]]))){
-		p<-dim(x)[2]
-		out<-rep('',p)
-		TMP<-chunks(x)
-		for(i in 1:nrow(TMP)){
-			out[(TMP[i,2]:TMP[i,3])]<-colnames(x[[i]])
-		}
-	}
-	return(out)
-  }
-  
-  get.colnames.rDMatrix<-function(x){
-	out<-colnames(x[[1]])
-	return(out)
-  }
-  
- setMethod(f="colnames",signature("cDMatrix"), definition=get.colnames.cDMatrix)
- setMethod(f="colnames",signature("rDMatrix"), definition=get.colnames.rDMatrix)
+get.colnames.cDMatrix<-function(x){
+    out<-NULL
+    if(!is.null(colnames(x[[1]]))){
+        p<-dim(x)[2]
+        out<-rep('',p)
+        TMP<-chunks(x)
+        for(i in 1:nrow(TMP)){
+            out[(TMP[i,2]:TMP[i,3])]<-colnames(x[[i]])
+        }
+    }
+    return(out)
+}
+
+get.colnames.rDMatrix<-function(x){
+    out<-colnames(x[[1]])
+    return(out)
+}
+
+setMethod(f="colnames",signature("cDMatrix"), definition=get.colnames.cDMatrix)
+setMethod(f="colnames",signature("rDMatrix"), definition=get.colnames.rDMatrix)
 ## end of colnames #######################################################################
 
 ## rownames method for cDMatrix and rDMatrix ##########################################################
-  get.rownames.cDMatrix<-function(x){
-	out<-rownames(x[[1]])
-	return(out)
-  }
+get.rownames.cDMatrix<-function(x){
+    out<-rownames(x[[1]])
+    return(out)
+}
 
-  get.rownames.rDMatrix<-function(x){
+get.rownames.rDMatrix<-function(x){
     out<-NULL
     if(!is.null(rownames(x[[1]]))){ 
-		n<-dim(x)[1]
-		out<-rep('',n)
-		TMP<-chunks(x)
-		for(i in 1:nrow(TMP)){
-			out[(TMP[i,2]:TMP[i,3])]<-rownames(x[[i]])
-		}
-	}
+        n<-dim(x)[1]
+        out<-rep('',n)
+        TMP<-chunks(x)
+        for(i in 1:nrow(TMP)){
+            out[(TMP[i,2]:TMP[i,3])]<-rownames(x[[i]])
+        }
+    }
     return(out)
-  }
-  
-  set.rownames.cDMatrix<-function(x,...){
-    for(i in 1:length(out)){
-		rownames(out[[i]])<-value
-	}
-  }
-  
-  set.rownames.rDMatrix<-function(x,names){
-   	TMP<-chunks(x)
-	for(i in 1:nrow(TMP)){
-		out[(TMP[i,2]:TMP[i,3])]<-names
-	}
-  }
- setMethod(f="rownames",signature("cDMatrix"),definition=get.rownames.cDMatrix)
- #setMethod(f="rownames<-",signature("cDMatrix"),definition=set.rownames.cDMatrix)
- setMethod(f="rownames",signature("rDMatrix"),definition=get.rownames.rDMatrix)
- #setMethod(f="rownames<-",signature("rDMatrix"),definition=set.rownames.rDMatrix)
+}
 
+set.rownames.cDMatrix<-function(x,...){
+    for(i in 1:length(out)){
+        rownames(out[[i]])<-value
+    }
+}
+
+set.rownames.rDMatrix<-function(x,names){
+    TMP<-chunks(x)
+    for(i in 1:nrow(TMP)){
+        out[(TMP[i,2]:TMP[i,3])]<-names
+    }
+}
+
+setMethod(f="rownames",signature("cDMatrix"),definition=get.rownames.cDMatrix)
+#setMethod(f="rownames<-",signature("cDMatrix"),definition=set.rownames.cDMatrix)
+setMethod(f="rownames",signature("rDMatrix"),definition=get.rownames.rDMatrix)
+#setMethod(f="rownames<-",signature("rDMatrix"),definition=set.rownames.rDMatrix)
 # end of rownames ########################################################################
 
 
