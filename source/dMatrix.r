@@ -122,6 +122,14 @@ setMethod(f="rownames",signature("rDMatrix"),definition=get.rownames.rDMatrix)
 #setMethod(f="rownames<-",signature("rDMatrix"),definition=set.rownames.rDMatrix)
 # end of rownames ########################################################################
 
+## dimnames method for cDMatrix and rDMatrix ##########################################################
+get.dimnames<-function(x){
+    list(rownames(x), colnames(x))
+}
+
+setMethod(f="dimnames",signature("cDMatrix"),definition=get.dimnames)
+setMethod(f="dimnames",signature("rDMatrix"),definition=get.dimnames)
+# end of dimnames ########################################################################
 
 ## finds the position of a set of columns in an object cDMatrix ###########################
 colindexes<-function(x,columns){
