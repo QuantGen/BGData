@@ -219,8 +219,19 @@ subset.cDMatrix<-function(x,i=(1:nrow(x)),j=(1:ncol(x))){
         }
  }
 
+replace.cDMatrix<-function(x,i=(1:nrow(x)),j=(1:ncol(x)),...,value){
+    indices<-colindexes(x,j)
+    for(k in 1:nrow(indices)){
+        index<-indices[k,]
+        chunk<-index[1]
+        col<-index[3]
+        x[[chunk]][i,col]<-value
+    }
+    x
+}
+
 setMethod("[",signature("cDMatrix"),subset.cDMatrix)
-# We should also set "[<-" for modifuing entries of the object
+setReplaceMethod("[",signature("cDMatrix"),replace.cDMatrix)
  
 ## end of indexing cDMatrix #################################################################### 
 
@@ -262,8 +273,19 @@ subset.rDMatrix<-function(x,i=(1:nrow(x)),j=(1:ncol(x))){
         }
  }
 
+replace.rDMatrix<-function(x,i=(1:nrow(x)),j=(1:ncol(x)),...,value){
+    indices<-rowindexes(x,i)
+    for(k in 1:nrow(indices)){
+        index<-indices[k,]
+        chunk<-index[1]
+        row<-index[3]
+        x[[chunk]][row,j]<-value
+    }
+    x
+}
+
 setMethod("[",signature("rDMatrix"),subset.rDMatrix)
-# We should also set "[<-" for modifuing entries of the object
+setReplaceMethod("[",signature("rDMatrix"),replace.rDMatrix)
 
 ## end of indexing cDMatrix #################################################################### 
 
