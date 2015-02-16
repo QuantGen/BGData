@@ -552,11 +552,11 @@ GWAS<-function(formula,data,method,plot=FALSE,verbose=FALSE,min.pValue=1e-10,chu
         ##
         if(class(data)!='genData'){ stop('data must genData')}
         
-        if(!method%in%c('lm','glm','lmer','lsfit')){
+        if(!method%in%c('lm','lm.fit','lsfit','glm','lmer')){
                 stop('Only lm, glm and lmer have been implemented so far.')
         }
         
-        if(method%in%c('lm','lm.fit','ls.fit')){
+        if(method%in%c('lm','lm.fit','lsfit')){
         	OUT<-GWAS.ols(formula=formula,data=data,plot=plot,verbose=verbose,min.pValue=min.pValue,chunkSize=,chunkSize,...)	
         }else{
         	FUN<-match.fun(method)
