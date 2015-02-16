@@ -543,57 +543,65 @@ summary.DMatrix<-function(X,MARGIN=2,chunkSize=1e3,...){
 
 ## Example: GWAS using function lm
 
-GWAS<-function(formula,data,method,plot=FALSE,verbose=FALSE,min.pValue=1e-10,...){
-    ##
-    # formula: the formula for the GWAS model without including the marker, e.g., y~1  or y~factor(sex)+age
-    #          all the variables in the formula must be in data@pheno
-    # data (genData) containing slots @pheno and @geno
-    # method: a descritpion of the regression method (e.g.,lm, glm...)
-    ##
-
-    if(!method%in%c('lm','glm','lmer')){
-        stop('Only lm, glm and lmer have been implemented so far.')
-    }
-
-    if(class(data)!='genData'){ stop('data must genData')}
-
-    FUN<-match.fun(method)
-    # could subset based on NAs so that subsetting does not take place in each iteration of the GWAS loop
-    pheno<-data@pheno
-
-    fm<-FUN(formula,data=pheno,...)
-    tmp<-getCoefficients(fm)
-
-    p<-ncol(data@geno)
-    OUT<-matrix(nrow=p,ncol=length(tmp),NA)
-    rownames(OUT)<-colnames(data@geno)
-    colnames(OUT)<-colnames(tmp)
-
-    GWAS.model<-update(as.formula(formula),'.~z+.')
-
-    if(plot){
-        tmp<-paste(as.character(GWAS.model[2]),as.character(GWAS.model[3]),sep='~')
-        plot(numeric()~numeric(),xlim=c(0,p),ylim=c(0,-log(min.pValue,base=10)),ylab='-log(p-value)',xlab='Marker',main=tmp)
-    }
-
-    for(i in 1:p){
-        time.in<-proc.time()[3]
-        pheno$z<-data@geno[,i]
-        fm<-FUN(GWAS.model,data=pheno,...)
-        tmp<-getCoefficients(fm)
-
-        OUT[i,]<-tmp
-        if(plot){
-            x=c(i-1,i)
-            y=-log(OUT[c(i-1,i),4],base=10)
-            if(i>1){ lines(x=x,y=y,col=8,lwd=.5) }
-            points(y=-log(tmp[4],base=10),col=2,cex=.5,x=i)
+GWAS<-function(formula,data,method,plot=FALSE,verbose=FALSE,min.pValue=1e-10,chunkSize=10,...){
+        ##
+        # formula: the formula for the GWAS model without including the marker, e.g., y~1 or y~factor(sex)+age
+        # all the variables in the formula must be in data@pheno
+        # data (genData) containing slots @pheno and @geno
+        # method: a descritpion of the regression method (e.g.,lm, glm...)
+        ##
+        if(class(data)!='genData'){ stop('data must genData')}
+        
+        if(!method%in%c('lm','glm','lmer','lsfit')){
+                stop('Only lm, glm and lmer have been implemented so far.')
         }
-        if(verbose){ cat(sep='','Marker ',i,' (',round(proc.time()[3]-time.in,2),' seconds/marker, ',round(i/p*100,3),'% done )\n') }
-    }
+        
+        if(method%in%c('lm','lm.fit','ls.fit')){
+        	OUT<-GWAS.ols(formula=formula,data=data,plot=plot,verbose=verbose,min.pValue=min.pValue,chunkSize=,chunkSize,...)	
+        }else{
+        	FUN<-match.fun(method)
+        	# could subset based on NAs so that subsetting does not take place in each iteration of the GWAS loop
+        	pheno<-data@pheno
+        	fm<-FUN(formula,data=pheno,...)
+        	tmp<-getCoefficients(fm)
+        	p<-ncol(data@geno)
+        	OUT<-matrix(nrow=p,ncol=length(tmp),NA)
+        	rownames(OUT)<-colnames(data@geno)
+        	colnames(OUT)<-colnames(tmp)
+        	GWAS.model<-update(as.formula(formula),'.~z+.')
+        	if(plot){
+                	tmp<-paste(as.character(GWAS.model[2]),as.character(GWAS.model[3]),sep='~')
+                	plot(numeric()~numeric(),xlim=c(0,p),ylim=c(0,-log(min.pValue,base=10)),ylab='-log(p-value)',xlab='Marker',main=tmp)
+        	}
+        	nChunks<-ceiling(p/chunkSize)
+        	end<-0
+        	tmpRow<-0
 
-    return(OUT)
+        	for(i in 1:nChunks){
+        		time.in<-proc.time()[3]
+        		ini<-end+1
+        		end<-min(ini+chunkSize-1,p)
+        		Z<-as.matrix(data@geno[,ini:end])
+
+        		for(j in 1:(end-ini+1)){
+                		pheno$z<-Z[,j]
+                		fm<-FUN(GWAS.model,data=pheno,...)
+                		tmp<-getCoefficients(fm)
+                		tmpRow<-tmpRow+1
+                		OUT[tmpRow,]<-tmp
+                		if(plot){
+                  			x=c(tmpRow-1,tmpRow)
+                  			y=-log(OUT[c(tmpRow-1,tmpRow),4],base=10)
+                  			if(tmpRow>1){ lines(x=x,y=y,col=8,lwd=.5) }
+                  			points(y=-log(tmp[4],base=10),col=2,cex=.5,x=tmpRow)
+                		}
+        		}
+        		if(verbose){ cat(sep='','Chunk ',i,' of ', nChunks,' (',round(proc.time()[3]-time.in,2),' seconds/chunk, ',round(i/nChunks*100,3),'% done )\n') }
+        	}
+        }
+        return(OUT)
 }
+
 
 getCoefficients<-function(x){
     UseMethod('getCoefficients')
@@ -608,6 +616,57 @@ getCoefficients.lmerMod<-function(x){
     ans<-summary(x)$coef[2,]
     ans<-c(ans,c(1-pnorm(ans[3])))
     return(ans)
+}
+
+## GWAS 'Ordinary least squares' (e.g., lsfit lm.fit lm)
+GWAS.ols<-function(formula,data,plot=FALSE,verbose=FALSE,min.pValue=1e-10,chunkSize=10,...){
+        ##
+        # formula: the formula for the GWAS model without including the marker, e.g., y~1 or y~factor(sex)+age
+        # all the variables in the formula must be in data@pheno
+        # data (genData) containing slots @pheno and @geno
+        ##
+
+       X <- model.matrix(formula,data@pheno)
+       X <- X[match(rownames(data@pheno),rownames(X)),]
+
+        y<-data@pheno[,as.character(terms(formula)[[2]])]
+        p<-ncol(data@geno)
+        tmp<-ls.print(lsfit(x=X,y=y,intercept=FALSE),print=FALSE)$coef.table[[1]]
+        OUT<-matrix(nrow=p,ncol=ncol(tmp),NA)
+        colnames(OUT)<-colnames(tmp)
+        rownames(OUT)<-colnames(data@geno)
+        X<-cbind(0,X)
+
+        if(plot){
+                tmp<-paste(as.character(GWAS.model[2]),as.character(GWAS.model[3]),sep='~')
+                plot(numeric()~numeric(),xlim=c(0,p),ylim=c(0,-log(min.pValue,base=10)),ylab='-log(p-value)',xlab='Marker',main=tmp)
+        }
+        nChunks<-ceiling(p/chunkSize)
+        end<-0
+        tmpRow<-0
+
+        for(i in 1:nChunks){
+        time.in<-proc.time()[3]
+        ini<-end+1
+        end<-min(ini+chunkSize-1,p)
+        Z<-as.matrix(data@geno[,ini:end])
+
+        for(j in 1:(end-ini+1)){
+                X[,1]<-Z[,j]
+                tmpRow<-tmpRow+1
+                fm<-lsfit(x=X,y=y,intercept=FALSE)
+                OUT[tmpRow,]<-ls.print(fm,print=FALSE)$coef.table[[1]][1,]
+
+                if(plot){
+                   x=c(tmpRow-1,tmpRow)
+                   y=-log(OUT[c(tmpRow-1,tmpRow),4],base=10)
+                   if(tmpRow>1){ lines(x=x,y=y,col=8,lwd=.5) }
+                   points(y=-log(tmp[4],base=10),col=2,cex=.5,x=tmpRow)
+                }
+        }
+        if(verbose){ cat(sep='','Chunk ',i,' of ', nChunks,' (',round(proc.time()[3]-time.in,2),' seconds/chunk, ',round(i/nChunks*100,3),'% done )\n') }
+        }
+        return(OUT)
 }
 
 
