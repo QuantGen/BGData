@@ -30,8 +30,8 @@ dim.rDMatrix<-function(x){
 }
 
  # sets method dim for cDMatrix and rDMatrix objects
- setMethod(f="dim",signature("cDMatrix"),definition=dim.cDMatrix)
- setMethod(f="dim",signature("rDMatrix"),definition=dim.rDMatrix)
+ setMethod("dim",signature("cDMatrix"),dim.cDMatrix)
+ setMethod("dim",signature("rDMatrix"),dim.rDMatrix)
 ## end of dim ############################################################################
 
 ## chunks: returns which columns ar contained in each chunk of a cDMatrix or rDMatrix object ##########
@@ -80,8 +80,25 @@ get.colnames.rDMatrix<-function(x){
     return(out)
 }
 
-setMethod(f="colnames",signature("cDMatrix"), definition=get.colnames.cDMatrix)
-setMethod(f="colnames",signature("rDMatrix"), definition=get.colnames.rDMatrix)
+set.colnames.cDMatrix<-function(x,value){
+    TMP<-chunks(x)
+    for(i in 1:nrow(TMP)){
+        colnames(x[[i]])<-value[(TMP[i,2]:TMP[i,3])]
+    }
+    x
+}
+
+set.colnames.rDMatrix<-function(x,value){
+    for(i in 1:length(x)){
+        colnames(x[[i]])<-value
+    }
+    x
+}
+
+setMethod("colnames",signature("cDMatrix"),get.colnames.cDMatrix)
+setMethod("colnames<-",signature("cDMatrix"),set.colnames.cDMatrix)
+setMethod("colnames",signature("rDMatrix"),get.colnames.rDMatrix)
+setMethod("colnames<-",signature("rDMatrix"),set.colnames.rDMatrix)
 ## end of colnames #######################################################################
 
 ## rownames method for cDMatrix and rDMatrix ##########################################################
@@ -103,23 +120,25 @@ get.rownames.rDMatrix<-function(x){
     return(out)
 }
 
-set.rownames.cDMatrix<-function(x,...){
-    for(i in 1:length(out)){
-        rownames(out[[i]])<-value
+set.rownames.cDMatrix<-function(x,value){
+    for(i in 1:length(x)){
+        rownames(x[[i]])<-value
     }
+    x
 }
 
-set.rownames.rDMatrix<-function(x,names){
+set.rownames.rDMatrix<-function(x,value){
     TMP<-chunks(x)
     for(i in 1:nrow(TMP)){
-        out[(TMP[i,2]:TMP[i,3])]<-names
+        rownames(x[[i]])<-value[(TMP[i,2]:TMP[i,3])]
     }
+    x
 }
 
-setMethod(f="rownames",signature("cDMatrix"),definition=get.rownames.cDMatrix)
-#setMethod(f="rownames<-",signature("cDMatrix"),definition=set.rownames.cDMatrix)
-setMethod(f="rownames",signature("rDMatrix"),definition=get.rownames.rDMatrix)
-#setMethod(f="rownames<-",signature("rDMatrix"),definition=set.rownames.rDMatrix)
+setMethod("rownames",signature("cDMatrix"),get.rownames.cDMatrix)
+setMethod("rownames<-",signature("cDMatrix"),set.rownames.cDMatrix)
+setMethod("rownames",signature("rDMatrix"),get.rownames.rDMatrix)
+setMethod("rownames<-",signature("rDMatrix"),set.rownames.rDMatrix)
 # end of rownames ########################################################################
 
 ## dimnames method for cDMatrix and rDMatrix ##########################################################
@@ -127,8 +146,8 @@ get.dimnames<-function(x){
     list(rownames(x), colnames(x))
 }
 
-setMethod(f="dimnames",signature("cDMatrix"),definition=get.dimnames)
-setMethod(f="dimnames",signature("rDMatrix"),definition=get.dimnames)
+setMethod("dimnames",signature("cDMatrix"),get.dimnames)
+setMethod("dimnames",signature("rDMatrix"),get.dimnames)
 # end of dimnames ########################################################################
 
 ## finds the position of a set of columns in an object cDMatrix ###########################
@@ -219,11 +238,21 @@ subset.cDMatrix<-function(x,i=(1:nrow(x)),j=(1:ncol(x))){
         }
  }
 
- setMethod(f="[",signature("cDMatrix"),definition=subset.cDMatrix)
- # We should also set "[<-" for modifuing entries of the object
+replace.cDMatrix<-function(x,i=(1:nrow(x)),j=(1:ncol(x)),...,value){
+    indices<-colindexes(x,j)
+    for(k in 1:nrow(indices)){
+        index<-indices[k,]
+        chunk<-index[1]
+        col<-index[3]
+        x[[chunk]][i,col]<-value
+    }
+    x
+}
 
+setMethod("[",signature("cDMatrix"),subset.cDMatrix)
+setReplaceMethod("[",signature("cDMatrix"),replace.cDMatrix)
  
- ## end of indexing cDMatrix #################################################################### 
+## end of indexing cDMatrix #################################################################### 
 
 #*# check this one
 ## Indexing for rDMatrix objects ##########################################################
@@ -263,8 +292,20 @@ subset.rDMatrix<-function(x,i=(1:nrow(x)),j=(1:ncol(x))){
         }
  }
 
- setMethod(f="[",signature("rDMatrix"),definition=subset.rDMatrix)
- # We should also set "[<-" for modifuing entries of the object
+replace.rDMatrix<-function(x,i=(1:nrow(x)),j=(1:ncol(x)),...,value){
+    indices<-rowindexes(x,i)
+    for(k in 1:nrow(indices)){
+        index<-indices[k,]
+        chunk<-index[1]
+        row<-index[3]
+        x[[chunk]][row,j]<-value
+    }
+    x
+}
+
+setMethod("[",signature("rDMatrix"),subset.rDMatrix)
+setReplaceMethod("[",signature("rDMatrix"),replace.rDMatrix)
+
 ## end of indexing cDMatrix #################################################################### 
 
 
