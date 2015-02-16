@@ -207,7 +207,7 @@ subset.cDMatrix<-function(x,i=(1:nrow(x)),j=(1:ncol(x))){
         for(i in whatChunks){
                 TMP<-matrix(data=INDEXES[INDEXES[,1]==i,],ncol=3)
                 ini<-end+1; end<-ini+nrow(TMP)-1
-                Z[,ini:end]<-x[[i]][rows,TMP[,3]]
+                Z[,ini:end]<-x[[i]][rows,TMP[,3],drop=FALSE]
         }
         if(length(originalOrder)>1){
             Z[]<-Z[,originalOrder]
@@ -251,7 +251,7 @@ subset.rDMatrix<-function(x,i=(1:nrow(x)),j=(1:ncol(x))){
         for(i in whatChunks){
                 TMP<-matrix(data=INDEXES[INDEXES[,1]==i,],ncol=3)
                 ini<-end+1; end<-ini+nrow(TMP)-1
-                Z[ini:end,]<-x[[i]][TMP[,3],columns]
+                Z[ini:end,]<-x[[i]][TMP[,3],columns,drop=FALSE]
         }
         if(length(originalOrder)>1){
             Z[]<-Z[originalOrder,]
