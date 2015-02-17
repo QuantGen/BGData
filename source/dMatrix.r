@@ -2,8 +2,8 @@
 # The class inherits from list, each element of the list is an FF object
 # cDMatrix splits the matrix by columns, rDMatrix by rows
 
-setClass('cDMatrix',slots='list',contains='list')  
-setClass('rDMatrix',slots='list',contains='list')  
+setClass('cDMatrix',contains='list')
+setClass('rDMatrix',contains='list')
 
 ## Idea we can define in the future a class for a collection of rDMatrices or cDMatrices (dDatabase)
 # Defiens the class genData the object has three slots:
