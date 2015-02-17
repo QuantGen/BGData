@@ -34,7 +34,7 @@ dim.rDMatrix<-function(x){
  setMethod("dim",signature("rDMatrix"),dim.rDMatrix)
 ## end of dim ############################################################################
 
-## chunks: returns which columns ar contained in each chunk of a cDMatrix or rDMatrix object ##########
+## chunks: returns which columns are contained in each chunk of a cDMatrix or rDMatrix object ##########
 chunks<-function(x){
     if(class(x)=='cDMatrix'){
         n<-length(x)
@@ -42,12 +42,12 @@ chunks<-function(x){
         colnames(OUT)<-c('chunk','col.ini','col.end')
         end<-0
         for(i in 1:n){
-                ini<-end+1
-                end<-ini+ncol(x[[i]])-1
-                OUT[i,]<-c(i,ini,end)
+            ini<-end+1
+            end<-ini+ncol(x[[i]])-1
+            OUT[i,]<-c(i,ini,end)
         }
-    }
-    if(class(x)=='rDMatrix'){
+        return(OUT)
+    }else if(class(x)=='rDMatrix'){
         n<-length(x)
         OUT<-matrix(nrow=n,ncol=3,NA)
         colnames(OUT)<-c('chunk','row.ini','row.end')
@@ -57,8 +57,10 @@ chunks<-function(x){
             end<-ini+nrow(x[[i]])-1
             OUT[i,]<-c(i,ini,end)
         }
+        return(OUT)
+    }else{
+        stop("Unsupported type.")
     }
-    return(OUT)
 }
 
 ## colnames method for cDMatrix and rDMatrix ###########################################################
