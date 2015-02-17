@@ -555,9 +555,8 @@ GWAS<-function(formula,data,method,plot=FALSE,verbose=FALSE,min.pValue=1e-10,chu
         if(!method%in%c('lm','lm.fit','lsfit','glm','lmer')){
                 stop('Only lm, glm and lmer have been implemented so far.')
         }
-        print(method)
+        ## We can have 'specialized methods, for instance for OLS it is better to use lsfit that is what GWAS.ols do
         if(method%in%c('lm','lm.fit','lsfit')){
-		
         	OUT<-GWAS.ols(formula=formula,data=data,plot=plot,verbose=verbose,min.pValue=min.pValue,chunkSize=,chunkSize,...)	
         }else{
         	FUN<-match.fun(method)
