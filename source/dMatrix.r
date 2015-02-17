@@ -555,8 +555,9 @@ GWAS<-function(formula,data,method,plot=FALSE,verbose=FALSE,min.pValue=1e-10,chu
         if(!method%in%c('lm','lm.fit','lsfit','glm','lmer')){
                 stop('Only lm, glm and lmer have been implemented so far.')
         }
-        
+        print(method)
         if(method%in%c('lm','lm.fit','lsfit')){
+		
         	OUT<-GWAS.ols(formula=formula,data=data,plot=plot,verbose=verbose,min.pValue=min.pValue,chunkSize=,chunkSize,...)	
         }else{
         	FUN<-match.fun(method)
@@ -619,6 +620,7 @@ getCoefficients.lmerMod<-function(x){
 }
 
 ## GWAS 'Ordinary least squares' (e.g., lsfit lm.fit lm)
+
 GWAS.ols<-function(formula,data,plot=FALSE,verbose=FALSE,min.pValue=1e-10,chunkSize=10,...){
         ##
         # formula: the formula for the GWAS model without including the marker, e.g., y~1 or y~factor(sex)+age
@@ -626,9 +628,8 @@ GWAS.ols<-function(formula,data,plot=FALSE,verbose=FALSE,min.pValue=1e-10,chunkS
         # data (genData) containing slots @pheno and @geno
         ##
 
-       X <- model.matrix(formula,data@pheno)
-       X <- X[match(rownames(data@pheno),rownames(X)),]
-
+        X <- model.matrix(formula,data@pheno)
+        X <- X[match(rownames(data@pheno),rownames(X)),]
         y<-data@pheno[,as.character(terms(formula)[[2]])]
         p<-ncol(data@geno)
         tmp<-ls.print(lsfit(x=X,y=y,intercept=FALSE),print=FALSE)$coef.table[[1]]
@@ -638,7 +639,7 @@ GWAS.ols<-function(formula,data,plot=FALSE,verbose=FALSE,min.pValue=1e-10,chunkS
         X<-cbind(0,X)
 
         if(plot){
-                tmp<-paste(as.character(GWAS.model[2]),as.character(GWAS.model[3]),sep='~')
+                tmp<-paste(as.character(formula[2]),as.character(formula[3]),sep='~')
                 plot(numeric()~numeric(),xlim=c(0,p),ylim=c(0,-log(min.pValue,base=10)),ylab='-log(p-value)',xlab='Marker',main=tmp)
         }
         nChunks<-ceiling(p/chunkSize)
@@ -655,12 +656,13 @@ GWAS.ols<-function(formula,data,plot=FALSE,verbose=FALSE,min.pValue=1e-10,chunkS
                 X[,1]<-Z[,j]
                 tmpRow<-tmpRow+1
                 fm<-lsfit(x=X,y=y,intercept=FALSE)
-                OUT[tmpRow,]<-ls.print(fm,print=FALSE)$coef.table[[1]][1,]
+				tmp<-ls.print(fm,print=FALSE)$coef.table[[1]][1,]
+                OUT[tmpRow,]<-tmp
 
                 if(plot){
-                   x=c(tmpRow-1,tmpRow)
-                   y=-log(OUT[c(tmpRow-1,tmpRow),4],base=10)
-                   if(tmpRow>1){ lines(x=x,y=y,col=8,lwd=.5) }
+                   tmp.x=c(tmpRow-1,tmpRow)
+                   tmp.y=-log(OUT[c(tmpRow-1,tmpRow),4],base=10)
+                   if(tmpRow>1){ lines(x=tmp.x,y=tmp.y,col=8,lwd=.5) }
                    points(y=-log(tmp[4],base=10),col=2,cex=.5,x=tmpRow)
                 }
         }
