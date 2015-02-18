@@ -467,7 +467,7 @@ setGenData<-function(fileIn,n,header,dataType,distributed.by='rows',p=NULL,
 ## END OF MAKE makeGenosFF ###############################################################
 
 
-applyDMatrix<-function(X,MARGIN,FUN,chunkSize=1e3,...){
+apply.DMatrix<-function(X,MARGIN,FUN,chunkSize=1e3,...){
     FUN<-match.fun(FUN)
     if(!(class(X)%in%c('rDMatrix','cDMatrix'))){ stop('X must be either dMatrix or rMatrix') }
 
@@ -516,31 +516,54 @@ applyDMatrix<-function(X,MARGIN,FUN,chunkSize=1e3,...){
     return(ANS)
 }
 
-colMeans.DMatrix<-function(X,chunkSize=1e3,...){
-    ANS<-applyDMatrix(X=X,MARGIN=2,FUN=mean,chunkSize=chunkSize,...)
+setMethod("apply",signature("rDMatrix"),apply.DMatrix)
+setMethod("apply",signature("cDMatrix"),apply.DMatrix)
+
+
+colMeans.DMatrix<-function(x,chunkSize=1e3,...){
+    ANS<-apply.DMatrix(X=x,MARGIN=2,FUN=mean,chunkSize=chunkSize,...)
     return(ANS)
 }
 
-colSums.DMatrix<-function(X,chunkSize=1e3,...){
-    ANS<-applyDMatrix(X=X,MARGIN=2,FUN=sum,chunkSize=chunkSize,...)
+setMethod("colMeans",signature("rDMatrix"),colMeans.DMatrix)
+setMethod("colMeans",signature("cDMatrix"),colMeans.DMatrix)
+
+
+colSums.DMatrix<-function(x,chunkSize=1e3,...){
+    ANS<-apply.DMatrix(X=x,MARGIN=2,FUN=sum,chunkSize=chunkSize,...)
     return(ANS)
 }
 
-rowMeans.DMatrix<-function(X,chunkSize=1e3,...){
-    ANS<-applyDMatrix(X=X,MARGIN=1,FUN=mean,chunkSize=chunkSize,...)
+setMethod("colSums",signature("rDMatrix"),colSums.DMatrix)
+setMethod("colSums",signature("cDMatrix"),colSums.DMatrix)
+
+
+rowMeans.DMatrix<-function(x,chunkSize=1e3,...){
+    ANS<-apply.DMatrix(X=x,MARGIN=1,FUN=mean,chunkSize=chunkSize,...)
     return(ANS)
 }
 
-rowSums.DMatrix<-function(X,chunkSize=1e3,...){
-    ANS<-applyDMatrix(X=X,MARGIN=1,FUN=sum,chunkSize=chunkSize,...)
+setMethod("rowMeans",signature("rDMatrix"),rowMeans.DMatrix)
+setMethod("rowMeans",signature("cDMatrix"),rowMeans.DMatrix)
+
+
+rowSums.DMatrix<-function(x,chunkSize=1e3,...){
+    ANS<-apply.DMatrix(X=x,MARGIN=1,FUN=sum,chunkSize=chunkSize,...)
     return(ANS)
 }
 
-summary.DMatrix<-function(X,MARGIN=2,chunkSize=1e3,...){
+setMethod("rowSums",signature("rDMatrix"),rowSums.DMatrix)
+setMethod("rowSums",signature("cDMatrix"),rowSums.DMatrix)
+
+
+summary.DMatrix<-function(object,MARGIN=2,chunkSize=1e3,...){
     # If MARGIN==1 summaries of columns are provided, this is the default, otherwise, row-summaries are returned.
-    ANS<-applyDMatrix(X=X,MARGIN=MARGIN,FUN=summary,chunkSize=chunkSize,...)
+    ANS<-apply.DMatrix(X=object,MARGIN=MARGIN,FUN=summary,chunkSize=chunkSize,...)
     return(ANS)
 }
+
+setMethod("summary",signature("rDMatrix"),summary.DMatrix)
+setMethod("summary",signature("cDMatrix"),summary.DMatrix)
 
 
 ## Example: GWAS using function lm
