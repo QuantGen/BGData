@@ -1,7 +1,9 @@
+# Load dependencies
+library(ff)
+
 ## Defines a classes cDMatrix & rDMatrix ###############################################################
 # The class inherits from list, each element of the list is an FF object
 # cDMatrix splits the matrix by columns, rDMatrix by rows
-
 setClass('cDMatrix',contains='list')
 setClass('rDMatrix',contains='list')
 
@@ -339,8 +341,6 @@ setGenData<-function(fileIn,n,header,dataType,distributed.by='rows',p=NULL,
     dir.create(folderOut)
 
     vMode<-ifelse( dataType%in%c('character','integer'),'byte','double')
-
-    library(ff)
 
     if(header){
         pedFile<-gzfile(fileIn,open='r')
