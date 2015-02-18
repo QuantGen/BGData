@@ -206,7 +206,7 @@ rowindexes<-function(x,rows){
 #########################################################################################
 
 ## Indexing for cDMatrix objects ########################################################
-subset.cDMatrix<-function(x,i=(1:nrow(x)),j=(1:ncol(x))){
+subset.cDMatrix<-function(x,i,j){
         rows<-i
         columns<-j
         n<-length(rows)
@@ -253,14 +253,27 @@ replace.cDMatrix<-function(x,i=(1:nrow(x)),j=(1:ncol(x)),...,value){
     x
 }
 
-setMethod("[",signature("cDMatrix"),subset.cDMatrix)
+setMethod("[",signature(x="cDMatrix",i="numeric",j="numeric"),subset.cDMatrix)
+setMethod("[",signature(x="cDMatrix",i="numeric",j="missing"),function(x,i){
+    j<-1:ncol(x)
+    subset.cDMatrix(x,i,j)
+})
+setMethod("[",signature(x="cDMatrix",i="missing",j="numeric"),function(x,j) {
+    i<-1:nrow(x)
+    subset.cDMatrix(x,i,j)
+})
+setMethod("[",signature(x="cDMatrix",i="missing",j="missing"),function(x) {
+    i<-1:nrow(x)
+    j<-1:ncol(x)
+    subset.cDMatrix(x,i,j)
+})
 setReplaceMethod("[",signature("cDMatrix"),replace.cDMatrix)
  
 ## end of indexing cDMatrix #################################################################### 
 
 #*# check this one
 ## Indexing for rDMatrix objects ##########################################################
-subset.rDMatrix<-function(x,i=(1:nrow(x)),j=(1:ncol(x))){
+subset.rDMatrix<-function(x,i,j){
         rows<-i
         columns<-j
         n<-length(rows)
@@ -307,7 +320,20 @@ replace.rDMatrix<-function(x,i=(1:nrow(x)),j=(1:ncol(x)),...,value){
     x
 }
 
-setMethod("[",signature("rDMatrix"),subset.rDMatrix)
+setMethod("[",signature(x="rDMatrix",i="numeric",j="numeric"),subset.rDMatrix)
+setMethod("[",signature(x="rDMatrix",i="numeric",j="missing"),function(x,i){
+    j<-1:ncol(x)
+    subset.rDMatrix(x,i,j)
+})
+setMethod("[",signature(x="rDMatrix",i="missing",j="numeric"),function(x,j) {
+    i<-1:nrow(x)
+    subset.rDMatrix(x,i,j)
+})
+setMethod("[",signature(x="rDMatrix",i="missing",j="missing"),function(x) {
+    i<-1:nrow(x)
+    j<-1:ncol(x)
+    subset.rDMatrix(x,i,j)
+})
 setReplaceMethod("[",signature("rDMatrix"),replace.rDMatrix)
 
 ## end of indexing cDMatrix #################################################################### 
