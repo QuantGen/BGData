@@ -198,7 +198,7 @@ rowindexes<-function(x,rows){
         if(!is.null(rows)){ INDEX<-INDEX[rows,] }
         if(is.vector(INDEX)){
 	        tmp<-names(INDEX)
-    	    INDEX<-matrix(INDEX,ncol=3)
+    	    	INDEX<-matrix(INDEX,ncol=3)
         	colnames(INDEX)<-tmp
         }
         return(INDEX)
