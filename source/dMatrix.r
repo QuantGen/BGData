@@ -784,7 +784,8 @@ simPED<-function(filename,n,p,propNA=.02){
         timeIn<-proc.time()[3]
         geno<-sample(1:4,size=p,replace=TRUE)
         geno[runif(p)<propNA]<-0
-   		x<-c(0,paste('id_',i,sep=''),rep(NA,4),geno)
+        pheno<-c(0,paste0('id_',i),rep(NA,4))
+        x<-c(pheno,geno)
    		write(x,ncol=length(x),append=TRUE,file=fileOut)
    		cat(i,round(proc.time()[3]-timeIn,1),'\n')
    }
