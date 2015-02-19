@@ -781,6 +781,8 @@ getG<-function(x,n_submatrix=3,scaleCol=TRUE,verbose=TRUE,minMAF=1/100){
 simPED<-function(filename,n,p,propNA=.02){
    fileOut<-file(filename,open='w')
    pedP<-6+p
+   header<-c(c('FID','IID','PAT','MAT','SEX','PHENOTYPE'),paste0('mrk_',1:p))
+   write(header,ncol=pedP,append=TRUE,file=fileOut)
    for(i in 1:n){
         geno<-sample(1:4,size=p,replace=TRUE)
         geno[runif(p)<propNA]<-0
