@@ -779,21 +779,21 @@ getG<-function(x,n_submatrix=3,scaleCol=TRUE,verbose=TRUE,minMAF=1/100){
 ##  Utils
 
 simPED<-function(filename,n,p,genoChars=1:4,propNA=.02){
-   if(file.exists(filename)){
+    if(file.exists(filename)){
         stop(paste('File',filename,'already exists. Please move it or pick a different name.'))
-   }
-   fileOut<-file(filename,open='w')
-   pedP<-6+p
-   header<-c(c('FID','IID','PAT','MAT','SEX','PHENOTYPE'),paste0('mrk_',1:p))
-   write(header,ncol=pedP,append=TRUE,file=fileOut)
-   for(i in 1:n){
+    }
+    fileOut<-file(filename,open='w')
+    pedP<-6+p
+    header<-c(c('FID','IID','PAT','MAT','SEX','PHENOTYPE'),paste0('mrk_',1:p))
+    write(header,ncol=pedP,append=TRUE,file=fileOut)
+    for(i in 1:n){
         geno<-sample(genoChars,size=p,replace=TRUE)
         geno[runif(p)<propNA]<-0
         pheno<-c(0,paste0('id_',i),rep(NA,4))
         x<-c(pheno,geno)
         write(x,ncol=pedP,append=TRUE,file=fileOut)
-   }
-   close(fileOut)
+    }
+    close(fileOut)
 }
 
 
