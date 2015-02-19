@@ -362,7 +362,7 @@ setGenData<-function(fileIn,n,header,dataType,distributed.by='rows',p=NULL,
         ###
 
     if(file.exists(folderOut)){
-        stop(paste('Output folder',folderOut,'already exists. Please remove it or pick a different one.'))
+        stop(paste('Output folder',folderOut,'already exists. Please move it or pick a different one.'))
     }
     dir.create(folderOut)
 
@@ -779,6 +779,9 @@ getG<-function(x,n_submatrix=3,scaleCol=TRUE,verbose=TRUE,minMAF=1/100){
 ##  Utils
 
 simPED<-function(filename,n,p,propNA=.02){
+   if(file.exists(filename)){
+        stop(paste('File',filename,'already exists. Please move it or pick a different name.'))
+   }
    fileOut<-file(filename,open='w')
    pedP<-6+p
    header<-c(c('FID','IID','PAT','MAT','SEX','PHENOTYPE'),paste0('mrk_',1:p))
