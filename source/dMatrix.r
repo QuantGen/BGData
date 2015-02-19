@@ -782,7 +782,7 @@ simPED<-function(filename,n,p,propNA=.02){
    fileOut<-file(filename,open='w')
    for(i in 1:n){
         timeIn<-proc.time()[3]
-        geno<-rbinom(n=p,size=2,prob=.3)
+        geno<-sample(1:4,size=p,replace=TRUE)
         geno[runif(p)<propNA]<-NA
    		x<-c(0,paste('id_',i,sep=''),rep(NA,4),geno)
    		write(x,ncol=length(x),append=TRUE,file=fileOut)
