@@ -780,12 +780,13 @@ getG<-function(x,n_submatrix=3,scaleCol=TRUE,verbose=TRUE,minMAF=1/100){
 
 simPED<-function(filename,n,p,propNA=.02){
    fileOut<-file(filename,open='w')
+   pedP<-6+p
    for(i in 1:n){
         geno<-sample(1:4,size=p,replace=TRUE)
         geno[runif(p)<propNA]<-0
         pheno<-c(0,paste0('id_',i),rep(NA,4))
         x<-c(pheno,geno)
-   		write(x,ncol=length(x),append=TRUE,file=fileOut)
+        write(x,ncol=pedP,append=TRUE,file=fileOut)
    }
    close(fileOut)
 }
