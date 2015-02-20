@@ -787,7 +787,7 @@ getG<-function(x,nChunks=3,scaleCol=TRUE,verbose=FALSE,minMAF=1/100){
 
 
 ##  Utils
-simPED<-function(filename,n,p,genoChars=1:4,propNA=.02,returnGenos=FALSE){
+simPED<-function(filename,n,p,genoChars=1:4,na.string=0,propNA=.02,returnGenos=FALSE){
     if(file.exists(filename)){
         stop(paste('File',filename,'already exists. Please move it or pick a different name.'))
     }
@@ -800,7 +800,7 @@ simPED<-function(filename,n,p,genoChars=1:4,propNA=.02,returnGenos=FALSE){
     write(header,ncol=pedP,append=TRUE,file=fileOut)
     for(i in 1:n){
         geno<-sample(genoChars,size=p,replace=TRUE)
-        geno[runif(p)<propNA]<-0
+        geno[runif(p)<propNA]<-na.string
         pheno<-c(0,paste0('id_',i),rep(NA,4))
         x<-c(pheno,geno)
         write(x,ncol=pedP,append=TRUE,file=fileOut)
