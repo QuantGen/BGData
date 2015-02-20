@@ -242,16 +242,28 @@ subset.cDMatrix<-function(x,i,j){
         }
  }
 
-replace.cDMatrix<-function(x,i=(1:nrow(x)),j=(1:ncol(x)),...,value){
-    indices<-colindexes(x,j)
-    for(k in 1:nrow(indices)){
-        index<-indices[k,]
-        chunk<-index[1]
-        col<-index[3]
-        x[[chunk]][i,col]<-value
-    }
-    x
+
+replace.cDMatrix<-function(x,i=1:nrow(x),j=1:ncol(x),...,value){
+	Z<-matrix(nrow=length(i),ncol=length(j),data=value)
+	CHUNKS<-chunks(x)
+	for(k in 1:nrow(CHUNKS) ){
+		col_z<-(j>=CHUNKS[k,2])&(j<=CHUNKS[k,3])
+		colLocal<-colindexes(x,j[col_z])[,3]
+		x[[k]][i,colLocal]<-Z[,col_z]
+	}  
+	return(x)
 }
+
+#replace.cDMatrix<-function(x,i=(1:nrow(x)),j=(1:ncol(x)),...,value){
+#    indices<-colindexes(x,j)
+#    for(k in 1:nrow(indices)){
+#        index<-indices[k,]
+#        chunk<-index[1]
+#        col<-index[3]
+#        x[[chunk]][i,col]<-value
+#    }
+#    x
+#}
 
 setMethod("[",signature(x="cDMatrix",i="numeric",j="numeric"),subset.cDMatrix)
 setMethod("[",signature(x="cDMatrix",i="numeric",j="missing"),function(x,i){
@@ -271,7 +283,6 @@ setReplaceMethod("[",signature("cDMatrix"),replace.cDMatrix)
  
 ## end of indexing cDMatrix #################################################################### 
 
-#*# check this one
 ## Indexing for rDMatrix objects ##########################################################
 subset.rDMatrix<-function(x,i,j){
         rows<-i
@@ -309,15 +320,16 @@ subset.rDMatrix<-function(x,i,j){
         }
  }
 
-replace.rDMatrix<-function(x,i=(1:nrow(x)),j=(1:ncol(x)),...,value){
-    indices<-rowindexes(x,i)
-    for(k in 1:nrow(indices)){
-        index<-indices[k,]
-        chunk<-index[1]
-        row<-index[3]
-        x[[chunk]][row,j]<-value
-    }
-    x
+
+replace.rDMatrix<-function(x,i=1:nrow(x),j=1:ncol(x),...,value){ 
+	Z<-matrix(nrow=length(i),ncol=length(j),data=value)
+	CHUNKS<-chunks(x)
+	for(k in 1:nrow(CHUNKS) ){
+		rows_z<-(i>=CHUNKS[k,2])&(i<=CHUNKS[k,3])
+		rowLocal<-rowindexes(x,i[rows_z])[,3]
+		x[[k]][rowLocal,j]<-Z[rows_z,]
+	}  
+	return(x)
 }
 
 setMethod("[",signature(x="rDMatrix",i="numeric",j="numeric"),subset.rDMatrix)
