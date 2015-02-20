@@ -790,9 +790,12 @@ getG<-function(x,n_submatrix=3,scaleCol=TRUE,verbose=TRUE,minMAF=1/100){
 
 ##  Utils
 
-simPED<-function(filename,n,p,genoChars=1:4,propNA=.02){
+simPED<-function(filename,n,p,genoChars=1:4,propNA=.02,returnGenos=FALSE){
     if(file.exists(filename)){
         stop(paste('File',filename,'already exists. Please move it or pick a different name.'))
+    }
+    if(returnGenos){
+    	OUT<-matrix(nrow=n,ncol=p,NA)
     }
     fileOut<-file(filename,open='w')
     pedP<-6+p
@@ -804,8 +807,10 @@ simPED<-function(filename,n,p,genoChars=1:4,propNA=.02){
         pheno<-c(0,paste0('id_',i),rep(NA,4))
         x<-c(pheno,geno)
         write(x,ncol=pedP,append=TRUE,file=fileOut)
+        if(returnGenos){ OUT[i,]<-geno }
     }
     close(fileOut)
+    return(OUT)
 }
 
 
