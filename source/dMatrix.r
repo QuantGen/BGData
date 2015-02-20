@@ -753,7 +753,7 @@ getG<-function(x,nChunks=3,scaleCol=TRUE,verbose=FALSE,minMAF=1/100){
 	
 	K<-0
 	from_column<-0
-    for(k in 1:nChunks{
+	for(k in 1:nChunks){
 		from_column=to_column+1;
 		to_column=min(p,from_column+delta-1)
 		if(verbose){
