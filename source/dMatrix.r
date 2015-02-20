@@ -374,7 +374,7 @@ setGenData<-function(fileIn,n,header,dataType,distributed.by='rows',p=NULL,
         ###
 
     if(file.exists(folderOut)){
-        stop(paste('Output folder',folderOut,'already exists. Please remove it or pick a different one.'))
+        stop(paste('Output folder',folderOut,'already exists. Please move it or pick a different one.'))
     }
     dir.create(folderOut)
 
@@ -790,17 +790,22 @@ getG<-function(x,n_submatrix=3,scaleCol=TRUE,verbose=TRUE,minMAF=1/100){
 
 ##  Utils
 
-simPED<-function(filename,n,p,propNA=.02){
-   fileOut<-file(filename,open='w')
-   for(i in 1:n){
-        timeIn<-proc.time()[3]
-        geno<-rbinom(n=p,size=2,prob=.3)
-        geno[runif(p)<propNA]<-NA
-   		x<-c(0,paste('id_',i,sep=''),rep(NA,4),geno)
-   		write(x,ncol=length(x),append=TRUE,file=fileOut)
-   		cat(i,round(proc.time()[3]-timeIn,1),'\n')
-   }
-   close(fileOut)
+simPED<-function(filename,n,p,genoChars=1:4,propNA=.02){
+    if(file.exists(filename)){
+        stop(paste('File',filename,'already exists. Please move it or pick a different name.'))
+    }
+    fileOut<-file(filename,open='w')
+    pedP<-6+p
+    header<-c(c('FID','IID','PAT','MAT','SEX','PHENOTYPE'),paste0('mrk_',1:p))
+    write(header,ncol=pedP,append=TRUE,file=fileOut)
+    for(i in 1:n){
+        geno<-sample(genoChars,size=p,replace=TRUE)
+        geno[runif(p)<propNA]<-0
+        pheno<-c(0,paste0('id_',i),rep(NA,4))
+        x<-c(pheno,geno)
+        write(x,ncol=pedP,append=TRUE,file=fileOut)
+    }
+    close(fileOut)
 }
 
 
