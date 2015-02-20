@@ -806,17 +806,21 @@ simPED<-function(filename,n,p,genoChars=1:4,na.string=0,propNA=.02,returnGenos=F
     if(file.exists(filename)){
         stop(paste('File',filename,'already exists. Please move it or pick a different name.'))
     }
+    markerNames<-paste0('mrk_',1:p)
+    subjectNames<-paste0('id_',1:n)
     if(returnGenos){
         OUT<-matrix(nrow=n,ncol=p,NA)
+        colnames(OUT)<-markerNames
+        rownames(OUT)<-subjectNames
     }
     fileOut<-file(filename,open='w')
     pedP<-6+p
-    header<-c(c('FID','IID','PAT','MAT','SEX','PHENOTYPE'),paste0('mrk_',1:p))
+    header<-c(c('FID','IID','PAT','MAT','SEX','PHENOTYPE'),markerNames)
     write(header,ncol=pedP,append=TRUE,file=fileOut)
     for(i in 1:n){
         geno<-sample(genoChars,size=p,replace=TRUE)
         geno[runif(p)<propNA]<-na.string
-        pheno<-c(0,paste0('id_',i),rep(NA,4))
+        pheno<-c(0,subjectNames[i],rep(NA,4))
         x<-c(pheno,geno)
         write(x,ncol=pedP,append=TRUE,file=fileOut)
         if(returnGenos){
