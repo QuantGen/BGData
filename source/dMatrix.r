@@ -682,7 +682,6 @@ getCoefficients.lmerMod<-function(x){
 }
 
 ## GWAS 'Ordinary least squares' (e.g., lsfit lm.fit lm)
-
 GWAS.ols<-function(formula,data,plot=FALSE,verbose=FALSE,min.pValue=1e-10,chunkSize=10,...){
         ##
         # formula: the formula for the GWAS model without including the marker, e.g., y~1 or y~factor(sex)+age
@@ -735,7 +734,7 @@ GWAS.ols<-function(formula,data,plot=FALSE,verbose=FALSE,min.pValue=1e-10,chunkS
 
 
 ## Computes a Genomic Relationship Matrix
-getG<-function(x,n_submatrix=3,scaleCol=TRUE,verbose=TRUE,minMAF=1/100){
+getG<-function(x,nChunks=3,scaleCol=TRUE,verbose=FALSE,minMAF=1/100){
 	#This function takes as input an object of the class cFF or rFF and computes the
 	#Genomic relationship matrix
 	#Arguments:
@@ -747,14 +746,14 @@ getG<-function(x,n_submatrix=3,scaleCol=TRUE,verbose=TRUE,minMAF=1/100){
 	p=rows_cols[2]
 	
 	to_column=0;
-	delta=ceiling(p/n_submatrix);
+	delta=ceiling(p/nChunks);
 	G=matrix(0,nrow=n,ncol=n)
 	rownames(G)<-rownames(x)
 	colnames(G)<-rownames(x)
 	
 	K<-0
 	from_column<-0
-    for(k in 1:n_submatrix){
+    for(k in 1:nChunks{
 		from_column=to_column+1;
 		to_column=min(p,from_column+delta-1)
 		if(verbose){
@@ -781,7 +780,6 @@ getG<-function(x,n_submatrix=3,scaleCol=TRUE,verbose=TRUE,minMAF=1/100){
 			K<-K+ifelse(scaleCol,ncol(X)*(n-1)/n,sum(VAR))
 			G<-G+tcrossprod(X)
 		}
-		
    }
    G<-G/K
    return(G)
@@ -789,7 +787,6 @@ getG<-function(x,n_submatrix=3,scaleCol=TRUE,verbose=TRUE,minMAF=1/100){
 
 
 ##  Utils
-
 simPED<-function(filename,n,p,genoChars=1:4,propNA=.02,returnGenos=FALSE){
     if(file.exists(filename)){
         stop(paste('File',filename,'already exists. Please move it or pick a different name.'))
@@ -812,5 +809,3 @@ simPED<-function(filename,n,p,genoChars=1:4,propNA=.02,returnGenos=FALSE){
     close(fileOut)
     return(OUT)
 }
-
-
