@@ -503,8 +503,8 @@ setGenData<-function(fileIn,n,header,dataType,distributed.by='rows',p=NULL,
 }
  
 ## END OF MAKE makeGenosFF ###############################################################
-
 apply.DMatrix<-function(X,MARGIN,FUN,chunkSize=1e3,verbose=FALSE,...){
+
     FUN<-match.fun(FUN)
     if(!(class(X)%in%c('rDMatrix','cDMatrix'))){ stop('X must be either dMatrix or rMatrix') }
 
