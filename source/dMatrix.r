@@ -512,6 +512,7 @@ apply.DMatrix<-function(X,MARGIN,FUN,chunkSize=1e3,verbose=TRUE,...){
     if(MARGIN==1){  x<-X[1,] }else{ x<-X[,1] }
 
     tmp<-as.vector(FUN(x,...))
+    
     if(is.atomic(tmp)){
 	    ANS<-matrix(nrow=length(tmp),ncol=n,NA)
 	    rownames(ANS)<-names(tmp)
@@ -601,7 +602,6 @@ summary.char<-function(x){
 }
 
 summary.DMatrix<-function(object,MARGIN=2,chunkSize=1e3,...){
- print('hello')
     # If MARGIN==1 summaries of columns are provided, this is the default, otherwise, row-summaries are returned.
     if(is.numeric(object[1,1])){
         ANS<-apply.DMatrix(X=object,MARGIN=MARGIN,FUN=summary.num,chunkSize=chunkSize,...)
