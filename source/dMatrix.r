@@ -504,52 +504,45 @@ setGenData<-function(fileIn,n,header,dataType,distributed.by='rows',p=NULL,
  
 ## END OF MAKE makeGenosFF ###############################################################
 
-
-apply.DMatrix<-function(X,MARGIN,FUN,chunkSize=1e3,...){
+apply.DMatrix<-function(X,MARGIN,FUN,chunkSize=1e3,verbose=FALSE,...){
     FUN<-match.fun(FUN)
     if(!(class(X)%in%c('rDMatrix','cDMatrix'))){ stop('X must be either dMatrix or rMatrix') }
 
-    nCol<-ifelse(MARGIN==1,nrow(X),ncol(X))
-
-    if(MARGIN==1){
-        x<-X[1,]
-    }else{
-        x<-X[,1]
-    }
+    n<-ifelse(MARGIN==1,nrow(X),ncol(X))
+    if(MARGIN==1){  x<-X[1,] }else{ x<-X[,1] }
     tmp<-FUN(x,...)
-
-    ANS<-matrix(nrow=length(tmp),ncol=nCol,NA)
-    if(MARGIN==1){
+    
+    if(is.atomic(tmp)){
+    	tmp<-as.vector(tmp)	
+        ANS<-matrix(nrow=length(tmp),ncol=n,NA)
         rownames(ANS)<-names(tmp)
-        colnames(ANS)<-rownames(X)
+        colnames(ANS)<-ifelse(MARGIN==1,rownames(X),colnames(X))
+        nChunks<-floor(nCol/chunkSize)
+        end<-0
+        for(i in 1:nChunks){
+                if(verbose){cat(i,' out of ',nChunks,' \n')}
+                ini<-end+1
+                end<-min(ini+chunkSize-1,n)
+                if(MARGIN==1){
+	               Z<-X[ini:end,]
+                }else{
+        	        Z<-X[,ini:end]
+                }
+                ANS[,ini:end]<-apply(FUN=FUN,MARGIN=MARGIN, X=Z,...)
+        }
     }else{
-        rownames(ANS)<-names(tmp)
-        colnames(ANS)<-colnames(X)
-    }
-
-    nChunks<-floor(nCol/chunkSize)
-    end<-0
-
-    for(i in 1:nChunks){
-        cat(i,' out of ',nChunks,' \n')
-        ini<-end+1
-        end<-ini+chunkSize-1
-        if(MARGIN==1){
-            Z<-X[ini:end,]
-        }else{
-            Z<-X[,ini:end]
+        ANS<-vector('list',n)
+        names(ANS)<-ifelse(MARGIN==1,rownames(X),colnames(X))
+        nChunks<-floor(nCol/chunkSize)
+        end<-0
+        for(i in 1:n){
+                if(verbose){cat(i,' out of ',n,' \n')}
+                if(MARGIN==1){
+                        ANS[[i]]<-FUN(X[i,],...)
+                }else{
+                        ANS[[i]]<-FUN(X[,i],...)
+                }
         }
-        ANS[,ini:end]<-apply(FUN=FUN,MARGIN=MARGIN, X=Z,...)
-    }
-    if(end<nCol){
-        ini<-end+1
-        end<-nCol
-        if(MARGIN==1){
-            Z<-X[ini:end,]
-        }else{
-            Z<-X[,ini:end]
-        }
-        ANS[,ini:end]<-apply(FUN=FUN,MARGIN=MARGIN, X=Z,...)
     }
     return(ANS)
 }
@@ -593,10 +586,30 @@ rowSums.DMatrix<-function(x,chunkSize=1e3,...){
 setMethod("rowSums",signature("rDMatrix"),rowSums.DMatrix)
 setMethod("rowSums",signature("cDMatrix"),rowSums.DMatrix)
 
+summary.num<-function(x){
+    out<-c(range(x,na.rm=T),mean(x,na.rm=T),sd(x,na.rm=T),mean(is.na(x)))
+    names(out)<-c('min','max','mean','sd','prop NAs')
+    return(out)
+}
+
+summary.char<-function(x){
+    out<-table(x,useNA='always')
+    out<-out/length(x)
+    return(out)
+}
 
 summary.DMatrix<-function(object,MARGIN=2,chunkSize=1e3,...){
     # If MARGIN==1 summaries of columns are provided, this is the default, otherwise, row-summaries are returned.
-    ANS<-apply.DMatrix(X=object,MARGIN=MARGIN,FUN=summary,chunkSize=chunkSize,...)
+    if(is.numeric(object[1,1])){
+        ANS<-apply.DMatrix(X=object,MARGIN=MARGIN,FUN=summary.num,chunkSize=chunkSize,...)
+    }else{
+       if(is.character(object[1,1])|is.logical(object[1,1])){
+           ANS<-apply.DMatrix(X=object,MARGIN=MARGIN,FUN=summary.char,chunkSize=chunkSize,...)
+       }else{
+           ANS<-apply.DMatrix(X=object,MARGIN=MARGIN,FUN=summary,chunkSize=chunkSize,...)
+       }
+
+    }
     return(ANS)
 }
 
