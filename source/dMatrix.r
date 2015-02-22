@@ -511,7 +511,7 @@ apply.DMatrix<-function(X,MARGIN,FUN,chunkSize=1e3,verbose=TRUE,...){
  
     if(MARGIN==1){  x<-X[1,] }else{ x<-X[,1] }
 
-    tmp<-as.vector(FUN(x,...))
+    tmp<-FUN(x,...)
     
     if(is.atomic(tmp)){
 	    ANS<-matrix(nrow=length(tmp),ncol=n,NA)
