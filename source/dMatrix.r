@@ -2,7 +2,7 @@
 library(ff)
 
 ## Defines a classes cDMatrix & rDMatrix ###############################################################
-# The class inherits from list, each element of the list is an FF object
+# The class inherits from list, each element of thea list is an FF object
 # cDMatrix splits the matrix by columns, rDMatrix by rows
 setClass('cDMatrix',contains='list')
 setClass('rDMatrix',contains='list')
@@ -514,16 +514,15 @@ apply.DMatrix<-function(X,MARGIN,FUN,chunkSize=1e3,verbose=TRUE,...){
     tmp<-FUN(x,...)
     
     if(is.atomic(tmp)){
-	    ANS<-matrix(nrow=length(tmp),ncol=n,NA)
-	    rownames(ANS)<-names(tmp)
-	    if(MARGIN==1){
-	    	colnames(ANS)<-rownames(X)
-	    }else{
+	ANS<-matrix(nrow=length(tmp),ncol=n,NA)
+	rownames(ANS)<-names(tmp)
+	if(MARGIN==1){
+		colnames(ANS)<-rownames(X)
+	}else{
            colnames(ANS)<-colnames(X)	    
-	    }
-	    nChunks<-floor(n/chunkSize)
+	}
+	nChunks<-ceiling(n/chunkSize)
     	end<-0
-    	
     	for(i in 1:nChunks){
         	if(verbose){cat(i,' out of ',nChunks,' \n')}
         	ini<-end+1
@@ -540,12 +539,12 @@ apply.DMatrix<-function(X,MARGIN,FUN,chunkSize=1e3,verbose=TRUE,...){
     	names(ANS)<-ifelse(MARGIN==1,rownames(X),colnames(X))
     	end<-0
     	for(i in 1:n){
-  			if(verbose){cat(i,' out of ',n,' \n')}
-			if(MARGIN==1){
+  		if(verbose){cat(i,' out of ',n,' \n')}
+		if(MARGIN==1){
 				ANS[[i]]<-FUN(X[i,],...)
-			}else{
-				ANS[[i]]<-FUN(X[,i],...)
-			}    		
+		}else{
+			ANS[[i]]<-FUN(X[,i],...)
+		}    		
     	}
     }
     return(ANS)
