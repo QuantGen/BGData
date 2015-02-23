@@ -491,7 +491,11 @@ setGenData<-function(fileIn,n,header,dataType,distributed.by='rows',p=NULL,
 	map<-data.frame(mrk=mrkNames,maf=as.numeric(NA),freqNA=as.numeric(NA),stringsAsFactors=FALSE)
 	
 	geno<-new(ifelse(distributed.by=='columns','cDMatrix','rDMatrix'),genosList)
+
 	genData<-new('genData',geno=geno,map=map,pheno=pheno)
+
+    attr(genData,'origFile')<-list(path=fileIn,dataType=dataType)
+    attr(genData,'dateCreated')<-date()
 
     for(i in 1:nChunks){
         attr(attributes(genData@geno[[i]])$physical,"pattern")<-'ff'
