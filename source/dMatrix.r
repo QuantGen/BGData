@@ -207,12 +207,10 @@ rowindexes<-function(x,rows){
 
 ## Indexing for cDMatrix objects ########################################################
 subset.cDMatrix<-function(x,i,j){
-        rows<-i
-        columns<-j
-        n<-length(rows)
-        p<-length(columns)
-        originalOrder<-(1:p)[order(columns)]
-        columns<-sort(columns)
+        n<-length(i)
+        p<-length(j)
+        originalOrder<-(1:p)[order(j)]
+        sortedColumns<-sort(j)
 
         dimX<-dim(x)
         if( p>dimX[2] | n>dimX[1] ){
@@ -220,23 +218,25 @@ subset.cDMatrix<-function(x,i,j){
         }
 
         Z<-matrix(nrow=n,ncol=p,NA)
-        colnames(Z)<-colnames(x)[columns]
-        rownames(Z)<-rownames(x)[rows]
+        colnames(Z)<-colnames(x)[j]
+        rownames(Z)<-rownames(x)[i]
 
-        INDEXES<-colindexes(x,columns=columns)
+        INDEXES<-colindexes(x,columns=sortedColumns)
 
         whatChunks<-unique(INDEXES[,1])
         end<-0
-        for(i in whatChunks){
-                TMP<-matrix(data=INDEXES[INDEXES[,1]==i,],ncol=3)
-                ini<-end+1; end<-ini+nrow(TMP)-1
-                Z[,ini:end]<-x[[i]][rows,TMP[,3],drop=FALSE]
+        for(k in whatChunks){
+                TMP<-matrix(data=INDEXES[INDEXES[,1]==k,],ncol=3)
+                ini<-end+1
+                end<-ini+nrow(TMP)-1
+                Z[,ini:end]<-x[[k]][i,TMP[,3],drop=FALSE]
         }
         if(length(originalOrder)>1){
             Z[]<-Z[,originalOrder]
         }
         if(n==1||p==1){
-            return(as.vector(Z))
+            # Revert drop.
+            return(Z[,])
         }else{
             return(Z)
         }
@@ -285,12 +285,10 @@ setReplaceMethod("[",signature("cDMatrix"),replace.cDMatrix)
 
 ## Indexing for rDMatrix objects ##########################################################
 subset.rDMatrix<-function(x,i,j){
-        rows<-i
-        columns<-j
-        n<-length(rows)
-        p<-length(columns)
-        originalOrder<-(1:n)[order(rows)]
-        rows<-sort(rows)
+        n<-length(i)
+        p<-length(j)
+        originalOrder<-(1:n)[order(i)]
+        sortedRows<-sort(i)
 
         dimX<-dim(x)
         if( p>dimX[2] | n>dimX[1] ){
@@ -298,23 +296,25 @@ subset.rDMatrix<-function(x,i,j){
         }
 
         Z<-matrix(nrow=n,ncol=p,NA)
-        colnames(Z)<-colnames(x)[columns]
-        rownames(Z)<-rownames(x)[rows]
+        colnames(Z)<-colnames(x)[j]
+        rownames(Z)<-rownames(x)[i]
 
-        INDEXES<-rowindexes(x,rows=rows)
+        INDEXES<-rowindexes(x,rows=sortedRows)
 
         whatChunks<-unique(INDEXES[,1])
         end<-0
-        for(i in whatChunks){
-                TMP<-matrix(data=INDEXES[INDEXES[,1]==i,],ncol=3)
-                ini<-end+1; end<-ini+nrow(TMP)-1
-                Z[ini:end,]<-x[[i]][TMP[,3],columns,drop=FALSE]
+        for(k in whatChunks){
+                TMP<-matrix(data=INDEXES[INDEXES[,1]==k,],ncol=3)
+                ini<-end+1
+                end<-ini+nrow(TMP)-1
+                Z[ini:end,]<-x[[k]][TMP[,3],j,drop=FALSE]
         }
         if(length(originalOrder)>1){
             Z[]<-Z[originalOrder,]
         }
         if(n==1||p==1){
-            return(as.vector(Z))
+            # Revert drop.
+            return(Z[,])
         }else{
             return(Z)
         }
