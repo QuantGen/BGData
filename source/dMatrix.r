@@ -209,13 +209,11 @@ rowindexes<-function(x,rows){
 #########################################################################################
 
 ## Indexing for cDMatrix objects ########################################################
-subset.cDMatrix<-function(x,i,j){
-        rows<-i
-        columns<-j
-        n<-length(rows)
-        p<-length(columns)
-        originalOrder<-(1:p)[order(columns)]
-        columns<-sort(columns)
+subset.cDMatrix<-function(x,i,j,drop){
+        n<-length(i)
+        p<-length(j)
+        originalOrder<-(1:p)[order(j)]
+        sortedColumns<-sort(j)
 
         dimX<-dim(x)
         if( p>dimX[2] | n>dimX[1] ){
@@ -223,23 +221,25 @@ subset.cDMatrix<-function(x,i,j){
         }
 
         Z<-matrix(nrow=n,ncol=p,NA)
-        colnames(Z)<-colnames(x)[columns]
-        rownames(Z)<-rownames(x)[rows]
+        colnames(Z)<-colnames(x)[j]
+        rownames(Z)<-rownames(x)[i]
 
-        INDEXES<-colindexes(x,columns=columns)
+        INDEXES<-colindexes(x,columns=sortedColumns)
 
         whatChunks<-unique(INDEXES[,1])
         end<-0
-        for(i in whatChunks){
-                TMP<-matrix(data=INDEXES[INDEXES[,1]==i,],ncol=3)
-                ini<-end+1; end<-ini+nrow(TMP)-1
-                Z[,ini:end]<-x[[i]][rows,TMP[,3],drop=FALSE]
+        for(k in whatChunks){
+                TMP<-matrix(data=INDEXES[INDEXES[,1]==k,],ncol=3)
+                ini<-end+1
+                end<-ini+nrow(TMP)-1
+                Z[,ini:end]<-x[[k]][i,TMP[,3],drop=FALSE]
         }
         if(length(originalOrder)>1){
             Z[]<-Z[,originalOrder]
         }
-        if(n==1||p==1){
-            return(as.vector(Z))
+        if(drop==TRUE&&(n==1||p==1)){
+            # Revert drop.
+            return(Z[,])
         }else{
             return(Z)
         }
@@ -268,32 +268,30 @@ replace.cDMatrix<-function(x,i=1:nrow(x),j=1:ncol(x),...,value){
 #    x
 #}
 
-setMethod("[",signature(x="cDMatrix",i="numeric",j="numeric"),subset.cDMatrix)
-setMethod("[",signature(x="cDMatrix",i="numeric",j="missing"),function(x,i){
+setMethod("[",signature(x="cDMatrix",i="numeric",j="numeric",drop="ANY"),subset.cDMatrix)
+setMethod("[",signature(x="cDMatrix",i="numeric",j="missing",drop="ANY"),function(x,i,drop){
     j<-1:ncol(x)
-    subset.cDMatrix(x,i,j)
+    subset.cDMatrix(x,i,j,drop)
 })
-setMethod("[",signature(x="cDMatrix",i="missing",j="numeric"),function(x,j) {
+setMethod("[",signature(x="cDMatrix",i="missing",j="numeric",drop="ANY"),function(x,j,drop) {
     i<-1:nrow(x)
-    subset.cDMatrix(x,i,j)
+    subset.cDMatrix(x,i,j,drop)
 })
-setMethod("[",signature(x="cDMatrix",i="missing",j="missing"),function(x) {
+setMethod("[",signature(x="cDMatrix",i="missing",j="missing",drop="ANY"),function(x,drop) {
     i<-1:nrow(x)
     j<-1:ncol(x)
-    subset.cDMatrix(x,i,j)
+    subset.cDMatrix(x,i,j,drop)
 })
 setReplaceMethod("[",signature("cDMatrix"),replace.cDMatrix)
  
 ## end of indexing cDMatrix #################################################################### 
 
 ## Indexing for rDMatrix objects ##########################################################
-subset.rDMatrix<-function(x,i,j){
-        rows<-i
-        columns<-j
-        n<-length(rows)
-        p<-length(columns)
-        originalOrder<-(1:n)[order(rows)]
-        rows<-sort(rows)
+subset.rDMatrix<-function(x,i,j,drop){
+        n<-length(i)
+        p<-length(j)
+        originalOrder<-(1:n)[order(i)]
+        sortedRows<-sort(i)
 
         dimX<-dim(x)
         if( p>dimX[2] | n>dimX[1] ){
@@ -301,23 +299,25 @@ subset.rDMatrix<-function(x,i,j){
         }
 
         Z<-matrix(nrow=n,ncol=p,NA)
-        colnames(Z)<-colnames(x)[columns]
-        rownames(Z)<-rownames(x)[rows]
+        colnames(Z)<-colnames(x)[j]
+        rownames(Z)<-rownames(x)[i]
 
-        INDEXES<-rowindexes(x,rows=rows)
+        INDEXES<-rowindexes(x,rows=sortedRows)
 
         whatChunks<-unique(INDEXES[,1])
         end<-0
-        for(i in whatChunks){
-                TMP<-matrix(data=INDEXES[INDEXES[,1]==i,],ncol=3)
-                ini<-end+1; end<-ini+nrow(TMP)-1
-                Z[ini:end,]<-x[[i]][TMP[,3],columns,drop=FALSE]
+        for(k in whatChunks){
+                TMP<-matrix(data=INDEXES[INDEXES[,1]==k,],ncol=3)
+                ini<-end+1
+                end<-ini+nrow(TMP)-1
+                Z[ini:end,]<-x[[k]][TMP[,3],j,drop=FALSE]
         }
         if(length(originalOrder)>1){
             Z[]<-Z[originalOrder,]
         }
-        if(n==1||p==1){
-            return(as.vector(Z))
+        if(drop==TRUE&&(n==1||p==1)){
+            # Revert drop.
+            return(Z[,])
         }else{
             return(Z)
         }
@@ -335,19 +335,19 @@ replace.rDMatrix<-function(x,i=1:nrow(x),j=1:ncol(x),...,value){
 	return(x)
 }
 
-setMethod("[",signature(x="rDMatrix",i="numeric",j="numeric"),subset.rDMatrix)
-setMethod("[",signature(x="rDMatrix",i="numeric",j="missing"),function(x,i){
+setMethod("[",signature(x="rDMatrix",i="numeric",j="numeric",drop="ANY"),subset.rDMatrix)
+setMethod("[",signature(x="rDMatrix",i="numeric",j="missing",drop="ANY"),function(x,i,drop){
     j<-1:ncol(x)
-    subset.rDMatrix(x,i,j)
+    subset.rDMatrix(x,i,j,drop)
 })
-setMethod("[",signature(x="rDMatrix",i="missing",j="numeric"),function(x,j) {
+setMethod("[",signature(x="rDMatrix",i="missing",j="numeric",drop="ANY"),function(x,j,drop) {
     i<-1:nrow(x)
-    subset.rDMatrix(x,i,j)
+    subset.rDMatrix(x,i,j,drop)
 })
-setMethod("[",signature(x="rDMatrix",i="missing",j="missing"),function(x) {
+setMethod("[",signature(x="rDMatrix",i="missing",j="missing",drop="ANY"),function(x,drop) {
     i<-1:nrow(x)
     j<-1:ncol(x)
-    subset.rDMatrix(x,i,j)
+    subset.rDMatrix(x,i,j,drop)
 })
 setReplaceMethod("[",signature("rDMatrix"),replace.rDMatrix)
 
@@ -662,7 +662,7 @@ GWAS<-function(formula,data,method,plot=FALSE,verbose=FALSE,min.pValue=1e-10,chu
         		time.in<-proc.time()[3]
         		ini<-end+1
         		end<-min(ini+chunkSize-1,p)
-        		Z<-as.matrix(data@geno[,ini:end])
+        		Z<-data@geno[,ini:end,drop=FALSE]
 
         		for(j in 1:(end-ini+1)){
                 		pheno$z<-Z[,j]
@@ -729,7 +729,7 @@ GWAS.ols<-function(formula,data,plot=FALSE,verbose=FALSE,min.pValue=1e-10,chunkS
         time.in<-proc.time()[3]
         ini<-end+1
         end<-min(ini+chunkSize-1,p)
-        Z<-as.matrix(data@geno[,ini:end])
+        Z<-data@geno[,ini:end,drop=FALSE]
 
         for(j in 1:(end-ini+1)){
                 X[,1]<-Z[,j]
