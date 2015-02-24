@@ -206,7 +206,7 @@ rowindexes<-function(x,rows){
 #########################################################################################
 
 ## Indexing for cDMatrix objects ########################################################
-subset.cDMatrix<-function(x,i,j){
+subset.cDMatrix<-function(x,i,j,drop){
         n<-length(i)
         p<-length(j)
         originalOrder<-(1:p)[order(j)]
@@ -234,7 +234,7 @@ subset.cDMatrix<-function(x,i,j){
         if(length(originalOrder)>1){
             Z[]<-Z[,originalOrder]
         }
-        if(n==1||p==1){
+        if(drop==TRUE&&(n==1||p==1)){
             # Revert drop.
             return(Z[,])
         }else{
@@ -265,26 +265,26 @@ replace.cDMatrix<-function(x,i=1:nrow(x),j=1:ncol(x),...,value){
 #    x
 #}
 
-setMethod("[",signature(x="cDMatrix",i="numeric",j="numeric"),subset.cDMatrix)
-setMethod("[",signature(x="cDMatrix",i="numeric",j="missing"),function(x,i){
+setMethod("[",signature(x="cDMatrix",i="numeric",j="numeric",drop="ANY"),subset.cDMatrix)
+setMethod("[",signature(x="cDMatrix",i="numeric",j="missing",drop="ANY"),function(x,i,drop){
     j<-1:ncol(x)
-    subset.cDMatrix(x,i,j)
+    subset.cDMatrix(x,i,j,drop)
 })
-setMethod("[",signature(x="cDMatrix",i="missing",j="numeric"),function(x,j) {
+setMethod("[",signature(x="cDMatrix",i="missing",j="numeric",drop="ANY"),function(x,j,drop) {
     i<-1:nrow(x)
-    subset.cDMatrix(x,i,j)
+    subset.cDMatrix(x,i,j,drop)
 })
-setMethod("[",signature(x="cDMatrix",i="missing",j="missing"),function(x) {
+setMethod("[",signature(x="cDMatrix",i="missing",j="missing",drop="ANY"),function(x,drop) {
     i<-1:nrow(x)
     j<-1:ncol(x)
-    subset.cDMatrix(x,i,j)
+    subset.cDMatrix(x,i,j,drop)
 })
 setReplaceMethod("[",signature("cDMatrix"),replace.cDMatrix)
  
 ## end of indexing cDMatrix #################################################################### 
 
 ## Indexing for rDMatrix objects ##########################################################
-subset.rDMatrix<-function(x,i,j){
+subset.rDMatrix<-function(x,i,j,drop){
         n<-length(i)
         p<-length(j)
         originalOrder<-(1:n)[order(i)]
@@ -312,7 +312,7 @@ subset.rDMatrix<-function(x,i,j){
         if(length(originalOrder)>1){
             Z[]<-Z[originalOrder,]
         }
-        if(n==1||p==1){
+        if(drop==TRUE&&(n==1||p==1)){
             # Revert drop.
             return(Z[,])
         }else{
@@ -332,19 +332,19 @@ replace.rDMatrix<-function(x,i=1:nrow(x),j=1:ncol(x),...,value){
 	return(x)
 }
 
-setMethod("[",signature(x="rDMatrix",i="numeric",j="numeric"),subset.rDMatrix)
-setMethod("[",signature(x="rDMatrix",i="numeric",j="missing"),function(x,i){
+setMethod("[",signature(x="rDMatrix",i="numeric",j="numeric",drop="ANY"),subset.rDMatrix)
+setMethod("[",signature(x="rDMatrix",i="numeric",j="missing",drop="ANY"),function(x,i,drop){
     j<-1:ncol(x)
-    subset.rDMatrix(x,i,j)
+    subset.rDMatrix(x,i,j,drop)
 })
-setMethod("[",signature(x="rDMatrix",i="missing",j="numeric"),function(x,j) {
+setMethod("[",signature(x="rDMatrix",i="missing",j="numeric",drop="ANY"),function(x,j,drop) {
     i<-1:nrow(x)
-    subset.rDMatrix(x,i,j)
+    subset.rDMatrix(x,i,j,drop)
 })
-setMethod("[",signature(x="rDMatrix",i="missing",j="missing"),function(x) {
+setMethod("[",signature(x="rDMatrix",i="missing",j="missing",drop="ANY"),function(x,drop) {
     i<-1:nrow(x)
     j<-1:ncol(x)
-    subset.rDMatrix(x,i,j)
+    subset.rDMatrix(x,i,j,drop)
 })
 setReplaceMethod("[",signature("rDMatrix"),replace.rDMatrix)
 
