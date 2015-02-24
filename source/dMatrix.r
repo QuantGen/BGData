@@ -498,8 +498,8 @@ setGenData<-function(fileIn,n,header,dataType,distributed.by='rows',p=NULL,
     attr(genData,'dateCreated')<-date()
 
     for(i in 1:nChunks){
-        attr(attributes(genData@geno[[i]])$physical,"pattern")<-'ff'
-        attr(attributes(genData@geno[[i]])$physical,"filename")<-paste('geno_',i,'.bin',sep='')
+        physical(genData@geno[[i]])$pattern<-'ff'
+        physical(genData@geno[[i]])$filename<-paste('geno_',i,'.bin',sep='')
     }
     save(genData,file=paste(folderOut,'/genData.RData',sep=''))
 
