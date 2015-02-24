@@ -7,9 +7,11 @@ library(ff)
 setClass('cDMatrix',contains='list')
 setClass('rDMatrix',contains='list')
 
+setClassUnion('dMatrix',c('cDMatrix','rDMatrix'))
+
 ## Idea we can define in the future a class for a collection of rDMatrices or cDMatrices (dDatabase)
 # Defiens the class genData the object has three slots:
-setClass('genData',slots=c(pheno='data.frame',map='data.frame',geno='list') )
+setClass('genData',slots=c(pheno='data.frame',map='data.frame',geno='dMatrix') )
 
 
 ## Defines method dim() (extract # of rows and number of columns) of an object getnosFF ##
