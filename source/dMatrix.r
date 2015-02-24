@@ -659,7 +659,7 @@ GWAS<-function(formula,data,method,plot=FALSE,verbose=FALSE,min.pValue=1e-10,chu
         		time.in<-proc.time()[3]
         		ini<-end+1
         		end<-min(ini+chunkSize-1,p)
-        		Z<-as.matrix(data@geno[,ini:end])
+        		Z<-data@geno[,ini:end,drop=FALSE]
 
         		for(j in 1:(end-ini+1)){
                 		pheno$z<-Z[,j]
@@ -726,7 +726,7 @@ GWAS.ols<-function(formula,data,plot=FALSE,verbose=FALSE,min.pValue=1e-10,chunkS
         time.in<-proc.time()[3]
         ini<-end+1
         end<-min(ini+chunkSize-1,p)
-        Z<-as.matrix(data@geno[,ini:end])
+        Z<-data@geno[,ini:end,drop=FALSE]
 
         for(j in 1:(end-ini+1)){
                 X[,1]<-Z[,j]
