@@ -8,7 +8,7 @@ setClass('cDMatrix',contains='list')
 setClass('rDMatrix',contains='list')
 
 setClassUnion('dMatrix',c('cDMatrix','rDMatrix'))
-setClassUnion('geno',c('dMatrix','matrix','ff'))
+setClassUnion('geno',c('dMatrix','matrix','ff_matrix'))
 
 ## Idea we can define in the future a class for a collection of rDMatrices or cDMatrices (dDatabase)
 # Defiens the class genData the object has three slots:
