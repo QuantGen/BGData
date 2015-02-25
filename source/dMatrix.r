@@ -782,7 +782,7 @@ getG<-function(x,nChunks=3,scaleCol=TRUE,verbose=FALSE,minMAF=1/100){
 			cat("Submatrix: ",k," (",from_column,":",to_column,")\n");
 			cat("  =>Aquiring genotypes...\n")
 		}
-		X=x[,from_column:to_column];
+		X=x[,from_column:to_column,drop=FALSE];
 		tmp<-colMeans(X,na.rm=TRUE)/2
 		maf<-ifelse(tmp>.5,1-tmp,tmp)
 		VAR<-apply(X=X,FUN=var,MARGIN=2,na.rm=TRUE)
@@ -794,7 +794,7 @@ getG<-function(x,nChunks=3,scaleCol=TRUE,verbose=FALSE,minMAF=1/100){
 		}
 
 		if(ncol(X)>0){
-			cat("  =>Computing...\n")
+			if(verbose){ cat("  =>Computing...\n") }
 			if(scaleCol){
 				X<-scale(X,center=TRUE,scale=scaleCol)
 			}
