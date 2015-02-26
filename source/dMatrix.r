@@ -356,7 +356,7 @@ setReplaceMethod("[",signature("rDMatrix"),replace.rDMatrix)
 
 ## Creates and rDMatrix or cDMatrix from a ped file
 
-setGenData<-function(fileIn,n,header,dataType,distributed.by='rows',p=NULL,
+setGenData<-function(fileIn,header,dataType,distributed.by='rows',n=NULL,p=NULL,
                     folderOut=paste('genData_',sub("\\.[[:alnum:]]+$","",basename(fileIn)),sep=''),
                     returnData=TRUE,na.strings='NA',nColSkip=6,idCol=2,verbose=FALSE,nChunks=NULL,
                     dimorder=if(distributed.by=='rows') 2:1 else 1:2){
@@ -383,6 +383,23 @@ setGenData<-function(fileIn,n,header,dataType,distributed.by='rows',p=NULL,
 
     vMode<-ifelse( dataType%in%c('character','integer'),'byte','double')
 
+    if(is.null(n)){
+        # gzfile and readLines throw some warnings, but since it works, let's
+        # disable warnings for this block
+        warnLevel<-unlist(options('warn'))
+        options(warn=-1)
+        detN<-gzfile(fileIn,open='r')
+        n <- 0
+        while(length(readLines(detN,n=1))>0){
+            n<-n+1
+        }
+        if(header){
+            n<-n-1
+        }
+        close(detN)
+        # restore previous warning level
+        options(warn=warnLevel)
+    }
     if(header){
         pedFile<-gzfile(fileIn,open='r')
         tmp<-scan(pedFile,nlines=1,what=character(),quiet=TRUE)
