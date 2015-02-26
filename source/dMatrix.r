@@ -6,9 +6,10 @@ library(ff)
 # cDMatrix splits the matrix by columns, rDMatrix by rows
 setClass('cDMatrix',contains='list')
 setClass('rDMatrix',contains='list')
-
 setClassUnion('dMatrix',c('cDMatrix','rDMatrix'))
-setClassUnion('geno',c('dMatrix','matrix'))
+
+setOldClass('ff_matrix') # Convert ff_matrix into an S4 class
+setClassUnion('geno',c('dMatrix','matrix','ff_matrix'))
 
 ## Idea we can define in the future a class for a collection of rDMatrices or cDMatrices (dDatabase)
 # Defiens the class genData the object has three slots:
