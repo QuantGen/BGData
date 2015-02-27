@@ -526,6 +526,23 @@ setGenData<-function(fileIn,header,dataType,distributed.by='rows',n=NULL,p=NULL,
 
     if(returnData){ return(genData) }
 }
+
+loadGenData<-function(path){
+    if(!file.exists(paste0(path,'/genData.RData'))){
+        stop(paste('Could not find a genData object in path',path))
+    }
+    cwd<-getwd()
+    setwd(path)
+    load('genData.RData', .GlobalEnv)
+    # Open all chunks for reading (we do not store absolute paths to ff files,
+    # so this has to happen in the same working directory)
+    chunks<-chunks(genData@geno)
+    for(i in 1:nrow(chunks)){
+        open(genData@geno[[i]])
+    }
+    # Restore working directory
+    setwd(cwd)
+}
  
 ## END OF MAKE makeGenosFF ###############################################################
 apply.DMatrix<-function(X,MARGIN,FUN,chunkSize=1e3,verbose=TRUE,...){
