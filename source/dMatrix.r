@@ -4,8 +4,8 @@ library(ff)
 ## Defines a classes cDMatrix & rDMatrix ###############################################################
 # The class inherits from list, each element of thea list is an FF object
 # cDMatrix splits the matrix by columns, rDMatrix by rows
-setClass('cDMatrix',contains='list')
-setClass('rDMatrix',contains='list')
+cDMatrix<-setClass('cDMatrix',contains='list')
+rDMatrix<-setClass('rDMatrix',contains='list')
 setClassUnion('dMatrix',c('cDMatrix','rDMatrix'))
 
 setOldClass('ff_matrix') # Convert ff_matrix into an S4 class
@@ -13,7 +13,7 @@ setClassUnion('geno',c('dMatrix','matrix','ff_matrix'))
 
 ## Idea we can define in the future a class for a collection of rDMatrices or cDMatrices (dDatabase)
 # Defiens the class genData the object has three slots:
-setClass('genData',slots=c(pheno='data.frame',map='data.frame',geno='geno') )
+genData<-setClass('genData',slots=c(pheno='data.frame',map='data.frame',geno='geno'))
 
 
 ## Defines method dim() (extract # of rows and number of columns) of an object getnosFF ##
