@@ -528,6 +528,9 @@ setGenData<-function(fileIn,header,dataType,distributed.by='rows',n=NULL,p=NULL,
 }
 
 loadGenData<-function(path,envir=.GlobalEnv){
+    if('genData'%in%ls(envir=envir)){
+        stop('There is already an object called genData in the environment. Please move it.')
+    }
     if(!file.exists(paste0(path,'/genData.RData'))){
         stop(paste('Could not find a genData object in path',path))
     }
