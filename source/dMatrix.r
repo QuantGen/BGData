@@ -527,13 +527,17 @@ setGenData<-function(fileIn,header,dataType,distributed.by='columns',n=NULL,p=NU
     if(returnData){ return(genData) }
 }
 
-loadGenData<-function(path){
+loadGenData<-function(path,envir=.GlobalEnv){
+    if('genData'%in%ls(envir=envir)){
+        stop('There is already an object called genData in the environment. Please move it.')
+    }
     if(!file.exists(paste0(path,'/genData.RData'))){
         stop(paste('Could not find a genData object in path',path))
     }
     cwd<-getwd()
     setwd(path)
-    load('genData.RData', .GlobalEnv)
+    load('genData.RData',envir)
+    cat('Loaded genData object into environment under name genData')
     # Open all chunks for reading (we do not store absolute paths to ff files,
     # so this has to happen in the same working directory)
     chunks<-chunks(genData@geno)
