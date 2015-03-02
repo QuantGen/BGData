@@ -8,6 +8,23 @@ cDMatrix<-setClass('cDMatrix',contains='list')
 rDMatrix<-setClass('rDMatrix',contains='list')
 setClassUnion('dMatrix',c('cDMatrix','rDMatrix'))
 
+# Make sure that dMatrix only accepts lists of ff_matrix objects.
+# TODO: Remove duplicated function once we have a private scope.
+setMethod('initialize','cDMatrix',function(.Object,list){
+    if(!all(as.logical(lapply(list,inherits,what='ff_matrix')))){
+        stop("Only lists of ff_matrix objects are allowed.")
+    }
+    .Object<-callNextMethod(.Object,list)
+    return(.Object)
+})
+setMethod('initialize','rDMatrix',function(.Object,list){
+    if(!all(as.logical(lapply(list,inherits,what='ff_matrix')))){
+        stop("Only lists of ff_matrix objects are allowed.")
+    }
+    .Object<-callNextMethod(.Object,list)
+    return(.Object)
+})
+
 setOldClass('ff_matrix') # Convert ff_matrix into an S4 class
 setClassUnion('geno',c('dMatrix','matrix','ff_matrix'))
 
