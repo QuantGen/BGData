@@ -357,7 +357,7 @@ setReplaceMethod("[",signature("rDMatrix"),replace.rDMatrix)
 
 ## Creates and rDMatrix or cDMatrix from a ped file
 
-setGenData<-function(fileIn,header,dataType,distributed.by='rows',n=NULL,p=NULL,
+setGenData<-function(fileIn,header,dataType,distributed.by='columns',n=NULL,p=NULL,
                     folderOut=paste('genData_',sub("\\.[[:alnum:]]+$","",basename(fileIn)),sep=''),
                     returnData=TRUE,na.strings='NA',nColSkip=6,idCol=2,verbose=FALSE,nChunks=NULL,
                     dimorder=if(distributed.by=='rows') 2:1 else 1:2){
