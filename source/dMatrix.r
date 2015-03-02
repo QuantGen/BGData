@@ -534,6 +534,7 @@ loadGenData<-function(path,envir=.GlobalEnv){
     cwd<-getwd()
     setwd(path)
     load('genData.RData',envir)
+    cat('Loaded genData object into environment under name genData')
     # Open all chunks for reading (we do not store absolute paths to ff files,
     # so this has to happen in the same working directory)
     chunks<-chunks(genData@geno)
