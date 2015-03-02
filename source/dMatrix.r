@@ -381,7 +381,7 @@ setGenData<-function(fileIn,header,dataType,distributed.by='columns',n=NULL,p=NU
         stop(paste('Output folder',folderOut,'already exists. Please move it or pick a different one.'))
     }
     dir.create(folderOut)
-
+    if(!(dataType%in%c('character','integer','numeric'))){ stop('dataType must be either character, integer or numeric')}
     vMode<-ifelse( dataType%in%c('character','integer'),'byte','double')
 
     if(is.null(n)){
