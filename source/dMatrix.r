@@ -528,6 +528,12 @@ setGenData<-function(fileIn,header,dataType,distributed.by='columns',n=NULL,p=NU
 }
 
 loadGenData<-function(path,envir=.GlobalEnv){
+    ##
+    # Use: to load a genData object using the name of the folder where the meta-data and data are stored.
+    # path: the name of the folder where the data and meta data are stored.
+    # envir: the name of the environment where the object is returned.
+    # See also: load2() and setGenData()
+    ##
     if('genData'%in%ls(envir=envir)){
         stop('There is already an object called genData in the environment. Please move it.')
     }
@@ -548,6 +554,64 @@ loadGenData<-function(path,envir=.GlobalEnv){
     setwd(cwd)
 }
  
+ 
+load2<-function(file,envir=parent.frame(),verbose=TRUE){
+    	##
+    	# Function to load genData or dMatrix objects
+    	# file: the name of the .RData file to be loaded (and possibly a path)
+    	# envir: the environment where to load the data
+    	# verbose: TRUE/FALSE
+    	# See also: loadGenData()
+    	##
+	
+	# determining the object name
+    	lsOLD<-ls(); 
+    	load(file=file)
+    	lsNEW<-ls();
+    	objectName<-lsNEW[(!lsNEW%in%lsOLD)&(lsNEW!='lsOLD')];  
+    
+    	# determining path and filename
+    	path<-dirname(file)
+    	fname<-basename(file)
+    
+    	# stores current working directiory and sets working directory to path
+    	cwd<-getwd()
+    	setwd(path)
+
+    	# determining object class
+	objectClass<-class(eval(parse(text=objectName)))
+
+	if(verbose){ 
+		cat(' Meta data (',fname,') and its data were stored at folder ',path,'.\n',sep='')
+		cat(' Object Name: ',objectName,'\n',sep='')
+		cat(' Object Class: ',objectClass,'\n',sep='')
+	}
+	if(!(objectClass%in%c('genData','rDMatrix','cDMatrix'))){ stop( ' Object class must be either genData, cDMatrix or rDMatrix')}
+	
+	# Determining number of chunks
+	if(objectClass=='genData'){
+		tmpChunks<-chunks(eval(parse(text=paste0(objectName,'@geno'))))
+	}else{
+		tmpChunks<-chunks(eval(parse(text=objectName)))
+	}
+	
+	# opening files
+    	for(i in 1:nrow(tmpChunks)){
+		if(verbose){ cat(' Opening flat file ', i,'\n')  }
+		if(objectClass=='genData'){
+			open(eval(parse(text=paste0(objectName,'@geno[[',i,']]'))))
+		}else{
+			open(eval(parse(text=paste0(objectName,'[[',i,']]'))))
+		}
+    	}  
+    	# sending the object to envir
+	assign(objectName,get(objectName), envir=envir)
+	
+	# restoring the working directory
+	setwd(cwd)
+	if(verbose){ cat(' Original directory (',getwd(),') restored \n',sep='')}
+}
+
 ## END OF MAKE makeGenosFF ###############################################################
 apply.DMatrix<-function(X,MARGIN,FUN,chunkSize=1e3,verbose=TRUE,...){
     FUN<-match.fun(FUN)
