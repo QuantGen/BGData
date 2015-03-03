@@ -72,6 +72,14 @@ test_that("subsetting", {
     expect_equal(all.equal(rGenData@geno[, c(3, 1), drop = FALSE], genotypes[, c(3, 1), drop = FALSE]), TRUE)
     expect_equal(all.equal(rGenData@geno[c(3, 1), c(3, 1), drop = FALSE], genotypes[c(3, 1), c(3, 1), drop = FALSE]), TRUE)
 
+    # expect_equal(all.equal(rGenData@geno[genotypes > 1], genotypes[genotypes > 1]), TRUE) Not implemented yet
+    expect_equal(all.equal(rGenData@geno[c(TRUE, FALSE, TRUE), ], genotypes[c(TRUE, FALSE, TRUE), ]), TRUE)
+    expect_equal(all.equal(rGenData@geno[, c(TRUE, FALSE, TRUE)], genotypes[, c(TRUE, FALSE, TRUE)]), TRUE)
+    expect_equal(all.equal(rGenData@geno[c(TRUE, FALSE, TRUE), c(TRUE, FALSE, TRUE)], genotypes[c(TRUE, FALSE, TRUE), c(TRUE, FALSE, TRUE)]), TRUE)
+    expect_equal(all.equal(rGenData@geno[c(TRUE, FALSE, TRUE), , drop = FALSE], genotypes[c(TRUE, FALSE, TRUE), , drop = FALSE]), TRUE)
+    expect_equal(all.equal(rGenData@geno[, c(TRUE, FALSE, TRUE), drop = FALSE], genotypes[, c(TRUE, FALSE, TRUE), drop = FALSE]), TRUE)
+    expect_equal(all.equal(rGenData@geno[c(TRUE, FALSE, TRUE), c(TRUE, FALSE, TRUE), drop = FALSE], genotypes[c(TRUE, FALSE, TRUE), c(TRUE, FALSE, TRUE), drop = FALSE]), TRUE)
+
 })
 
 test_that("replacement", {
@@ -176,6 +184,14 @@ test_that("subsetting", {
     expect_equal(all.equal(cGenData@geno[c(3, 1), , drop = FALSE], genotypes[c(3, 1), , drop = FALSE]), TRUE)
     expect_equal(all.equal(cGenData@geno[, c(3, 1), drop = FALSE], genotypes[, c(3, 1), drop = FALSE]), TRUE)
     expect_equal(all.equal(cGenData@geno[c(3, 1), c(3, 1), drop = FALSE], genotypes[c(3, 1), c(3, 1), drop = FALSE]), TRUE)
+
+    # expect_equal(all.equal(cGenData@geno[genotypes > 1], genotypes[genotypes > 1]), TRUE) Not implemented yet
+    expect_equal(all.equal(cGenData@geno[c(TRUE, FALSE, TRUE), ], genotypes[c(TRUE, FALSE, TRUE), ]), TRUE)
+    expect_equal(all.equal(cGenData@geno[, c(TRUE, FALSE, TRUE)], genotypes[, c(TRUE, FALSE, TRUE)]), TRUE)
+    expect_equal(all.equal(cGenData@geno[c(TRUE, FALSE, TRUE), c(TRUE, FALSE, TRUE)], genotypes[c(TRUE, FALSE, TRUE), c(TRUE, FALSE, TRUE)]), TRUE)
+    expect_equal(all.equal(cGenData@geno[c(TRUE, FALSE, TRUE), , drop = FALSE], genotypes[c(TRUE, FALSE, TRUE), , drop = FALSE]), TRUE)
+    expect_equal(all.equal(cGenData@geno[, c(TRUE, FALSE, TRUE), drop = FALSE], genotypes[, c(TRUE, FALSE, TRUE), drop = FALSE]), TRUE)
+    expect_equal(all.equal(cGenData@geno[c(TRUE, FALSE, TRUE), c(TRUE, FALSE, TRUE), drop = FALSE], genotypes[c(TRUE, FALSE, TRUE), c(TRUE, FALSE, TRUE), drop = FALSE]), TRUE)
 
 })
 
