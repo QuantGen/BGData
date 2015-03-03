@@ -211,6 +211,20 @@ rowindexes<-function(x,rows){
 
 ## Indexing for cDMatrix objects ########################################################
 subset.cDMatrix<-function(x,i,j,drop){
+        if(class(i)=='logical'){
+                i<-which(i)
+        }else if(class(i)=='character'){
+                i<-sapply(i,function(name){
+                        which(rownames(x)==name)
+                },USE.NAMES=FALSE)
+        }
+        if(class(j)=='logical'){
+                j<-which(j)
+        }else if(class(j)=='character'){
+                j<-sapply(j,function(name){
+                        which(colnames(x)==name)
+                },USE.NAMES=FALSE)
+        }
         n<-length(i)
         p<-length(j)
         originalOrder<-(1:p)[order(j)]
@@ -269,12 +283,12 @@ replace.cDMatrix<-function(x,i=1:nrow(x),j=1:ncol(x),...,value){
 #    x
 #}
 
-setMethod("[",signature(x="cDMatrix",i="numeric",j="numeric",drop="ANY"),subset.cDMatrix)
-setMethod("[",signature(x="cDMatrix",i="numeric",j="missing",drop="ANY"),function(x,i,drop){
+setMethod("[",signature(x="cDMatrix",i="ANY",j="ANY",drop="ANY"),subset.cDMatrix)
+setMethod("[",signature(x="cDMatrix",i="ANY",j="missing",drop="ANY"),function(x,i,drop){
     j<-1:ncol(x)
     subset.cDMatrix(x,i,j,drop)
 })
-setMethod("[",signature(x="cDMatrix",i="missing",j="numeric",drop="ANY"),function(x,j,drop) {
+setMethod("[",signature(x="cDMatrix",i="missing",j="ANY",drop="ANY"),function(x,j,drop) {
     i<-1:nrow(x)
     subset.cDMatrix(x,i,j,drop)
 })
@@ -289,6 +303,20 @@ setReplaceMethod("[",signature("cDMatrix"),replace.cDMatrix)
 
 ## Indexing for rDMatrix objects ##########################################################
 subset.rDMatrix<-function(x,i,j,drop){
+        if(class(i)=='logical'){
+                i<-which(i)
+        }else if(class(i)=='character'){
+                i<-sapply(i,function(name){
+                        which(rownames(x)==name)
+                },USE.NAMES=FALSE)
+        }
+        if(class(j)=='logical'){
+                j<-which(j)
+        }else if(class(j)=='character'){
+                j<-sapply(j,function(name){
+                        which(colnames(x)==name)
+                },USE.NAMES=FALSE)
+        }
         n<-length(i)
         p<-length(j)
         originalOrder<-(1:n)[order(i)]
@@ -336,12 +364,12 @@ replace.rDMatrix<-function(x,i=1:nrow(x),j=1:ncol(x),...,value){
 	return(x)
 }
 
-setMethod("[",signature(x="rDMatrix",i="numeric",j="numeric",drop="ANY"),subset.rDMatrix)
-setMethod("[",signature(x="rDMatrix",i="numeric",j="missing",drop="ANY"),function(x,i,drop){
+setMethod("[",signature(x="rDMatrix",i="ANY",j="numeric",drop="ANY"),subset.rDMatrix)
+setMethod("[",signature(x="rDMatrix",i="ANY",j="missing",drop="ANY"),function(x,i,drop){
     j<-1:ncol(x)
     subset.rDMatrix(x,i,j,drop)
 })
-setMethod("[",signature(x="rDMatrix",i="missing",j="numeric",drop="ANY"),function(x,j,drop) {
+setMethod("[",signature(x="rDMatrix",i="missing",j="ANY",drop="ANY"),function(x,j,drop) {
     i<-1:nrow(x)
     subset.rDMatrix(x,i,j,drop)
 })
