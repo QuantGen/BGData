@@ -381,7 +381,7 @@ replace.rDMatrix<-function(x,i=1:nrow(x),j=1:ncol(x),...,value){
 	return(x)
 }
 
-setMethod("[",signature(x="rDMatrix",i="ANY",j="numeric",drop="ANY"),subset.rDMatrix)
+setMethod("[",signature(x="rDMatrix",i="ANY",j="ANY",drop="ANY"),subset.rDMatrix)
 setMethod("[",signature(x="rDMatrix",i="ANY",j="missing",drop="ANY"),function(x,i,drop){
     j<-1:ncol(x)
     subset.rDMatrix(x,i,j,drop)
