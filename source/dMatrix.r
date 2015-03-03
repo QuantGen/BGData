@@ -551,6 +551,7 @@ setGenData<-function(fileIn,header,dataType,distributed.by='columns',n=NULL,p=NU
 			rownames(genosList[[i]])<-IDs
 		}
 	}
+	rownames(pheno)<-IDs
 	
 	pheno<-as.data.frame(pheno,stringsAsFactors=FALSE)
 	pheno[]<-lapply(pheno,type.convert,as.is=TRUE)
