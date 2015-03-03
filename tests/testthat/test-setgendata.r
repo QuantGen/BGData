@@ -80,6 +80,34 @@ test_that("subsetting", {
     expect_equal(all.equal(rGenData@geno[, c(TRUE, FALSE, TRUE), drop = FALSE], genotypes[, c(TRUE, FALSE, TRUE), drop = FALSE]), TRUE)
     expect_equal(all.equal(rGenData@geno[c(TRUE, FALSE, TRUE), c(TRUE, FALSE, TRUE), drop = FALSE], genotypes[c(TRUE, FALSE, TRUE), c(TRUE, FALSE, TRUE), drop = FALSE]), TRUE)
 
+    expect_equal(all.equal(rGenData@geno['id_1', ], genotypes['id_1', ]), TRUE)
+    expect_equal(all.equal(rGenData@geno[, 'mrk_1'], genotypes[, 'mrk_1']), TRUE)
+    expect_equal(all.equal(rGenData@geno['id_1', 'mrk_1'], genotypes['id_1', 'mrk_1']), TRUE)
+    expect_equal(all.equal(rGenData@geno['id_1', , drop = FALSE], genotypes['id_1', , drop = FALSE]), TRUE)
+    expect_equal(all.equal(rGenData@geno[, 'mrk_1', drop = FALSE], genotypes[, 'mrk_1', drop = FALSE]), TRUE)
+    expect_equal(all.equal(rGenData@geno['id_1', 'mrk_1', drop = FALSE], genotypes['id_1', 'mrk_1', drop = FALSE]), TRUE)
+
+    expect_equal(all.equal(rGenData@geno[c('id_1', 'id_2'), ], genotypes[c('id_1', 'id_2'), ]), TRUE)
+    expect_equal(all.equal(rGenData@geno[, c('mrk_1', 'mrk_2')], genotypes[, c('mrk_1', 'mrk_2')]), TRUE)
+    expect_equal(all.equal(rGenData@geno[c('id_1', 'id_2'), c('mrk_1', 'mrk_2')], genotypes[c('id_1', 'id_2'), c('mrk_1', 'mrk_2')]), TRUE)
+    expect_equal(all.equal(rGenData@geno[c('id_1', 'id_2'), , drop = FALSE], genotypes[c('id_1', 'id_2'), , drop = FALSE]), TRUE)
+    expect_equal(all.equal(rGenData@geno[, c('mrk_1', 'mrk_2'), drop = FALSE], genotypes[, c('mrk_1', 'mrk_2'), drop = FALSE]), TRUE)
+    expect_equal(all.equal(rGenData@geno[c('id_1', 'id_2'), c('mrk_1', 'mrk_2'), drop = FALSE], genotypes[c('id_1', 'id_2'), c('mrk_1', 'mrk_2'), drop = FALSE]), TRUE)
+
+    expect_equal(all.equal(rGenData@geno[c('id_2', 'id_1'), ], genotypes[c('id_2', 'id_1'), ]), TRUE)
+    expect_equal(all.equal(rGenData@geno[, c('mrk_2', 'mrk_1')], genotypes[, c('mrk_2', 'mrk_1')]), TRUE)
+    expect_equal(all.equal(rGenData@geno[c('id_2', 'id_1'), c('mrk_2', 'mrk_1')], genotypes[c('id_2', 'id_1'), c('mrk_2', 'mrk_1')]), TRUE)
+    expect_equal(all.equal(rGenData@geno[c('id_2', 'id_1'), , drop = FALSE], genotypes[c('id_2', 'id_1'), , drop = FALSE]), TRUE)
+    expect_equal(all.equal(rGenData@geno[, c('mrk_2', 'mrk_1'), drop = FALSE], genotypes[, c('mrk_2', 'mrk_1'), drop = FALSE]), TRUE)
+    expect_equal(all.equal(rGenData@geno[c('id_2', 'id_1'), c('mrk_2', 'mrk_1'), drop = FALSE], genotypes[c('id_2', 'id_1'), c('mrk_2', 'mrk_1'), drop = FALSE]), TRUE)
+
+    expect_equal(all.equal(rGenData@geno[c('id_3', 'id_1'), ], genotypes[c('id_3', 'id_1'), ]), TRUE)
+    expect_equal(all.equal(rGenData@geno[, c('mrk_3', 'mrk_1')], genotypes[, c('mrk_3', 'mrk_1')]), TRUE)
+    expect_equal(all.equal(rGenData@geno[c('id_3', 'id_1'), c('mrk_3', 'mrk_1')], genotypes[c('id_3', 'id_1'), c('mrk_3', 'mrk_1')]), TRUE)
+    expect_equal(all.equal(rGenData@geno[c('id_3', 'id_1'), , drop = FALSE], genotypes[c('id_3', 'id_1'), , drop = FALSE]), TRUE)
+    expect_equal(all.equal(rGenData@geno[, c('mrk_3', 'mrk_1'), drop = FALSE], genotypes[, c('mrk_3', 'mrk_1'), drop = FALSE]), TRUE)
+    expect_equal(all.equal(rGenData@geno[c('id_3', 'id_1'), c('mrk_3', 'mrk_1'), drop = FALSE], genotypes[c('id_3', 'id_1'), c('mrk_3', 'mrk_1'), drop = FALSE]), TRUE)
+
 })
 
 test_that("replacement", {
@@ -192,6 +220,34 @@ test_that("subsetting", {
     expect_equal(all.equal(cGenData@geno[c(TRUE, FALSE, TRUE), , drop = FALSE], genotypes[c(TRUE, FALSE, TRUE), , drop = FALSE]), TRUE)
     expect_equal(all.equal(cGenData@geno[, c(TRUE, FALSE, TRUE), drop = FALSE], genotypes[, c(TRUE, FALSE, TRUE), drop = FALSE]), TRUE)
     expect_equal(all.equal(cGenData@geno[c(TRUE, FALSE, TRUE), c(TRUE, FALSE, TRUE), drop = FALSE], genotypes[c(TRUE, FALSE, TRUE), c(TRUE, FALSE, TRUE), drop = FALSE]), TRUE)
+
+    expect_equal(all.equal(cGenData@geno['id_1', ], genotypes['id_1', ]), TRUE)
+    expect_equal(all.equal(cGenData@geno[, 'mrk_1'], genotypes[, 'mrk_1']), TRUE)
+    expect_equal(all.equal(cGenData@geno['id_1', 'mrk_1'], genotypes['id_1', 'mrk_1']), TRUE)
+    expect_equal(all.equal(cGenData@geno['id_1', , drop = FALSE], genotypes['id_1', , drop = FALSE]), TRUE)
+    expect_equal(all.equal(cGenData@geno[, 'mrk_1', drop = FALSE], genotypes[, 'mrk_1', drop = FALSE]), TRUE)
+    expect_equal(all.equal(cGenData@geno['id_1', 'mrk_1', drop = FALSE], genotypes['id_1', 'mrk_1', drop = FALSE]), TRUE)
+
+    expect_equal(all.equal(cGenData@geno[c('id_1', 'id_2'), ], genotypes[c('id_1', 'id_2'), ]), TRUE)
+    expect_equal(all.equal(cGenData@geno[, c('mrk_1', 'mrk_2')], genotypes[, c('mrk_1', 'mrk_2')]), TRUE)
+    expect_equal(all.equal(cGenData@geno[c('id_1', 'id_2'), c('mrk_1', 'mrk_2')], genotypes[c('id_1', 'id_2'), c('mrk_1', 'mrk_2')]), TRUE)
+    expect_equal(all.equal(cGenData@geno[c('id_1', 'id_2'), , drop = FALSE], genotypes[c('id_1', 'id_2'), , drop = FALSE]), TRUE)
+    expect_equal(all.equal(cGenData@geno[, c('mrk_1', 'mrk_2'), drop = FALSE], genotypes[, c('mrk_1', 'mrk_2'), drop = FALSE]), TRUE)
+    expect_equal(all.equal(cGenData@geno[c('id_1', 'id_2'), c('mrk_1', 'mrk_2'), drop = FALSE], genotypes[c('id_1', 'id_2'), c('mrk_1', 'mrk_2'), drop = FALSE]), TRUE)
+
+    expect_equal(all.equal(cGenData@geno[c('id_2', 'id_1'), ], genotypes[c('id_2', 'id_1'), ]), TRUE)
+    expect_equal(all.equal(cGenData@geno[, c('mrk_2', 'mrk_1')], genotypes[, c('mrk_2', 'mrk_1')]), TRUE)
+    expect_equal(all.equal(cGenData@geno[c('id_2', 'id_1'), c('mrk_2', 'mrk_1')], genotypes[c('id_2', 'id_1'), c('mrk_2', 'mrk_1')]), TRUE)
+    expect_equal(all.equal(cGenData@geno[c('id_2', 'id_1'), , drop = FALSE], genotypes[c('id_2', 'id_1'), , drop = FALSE]), TRUE)
+    expect_equal(all.equal(cGenData@geno[, c('mrk_2', 'mrk_1'), drop = FALSE], genotypes[, c('mrk_2', 'mrk_1'), drop = FALSE]), TRUE)
+    expect_equal(all.equal(cGenData@geno[c('id_2', 'id_1'), c('mrk_2', 'mrk_1'), drop = FALSE], genotypes[c('id_2', 'id_1'), c('mrk_2', 'mrk_1'), drop = FALSE]), TRUE)
+
+    expect_equal(all.equal(cGenData@geno[c('id_3', 'id_1'), ], genotypes[c('id_3', 'id_1'), ]), TRUE)
+    expect_equal(all.equal(cGenData@geno[, c('mrk_3', 'mrk_1')], genotypes[, c('mrk_3', 'mrk_1')]), TRUE)
+    expect_equal(all.equal(cGenData@geno[c('id_3', 'id_1'), c('mrk_3', 'mrk_1')], genotypes[c('id_3', 'id_1'), c('mrk_3', 'mrk_1')]), TRUE)
+    expect_equal(all.equal(cGenData@geno[c('id_3', 'id_1'), , drop = FALSE], genotypes[c('id_3', 'id_1'), , drop = FALSE]), TRUE)
+    expect_equal(all.equal(cGenData@geno[, c('mrk_3', 'mrk_1'), drop = FALSE], genotypes[, c('mrk_3', 'mrk_1'), drop = FALSE]), TRUE)
+    expect_equal(all.equal(cGenData@geno[c('id_3', 'id_1'), c('mrk_3', 'mrk_1'), drop = FALSE], genotypes[c('id_3', 'id_1'), c('mrk_3', 'mrk_1'), drop = FALSE]), TRUE)
 
 })
 
