@@ -708,7 +708,10 @@ apply.DMatrix<-function(X,MARGIN,FUN,chunkSize=1e3,verbose=TRUE,...){
 setMethod("apply",signature("dMatrix"),apply.DMatrix)
 
 
-colMeans.DMatrix<-function(x,na.rm=FALSE,chunkSize=1e3,...){
+colMeans.DMatrix<-function(x,na.rm=TRUE,chunkSize=1e3,...){
+    if(na.rm){
+        warning('Ignoring missing values')
+    }
     ANS<-apply.DMatrix(X=x,MARGIN=2,FUN=mean,chunkSize=chunkSize,na.rm=na.rm,...)
     return(ANS)
 }
@@ -716,7 +719,10 @@ colMeans.DMatrix<-function(x,na.rm=FALSE,chunkSize=1e3,...){
 setMethod("colMeans",signature("dMatrix"),colMeans.DMatrix)
 
 
-colSums.DMatrix<-function(x,na.rm=FALSE,chunkSize=1e3,...){
+colSums.DMatrix<-function(x,na.rm=TRUE,chunkSize=1e3,...){
+    if(na.rm){
+        warning('Ignoring missing values')
+    }
     ANS<-apply.DMatrix(X=x,MARGIN=2,FUN=sum,chunkSize=chunkSize,na.rm=na.rm,...)
     return(ANS)
 }
@@ -724,7 +730,10 @@ colSums.DMatrix<-function(x,na.rm=FALSE,chunkSize=1e3,...){
 setMethod("colSums",signature("dMatrix"),colSums.DMatrix)
 
 
-rowMeans.DMatrix<-function(x,na.rm=FALSE,chunkSize=1e3,...){
+rowMeans.DMatrix<-function(x,na.rm=TRUE,chunkSize=1e3,...){
+    if(na.rm){
+        warning('Ignoring missing values')
+    }
     ANS<-apply.DMatrix(X=x,MARGIN=1,FUN=mean,chunkSize=chunkSize,na.rm=na.rm,...)
     return(ANS)
 }
@@ -732,7 +741,10 @@ rowMeans.DMatrix<-function(x,na.rm=FALSE,chunkSize=1e3,...){
 setMethod("rowMeans",signature("dMatrix"),rowMeans.DMatrix)
 
 
-rowSums.DMatrix<-function(x,na.rm=FALSE,chunkSize=1e3,...){
+rowSums.DMatrix<-function(x,na.rm=TRUE,chunkSize=1e3,...){
+    if(na.rm){
+        warning('Ignoring missing values')
+    }
     ANS<-apply.DMatrix(X=x,MARGIN=1,FUN=sum,chunkSize=chunkSize,na.rm=na.rm,...)
     return(ANS)
 }
