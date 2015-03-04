@@ -903,55 +903,75 @@ GWAS.ols<-function(formula,data,plot=FALSE,verbose=FALSE,min.pValue=1e-10,chunkS
 }
 
 
-## Computes a Genomic Relationship Matrix
-getG<-function(x,nChunks=3,scaleCol=TRUE,verbose=FALSE,minMAF=1/100){
-	#This function takes as input an object of the class cFF or rFF and computes the
-	#Genomic relationship matrix
-	#Arguments:
-	#the cFF object that holds the matrix with Markers (e.g. SNPs or )
+getG<-function(x,nChunks=3,scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,i=1:nrow(x),j=1:ncol(x),minVar=1e-5){
+    ###
+    # Computes a genomic relationship matrix G=XX'
+    # Offers options for centering and scaling G=WW' where W=scale(X,center=centerCol,scale=scaleCol)
+    # And of scaling the final output so that the average diagonal value is equal to one (scaleG=TRUE)
+    # If scaleCol=centerCol=scaleG=FALSE it behaves as tcrossprod(X)
+    # Arguments:
+    #   x: matrix, ff_matrix, rDMatrix or cDMatrix
+    #   nChunks: the number of columns that are processed at a time.
+    #   scaleCol, centerCol: TRUE/FALSE whether columns must be centered and scaled before computing XX'
+    #   i,j: (integer, boolean or character) indicating which columsn and which rows should be used.
+    #        By default all columns and rows are used.
+    #  Genomic relationship matrix
+    # Value: G=XX'
+    ###
+   
+    nX<-nrow(x);   	pX<-ncol(x)
+    n<-length(i); 	p<-length(j)
+    
+    if(n>nX|p>pX){ stop('Index out of bounds')}
 
-	#Obtain the number of rows and columns for the matrix with molecular markers
-	rows_cols=dim(x)
-	n=rows_cols[1]
-	p=rows_cols[2]
-	
-	to_column=0;
-	delta=ceiling(p/nChunks);
-	G=matrix(0,nrow=n,ncol=n)
-	rownames(G)<-rownames(x)
-	colnames(G)<-rownames(x)
-	
-	K<-0
-	from_column<-0
-	for(k in 1:nChunks){
-		from_column=to_column+1;
-		to_column=min(p,from_column+delta-1)
-		if(verbose){
-			cat("Submatrix: ",k," (",from_column,":",to_column,")\n");
-			cat("  =>Aquiring genotypes...\n")
+    if(is.numeric(i)){ if( (min(i)<1)|(max(i)>nX)){ stop('Index out of bounds') }}
+    if(is.numeric(j)){ if( (min(j)<1)|(max(j)>pX)){ stop('Index out of bounds') }}
+    
+	tmp<-x[i,1:2]
+	n<-nrow(tmp)
+    
+    G<-matrix(0,nrow=n,ncol=n)
+    rownames(G)<-rownames(tmp)
+    colnames(G)<-rownames(G)
+   
+    end<-0;
+    delta<-ceiling(p/nChunks);
+   
+    for(k in 1:nChunks){
+        ini<-end+1;
+        end<-min(p,end+delta-1)
+        if(verbose){
+            cat("Submatrix: ",k," (out of",nChunks,")\n");
+            cat("  =>Aquiring genotypes...\n")
+        }
+       
+        # subset
+        tmp<-j[ini:end]
+        X=x[i,tmp,drop=FALSE];
+        
+        if(scaleCol){
+	        VAR<-apply(X=X,FUN=var,MARGIN=2,na.rm=TRUE)
+    	    tmp<-which(VAR<minVar)
+        	if(length(tmp)>0){
+            	X<-X[,-tmp]
+            	VAR<-VAR[-tmp]
+        	}
 		}
-		X=x[,from_column:to_column,drop=FALSE];
-		tmp<-colMeans(X,na.rm=TRUE)/2
-		maf<-ifelse(tmp>.5,1-tmp,tmp)
-		VAR<-apply(X=X,FUN=var,MARGIN=2,na.rm=TRUE)
 		
-		tmp<-which((maf<minMAF)|(VAR<1e-8))
-		if(length(tmp)>0){
-			X<-X[,-tmp]
-			VAR<-VAR[-tmp]
-		}
-
-		if(ncol(X)>0){
-			if(verbose){ cat("  =>Computing...\n") }
-			if(scaleCol){
-				X<-scale(X,center=TRUE,scale=scaleCol)
-			}
-			X<-ifelse(is.na(X),0,X)
-			K<-K+ifelse(scaleCol,ncol(X)*(n-1)/n,sum(VAR))
-			G<-G+tcrossprod(X)
-		}
-   }
-   G<-G/K
+        if(ncol(X)>0){
+            if(verbose){ cat("  =>Computing...\n") }
+            if(scaleCol){
+                X<-scale(X,center=TRUE,scale=scaleCol)
+            }
+            TMP<-is.na(X)
+            if(any(TMP)){    X<-ifelse(TMP,0,X) }
+            G<-G+tcrossprod(X)
+        }
+    }
+    if(scaleG){
+        tmp<-mean(diag(G))
+        G<-G/tmp
+    }
    return(G)
 }
 
