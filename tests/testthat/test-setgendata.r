@@ -117,55 +117,55 @@ test_that("replacement", {
     replacement <- simPED(filename = replacmentPath, n = nRows, p = nCols, returnGenos = TRUE)
     comparison <- genotypes
 
-    testAndRestore <- function () {
-        expect_equal(all.equal(rGenData@geno[], comparison), TRUE)
+    testAndRestore <- function (label) {
+        expect_equal(all.equal(rGenData@geno[], comparison), TRUE, label=label)
         rGenData@geno[] <- genotypes # no environment change necessary
         assign('comparison', genotypes, parent.frame())
     }
 
     rGenData@geno[] <- replacement
     comparison[] <- replacement
-    testAndRestore()
+    testAndRestore('[]')
 
     rGenData@geno[1, ] <- replacement[1, ]
     comparison[1, ] <- replacement[1, ]
-    testAndRestore()
+    testAndRestore('[1, ]')
     rGenData@geno[, 1] <- replacement[, 1]
     comparison[, 1] <- replacement[, 1]
-    testAndRestore()
+    testAndRestore('[, 1]')
     rGenData@geno[1, 1] <- replacement[1, 1]
     comparison[1, 1] <- replacement[1, 1]
-    testAndRestore()
+    testAndRestore('[1, 1]')
 
     rGenData@geno[1:2, ] <- replacement[1:2, ]
     comparison[1:2, ] <- replacement[1:2, ]
-    testAndRestore()
+    testAndRestore('[1:2, ]')
     rGenData@geno[, 1:2] <- replacement[, 1:2]
     comparison[, 1:2] <- replacement[, 1:2]
-    testAndRestore()
+    testAndRestore('[, 1:2]')
     rGenData@geno[1:2, 1:2] <- replacement[1:2, 1:2]
     comparison[1:2, 1:2] <- replacement[1:2, 1:2]
-    testAndRestore()
+    testAndRestore('[1:2, 1:2]')
 
     rGenData@geno[2:1, ] <- replacement[2:1, ]
     comparison[2:1, ] <- replacement[2:1, ]
-    testAndRestore()
+    testAndRestore('[2:1, ]')
     rGenData@geno[, 2:1] <- replacement[, 2:1]
     comparison[, 2:1] <- replacement[, 2:1]
-    testAndRestore()
+    testAndRestore('[, 2:1]')
     rGenData@geno[2:1, 2:1] <- replacement[2:1, 2:1]
     comparison[2:1, 2:1] <- replacement[2:1, 2:1]
-    testAndRestore()
+    testAndRestore('[2:1, 2:1]')
 
     rGenData@geno[c(3, 1), ] <- replacement[c(3, 1), ]
     comparison[c(3, 1), ] <- replacement[c(3, 1), ]
-    testAndRestore()
+    testAndRestore('[c(3, 1), ]')
     rGenData@geno[, c(3, 1)] <- replacement[, c(3, 1)]
     comparison[, c(3, 1)] <- replacement[, c(3, 1)]
-    testAndRestore()
+    testAndRestore('[, c(3, 1)]')
     rGenData@geno[c(3, 1), c(3, 1)] <- replacement[c(3, 1), c(3, 1)]
     comparison[c(3, 1), c(3, 1)] <- replacement[c(3, 1), c(3, 1)]
-    testAndRestore()
+    testAndRestore('[c(3, 1), c(3, 1)]')
 
 })
 
@@ -290,55 +290,55 @@ test_that("replacement", {
     replacement <- simPED(filename = replacmentPath, n = nRows, p = nCols, returnGenos = TRUE)
     comparison <- genotypes
 
-    testAndRestore <- function () {
-        expect_equal(all.equal(cGenData@geno[], comparison), TRUE)
+    testAndRestore <- function (label) {
+        expect_equal(all.equal(cGenData@geno[], comparison), TRUE, label=label)
         cGenData@geno[] <- genotypes # no environment change necessary
         assign('comparison', genotypes, parent.frame())
     }
 
     cGenData@geno[] <- replacement
     comparison[] <- replacement
-    testAndRestore()
+    testAndRestore('[]')
 
     cGenData@geno[1, ] <- replacement[1, ]
     comparison[1, ] <- replacement[1, ]
-    testAndRestore()
+    testAndRestore('[1, ]')
     cGenData@geno[, 1] <- replacement[, 1]
     comparison[, 1] <- replacement[, 1]
-    testAndRestore()
+    testAndRestore('[, 1]')
     cGenData@geno[1, 1] <- replacement[1, 1]
     comparison[1, 1] <- replacement[1, 1]
-    testAndRestore()
+    testAndRestore('[1, 1]')
 
     cGenData@geno[1:2, ] <- replacement[1:2, ]
     comparison[1:2, ] <- replacement[1:2, ]
-    testAndRestore()
+    testAndRestore('[1:2, ]')
     cGenData@geno[, 1:2] <- replacement[, 1:2]
     comparison[, 1:2] <- replacement[, 1:2]
-    testAndRestore()
+    testAndRestore('[, 1:2]')
     cGenData@geno[1:2, 1:2] <- replacement[1:2, 1:2]
     comparison[1:2, 1:2] <- replacement[1:2, 1:2]
-    testAndRestore()
+    testAndRestore('[1:2, 1:2]')
 
     cGenData@geno[2:1, ] <- replacement[2:1, ]
     comparison[2:1, ] <- replacement[2:1, ]
-    testAndRestore()
+    testAndRestore('[2:1, ]')
     cGenData@geno[, 2:1] <- replacement[, 2:1]
     comparison[, 2:1] <- replacement[, 2:1]
-    testAndRestore()
+    testAndRestore('[, 2:1]')
     cGenData@geno[2:1, 2:1] <- replacement[2:1, 2:1]
     comparison[2:1, 2:1] <- replacement[2:1, 2:1]
-    testAndRestore()
+    testAndRestore('[2:1, 2:1]')
 
     cGenData@geno[c(3, 1), ] <- replacement[c(3, 1), ]
     comparison[c(3, 1), ] <- replacement[c(3, 1), ]
-    testAndRestore()
+    testAndRestore('[c(3, 1), ]')
     cGenData@geno[, c(3, 1)] <- replacement[, c(3, 1)]
     comparison[, c(3, 1)] <- replacement[, c(3, 1)]
-    testAndRestore()
+    testAndRestore('[, c(3, 1)]')
     cGenData@geno[c(3, 1), c(3, 1)] <- replacement[c(3, 1), c(3, 1)]
     comparison[c(3, 1), c(3, 1)] <- replacement[c(3, 1), c(3, 1)]
-    testAndRestore()
+    testAndRestore('[c(3, 1), c(3, 1)]')
 
 })
 
