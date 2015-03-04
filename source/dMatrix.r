@@ -708,32 +708,32 @@ apply.DMatrix<-function(X,MARGIN,FUN,chunkSize=1e3,verbose=TRUE,...){
 setMethod("apply",signature("dMatrix"),apply.DMatrix)
 
 
-colMeans.DMatrix<-function(x,chunkSize=1e3,...){
-    ANS<-apply.DMatrix(X=x,MARGIN=2,FUN=mean,chunkSize=chunkSize,...)
+colMeans.DMatrix<-function(x,na.rm=FALSE,chunkSize=1e3,...){
+    ANS<-apply.DMatrix(X=x,MARGIN=2,FUN=mean,chunkSize=chunkSize,na.rm=na.rm,...)
     return(ANS)
 }
 
 setMethod("colMeans",signature("dMatrix"),colMeans.DMatrix)
 
 
-colSums.DMatrix<-function(x,chunkSize=1e3,...){
-    ANS<-apply.DMatrix(X=x,MARGIN=2,FUN=sum,chunkSize=chunkSize,...)
+colSums.DMatrix<-function(x,na.rm=FALSE,chunkSize=1e3,...){
+    ANS<-apply.DMatrix(X=x,MARGIN=2,FUN=sum,chunkSize=chunkSize,na.rm=na.rm,...)
     return(ANS)
 }
 
 setMethod("colSums",signature("dMatrix"),colSums.DMatrix)
 
 
-rowMeans.DMatrix<-function(x,chunkSize=1e3,...){
-    ANS<-apply.DMatrix(X=x,MARGIN=1,FUN=mean,chunkSize=chunkSize,...)
+rowMeans.DMatrix<-function(x,na.rm=FALSE,chunkSize=1e3,...){
+    ANS<-apply.DMatrix(X=x,MARGIN=1,FUN=mean,chunkSize=chunkSize,na.rm=na.rm,...)
     return(ANS)
 }
 
 setMethod("rowMeans",signature("dMatrix"),rowMeans.DMatrix)
 
 
-rowSums.DMatrix<-function(x,chunkSize=1e3,...){
-    ANS<-apply.DMatrix(X=x,MARGIN=1,FUN=sum,chunkSize=chunkSize,...)
+rowSums.DMatrix<-function(x,na.rm=FALSE,chunkSize=1e3,...){
+    ANS<-apply.DMatrix(X=x,MARGIN=1,FUN=sum,chunkSize=chunkSize,na.rm=na.rm,...)
     return(ANS)
 }
 
