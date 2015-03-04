@@ -169,6 +169,38 @@ test_that("replacement", {
 
 })
 
+test_that("apply", {
+
+    expect_equal(all.equal(colMeans(rGenData@geno), colMeans(genotypes)), TRUE)
+    expect_equal(all.equal(colSums(rGenData@geno), colSums(genotypes)), TRUE)
+    expect_equal(all.equal(rowMeans(rGenData@geno), rowMeans(genotypes)), TRUE)
+    expect_equal(all.equal(rowSums(rGenData@geno), rowSums(genotypes)), TRUE)
+
+    # Introduce NA
+    genotypes_na <- genotypes
+    genotypes_na[1,1] <- NA
+    rGenData@geno[1,1] <- NA
+
+    expect_warning(colMeans(rGenData@geno))
+    expect_warning(colSums(rGenData@geno))
+    expect_warning(rowMeans(rGenData@geno))
+    expect_warning(rowSums(rGenData@geno))
+
+    expect_equal(all.equal(colMeans(rGenData@geno, na.rm=FALSE), colMeans(genotypes_na, na.rm=FALSE)), TRUE)
+    expect_equal(all.equal(colSums(rGenData@geno, na.rm=FALSE), colSums(genotypes_na, na.rm=FALSE)), TRUE)
+    expect_equal(all.equal(rowMeans(rGenData@geno, na.rm=FALSE), rowMeans(genotypes_na, na.rm=FALSE)), TRUE)
+    expect_equal(all.equal(rowSums(rGenData@geno, na.rm=FALSE), rowSums(genotypes_na, na.rm=FALSE)), TRUE)
+
+    expect_equal(all.equal(colMeans(rGenData@geno, na.rm=TRUE), colMeans(genotypes_na, na.rm=TRUE)), TRUE)
+    expect_equal(all.equal(colSums(rGenData@geno, na.rm=TRUE), colSums(genotypes_na, na.rm=TRUE)), TRUE)
+    expect_equal(all.equal(rowMeans(rGenData@geno, na.rm=TRUE), rowMeans(genotypes_na, na.rm=TRUE)), TRUE)
+    expect_equal(all.equal(rowSums(rGenData@geno, na.rm=TRUE), rowSums(genotypes_na, na.rm=TRUE)), TRUE)
+
+    # Revert NA
+    rGenData@geno[] <- genotypes
+
+})
+
 
 #####
 context("cDMatrix")
@@ -307,5 +339,37 @@ test_that("replacement", {
     cGenData@geno[c(3, 1), c(3, 1)] <- replacement[c(3, 1), c(3, 1)]
     comparison[c(3, 1), c(3, 1)] <- replacement[c(3, 1), c(3, 1)]
     testAndRestore()
+
+})
+
+test_that("apply", {
+
+    expect_equal(all.equal(colMeans(cGenData@geno), colMeans(genotypes)), TRUE)
+    expect_equal(all.equal(colSums(cGenData@geno), colSums(genotypes)), TRUE)
+    expect_equal(all.equal(rowMeans(cGenData@geno), rowMeans(genotypes)), TRUE)
+    expect_equal(all.equal(rowSums(cGenData@geno), rowSums(genotypes)), TRUE)
+
+    # Introduce NA
+    genotypes_na <- genotypes
+    genotypes_na[1,1] <- NA
+    cGenData@geno[1,1] <- NA
+
+    expect_warning(colMeans(cGenData@geno))
+    expect_warning(colSums(cGenData@geno))
+    expect_warning(rowMeans(cGenData@geno))
+    expect_warning(rowSums(cGenData@geno))
+
+    expect_equal(all.equal(colMeans(cGenData@geno, na.rm=FALSE), colMeans(genotypes_na, na.rm=FALSE)), TRUE)
+    expect_equal(all.equal(colSums(cGenData@geno, na.rm=FALSE), colSums(genotypes_na, na.rm=FALSE)), TRUE)
+    expect_equal(all.equal(rowMeans(cGenData@geno, na.rm=FALSE), rowMeans(genotypes_na, na.rm=FALSE)), TRUE)
+    expect_equal(all.equal(rowSums(cGenData@geno, na.rm=FALSE), rowSums(genotypes_na, na.rm=FALSE)), TRUE)
+
+    expect_equal(all.equal(colMeans(cGenData@geno, na.rm=TRUE), colMeans(genotypes_na, na.rm=TRUE)), TRUE)
+    expect_equal(all.equal(colSums(cGenData@geno, na.rm=TRUE), colSums(genotypes_na, na.rm=TRUE)), TRUE)
+    expect_equal(all.equal(rowMeans(cGenData@geno, na.rm=TRUE), rowMeans(genotypes_na, na.rm=TRUE)), TRUE)
+    expect_equal(all.equal(rowSums(cGenData@geno, na.rm=TRUE), rowSums(genotypes_na, na.rm=TRUE)), TRUE)
+
+    # Revert NA
+    cGenData@geno[] <- genotypes
 
 })
