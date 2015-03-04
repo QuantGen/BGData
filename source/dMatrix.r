@@ -943,7 +943,7 @@ getG<-function(x,nChunks=3,scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,i=1:nrow(x),j=
         end<-min(p,end+delta-1)
         if(verbose){
             cat("Submatrix: ",k," (out of",nChunks,")\n");
-            cat("  =>Aquiring genotypes...\n")
+            cat("  =>Acquiring genotypes...\n")
         }
        
         # subset
