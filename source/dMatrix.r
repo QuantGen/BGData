@@ -702,7 +702,7 @@ apply.DMatrix<-function(X,MARGIN,FUN,chunkSize=1e3,verbose=TRUE,...){
 		}    		
     	}
     }
-    return(ANS)
+    return(ANS[,,drop=TRUE])
 }
 setMethod("apply",signature("rDMatrix"),apply.DMatrix)
 setMethod("apply",signature("cDMatrix"),apply.DMatrix)
