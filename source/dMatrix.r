@@ -728,44 +728,52 @@ apply.DMatrix<-function(X,MARGIN,FUN,chunkSize=1e3,verbose=TRUE,...){
     }
     return(ANS[,,drop=TRUE])
 }
-setMethod("apply",signature("rDMatrix"),apply.DMatrix)
-setMethod("apply",signature("cDMatrix"),apply.DMatrix)
+setMethod("apply",signature("dMatrix"),apply.DMatrix)
 
 
-colMeans.DMatrix<-function(x,chunkSize=1e3,...){
-    ANS<-apply.DMatrix(X=x,MARGIN=2,FUN=mean,chunkSize=chunkSize,...)
+colMeans.DMatrix<-function(x,na.rm=TRUE,chunkSize=1e3,...){
+    if(na.rm){
+        warning('Ignoring missing values')
+    }
+    ANS<-apply.DMatrix(X=x,MARGIN=2,FUN=mean,chunkSize=chunkSize,na.rm=na.rm,...)
     return(ANS)
 }
 
-setMethod("colMeans",signature("rDMatrix"),colMeans.DMatrix)
-setMethod("colMeans",signature("cDMatrix"),colMeans.DMatrix)
+setMethod("colMeans",signature("dMatrix"),colMeans.DMatrix)
 
 
-colSums.DMatrix<-function(x,chunkSize=1e3,...){
-    ANS<-apply.DMatrix(X=x,MARGIN=2,FUN=sum,chunkSize=chunkSize,...)
+colSums.DMatrix<-function(x,na.rm=TRUE,chunkSize=1e3,...){
+    if(na.rm){
+        warning('Ignoring missing values')
+    }
+    ANS<-apply.DMatrix(X=x,MARGIN=2,FUN=sum,chunkSize=chunkSize,na.rm=na.rm,...)
     return(ANS)
 }
 
-setMethod("colSums",signature("rDMatrix"),colSums.DMatrix)
-setMethod("colSums",signature("cDMatrix"),colSums.DMatrix)
+setMethod("colSums",signature("dMatrix"),colSums.DMatrix)
 
 
-rowMeans.DMatrix<-function(x,chunkSize=1e3,...){
-    ANS<-apply.DMatrix(X=x,MARGIN=1,FUN=mean,chunkSize=chunkSize,...)
+rowMeans.DMatrix<-function(x,na.rm=TRUE,chunkSize=1e3,...){
+    if(na.rm){
+        warning('Ignoring missing values')
+    }
+    ANS<-apply.DMatrix(X=x,MARGIN=1,FUN=mean,chunkSize=chunkSize,na.rm=na.rm,...)
     return(ANS)
 }
 
-setMethod("rowMeans",signature("rDMatrix"),rowMeans.DMatrix)
-setMethod("rowMeans",signature("cDMatrix"),rowMeans.DMatrix)
+setMethod("rowMeans",signature("dMatrix"),rowMeans.DMatrix)
 
 
-rowSums.DMatrix<-function(x,chunkSize=1e3,...){
-    ANS<-apply.DMatrix(X=x,MARGIN=1,FUN=sum,chunkSize=chunkSize,...)
+rowSums.DMatrix<-function(x,na.rm=TRUE,chunkSize=1e3,...){
+    if(na.rm){
+        warning('Ignoring missing values')
+    }
+    ANS<-apply.DMatrix(X=x,MARGIN=1,FUN=sum,chunkSize=chunkSize,na.rm=na.rm,...)
     return(ANS)
 }
 
-setMethod("rowSums",signature("rDMatrix"),rowSums.DMatrix)
-setMethod("rowSums",signature("cDMatrix"),rowSums.DMatrix)
+setMethod("rowSums",signature("dMatrix"),rowSums.DMatrix)
+
 
 summary.num<-function(x){
     out<-c(range(x,na.rm=T),mean(x,na.rm=T),sd(x,na.rm=T),mean(is.na(x)))
@@ -794,8 +802,7 @@ summary.DMatrix<-function(object,MARGIN=2,chunkSize=1e3,...){
     return(ANS)
 }
 
-setMethod("summary",signature("rDMatrix"),summary.DMatrix)
-setMethod("summary",signature("cDMatrix"),summary.DMatrix)
+setMethod("summary",signature("dMatrix"),summary.DMatrix)
 
 
 ## Example: GWAS using function lm
