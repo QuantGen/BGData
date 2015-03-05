@@ -32,6 +32,30 @@ setClassUnion('geno',c('dMatrix','matrix','ff_matrix'))
 # Defiens the class genData the object has three slots:
 genData<-setClass('genData',slots=c(pheno='data.frame',map='data.frame',geno='geno'))
 
+setMethod('initialize','genData',function(.Object,geno,pheno,map){
+    if(!is(geno,'geno')){
+        stop("Only dMatrix, ff_matrix, or regular matrix objects are allowed for geno.")
+    }
+    if(is.null(colnames(geno))){
+        colnames(geno)<-paste0('mrk_',1:ncol(geno))
+    }
+    if(is.null(rownames(geno))){
+        rownames(geno)<-paste0('id_',1:nrow(geno))
+    }
+    if(missing(pheno)){
+        pheno<-data.frame(IID=rownames(geno))
+        rownames(pheno)<-rownames(geno)
+    }
+    if(missing(map)){
+        map<-data.frame(mrk=colnames(geno))
+        rownames(map)<-colnames(geno)
+    }
+    .Object@geno<-geno
+    .Object@pheno<-pheno
+    .Object@map<-map
+    return(.Object)
+})
+
 
 ## Defines method dim() (extract # of rows and number of columns) of an object getnosFF ##
 dim.cDMatrix<-function(x){
@@ -555,11 +579,10 @@ setGenData<-function(fileIn,header,dataType,distributed.by='columns',n=NULL,p=NU
 	
 	pheno<-as.data.frame(pheno,stringsAsFactors=FALSE)
 	pheno[]<-lapply(pheno,type.convert,as.is=TRUE)
-	map<-data.frame(mrk=mrkNames,maf=as.numeric(NA),freqNA=as.numeric(NA),stringsAsFactors=FALSE)
 	
 	geno<-new(ifelse(distributed.by=='columns','cDMatrix','rDMatrix'),genosList)
 
-	genData<-new('genData',geno=geno,map=map,pheno=pheno)
+	genData<-new('genData',geno=geno,pheno=pheno)
 
     attr(genData,'origFile')<-list(path=fileIn,dataType=dataType)
     attr(genData,'dateCreated')<-date()
