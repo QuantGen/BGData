@@ -1,11 +1,18 @@
 ## Defines a classes cDMatrix & rDMatrix ###############################################################
 # The class inherits from list, each element of thea list is an FF object
 # cDMatrix splits the matrix by columns, rDMatrix by rows
+
+#' @export
 cDMatrix<-setClass('cDMatrix',contains='list')
+
+#' @export
 rDMatrix<-setClass('rDMatrix',contains='list')
+
 setClassUnion('dMatrix',c('cDMatrix','rDMatrix'))
 
 # Make sure that dMatrix only accepts lists of ff_matrix objects.
+
+#' @export
 setMethod('initialize','dMatrix',function(.Object,list){
     if(!all(as.logical(lapply(list,inherits,what='ff_matrix')))){
         stop("Only lists of ff_matrix objects are allowed.")
@@ -19,8 +26,11 @@ setClassUnion('geno',c('dMatrix','matrix','ff_matrix'))
 
 ## Idea we can define in the future a class for a collection of rDMatrices or cDMatrices (dDatabase)
 # Defiens the class genData the object has three slots:
+
+#' @export
 genData<-setClass('genData',slots=c(pheno='data.frame',map='data.frame',geno='geno'))
 
+#' @export
 setMethod('initialize','genData',function(.Object,geno,pheno,map){
     if(!is(geno,'geno')){
         stop("Only dMatrix, ff_matrix, or regular matrix objects are allowed for geno.")
@@ -66,11 +76,18 @@ dim.rDMatrix<-function(x){
 }
 
  # sets method dim for cDMatrix and rDMatrix objects
- setMethod("dim",signature("cDMatrix"),dim.cDMatrix)
- setMethod("dim",signature("rDMatrix"),dim.rDMatrix)
+
+#' @export
+setMethod("dim",signature("cDMatrix"),dim.cDMatrix)
+
+#' @export
+setMethod("dim",signature("rDMatrix"),dim.rDMatrix)
+
 ## end of dim ############################################################################
 
 ## chunks: returns which columns are contained in each chunk of a cDMatrix or rDMatrix object ##########
+
+#' @export
 chunks<-function(x){
     if(class(x)=='cDMatrix'){
         n<-length(x)
@@ -133,10 +150,18 @@ set.colnames.rDMatrix<-function(x,value){
     x
 }
 
+#' @export
 setMethod("colnames",signature("cDMatrix"),get.colnames.cDMatrix)
+
+#' @export
 setMethod("colnames<-",signature("cDMatrix"),set.colnames.cDMatrix)
+
+#' @export
 setMethod("colnames",signature("rDMatrix"),get.colnames.rDMatrix)
+
+#' @export
 setMethod("colnames<-",signature("rDMatrix"),set.colnames.rDMatrix)
+
 ## end of colnames #######################################################################
 
 ## rownames method for cDMatrix and rDMatrix ##########################################################
@@ -173,10 +198,18 @@ set.rownames.rDMatrix<-function(x,value){
     x
 }
 
+#' @export
 setMethod("rownames",signature("cDMatrix"),get.rownames.cDMatrix)
+
+#' @export
 setMethod("rownames<-",signature("cDMatrix"),set.rownames.cDMatrix)
+
+#' @export
 setMethod("rownames",signature("rDMatrix"),get.rownames.rDMatrix)
+
+#' @export
 setMethod("rownames<-",signature("rDMatrix"),set.rownames.rDMatrix)
+
 # end of rownames ########################################################################
 
 ## dimnames method for cDMatrix and rDMatrix ##########################################################
@@ -184,7 +217,9 @@ get.dimnames<-function(x){
     list(rownames(x), colnames(x))
 }
 
+#' @export
 setMethod("dimnames",signature("dMatrix"),get.dimnames)
+
 # end of dimnames ########################################################################
 
 ## finds the position of a set of columns in an object cDMatrix ###########################
@@ -312,20 +347,29 @@ replace.cDMatrix<-function(x,i=1:nrow(x),j=1:ncol(x),...,value){
 #    x
 #}
 
+#' @export
 setMethod("[",signature(x="cDMatrix",i="ANY",j="ANY",drop="ANY"),subset.cDMatrix)
+
+#' @export
 setMethod("[",signature(x="cDMatrix",i="ANY",j="missing",drop="ANY"),function(x,i,drop){
     j<-1:ncol(x)
     subset.cDMatrix(x,i,j,drop)
 })
+
+#' @export
 setMethod("[",signature(x="cDMatrix",i="missing",j="ANY",drop="ANY"),function(x,j,drop) {
     i<-1:nrow(x)
     subset.cDMatrix(x,i,j,drop)
 })
+
+#' @export
 setMethod("[",signature(x="cDMatrix",i="missing",j="missing",drop="ANY"),function(x,drop) {
     i<-1:nrow(x)
     j<-1:ncol(x)
     subset.cDMatrix(x,i,j,drop)
 })
+
+#' @export
 setReplaceMethod("[",signature("cDMatrix"),replace.cDMatrix)
  
 ## end of indexing cDMatrix #################################################################### 
@@ -393,20 +437,30 @@ replace.rDMatrix<-function(x,i=1:nrow(x),j=1:ncol(x),...,value){
 	return(x)
 }
 
+
+#' @export
 setMethod("[",signature(x="rDMatrix",i="ANY",j="ANY",drop="ANY"),subset.rDMatrix)
+
+#' @export
 setMethod("[",signature(x="rDMatrix",i="ANY",j="missing",drop="ANY"),function(x,i,drop){
     j<-1:ncol(x)
     subset.rDMatrix(x,i,j,drop)
 })
+
+#' @export
 setMethod("[",signature(x="rDMatrix",i="missing",j="ANY",drop="ANY"),function(x,j,drop) {
     i<-1:nrow(x)
     subset.rDMatrix(x,i,j,drop)
 })
+
+#' @export
 setMethod("[",signature(x="rDMatrix",i="missing",j="missing",drop="ANY"),function(x,drop) {
     i<-1:nrow(x)
     j<-1:ncol(x)
     subset.rDMatrix(x,i,j,drop)
 })
+
+#' @export
 setReplaceMethod("[",signature("rDMatrix"),replace.rDMatrix)
 
 ## end of indexing cDMatrix #################################################################### 
@@ -414,6 +468,7 @@ setReplaceMethod("[",signature("rDMatrix"),replace.rDMatrix)
 
 ## Creates and rDMatrix or cDMatrix from a ped file
 
+#' @export
 setGenData<-function(fileIn,header,dataType,distributed.by='columns',n=NULL,p=NULL,
                     folderOut=paste('genData_',sub("\\.[[:alnum:]]+$","",basename(fileIn)),sep=''),
                     returnData=TRUE,na.strings='NA',nColSkip=6,idCol=2,verbose=FALSE,nChunks=NULL,
@@ -584,6 +639,7 @@ setGenData<-function(fileIn,header,dataType,distributed.by='columns',n=NULL,p=NU
     if(returnData){ return(genData) }
 }
 
+#' @export
 loadGenData<-function(path,envir=.GlobalEnv){
     ##
     # Use: to load a genData object using the name of the folder where the meta-data and data are stored.
@@ -610,8 +666,9 @@ loadGenData<-function(path,envir=.GlobalEnv){
     # Restore working directory
     setwd(cwd)
 }
- 
- 
+
+
+#' @export
 load2<-function(file,envir=parent.frame(),verbose=TRUE){
     	##
     	# Function to load genData or dMatrix objects
@@ -716,6 +773,8 @@ apply.DMatrix<-function(X,MARGIN,FUN,chunkSize=1e3,verbose=TRUE,...){
     }
     return(ANS[,,drop=TRUE])
 }
+
+#' @export
 setMethod("apply",signature("dMatrix"),apply.DMatrix)
 
 
@@ -727,6 +786,7 @@ colMeans.DMatrix<-function(x,na.rm=TRUE,chunkSize=1e3,...){
     return(ANS)
 }
 
+#' @export
 setMethod("colMeans",signature("dMatrix"),colMeans.DMatrix)
 
 
@@ -738,6 +798,7 @@ colSums.DMatrix<-function(x,na.rm=TRUE,chunkSize=1e3,...){
     return(ANS)
 }
 
+#' @export
 setMethod("colSums",signature("dMatrix"),colSums.DMatrix)
 
 
@@ -749,6 +810,7 @@ rowMeans.DMatrix<-function(x,na.rm=TRUE,chunkSize=1e3,...){
     return(ANS)
 }
 
+#' @export
 setMethod("rowMeans",signature("dMatrix"),rowMeans.DMatrix)
 
 
@@ -760,6 +822,7 @@ rowSums.DMatrix<-function(x,na.rm=TRUE,chunkSize=1e3,...){
     return(ANS)
 }
 
+#' @export
 setMethod("rowSums",signature("dMatrix"),rowSums.DMatrix)
 
 
@@ -790,11 +853,13 @@ summary.DMatrix<-function(object,MARGIN=2,chunkSize=1e3,...){
     return(ANS)
 }
 
+#' @export
 setMethod("summary",signature("dMatrix"),summary.DMatrix)
 
 
 ## Example: GWAS using function lm
 
+#' @export
 GWAS<-function(formula,data,method,plot=FALSE,verbose=FALSE,min.pValue=1e-10,chunkSize=10,...){
         ##
         # formula: the formula for the GWAS model without including the marker, e.g., y~1 or y~factor(sex)+age
@@ -922,6 +987,7 @@ GWAS.ols<-function(formula,data,plot=FALSE,verbose=FALSE,min.pValue=1e-10,chunkS
 }
 
 
+#' @export
 getG<-function(x,nChunks=3,scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,i=1:nrow(x),j=1:ncol(x),minVar=1e-5){
     ###
     # Computes a genomic relationship matrix G=XX'
@@ -996,6 +1062,8 @@ getG<-function(x,nChunks=3,scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,i=1:nrow(x),j=
 
 
 ##  Utils
+
+#' @export
 simPED<-function(filename,n,p,genoChars=1:4,na.string=0,propNA=.02,returnGenos=FALSE){
     if(file.exists(filename)){
         stop(paste('File',filename,'already exists. Please move it or pick a different name.'))
