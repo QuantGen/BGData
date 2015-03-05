@@ -1,6 +1,3 @@
-# Load dependencies
-library(ff)
-
 ## Defines a classes cDMatrix & rDMatrix ###############################################################
 # The class inherits from list, each element of thea list is an FF object
 # cDMatrix splits the matrix by columns, rDMatrix by rows
