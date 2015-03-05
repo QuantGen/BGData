@@ -1,4 +1,4 @@
-library(testthat)
+library(dMatrix)
 
 context("dMatrix")
 

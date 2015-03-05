@@ -12,5 +12,6 @@ Depends:
     R (>= 3.1.2),
     ff
 Suggests:
+    testthat,
     lme4
 LazyData: true
