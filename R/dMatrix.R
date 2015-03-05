@@ -184,8 +184,7 @@ get.dimnames<-function(x){
     list(rownames(x), colnames(x))
 }
 
-setMethod("dimnames",signature("cDMatrix"),get.dimnames)
-setMethod("dimnames",signature("rDMatrix"),get.dimnames)
+setMethod("dimnames",signature("dMatrix"),get.dimnames)
 # end of dimnames ########################################################################
 
 ## finds the position of a set of columns in an object cDMatrix ###########################
