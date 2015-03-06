@@ -10,11 +10,10 @@ rDMatrix<-setClass('rDMatrix',contains='list')
 
 setClassUnion('dMatrix',c('cDMatrix','rDMatrix'))
 
-# Make sure that dMatrix only accepts lists of ff_matrix objects.
-
 #' @export
 setMethod('initialize','dMatrix',function(.Object,list){
-    if(!all(as.logical(lapply(list,inherits,what='ff_matrix')))){
+    # Make sure that dMatrix only accepts lists of ff_matrix objects.
+    if(!all(as.logical(lapply(list,is,'ff_matrix')))){
         stop("Only lists of ff_matrix objects are allowed.")
     }
     .Object<-callNextMethod(.Object,list)
