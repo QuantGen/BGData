@@ -143,8 +143,16 @@ setMethod("dim",signature("rDMatrix"),dim.rDMatrix)
 
 ## end of dim ############################################################################
 
-## chunks: returns which columns are contained in each chunk of a cDMatrix or rDMatrix object ##########
 
+#' Provides information about how data is distributed into binary files.
+#' 
+#' Row-distributed (rDMatrix) and column-distributed matrices (cDMatrix) have 
+#' the content of the array mapped to possibly multiple binary files. Each chunk
+#' is an ff_matrix object. chunks() gives, for each chunk, the row or column 
+#' indexes at which each chunk start and ends.
+#' 
+#' @param x Either an rDMatrix or a cDMatrix object
+#' @return A matrix with information per chunk in rows.
 #' @export
 chunks<-function(x){
     if(class(x)=='cDMatrix'){
