@@ -324,29 +324,6 @@ subset.cDMatrix<-function(x,i,j,drop){
         }
  }
 
-
-replace.cDMatrix<-function(x,i=1:nrow(x),j=1:ncol(x),...,value){
-	Z<-matrix(nrow=length(i),ncol=length(j),data=value)
-	CHUNKS<-chunks(x)
-	for(k in 1:nrow(CHUNKS) ){
-		col_z<-(j>=CHUNKS[k,2])&(j<=CHUNKS[k,3])
-		colLocal<-colindexes(x,j[col_z])[,3]
-		x[[k]][i,colLocal]<-Z[,col_z]
-	}  
-	return(x)
-}
-
-#replace.cDMatrix<-function(x,i=(1:nrow(x)),j=(1:ncol(x)),...,value){
-#    indices<-colindexes(x,j)
-#    for(k in 1:nrow(indices)){
-#        index<-indices[k,]
-#        chunk<-index[1]
-#        col<-index[3]
-#        x[[chunk]][i,col]<-value
-#    }
-#    x
-#}
-
 #' @export
 setMethod("[",signature(x="cDMatrix",i="ANY",j="ANY",drop="ANY"),subset.cDMatrix)
 
@@ -369,8 +346,39 @@ setMethod("[",signature(x="cDMatrix",i="missing",j="missing",drop="ANY"),functio
     subset.cDMatrix(x,i,j,drop)
 })
 
+
+replace.cDMatrix<-function(x,i,j,...,value){
+    Z<-matrix(nrow=length(i),ncol=length(j),data=value)
+    CHUNKS<-chunks(x)
+    for(k in 1:nrow(CHUNKS) ){
+        col_z<-(j>=CHUNKS[k,2])&(j<=CHUNKS[k,3])
+        colLocal<-colindexes(x,j[col_z])[,3]
+        x[[k]][i,colLocal]<-Z[,col_z]
+    }
+    return(x)
+}
+
 #' @export
-setReplaceMethod("[",signature("cDMatrix"),replace.cDMatrix)
+setReplaceMethod("[",signature(x="cDMatrix",i="ANY",j="ANY",value="ANY"),replace.cDMatrix)
+
+#' @export
+setReplaceMethod("[",signature(x="cDMatrix",i="ANY",j="missing",value="ANY"),function(x,i,value){
+    j<-1:ncol(x)
+    replace.cDMatrix(x,i,j,value=value)
+})
+
+#' @export
+setReplaceMethod("[",signature(x="cDMatrix",i="missing",j="ANY",value="ANY"),function(x,j,value) {
+    i<-1:nrow(x)
+    replace.cDMatrix(x,i,j,value=value)
+})
+
+#' @export
+setReplaceMethod("[",signature(x="cDMatrix",i="missing",j="missing",value="ANY"),function(x,value) {
+    i<-1:nrow(x)
+    j<-1:ncol(x)
+    replace.cDMatrix(x,i,j,value=value)
+})
  
 ## end of indexing cDMatrix #################################################################### 
 
@@ -425,19 +433,6 @@ subset.rDMatrix<-function(x,i,j,drop){
         }
  }
 
-
-replace.rDMatrix<-function(x,i=1:nrow(x),j=1:ncol(x),...,value){ 
-	Z<-matrix(nrow=length(i),ncol=length(j),data=value)
-	CHUNKS<-chunks(x)
-	for(k in 1:nrow(CHUNKS) ){
-		rows_z<-(i>=CHUNKS[k,2])&(i<=CHUNKS[k,3])
-		rowLocal<-rowindexes(x,i[rows_z])[,3]
-		x[[k]][rowLocal,j]<-Z[rows_z,]
-	}  
-	return(x)
-}
-
-
 #' @export
 setMethod("[",signature(x="rDMatrix",i="ANY",j="ANY",drop="ANY"),subset.rDMatrix)
 
@@ -460,8 +455,39 @@ setMethod("[",signature(x="rDMatrix",i="missing",j="missing",drop="ANY"),functio
     subset.rDMatrix(x,i,j,drop)
 })
 
+
+replace.rDMatrix<-function(x,i,j,...,value){
+    Z<-matrix(nrow=length(i),ncol=length(j),data=value)
+    CHUNKS<-chunks(x)
+    for(k in 1:nrow(CHUNKS) ){
+        rows_z<-(i>=CHUNKS[k,2])&(i<=CHUNKS[k,3])
+        rowLocal<-rowindexes(x,i[rows_z])[,3]
+        x[[k]][rowLocal,j]<-Z[rows_z,]
+    }
+    return(x)
+}
+
 #' @export
-setReplaceMethod("[",signature("rDMatrix"),replace.rDMatrix)
+setReplaceMethod("[",signature(x="rDMatrix",i="ANY",j="ANY",value="ANY"),replace.rDMatrix)
+
+#' @export
+setReplaceMethod("[",signature(x="rDMatrix",i="ANY",j="missing",value="ANY"),function(x,i,value){
+    j<-1:ncol(x)
+    replace.rDMatrix(x,i,j,value=value)
+})
+
+#' @export
+setReplaceMethod("[",signature(x="rDMatrix",i="missing",j="ANY",value="ANY"),function(x,j,value) {
+    i<-1:nrow(x)
+    replace.rDMatrix(x,i,j,value=value)
+})
+
+#' @export
+setReplaceMethod("[",signature(x="rDMatrix",i="missing",j="missing",value="ANY"),function(x,value) {
+    i<-1:nrow(x)
+    j<-1:ncol(x)
+    replace.rDMatrix(x,i,j,value=value)
+})
 
 ## end of indexing cDMatrix #################################################################### 
 
