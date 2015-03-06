@@ -558,28 +558,51 @@ setReplaceMethod("[",signature(x="rDMatrix",i="missing",j="missing",value="ANY")
 ## end of indexing cDMatrix #################################################################### 
 
 
-## Creates and rDMatrix or cDMatrix from a ped file
-
+#' Creates a genData object from a plaintext file.
+#' 
+#' setGenData assumes that the plaintext file (fileIn) contains records of
+#' individuals in rows, and phenotypes, covariates and markers in columns. The
+#' columns included in columns 1:nColSkip are used to populate the slot @@pheno
+#' of a genData object, and the remaining columns are used to fill the slot
+#' @@geno. If the first row contains a header (header=TRUE), data in this row is
+#' used to determine variables names for @@pheno and marker names for @@map and
+#' @@geno. Genotypes are stored in a distributed matrix (dMatrix). By default a 
+#' column-distributed (cDMatrix) is used for @@geno, but the user can modify 
+#' this using the distributed.by argument. The number of chunks is either 
+#' specified by the user (use nChunks when calling setGenData) or determined 
+#' internally so that each ff_matrix object has a number of cells that is 
+#' smaller than .Machine$integer.max/1.2. setGenData creates a folder (see 
+#' folderOut, above) that contains the binary flat files (geno_*.bin) and the 
+#' genData object (typically named genData.RData. Optionally (if
+#' returnData=TRUE) it returns the genData object to the environment. The
+#' filename of the ff_matrix objects are saved as relative names. Therefore, to
+#' be able to access the content of the data included in @@geno the working
+#' directory must either be the folder where these files are saved (see
+#' folderOut above) or the object must be loaded using the loadGenData()
+#' function included in the package.
+#' 
+#' @param fileIn The path to the plaintext file.
+#' @param header If TRUE, the file contains a header.
+#' @param dataType The coding of genotypes. Use 'character' for A/C/G/T or 'integer' for numeric coding.
+#' @param distributed.by If columns a column-distributed matrix (cDMatrix) is created, if rows a row-distributed matrix (rDMatrix).
+#' @param n The number of individuals.
+#' @param p The number of markers.
+#' @param folderOut The path to the folder where to save the binary files.
+#' @param returnData If TRUE, the function returns a genData object.
+#' @param na.strings The character string use to denote missing value.
+#' @param nColSkip The number of columns to be skipped to reach the genotype information in the file.
+#' @param idCol The index of the ID column.
+#' @param verbose If TRUE, progress updates will be posted.
+#' @param nChunks The number of chunks to create.
+#' @param dimorder The physical layout of the chunks.
+#' @return If returnData is TRUE, a genData object with slots @@geno (of type
+#'   dMatrix), @@pheno (of type data.frame) and @@map (of type data.frame) is
+#'   returned
 #' @export
 setGenData<-function(fileIn,header,dataType,distributed.by='columns',n=NULL,p=NULL,
                     folderOut=paste('genData_',sub("\\.[[:alnum:]]+$","",basename(fileIn)),sep=''),
                     returnData=TRUE,na.strings='NA',nColSkip=6,idCol=2,verbose=FALSE,nChunks=NULL,
                     dimorder=if(distributed.by=='rows') 2:1 else 1:2){
-        ###
-        # Use: creates (returns, saves or both) a genData object from an ASCII file
-        # fileIn (character): the name of the ped file.
-        # n (integer): the number of individuals.
-        # dataType : the coding of genotypes, use 'character' for A/C/G/T or 'integer' for numeric coding.
-        #            if type='numeric' vmode needs must be 'double'.
-        # folderOut (charater): the name of the folder where to save the binary files.
-        #                     NOTE: associated to this file there will be files containing the acutal data genos_*.bin
-        # returnData (logical): if TRUE the function returns a list with genotypes (X), MAP file and subject information (phenos)
-        # header (logical): TRUE if the 1st line of the ped file is a header
-        # na.strings (character): the character string use to denote missing value.
-        # nColSkip (integer): the number of columsn to be skipped.
-        # idCol (integer): the column that contains the subject ID
-        # Requires: package ff
-        ###
 
     if(file.exists(folderOut)){
         stop(paste('Output folder',folderOut,'already exists. Please move it or pick a different one.'))
