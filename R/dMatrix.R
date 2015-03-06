@@ -2,10 +2,12 @@
 # The class inherits from list, each element of thea list is an FF object
 # cDMatrix splits the matrix by columns, rDMatrix by rows
 
-#' @export
+#' @export cDMatrix
+#' @exportClass cDMatrix
 cDMatrix<-setClass('cDMatrix',contains='list')
 
-#' @export
+#' @export rDMatrix
+#' @exportClass rDMatrix
 rDMatrix<-setClass('rDMatrix',contains='list')
 
 setClassUnion('dMatrix',c('cDMatrix','rDMatrix'))
@@ -27,7 +29,8 @@ setClassUnion('geno',c('dMatrix','matrix','ff_matrix'))
 ## Idea we can define in the future a class for a collection of rDMatrices or cDMatrices (dDatabase)
 # Defiens the class genData the object has three slots:
 
-#' @export
+#' @export genData
+#' @exportClass genData
 genData<-setClass('genData',slots=c(pheno='data.frame',map='data.frame',geno='geno'))
 
 #' @export
