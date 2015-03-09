@@ -884,16 +884,29 @@ summary.DMatrix<-function(object,MARGIN=2,chunkSize=1e3,...){
 setMethod("summary",signature("dMatrix"),summary.DMatrix)
 
 
-## Example: GWAS using function lm
-
+#' Conducts an association study (GWAS) using a genData object.
+#' 
+#' This function conducts an association test using the formula provided by the 
+#' user (see formula above) plus one column of @@geno, one column at a time. The
+#' data from the association tests is obtained from a genData object.
+#' 
+#' @param formula A formula (e.g. weight~sex+age) with the response on the 
+#'   left-hand side and predictors (all the covariates except the markers) on 
+#'   the right-hand side. The variables included in the formula must be in the 
+#'   @@pheno object of the genData.
+#' @param data A genData object.
+#' @param method The regression method to be used. Currently, the following 
+#'   methods are implemented: lm, lm.fit, lsfit, glm and lmer.
+#' @param plot If TRUE a Manhattan plot is produced and filled with points as 
+#'   the association tests are run.
+#' @param verbose If TRUE more messages are printed.
+#' @param min.pValue Numeric, the minimum p-value expected, used to determine 
+#'   the limits of the vertical axis of the Manhattan plot.
+#' @param chunkSize Represents the number of columns of @@geno that are brought 
+#'   into RAM for processing (10 by default).
+#' @return Returns a matrix with estimates, SE, p-value, etc.
 #' @export
 GWAS<-function(formula,data,method,plot=FALSE,verbose=FALSE,min.pValue=1e-10,chunkSize=10,...){
-        ##
-        # formula: the formula for the GWAS model without including the marker, e.g., y~1 or y~factor(sex)+age
-        # all the variables in the formula must be in data@pheno
-        # data (genData) containing slots @pheno and @geno
-        # method: a descritpion of the regression method (e.g.,lm, glm...)
-        ##
         if(class(data)!='genData'){ stop('data must genData')}
         
         if(!method%in%c('lm','lm.fit','lsfit','glm','lmer')){
