@@ -13,14 +13,56 @@ rDMatrix<-setClass('rDMatrix',contains='list')
 setClassUnion('dMatrix',c('cDMatrix','rDMatrix'))
 
 #' @export
-setMethod('initialize','dMatrix',function(.Object,list){
-    # Make sure that dMatrix only accepts lists of ff_matrix objects.
-    if(!all(as.logical(lapply(list,is,'ff_matrix')))){
-        stop("Only lists of ff_matrix objects are allowed.")
+setMethod('initialize','cDMatrix',function(.Object,nrow=1,ncol=1,vmode='byte',folderOut=tempdir(),nChunks=NULL,dimorder=c(2,1)){
+    if(is.null(nChunks)){
+        chunkSize<-min(nrow,floor(.Machine$integer.max/ncol/1.2))
+        nChunks<-ceiling(nrow/chunkSize)
+    }else{
+        chunkSize<-ceiling(ncol/nChunks)
+        if(chunkSize*nrow >= .Machine$integer.max/1.2){
+            stop('More chunks are needed')
+        }
     }
-    .Object<-callNextMethod(.Object,list)
+    ffList<-list()
+    end<-0
+    for(i in 1:nChunks){
+        ini<-end+1
+        end<-min(ncol,ini+chunkSize-1)
+        filename=paste0('geno_',i,'.bin')
+        ffList[[i]]<-ff(vmode=vmode,dim=c(nrow,(end-ini+1)),dimorder=dimorder,filename=paste0(folderOut,'/',filename))
+        # Change ff path to a relative one
+        physical(ffList[[i]])$pattern<-'ff'
+        physical(ffList[[i]])$filename<-filename
+    }
+    .Object<-callNextMethod(.Object,ffList)
     return(.Object)
 })
+
+#' @export
+setMethod('initialize','rDMatrix',function(.Object,nrow=1,ncol=1,vmode='byte',folderOut=tempdir(),nChunks=NULL,dimorder=c(2,1)){
+    if(is.null(nChunks)){
+        chunkSize<-min(ncol,floor(.Machine$integer.max/nrow/1.2))
+        nChunks<-ceiling(ncol/chunkSize)
+    }else{
+        chunkSize<-ceiling(nrow/nChunks)
+        if(chunkSize*ncol >= .Machine$integer.max/1.2){
+            stop('More chunks are needed')
+        }
+    }
+    ffList<-list()
+    end<-0
+    for(i in 1:nChunks){
+        ini<-end+1
+        end<-min(nrow,ini+chunkSize-1)
+        filename=paste0('geno_',i,'.bin')
+        ffList[[i]]<-ff(vmode=vmode,dim=c((end-ini+1),ncol),dimorder=dimorder,filename=paste0(folderOut,'/',filename))
+        # Change ff path to a relative one
+        physical(ffList[[i]])$pattern<-'ff'
+        physical(ffList[[i]])$filename<-filename
+    }
+    .Object<-callNextMethod(.Object,ffList)
+})
+
 
 setOldClass('ff_matrix') # Convert ff_matrix into an S4 class
 setClassUnion('geno',c('dMatrix','matrix','ff_matrix'))
@@ -565,103 +607,36 @@ setGenData<-function(fileIn,header,dataType,distributed.by='columns',n=NULL,p=NU
     colnames(pheno)<-phtNames
 
 	if(!distributed.by%in%c('columns','rows')){stop('distributed.by must be either columns or rows') }
-	
-    if(is.null(nChunks)){
-		if(distributed.by=='columns'){
-			chunkSize<-min(p,floor(.Machine$integer.max/n/1.2))
-			nChunks<-ceiling(p/chunkSize)
-		}else{
-			chunkSize<-min(n,floor(.Machine$integer.max/p/1.2))
-			nChunks<-ceiling(n/chunkSize)		
-		}
 
-	}else{
-		if(distributed.by=='columns'){
-			chunkSize<-ceiling(p/nChunks)
-			if(chunkSize*n >= .Machine$integer.max/1.2){ stop(' More chunks are needed')}
-		}else{
-			chunkSize<-ceiling(n/nChunks)
-			if(chunkSize*p >=  .Machine$integer.max/1.2){ stop(' More chunks are needed')}
-		}
-	}
-	
-    genosList<-list()
-
-    end<-0
-    for(i in 1:nChunks){
-        if(distributed.by=='columns'){
-			ini<-end+1
-			end<-min(p,ini+chunkSize-1)
-			genosList[[i]]<-ff(vmode=vMode,dim=c(n,(end-ini+1)),dimorder=dimorder,filename=paste(folderOut,'/geno_',i,'.bin',sep=''))
-			colnames(genosList[[i]])<-mrkNames[ini:end]
-		}else{
-			ini<-end+1
-			end<-min(n,ini+chunkSize-1)
-			genosList[[i]]<-ff(vmode=vMode,dim=c((end-ini+1),p),dimorder=dimorder,filename=paste(folderOut,'/geno_',i,'.bin',sep=''))
-			colnames(genosList[[i]])<-mrkNames
-		}
-    }
+    geno<-new(ifelse(distributed.by=='columns','cDMatrix','rDMatrix'),nrow=n,ncol=p,vmode=vMode,folderOut=folderOut,nChunks=nChunks,dimorder=dimorder)
+    colnames(geno)<-mrkNames
 
     for(i in 1:n){
-		#if(verbose){ cat(' Subject ',i,'\n')}
 		time1<-proc.time()
 		xSkip<-scan(pedFile,n=nColSkip,what=character(),na.strings=na.strings,quiet=TRUE)
 		x<-scan(pedFile,n=p,what=dataType,na.strings=na.strings,quiet=TRUE)
-		
 		pheno[i,]<-xSkip
-		
 		time2<-proc.time()
         IDs[i]<-xSkip[idCol]
-        ## now we split x into its chunks
-		end<-0
 		time3<-proc.time()
-		
-		if(distributed.by=='columns'){
-			for(j in 1:nChunks){
-				ini<-end+1
-				end<-ini+ncol(genosList[[j]])-1
-				genosList[[j]][i,]<-x[ini:end]
-			}
-		}else{
-			tmpChunk<-ceiling(i/chunkSize)
-			tmpRow<-i-(tmpChunk-1)*chunkSize
-			genosList[[tmpChunk]][tmpRow,]<-x
-		}
-		
+        geno[i,]<-x
 		time4<-proc.time()
         if(verbose){ cat(' Subject ',i,'  ',round(time4[3]-time1[3],3),' sec/subject.','\n')}
     }
     close(pedFile)
 
 	# Adding names
-	if(distributed.by=='rows'){
-	    end<-0
-		for(i in 1:nChunks){
-			ini<-end+1
-			end<-min(ini+nrow(genosList[[i]])-1,n)
-			rownames(genosList[[i]])<-IDs[ini:end]
-		}
-	}else{
-		for(i in 1:nChunks){
-			rownames(genosList[[i]])<-IDs
-		}
-	}
+	rownames(geno)<-IDs
 	rownames(pheno)<-IDs
-	
+
 	pheno<-as.data.frame(pheno,stringsAsFactors=FALSE)
 	pheno[]<-lapply(pheno,type.convert,as.is=TRUE)
-	
-	geno<-new(ifelse(distributed.by=='columns','cDMatrix','rDMatrix'),genosList)
 
 	genData<-new('genData',geno=geno,pheno=pheno)
 
     attr(genData,'origFile')<-list(path=fileIn,dataType=dataType)
     attr(genData,'dateCreated')<-date()
 
-    for(i in 1:nChunks){
-        physical(genData@geno[[i]])$pattern<-'ff'
-        physical(genData@geno[[i]])$filename<-paste('geno_',i,'.bin',sep='')
-    }
     save(genData,file=paste(folderOut,'/genData.RData',sep=''))
 
     if(returnData){ return(genData) }
