@@ -776,7 +776,7 @@ load2<-function(file,envir=parent.frame(),verbose=TRUE){
 	if(verbose){ cat(' Original directory (',getwd(),') restored \n',sep='')}
 }
 
-## END OF MAKE makeGenosFF ###############################################################
+
 apply.DMatrix<-function(X,MARGIN,FUN,chunkSize=1e3,verbose=TRUE,...){
     FUN<-match.fun(FUN)
     if(!(class(X)%in%c('rDMatrix','cDMatrix'))){ stop('X must be either dMatrix or rMatrix') }
@@ -824,6 +824,18 @@ apply.DMatrix<-function(X,MARGIN,FUN,chunkSize=1e3,verbose=TRUE,...){
     return(ANS[,,drop=TRUE])
 }
 
+#' Apply function for rDMatrix or cDMatrix objects.
+#' 
+#' This function brings chunks of data (of size chunkSize) from the distributed 
+#' array into RAM as matrix objects and calls the apply method of the base 
+#' package to obtain the summaries for the chunk. Results from all the chunks 
+#' are collected and returned.
+#' 
+#' @param X Either an rDMatrix or a cDMatrix object
+#' @param MARGIN Use 1 to obtain row summaries or 2 to obtain column summaries
+#' @param chunkSize The number of columns or rows that are processed at a time
+#'   (see Details).
+#' @return Returns a matrix or a list with results from FUN.
 #' @export
 setMethod("apply",signature("dMatrix"),apply.DMatrix)
 
