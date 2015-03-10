@@ -14,6 +14,10 @@ setClassUnion('dMatrix',c('cDMatrix','rDMatrix'))
 
 #' @export
 setMethod('initialize','cDMatrix',function(.Object,nrow=1,ncol=1,vmode='byte',folderOut=tempdir(),nChunks=NULL,dimorder=c(2,1)){
+    if(file.exists(folderOut)){
+        stop(paste('Output folder',folderOut,'already exists. Please move it or pick a different one.'))
+    }
+    dir.create(folderOut)
     if(is.null(nChunks)){
         chunkSize<-min(nrow,floor(.Machine$integer.max/ncol/1.2))
         nChunks<-ceiling(nrow/chunkSize)
@@ -40,6 +44,10 @@ setMethod('initialize','cDMatrix',function(.Object,nrow=1,ncol=1,vmode='byte',fo
 
 #' @export
 setMethod('initialize','rDMatrix',function(.Object,nrow=1,ncol=1,vmode='byte',folderOut=tempdir(),nChunks=NULL,dimorder=c(2,1)){
+    if(file.exists(folderOut)){
+        stop(paste('Output folder',folderOut,'already exists. Please move it or pick a different one.'))
+    }
+    dir.create(folderOut)
     if(is.null(nChunks)){
         chunkSize<-min(ncol,floor(.Machine$integer.max/nrow/1.2))
         nChunks<-ceiling(ncol/chunkSize)
@@ -562,8 +570,6 @@ setGenData<-function(fileIn,header,dataType,distributed.by='columns',n=NULL,p=NU
     if(file.exists(folderOut)){
         stop(paste('Output folder',folderOut,'already exists. Please move it or pick a different one.'))
     }
-    dir.create(folderOut)
-
     if(!dataType%in%c('character','integer','numeric')){
         stop('dataType must be either character, integer or numeric')
     }
