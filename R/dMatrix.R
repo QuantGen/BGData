@@ -15,8 +15,8 @@ setClassUnion('dMatrix',c('cDMatrix','rDMatrix'))
 #' @export
 setMethod('initialize','cDMatrix',function(.Object,nrow=1,ncol=1,vmode='byte',folderOut=tempdir(),nChunks=NULL,dimorder=c(2,1)){
     if(is.null(nChunks)){
-        chunkSize<-min(nrow,floor(.Machine$integer.max/ncol/1.2))
-        nChunks<-ceiling(nrow/chunkSize)
+        chunkSize<-min(ncol,floor(.Machine$integer.max/nrow/1.2))
+        nChunks<-ceiling(ncol/chunkSize)
     }else{
         chunkSize<-ceiling(ncol/nChunks)
         if(chunkSize*nrow >= .Machine$integer.max/1.2){
@@ -41,8 +41,8 @@ setMethod('initialize','cDMatrix',function(.Object,nrow=1,ncol=1,vmode='byte',fo
 #' @export
 setMethod('initialize','rDMatrix',function(.Object,nrow=1,ncol=1,vmode='byte',folderOut=tempdir(),nChunks=NULL,dimorder=c(2,1)){
     if(is.null(nChunks)){
-        chunkSize<-min(ncol,floor(.Machine$integer.max/nrow/1.2))
-        nChunks<-ceiling(ncol/chunkSize)
+        chunkSize<-min(nrow,floor(.Machine$integer.max/ncol/1.2))
+        nChunks<-ceiling(nrow/chunkSize)
     }else{
         chunkSize<-ceiling(nrow/nChunks)
         if(chunkSize*ncol >= .Machine$integer.max/1.2){
