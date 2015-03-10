@@ -612,16 +612,15 @@ setGenData<-function(fileIn,header,dataType,distributed.by='columns',n=NULL,p=NU
     colnames(geno)<-mrkNames
 
     for(i in 1:n){
-		time1<-proc.time()
+		time<-proc.time()
 		xSkip<-scan(pedFile,n=nColSkip,what=character(),na.strings=na.strings,quiet=TRUE)
 		x<-scan(pedFile,n=p,what=dataType,na.strings=na.strings,quiet=TRUE)
 		pheno[i,]<-xSkip
-		time2<-proc.time()
         IDs[i]<-xSkip[idCol]
-		time3<-proc.time()
         geno[i,]<-x
-		time4<-proc.time()
-        if(verbose){ cat(' Subject ',i,'  ',round(time4[3]-time1[3],3),' sec/subject.','\n')}
+        if(verbose){
+            cat('Subject',i,' ',round(proc.time()[3]-time[3],3),'sec/subject.','\n')
+        }
     }
     close(pedFile)
 
