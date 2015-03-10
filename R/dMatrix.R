@@ -13,7 +13,10 @@ rDMatrix<-setClass('rDMatrix',contains='list')
 setClassUnion('dMatrix',c('cDMatrix','rDMatrix'))
 
 #' @export
-setMethod('initialize','cDMatrix',function(.Object,nrow=1,ncol=1,vmode='byte',folderOut=tempdir(),nChunks=NULL,dimorder=c(2,1)){
+setMethod('initialize','cDMatrix',function(.Object,nrow=1,ncol=1,vmode='byte',folderOut=NULL,nChunks=NULL,dimorder=c(2,1)){
+    if(is.null(folderOut)){
+        folderOut<-paste0(tempdir(),'/dMatrix-',randomString())
+    }
     if(file.exists(folderOut)){
         stop(paste('Output folder',folderOut,'already exists. Please move it or pick a different one.'))
     }
@@ -43,7 +46,10 @@ setMethod('initialize','cDMatrix',function(.Object,nrow=1,ncol=1,vmode='byte',fo
 })
 
 #' @export
-setMethod('initialize','rDMatrix',function(.Object,nrow=1,ncol=1,vmode='byte',folderOut=tempdir(),nChunks=NULL,dimorder=c(2,1)){
+setMethod('initialize','rDMatrix',function(.Object,nrow=1,ncol=1,vmode='byte',folderOut=NULL,nChunks=NULL,dimorder=c(2,1)){
+    if(is.null(folderOut)){
+        folderOut<-paste0(tempdir(),'/dMatrix-',randomString())
+    }
     if(file.exists(folderOut)){
         stop(paste('Output folder',folderOut,'already exists. Please move it or pick a different one.'))
     }
@@ -1107,4 +1113,8 @@ simPED<-function(filename,n,p,genoChars=1:4,na.string=0,propNA=.02,returnGenos=F
     if(returnGenos){
         return(OUT)
     }
+}
+
+randomString <- function () {
+    paste(sample(c(0:9, letters, LETTERS), size = 5, replace = TRUE), collapse = "")
 }

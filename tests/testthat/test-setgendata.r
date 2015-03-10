@@ -2,10 +2,6 @@ library(dMatrix)
 
 context("dMatrix")
 
-randomString <- function () {
-    paste(sample(c(0:9, letters, LETTERS), size = 5, replace = TRUE), collapse = "")
-}
-
 # Create temporary directory
 tmpPath <- paste0("/tmp/dMatrix-", randomString(), "/")
 dir.create(tmpPath)
