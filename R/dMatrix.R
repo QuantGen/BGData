@@ -563,8 +563,15 @@ setGenData<-function(fileIn,header,dataType,distributed.by='columns',n=NULL,p=NU
         stop(paste('Output folder',folderOut,'already exists. Please move it or pick a different one.'))
     }
     dir.create(folderOut)
-    if(!(dataType%in%c('character','integer','numeric'))){ stop('dataType must be either character, integer or numeric')}
-    vMode<-ifelse( dataType%in%c('character','integer'),'byte','double')
+
+    if(!dataType%in%c('character','integer','numeric')){
+        stop('dataType must be either character, integer or numeric')
+    }
+    if(!distributed.by%in%c('columns','rows')){
+        stop('distributed.by must be either columns or rows')
+    }
+
+    vMode<-ifelse(dataType%in%c('character','integer'),'byte','double')
 
     if(is.null(n)){
         # gzfile and readLines throw some warnings, but since it works, let's
@@ -605,8 +612,6 @@ setGenData<-function(fileIn,header,dataType,distributed.by='columns',n=NULL,p=NU
 
     pheno<-matrix(nrow=n,ncol=nColSkip)
     colnames(pheno)<-phtNames
-
-	if(!distributed.by%in%c('columns','rows')){stop('distributed.by must be either columns or rows') }
 
     geno<-new(ifelse(distributed.by=='columns','cDMatrix','rDMatrix'),nrow=n,ncol=p,vmode=vMode,folderOut=folderOut,nChunks=nChunks,dimorder=dimorder)
     colnames(geno)<-mrkNames
