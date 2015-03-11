@@ -1,16 +1,10 @@
-## Defines a classes cDMatrix & rDMatrix ###############################################################
-# The class inherits from list, each element of thea list is an FF object
-# cDMatrix splits the matrix by columns, rDMatrix by rows
-
+#' An S4 class to represent a column-distributed dMatrix.
+#' 
+#' cDMatrix inherits from list. Each element of the list is an ff_matrix object.
+#' 
 #' @export cDMatrix
 #' @exportClass cDMatrix
 cDMatrix<-setClass('cDMatrix',contains='list')
-
-#' @export rDMatrix
-#' @exportClass rDMatrix
-rDMatrix<-setClass('rDMatrix',contains='list')
-
-setClassUnion('dMatrix',c('cDMatrix','rDMatrix'))
 
 #' @export
 setMethod('initialize','cDMatrix',function(.Object,nrow=1,ncol=1,vmode='byte',folderOut=NULL,nChunks=NULL,dimorder=c(2,1)){
@@ -45,6 +39,15 @@ setMethod('initialize','cDMatrix',function(.Object,nrow=1,ncol=1,vmode='byte',fo
     return(.Object)
 })
 
+
+#' An S4 class to represent a row-distributed dMatrix.
+#' 
+#' rDMatrix inherits from list. Each element of the list is an ff_matrix object.
+#' 
+#' @export rDMatrix
+#' @exportClass rDMatrix
+rDMatrix<-setClass('rDMatrix',contains='list')
+
 #' @export
 setMethod('initialize','rDMatrix',function(.Object,nrow=1,ncol=1,vmode='byte',folderOut=NULL,nChunks=NULL,dimorder=c(2,1)){
     if(is.null(folderOut)){
@@ -78,12 +81,18 @@ setMethod('initialize','rDMatrix',function(.Object,nrow=1,ncol=1,vmode='byte',fo
 })
 
 
+setClassUnion('dMatrix',c('cDMatrix','rDMatrix'))
+
+
 setOldClass('ff_matrix') # Convert ff_matrix into an S4 class
 setClassUnion('geno',c('dMatrix','matrix','ff_matrix'))
 
-## Idea we can define in the future a class for a collection of rDMatrices or cDMatrices (dDatabase)
-# Defiens the class genData the object has three slots:
 
+#' An S4 class to represent GWAS data.
+#' 
+#' @slot pheno A data.frame that contains phenotypes.
+#' @slot map A data.frame that contains a genetic map.
+#' @slot geno A geno object (dMatrix, ff_matrix, or matrix) that contains genotypes.
 #' @export genData
 #' @exportClass genData
 genData<-setClass('genData',slots=c(pheno='data.frame',map='data.frame',geno='geno'))
