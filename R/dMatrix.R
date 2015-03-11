@@ -1070,6 +1070,47 @@ GWAS.ols<-function(formula,data,plot=FALSE,verbose=FALSE,min.pValue=1e-10,chunkS
         return(OUT)
 }
 
+GWAS.SKAT<-function(formula,data,groups,plot=FALSE,verbose=FALSE,min.pValue=1e-10,...){
+        ##
+        # formula: the formula for the GWAS model without including the markers, e.g., y~1 or y~factor(sex)+age
+        # all the variables in the formula must be in data@pheno
+        # data (genData) containing slots @pheno and @geno
+		# groups: a vector mapping markers into groups (can be integer, character or factor).
+        ##
+		
+        library(SKAT)
+		
+        p<-length(unique(groups))
+       
+        OUT<-matrix(nrow=p,ncol=2,NA)
+        colnames(OUT)<-c('nMrk','p-value')
+        levels<-unique(groups)
+        rownames(OUT)<-levels
+       
+        H0<-SKAT_Null_Model(formula,data=data@pheno,...)
+
+        if(plot){
+                tmp<-paste(as.character(formula[2]),as.character(formula[3]),sep='~')
+                plot(numeric()~numeric(),xlim=c(0,p),ylim=c(0,-log(min.pValue,base=10)),ylab='-log(p-value)',xlab='Marker',main=tmp)
+        }
+       
+        for(i in 1:p){
+             Z<-genData@geno[,groups==levels[i],drop=FALSE]
+             fm<-SKAT(Z=Z,obj=H0,...)
+             OUT[i,]<-c(ncol(Z),fm$p.value)
+           
+            if(plot){
+               tmp.x=c(i-1,i)
+               tmp.y=-log(OUT[tmp.x,2],base=10)
+               if(i>1){ lines(x=tmp.x,y=tmp.y,col=8,lwd=.5) }
+               points(y=tmp.y[2],col=2,cex=.5,x=i)
+            }
+        }
+        if(verbose){
+             cat(sep='','Group ',i,' of ', p,' (',round(proc.time()[3]-time.in,2),' seconds/chunk, ',round(i/p*100,3),'% done )\n')
+        }
+        return(OUT)
+}
 
 #' @export
 getG<-function(x,nChunks=3,scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,i=1:nrow(x),j=1:ncol(x),minVar=1e-5){
