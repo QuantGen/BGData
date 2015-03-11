@@ -953,12 +953,17 @@ setMethod("summary",signature("dMatrix"),summary.DMatrix)
 GWAS<-function(formula,data,method,plot=FALSE,verbose=FALSE,min.pValue=1e-10,chunkSize=10,...){
         if(class(data)!='genData'){ stop('data must genData')}
         
-        if(!method%in%c('lm','lm.fit','lsfit','glm','lmer')){
-                stop('Only lm, glm and lmer have been implemented so far.')
+        if(!method%in%c('lm','lm.fit','lsfit','glm','lmer','SKAT')){
+                stop('Only lm, glm, lmer and SKAT have been implemented so far.')
         }
         ## We can have 'specialized methods, for instance for OLS it is better to use lsfit that is what GWAS.ols do
-        if(method%in%c('lm','lm.fit','lsfit')){
+        if(method%in%c('lm','lm.fit','lsfit','SKAT')){
+            if(method%in%c('lm','lm.fit','lsfit')){
         	OUT<-GWAS.ols(formula=formula,data=data,plot=plot,verbose=verbose,min.pValue=min.pValue,chunkSize=,chunkSize,...)	
+            }
+            if(method%in%c('SKAT')){
+        	OUT<-GWAS.SKAT(formula=formula,data=data,plot=plot,verbose=verbose,min.pValue=min.pValue,...)	
+            }           
         }else{
         	FUN<-match.fun(method)
         	# could subset based on NAs so that subsetting does not take place in each iteration of the GWAS loop
