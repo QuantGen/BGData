@@ -3,26 +3,28 @@
 \docType{methods}
 \name{apply,dMatrix-method}
 \alias{apply,dMatrix-method}
-\title{Apply function for rDMatrix or cDMatrix objects.}
+\title{Apply function for \code{\linkS4class{rDMatrix}} or
+\code{\linkS4class{cDMatrix}} objects.}
 \usage{
 \S4method{apply}{dMatrix}(X, MARGIN, FUN, chunkSize = 1000, verbose = TRUE,
   ...)
 }
 \arguments{
-\item{X}{Either an rDMatrix or a cDMatrix object}
+\item{X}{Either an \code{\linkS4class{rDMatrix}} or a
+\code{\linkS4class{cDMatrix}} object.}
 
-\item{MARGIN}{Use 1 to obtain row summaries or 2 to obtain column summaries}
+\item{MARGIN}{Use 1 to obtain row summaries or 2 to obtain column summaries.}
 
 \item{chunkSize}{The number of columns or rows that are processed at a time
 (see Details).}
 }
 \value{
-Returns a matrix or a list with results from FUN.
+Returns a \code{matrix} or a \code{list} with results from FUN.
 }
 \description{
-This function brings chunks of data (of size chunkSize) from the distributed
-array into RAM as matrix objects and calls the apply method of the base
-package to obtain the summaries for the chunk. Results from all the chunks
-are collected and returned.
+This function brings chunks of data (of size \code{chunkSize}) from the
+distributed array into RAM as \code{matrix} objects and calls \code{apply} of
+the base package to obtain the summaries for the chunk. Results from all the
+chunks are collected and returned.
 }
 
