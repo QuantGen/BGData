@@ -7,15 +7,17 @@
 chunks(x)
 }
 \arguments{
-\item{x}{Either an rDMatrix or a cDMatrix object}
+\item{x}{Either an \code{\linkS4class{rDMatrix}} or a
+\code{\linkS4class{cDMatrix}} object}
 }
 \value{
 A matrix with information per chunk in rows.
 }
 \description{
-Row-distributed (rDMatrix) and column-distributed matrices (cDMatrix) have
-the content of the array mapped to possibly multiple binary files. Each chunk
-is an ff_matrix object. chunks() gives, for each chunk, the row or column
-indexes at which each chunk start and ends.
+Row-distributed (\code{\linkS4class{rDMatrix}}) and column-distributed
+matrices (\code{\linkS4class{cDMatrix}}) have the content of the array mapped
+to possibly multiple binary files. Each chunk is an \code{ff_matrix} object.
+\code{chunks} gives, for each chunk, the row or column indexes at which each
+chunk start and ends.
 }
 

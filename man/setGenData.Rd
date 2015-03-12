@@ -2,7 +2,7 @@
 % Please edit documentation in R/dMatrix.R
 \name{setGenData}
 \alias{setGenData}
-\title{Creates a genData object from a plaintext file.}
+\title{Creates a \code{\linkS4class{genData}} object from a plaintext file.}
 \usage{
 setGenData(fileIn, header, dataType, distributed.by = "columns", n = NULL,
   p = NULL, folderOut = paste("genData_", sub("\\\\.[[:alnum:]]+$", "",
@@ -15,9 +15,12 @@ setGenData(fileIn, header, dataType, distributed.by = "columns", n = NULL,
 
 \item{header}{If TRUE, the file contains a header.}
 
-\item{dataType}{The coding of genotypes. Use 'character' for A/C/G/T or 'integer' for numeric coding.}
+\item{dataType}{The coding of genotypes. Use 'character' for A/C/G/T or
+'integer' for numeric coding.}
 
-\item{distributed.by}{If columns a column-distributed matrix (cDMatrix) is created, if rows a row-distributed matrix (rDMatrix).}
+\item{distributed.by}{If columns a column-distributed matrix
+(\code{\linkS4class{cDMatrix}}) is created, if rows a row-distributed
+matrix (\code{\linkS4class{rDMatrix}}).}
 
 \item{n}{The number of individuals.}
 
@@ -25,11 +28,13 @@ setGenData(fileIn, header, dataType, distributed.by = "columns", n = NULL,
 
 \item{folderOut}{The path to the folder where to save the binary files.}
 
-\item{returnData}{If TRUE, the function returns a genData object.}
+\item{returnData}{If TRUE, the function returns a
+\code{\linkS4class{genData}} object.}
 
 \item{na.strings}{The character string use to denote missing value.}
 
-\item{nColSkip}{The number of columns to be skipped to reach the genotype information in the file.}
+\item{nColSkip}{The number of columns to be skipped to reach the genotype
+information in the file.}
 
 \item{idCol}{The index of the ID column.}
 
@@ -40,30 +45,33 @@ setGenData(fileIn, header, dataType, distributed.by = "columns", n = NULL,
 \item{dimorder}{The physical layout of the chunks.}
 }
 \value{
-If returnData is TRUE, a genData object with slots @geno (of type
-  dMatrix), @pheno (of type data.frame) and @map (of type data.frame) is
-  returned
+If \code{returnData} is TRUE, a \code{\linkS4class{genData}} object
+  is returned.
 }
 \description{
-setGenData assumes that the plaintext file (fileIn) contains records of
-individuals in rows, and phenotypes, covariates and markers in columns. The
-columns included in columns 1:nColSkip are used to populate the slot @pheno
-of a genData object, and the remaining columns are used to fill the slot
-@geno. If the first row contains a header (header=TRUE), data in this row is
-used to determine variables names for @pheno and marker names for @map and
-@geno. Genotypes are stored in a distributed matrix (dMatrix). By default a
-column-distributed (cDMatrix) is used for @geno, but the user can modify
-this using the distributed.by argument. The number of chunks is either
-specified by the user (use nChunks when calling setGenData) or determined
-internally so that each ff_matrix object has a number of cells that is
-smaller than .Machine$integer.max/1.2. setGenData creates a folder (see
-folderOut, above) that contains the binary flat files (geno_*.bin) and the
-genData object (typically named genData.RData. Optionally (if
-returnData=TRUE) it returns the genData object to the environment. The
-filename of the ff_matrix objects are saved as relative names. Therefore, to
-be able to access the content of the data included in @geno the working
-directory must either be the folder where these files are saved (see
-folderOut above) or the object must be loaded using the loadGenData()
+\code{setGenData} assumes that the plaintext file (\code{fileIn}) contains
+records of individuals in rows, and phenotypes, covariates and markers in
+columns. The columns included in columns \code{1:nColSkip} are used to
+populate the slot \code{\code{@pheno}} of a \code{\linkS4class{genData}}
+object, and the remaining columns are used to fill the slot
+\code{\code{@geno}}. If the first row contains a header
+(\code{header=TRUE}), data in this row is used to determine variables names
+for \code{@pheno} and marker names for \code{@map} and \code{@geno}.
+Genotypes are stored in a distributed matrix (\code{dMatrix}). By default a
+column-distributed (\code{\linkS4class{cDMatrix}}) is used for \code{@geno},
+but the user can modify this using the \code{distributed.by} argument. The
+number of chunks is either specified by the user (use \code{nChunks} when
+calling \code{setGenData}) or determined internally so that each
+\code{ff_matrix} object has a number of cells that is smaller than
+\code{.Machine$integer.max/1.2}. \code{setGenData} creates a folder
+(\code{folderOut}) that contains the binary flat files (\code{geno_*.bin})
+and the \code{\linkS4class{genData}} object (typically named
+\code{genData.RData}. Optionally (if \code{returnData} is TRUE) it returns
+the \code{\linkS4class{genData}} object to the environment. The filename of
+the \code{ff_matrix} objects are saved as relative names. Therefore, to be
+able to access the content of the data included in \code{@geno} the working
+directory must either be the folder where these files are saved
+(\code{folderOut}) or the object must be loaded using the \code{loadGenData}
 function included in the package.
 }
 

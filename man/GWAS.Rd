@@ -2,7 +2,8 @@
 % Please edit documentation in R/dMatrix.R
 \name{GWAS}
 \alias{GWAS}
-\title{Conducts an association study (GWAS) using a genData object.}
+\title{Conducts an association study (GWAS) using a \code{\linkS4class{genData}}
+object.}
 \usage{
 GWAS(formula, data, method, plot = FALSE, verbose = FALSE,
   min.pValue = 1e-10, chunkSize = 10, ...)
@@ -11,12 +12,13 @@ GWAS(formula, data, method, plot = FALSE, verbose = FALSE,
 \item{formula}{A formula (e.g. weight~sex+age) with the response on the
 left-hand side and predictors (all the covariates except the markers) on
 the right-hand side. The variables included in the formula must be in the
-@pheno object of the genData.}
+\code{@pheno} object of the \code{\linkS4class{genData}}.}
 
-\item{data}{A genData object.}
+\item{data}{A \code{\linkS4class{genData}} object.}
 
 \item{method}{The regression method to be used. Currently, the following
-methods are implemented: lm, lm.fit, lsfit, glm and lmer.}
+methods are implemented: \code{\link{lm}}, \code{\link{lm.fit}},
+\code{\link{lsfit}}, \code{\link{glm}} and \code{\link[lme4]{lmer}}.}
 
 \item{plot}{If TRUE a Manhattan plot is produced and filled with points as
 the association tests are run.}
@@ -26,15 +28,16 @@ the association tests are run.}
 \item{min.pValue}{Numeric, the minimum p-value expected, used to determine
 the limits of the vertical axis of the Manhattan plot.}
 
-\item{chunkSize}{Represents the number of columns of @geno that are brought
-into RAM for processing (10 by default).}
+\item{chunkSize}{Represents the number of columns of \code{@geno} that are
+brought into RAM for processing (10 by default).}
 }
 \value{
 Returns a matrix with estimates, SE, p-value, etc.
 }
 \description{
 This function conducts an association test using the formula provided by the
-user (see formula above) plus one column of @geno, one column at a time. The
-data from the association tests is obtained from a genData object.
+user (\code{formula}) plus one column of \code{@geno}, one column at a time.
+The data from the association tests is obtained from a
+\code{\linkS4class{genData}} object.
 }
 

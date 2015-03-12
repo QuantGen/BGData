@@ -1,6 +1,7 @@
-#' An S4 class to represent a column-distributed dMatrix.
+#' An S4 class to represent a column-distributed \code{dMatrix}.
 #' 
-#' cDMatrix inherits from list. Each element of the list is an ff_matrix object.
+#' \code{cDMatrix} inherits from \code{\link{list}}. Each element of the list is
+#' an \code{ff_matrix} object.
 #' 
 #' @export cDMatrix
 #' @exportClass cDMatrix
@@ -40,9 +41,10 @@ setMethod('initialize','cDMatrix',function(.Object,nrow=1,ncol=1,vmode='byte',fo
 })
 
 
-#' An S4 class to represent a row-distributed dMatrix.
+#' An S4 class to represent a row-distributed \code{dMatrix}
 #' 
-#' rDMatrix inherits from list. Each element of the list is an ff_matrix object.
+#' \code{rDMatrix} inherits from \code{\link{list}}. Each element of the list is
+#' an \code{ff_matrix} object.
 #' 
 #' @export rDMatrix
 #' @exportClass rDMatrix
@@ -90,9 +92,10 @@ setClassUnion('geno',c('dMatrix','matrix','ff_matrix'))
 
 #' An S4 class to represent GWAS data.
 #' 
-#' @slot pheno A data.frame that contains phenotypes.
-#' @slot map A data.frame that contains a genetic map.
-#' @slot geno A geno object (dMatrix, ff_matrix, or matrix) that contains genotypes.
+#' @slot pheno A \code{\link{data.frame}} that contains phenotypes.
+#' @slot map A \code{\link{data.frame}} that contains a genetic map.
+#' @slot geno A \code{geno} object (\code{dMatrix}, \code{ff_matrix}, or
+#'   \code{\link{matrix}}) that contains genotypes.
 #' @export genData
 #' @exportClass genData
 genData<-setClass('genData',slots=c(pheno='data.frame',map='data.frame',geno='geno'))
@@ -155,12 +158,14 @@ setMethod("dim",signature("rDMatrix"),dim.rDMatrix)
 
 #' Provides information about how data is distributed into binary files.
 #' 
-#' Row-distributed (rDMatrix) and column-distributed matrices (cDMatrix) have 
-#' the content of the array mapped to possibly multiple binary files. Each chunk
-#' is an ff_matrix object. chunks() gives, for each chunk, the row or column 
-#' indexes at which each chunk start and ends.
+#' Row-distributed (\code{\linkS4class{rDMatrix}}) and column-distributed 
+#' matrices (\code{\linkS4class{cDMatrix}}) have the content of the array mapped
+#' to possibly multiple binary files. Each chunk is an \code{ff_matrix} object. 
+#' \code{chunks} gives, for each chunk, the row or column indexes at which each 
+#' chunk start and ends.
 #' 
-#' @param x Either an rDMatrix or a cDMatrix object
+#' @param x Either an \code{\linkS4class{rDMatrix}} or a 
+#'   \code{\linkS4class{cDMatrix}} object
 #' @return A matrix with information per chunk in rows.
 #' @export
 chunks<-function(x){
@@ -567,46 +572,54 @@ setReplaceMethod("[",signature(x="rDMatrix",i="missing",j="missing",value="ANY")
 ## end of indexing cDMatrix #################################################################### 
 
 
-#' Creates a genData object from a plaintext file.
+#' Creates a \code{\linkS4class{genData}} object from a plaintext file.
 #' 
-#' setGenData assumes that the plaintext file (fileIn) contains records of
-#' individuals in rows, and phenotypes, covariates and markers in columns. The
-#' columns included in columns 1:nColSkip are used to populate the slot @@pheno
-#' of a genData object, and the remaining columns are used to fill the slot
-#' @@geno. If the first row contains a header (header=TRUE), data in this row is
-#' used to determine variables names for @@pheno and marker names for @@map and
-#' @@geno. Genotypes are stored in a distributed matrix (dMatrix). By default a 
-#' column-distributed (cDMatrix) is used for @@geno, but the user can modify 
-#' this using the distributed.by argument. The number of chunks is either 
-#' specified by the user (use nChunks when calling setGenData) or determined 
-#' internally so that each ff_matrix object has a number of cells that is 
-#' smaller than .Machine$integer.max/1.2. setGenData creates a folder (see 
-#' folderOut, above) that contains the binary flat files (geno_*.bin) and the 
-#' genData object (typically named genData.RData. Optionally (if
-#' returnData=TRUE) it returns the genData object to the environment. The
-#' filename of the ff_matrix objects are saved as relative names. Therefore, to
-#' be able to access the content of the data included in @@geno the working
-#' directory must either be the folder where these files are saved (see
-#' folderOut above) or the object must be loaded using the loadGenData()
+#' \code{setGenData} assumes that the plaintext file (\code{fileIn}) contains 
+#' records of individuals in rows, and phenotypes, covariates and markers in 
+#' columns. The columns included in columns \code{1:nColSkip} are used to 
+#' populate the slot \code{\code{@@pheno}} of a \code{\linkS4class{genData}}
+#' object, and the remaining columns are used to fill the slot
+#' \code{\code{@@geno}}. If the first row contains a header
+#' (\code{header=TRUE}), data in this row is used to determine variables names
+#' for \code{@@pheno} and marker names for \code{@@map} and \code{@@geno}.
+#' Genotypes are stored in a distributed matrix (\code{dMatrix}). By default a
+#' column-distributed (\code{\linkS4class{cDMatrix}}) is used for \code{@@geno},
+#' but the user can modify this using the \code{distributed.by} argument. The
+#' number of chunks is either specified by the user (use \code{nChunks} when
+#' calling \code{setGenData}) or determined internally so that each
+#' \code{ff_matrix} object has a number of cells that is smaller than 
+#' \code{.Machine$integer.max/1.2}. \code{setGenData} creates a folder 
+#' (\code{folderOut}) that contains the binary flat files (\code{geno_*.bin}) 
+#' and the \code{\linkS4class{genData}} object (typically named
+#' \code{genData.RData}. Optionally (if \code{returnData} is TRUE) it returns
+#' the \code{\linkS4class{genData}} object to the environment. The filename of
+#' the \code{ff_matrix} objects are saved as relative names. Therefore, to be
+#' able to access the content of the data included in \code{@@geno} the working
+#' directory must either be the folder where these files are saved
+#' (\code{folderOut}) or the object must be loaded using the \code{loadGenData}
 #' function included in the package.
 #' 
 #' @param fileIn The path to the plaintext file.
 #' @param header If TRUE, the file contains a header.
-#' @param dataType The coding of genotypes. Use 'character' for A/C/G/T or 'integer' for numeric coding.
-#' @param distributed.by If columns a column-distributed matrix (cDMatrix) is created, if rows a row-distributed matrix (rDMatrix).
+#' @param dataType The coding of genotypes. Use 'character' for A/C/G/T or 
+#'   'integer' for numeric coding.
+#' @param distributed.by If columns a column-distributed matrix 
+#'   (\code{\linkS4class{cDMatrix}}) is created, if rows a row-distributed 
+#'   matrix (\code{\linkS4class{rDMatrix}}).
 #' @param n The number of individuals.
 #' @param p The number of markers.
 #' @param folderOut The path to the folder where to save the binary files.
-#' @param returnData If TRUE, the function returns a genData object.
+#' @param returnData If TRUE, the function returns a 
+#'   \code{\linkS4class{genData}} object.
 #' @param na.strings The character string use to denote missing value.
-#' @param nColSkip The number of columns to be skipped to reach the genotype information in the file.
+#' @param nColSkip The number of columns to be skipped to reach the genotype 
+#'   information in the file.
 #' @param idCol The index of the ID column.
 #' @param verbose If TRUE, progress updates will be posted.
 #' @param nChunks The number of chunks to create.
 #' @param dimorder The physical layout of the chunks.
-#' @return If returnData is TRUE, a genData object with slots @@geno (of type
-#'   dMatrix), @@pheno (of type data.frame) and @@map (of type data.frame) is
-#'   returned
+#' @return If \code{returnData} is TRUE, a \code{\linkS4class{genData}} object 
+#'   is returned.
 #' @export
 setGenData<-function(fileIn,header,dataType,distributed.by='columns',n=NULL,p=NULL,
                     folderOut=paste('genData_',sub("\\.[[:alnum:]]+$","",basename(fileIn)),sep=''),
@@ -833,18 +846,20 @@ apply.DMatrix<-function(X,MARGIN,FUN,chunkSize=1e3,verbose=TRUE,...){
     return(ANS[,,drop=TRUE])
 }
 
-#' Apply function for rDMatrix or cDMatrix objects.
+#' Apply function for \code{\linkS4class{rDMatrix}} or 
+#' \code{\linkS4class{cDMatrix}} objects.
 #' 
-#' This function brings chunks of data (of size chunkSize) from the distributed 
-#' array into RAM as matrix objects and calls the apply method of the base 
-#' package to obtain the summaries for the chunk. Results from all the chunks 
-#' are collected and returned.
+#' This function brings chunks of data (of size \code{chunkSize}) from the 
+#' distributed array into RAM as \code{matrix} objects and calls \code{apply} of
+#' the base package to obtain the summaries for the chunk. Results from all the 
+#' chunks are collected and returned.
 #' 
-#' @param X Either an rDMatrix or a cDMatrix object
-#' @param MARGIN Use 1 to obtain row summaries or 2 to obtain column summaries
-#' @param chunkSize The number of columns or rows that are processed at a time
+#' @param X Either an \code{\linkS4class{rDMatrix}} or a 
+#'   \code{\linkS4class{cDMatrix}} object.
+#' @param MARGIN Use 1 to obtain row summaries or 2 to obtain column summaries.
+#' @param chunkSize The number of columns or rows that are processed at a time 
 #'   (see Details).
-#' @return Returns a matrix or a list with results from FUN.
+#' @return Returns a \code{matrix} or a \code{list} with results from FUN.
 #' @export
 setMethod("apply",signature("dMatrix"),apply.DMatrix)
 
@@ -928,26 +943,29 @@ summary.DMatrix<-function(object,MARGIN=2,chunkSize=1e3,...){
 setMethod("summary",signature("dMatrix"),summary.DMatrix)
 
 
-#' Conducts an association study (GWAS) using a genData object.
+#' Conducts an association study (GWAS) using a \code{\linkS4class{genData}}
+#' object.
 #' 
 #' This function conducts an association test using the formula provided by the 
-#' user (see formula above) plus one column of @@geno, one column at a time. The
-#' data from the association tests is obtained from a genData object.
+#' user (\code{formula}) plus one column of \code{@@geno}, one column at a time.
+#' The data from the association tests is obtained from a 
+#' \code{\linkS4class{genData}} object.
 #' 
 #' @param formula A formula (e.g. weight~sex+age) with the response on the 
 #'   left-hand side and predictors (all the covariates except the markers) on 
 #'   the right-hand side. The variables included in the formula must be in the 
-#'   @@pheno object of the genData.
-#' @param data A genData object.
+#'   \code{@@pheno} object of the \code{\linkS4class{genData}}.
+#' @param data A \code{\linkS4class{genData}} object.
 #' @param method The regression method to be used. Currently, the following 
-#'   methods are implemented: lm, lm.fit, lsfit, glm and lmer.
+#'   methods are implemented: \code{\link{lm}}, \code{\link{lm.fit}}, 
+#'   \code{\link{lsfit}}, \code{\link{glm}} and \code{\link[lme4]{lmer}}.
 #' @param plot If TRUE a Manhattan plot is produced and filled with points as 
 #'   the association tests are run.
 #' @param verbose If TRUE more messages are printed.
 #' @param min.pValue Numeric, the minimum p-value expected, used to determine 
 #'   the limits of the vertical axis of the Manhattan plot.
-#' @param chunkSize Represents the number of columns of @@geno that are brought 
-#'   into RAM for processing (10 by default).
+#' @param chunkSize Represents the number of columns of \code{@@geno} that are 
+#'   brought into RAM for processing (10 by default).
 #' @return Returns a matrix with estimates, SE, p-value, etc.
 #' @export
 GWAS<-function(formula,data,method,plot=FALSE,verbose=FALSE,min.pValue=1e-10,chunkSize=10,...){
@@ -1225,6 +1243,6 @@ simPED<-function(filename,n,p,genoChars=1:4,na.string=0,propNA=.02,returnGenos=F
     }
 }
 
-randomString <- function () {
-    paste(sample(c(0:9, letters, LETTERS), size = 5, replace = TRUE), collapse = "")
+randomString<-function(){
+    paste(sample(c(0:9,letters,LETTERS),size=5,replace=TRUE),collapse="")
 }
