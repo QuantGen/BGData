@@ -15,3 +15,9 @@ Suggests:
     testthat,
     lme4
 LazyData: true
+Collate:
+    'cDMatrix.R'
+    'rDMatrix.R'
+    'dMatrix.R'
+    'genData.R'
+    'utils.R'
