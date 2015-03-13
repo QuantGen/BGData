@@ -302,7 +302,7 @@ GWAS<-function(formula,data,method,plot=FALSE,verbose=FALSE,min.pValue=1e-10,chu
         if(method%in%c('lm','lm.fit','lsfit')){
             OUT<-GWAS.ols(formula=formula,data=data,plot=plot,verbose=verbose,min.pValue=min.pValue,chunkSize=,chunkSize,...)	
         }
-        if(method%in%c('SKAT')){
+        if(method=='SKAT'){
             OUT<-GWAS.SKAT(formula=formula,data=data,plot=plot,verbose=verbose,min.pValue=min.pValue,...)	
         }           
     }else{
@@ -422,8 +422,6 @@ GWAS.SKAT<-function(formula,data,groups,plot=FALSE,verbose=FALSE,min.pValue=1e-1
     # data (genData) containing slots @pheno and @geno
     # groups: a vector mapping markers into groups (can be integer, character or factor).
     ##
-    
-    library(SKAT)
     
     p<-length(unique(groups))
     
