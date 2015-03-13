@@ -29,7 +29,8 @@ Depends:
     ff
 Suggests:
     testthat,
-    lme4
+    lme4,
+    SKAT
 LazyData: true
 Collate:
     'cDMatrix.R'

@@ -302,11 +302,18 @@ GWAS<-function(formula,data,method,plot=FALSE,verbose=FALSE,min.pValue=1e-10,chu
         if(method%in%c('lm','lm.fit','lsfit')){
             OUT<-GWAS.ols(formula=formula,data=data,plot=plot,verbose=verbose,min.pValue=min.pValue,chunkSize=,chunkSize,...)	
         }
-        if(method%in%c('SKAT')){
+        if(method=='SKAT'){
             OUT<-GWAS.SKAT(formula=formula,data=data,plot=plot,verbose=verbose,min.pValue=min.pValue,...)	
         }           
     }else{
-        FUN<-match.fun(method)
+        if(method=='lmer'&&!requireNamespace("lme4",quietly=TRUE)){
+            stop("lme4 needed for this function to work. Please install it.",call.=FALSE)
+        }
+        if(method=='lmer'){
+            FUN<-lme4::lmer
+        }else{
+            FUN<-match.fun(method)
+        }
         # could subset based on NAs so that subsetting does not take place in each iteration of the GWAS loop
         pheno<-data@pheno
         fm<-FUN(formula,data=pheno,...)
@@ -423,8 +430,10 @@ GWAS.SKAT<-function(formula,data,groups,plot=FALSE,verbose=FALSE,min.pValue=1e-1
     # groups: a vector mapping markers into groups (can be integer, character or factor).
     ##
     
-    library(SKAT)
-    
+    if(!requireNamespace("SKAT",quietly=TRUE)){
+        stop("SKAT needed for this function to work. Please install it.",call.=FALSE)
+    }
+
     p<-length(unique(groups))
     
     OUT<-matrix(nrow=p,ncol=2,NA)
@@ -432,7 +441,7 @@ GWAS.SKAT<-function(formula,data,groups,plot=FALSE,verbose=FALSE,min.pValue=1e-1
     levels<-unique(groups)
     rownames(OUT)<-levels
     
-    H0<-SKAT_Null_Model(formula,data=data@pheno,...)
+    H0<-SKAT::SKAT_Null_Model(formula,data=data@pheno,...)
     
     if(plot){
         tmp<-paste(as.character(formula[2]),as.character(formula[3]),sep='~')
@@ -441,7 +450,7 @@ GWAS.SKAT<-function(formula,data,groups,plot=FALSE,verbose=FALSE,min.pValue=1e-1
     
     for(i in 1:p){
         Z<-genData@geno[,groups==levels[i],drop=FALSE]
-        fm<-SKAT(Z=Z,obj=H0,...)
+        fm<-SKAT::SKAT(Z=Z,obj=H0,...)
         OUT[i,]<-c(ncol(Z),fm$p.value)
         
         if(plot){
