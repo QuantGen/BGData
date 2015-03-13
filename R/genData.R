@@ -300,7 +300,7 @@ GWAS<-function(formula,data,method,plot=FALSE,verbose=FALSE,min.pValue=1e-10,chu
     ## We can have 'specialized methods, for instance for OLS it is better to use lsfit that is what GWAS.ols do
     if(method%in%c('lm','lm.fit','lsfit','SKAT')){
         if(method%in%c('lm','lm.fit','lsfit')){
-            OUT<-GWAS.ols(formula=formula,data=data,plot=plot,verbose=verbose,min.pValue=min.pValue,chunkSize=,chunkSize,...)	
+            OUT<-GWAS.ols(formula=formula,data=data,plot=plot,verbose=verbose,min.pValue=min.pValue,chunkSize=chunkSize,...)	
         }
         if(method%in%c('SKAT')){
             OUT<-GWAS.SKAT(formula=formula,data=data,plot=plot,verbose=verbose,min.pValue=min.pValue,...)	
