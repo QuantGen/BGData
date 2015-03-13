@@ -309,7 +309,11 @@ GWAS<-function(formula,data,method,plot=FALSE,verbose=FALSE,min.pValue=1e-10,chu
         if(method=='lmer'&&!requireNamespace("lme4",quietly=TRUE)){
             stop("lme4 needed for this function to work. Please install it.",call.=FALSE)
         }
-        FUN<-match.fun(method)
+        if(method=='lmer'){
+            FUN<-lme4::lmer
+        }else{
+            FUN<-match.fun(method)
+        }
         # could subset based on NAs so that subsetting does not take place in each iteration of the GWAS loop
         pheno<-data@pheno
         fm<-FUN(formula,data=pheno,...)
@@ -437,7 +441,7 @@ GWAS.SKAT<-function(formula,data,groups,plot=FALSE,verbose=FALSE,min.pValue=1e-1
     levels<-unique(groups)
     rownames(OUT)<-levels
     
-    H0<-SKAT_Null_Model(formula,data=data@pheno,...)
+    H0<-SKAT::SKAT_Null_Model(formula,data=data@pheno,...)
     
     if(plot){
         tmp<-paste(as.character(formula[2]),as.character(formula[3]),sep='~')
@@ -446,7 +450,7 @@ GWAS.SKAT<-function(formula,data,groups,plot=FALSE,verbose=FALSE,min.pValue=1e-1
     
     for(i in 1:p){
         Z<-genData@geno[,groups==levels[i],drop=FALSE]
-        fm<-SKAT(Z=Z,obj=H0,...)
+        fm<-SKAT::SKAT(Z=Z,obj=H0,...)
         OUT[i,]<-c(ncol(Z),fm$p.value)
         
         if(plot){
