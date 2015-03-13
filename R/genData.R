@@ -306,6 +306,9 @@ GWAS<-function(formula,data,method,plot=FALSE,verbose=FALSE,min.pValue=1e-10,chu
             OUT<-GWAS.SKAT(formula=formula,data=data,plot=plot,verbose=verbose,min.pValue=min.pValue,...)	
         }           
     }else{
+        if(method=='lmer'&&!requireNamespace("lme4",quietly=TRUE)){
+            stop("lme4 needed for this function to work. Please install it.",call.=FALSE)
+        }
         FUN<-match.fun(method)
         # could subset based on NAs so that subsetting does not take place in each iteration of the GWAS loop
         pheno<-data@pheno
@@ -423,6 +426,10 @@ GWAS.SKAT<-function(formula,data,groups,plot=FALSE,verbose=FALSE,min.pValue=1e-1
     # groups: a vector mapping markers into groups (can be integer, character or factor).
     ##
     
+    if(!requireNamespace("SKAT",quietly=TRUE)){
+        stop("SKAT needed for this function to work. Please install it.",call.=FALSE)
+    }
+
     p<-length(unique(groups))
     
     OUT<-matrix(nrow=p,ncol=2,NA)
