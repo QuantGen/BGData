@@ -66,7 +66,7 @@ setMethod('initialize','BGData',function(.Object,geno,pheno,map){
 #' the \code{ff_matrix} objects are saved as relative names. Therefore, to be
 #' able to access the content of the data included in \code{@@geno} the working
 #' directory must either be the folder where these files are saved
-#' (\code{folderOut}) or the object must be loaded using the \code{loadGenData}
+#' (\code{folderOut}) or the object must be loaded using the \code{loadBGData}
 #' function included in the package.
 #' 
 #' @param fileIn The path to the plaintext file.
@@ -183,7 +183,7 @@ read.PED.BGData<-function(fileIn,header,dataType,distributed.by='columns',n=NULL
 
 
 #' @export
-loadGenData<-function(path,envir=.GlobalEnv){
+loadBGData<-function(path,envir=.GlobalEnv){
     ##
     # Use: to load a BGData object using the name of the folder where the meta-data and data are stored.
     # path: the name of the folder where the data and meta data are stored.
@@ -218,7 +218,7 @@ load2<-function(file,envir=parent.frame(),verbose=TRUE){
     # file: the name of the .RData file to be loaded (and possibly a path)
     # envir: the environment where to load the data
     # verbose: TRUE/FALSE
-    # See also: loadGenData()
+    # See also: loadBGData()
     ##
     
     # determining the object name
