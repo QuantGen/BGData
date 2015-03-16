@@ -1,16 +1,16 @@
-#' @include dMatrix.R
+#' @include mmMatrix.R
 NULL
 
 
 setOldClass('ff_matrix') # Convert ff_matrix into an S4 class
-setClassUnion('geno',c('dMatrix','matrix','ff_matrix'))
+setClassUnion('geno',c('mmMatrix','matrix','ff_matrix'))
 
 
 #' An S4 class to represent GWAS data.
 #' 
 #' @slot pheno A \code{\link{data.frame}} that contains phenotypes.
 #' @slot map A \code{\link{data.frame}} that contains a genetic map.
-#' @slot geno A \code{geno} object (\code{dMatrix}, \code{ff_matrix}, or
+#' @slot geno A \code{geno} object (\code{mmMatrix}, \code{ff_matrix}, or
 #'   \code{\link{matrix}}) that contains genotypes.
 #' @export BGData
 #' @exportClass BGData
@@ -19,7 +19,7 @@ BGData<-setClass('BGData',slots=c(pheno='data.frame',map='data.frame',geno='geno
 #' @export
 setMethod('initialize','BGData',function(.Object,geno,pheno,map){
     if(!is(geno,'geno')){
-        stop("Only dMatrix, ff_matrix, or regular matrix objects are allowed for geno.")
+        stop("Only mmMatrix, ff_matrix, or regular matrix objects are allowed for geno.")
     }
     if(is.null(colnames(geno))){
         colnames(geno)<-paste0('mrk_',1:ncol(geno))
@@ -52,7 +52,7 @@ setMethod('initialize','BGData',function(.Object,geno,pheno,map){
 #' \code{\code{@@geno}}. If the first row contains a header
 #' (\code{header=TRUE}), data in this row is used to determine variables names
 #' for \code{@@pheno} and marker names for \code{@@map} and \code{@@geno}.
-#' Genotypes are stored in a distributed matrix (\code{dMatrix}). By default a
+#' Genotypes are stored in a distributed matrix (\code{mmMatrix}). By default a
 #' column-distributed (\code{\linkS4class{cDMatrix}}) is used for \code{@@geno},
 #' but the user can modify this using the \code{distributed.by} argument. The
 #' number of chunks is either specified by the user (use \code{nChunks} when
@@ -214,7 +214,7 @@ loadBGData<-function(path,envir=.GlobalEnv){
 #' @export
 load2<-function(file,envir=parent.frame(),verbose=TRUE){
     ##
-    # Function to load BGData or dMatrix objects
+    # Function to load BGData or mmMatrix objects
     # file: the name of the .RData file to be loaded (and possibly a path)
     # envir: the environment where to load the data
     # verbose: TRUE/FALSE

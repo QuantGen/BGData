@@ -2,7 +2,7 @@
 NULL
 
 
-setClassUnion('dMatrix',c('cDMatrix','rDMatrix'))
+setClassUnion('mmMatrix',c('cDMatrix','rDMatrix'))
 
 
 get.dimnames<-function(x){
@@ -10,12 +10,12 @@ get.dimnames<-function(x){
 }
 
 #' @export
-setMethod("dimnames",signature("dMatrix"),get.dimnames)
+setMethod("dimnames",signature("mmMatrix"),get.dimnames)
 
 
 apply.DMatrix<-function(X,MARGIN,FUN,chunkSize=1e3,verbose=TRUE,...){
     FUN<-match.fun(FUN)
-    if(!(class(X)%in%c('rDMatrix','cDMatrix'))){ stop('X must be either dMatrix or rMatrix') }
+    if(!(class(X)%in%c('rDMatrix','cDMatrix'))){ stop('X must be either mmMatrix or rMatrix') }
     
     n<-ifelse(MARGIN==1,nrow(X),ncol(X))
  
@@ -75,7 +75,7 @@ apply.DMatrix<-function(X,MARGIN,FUN,chunkSize=1e3,verbose=TRUE,...){
 #'   (see Details).
 #' @return Returns a \code{matrix} or a \code{list} with results from FUN.
 #' @export
-setMethod("apply",signature("dMatrix"),apply.DMatrix)
+setMethod("apply",signature("mmMatrix"),apply.DMatrix)
 
 
 colMeans.DMatrix<-function(x,na.rm=TRUE,chunkSize=1e3,...){
@@ -87,7 +87,7 @@ colMeans.DMatrix<-function(x,na.rm=TRUE,chunkSize=1e3,...){
 }
 
 #' @export
-setMethod("colMeans",signature("dMatrix"),colMeans.DMatrix)
+setMethod("colMeans",signature("mmMatrix"),colMeans.DMatrix)
 
 
 colSums.DMatrix<-function(x,na.rm=TRUE,chunkSize=1e3,...){
@@ -99,7 +99,7 @@ colSums.DMatrix<-function(x,na.rm=TRUE,chunkSize=1e3,...){
 }
 
 #' @export
-setMethod("colSums",signature("dMatrix"),colSums.DMatrix)
+setMethod("colSums",signature("mmMatrix"),colSums.DMatrix)
 
 
 rowMeans.DMatrix<-function(x,na.rm=TRUE,chunkSize=1e3,...){
@@ -111,7 +111,7 @@ rowMeans.DMatrix<-function(x,na.rm=TRUE,chunkSize=1e3,...){
 }
 
 #' @export
-setMethod("rowMeans",signature("dMatrix"),rowMeans.DMatrix)
+setMethod("rowMeans",signature("mmMatrix"),rowMeans.DMatrix)
 
 
 rowSums.DMatrix<-function(x,na.rm=TRUE,chunkSize=1e3,...){
@@ -123,7 +123,7 @@ rowSums.DMatrix<-function(x,na.rm=TRUE,chunkSize=1e3,...){
 }
 
 #' @export
-setMethod("rowSums",signature("dMatrix"),rowSums.DMatrix)
+setMethod("rowSums",signature("mmMatrix"),rowSums.DMatrix)
 
 
 summary.num<-function(x){
@@ -154,7 +154,7 @@ summary.DMatrix<-function(object,MARGIN=2,chunkSize=1e3,...){
 }
 
 #' @export
-setMethod("summary",signature("dMatrix"),summary.DMatrix)
+setMethod("summary",signature("mmMatrix"),summary.DMatrix)
 
 
 #' Provides information about how data is distributed into binary files.

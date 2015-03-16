@@ -4,7 +4,7 @@
 \name{cDMatrix-class}
 \alias{cDMatrix}
 \alias{cDMatrix-class}
-\title{An S4 class to represent a column-distributed \code{dMatrix}.}
+\title{An S4 class to represent a column-distributed \code{mmMatrix}.}
 \description{
 \code{cDMatrix} inherits from \code{\link{list}}. Each element of the list is
 an \code{ff_matrix} object.

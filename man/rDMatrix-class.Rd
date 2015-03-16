@@ -4,7 +4,7 @@
 \name{rDMatrix-class}
 \alias{rDMatrix}
 \alias{rDMatrix-class}
-\title{An S4 class to represent a row-distributed \code{dMatrix}}
+\title{An S4 class to represent a row-distributed \code{mmMatrix}}
 \description{
 \code{rDMatrix} inherits from \code{\link{list}}. Each element of the list is
 an \code{ff_matrix} object.

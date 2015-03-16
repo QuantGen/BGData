@@ -35,6 +35,6 @@ LazyData: true
 Collate:
     'rDMatrix.R'
     'cDMatrix.R'
-    'dMatrix.R'
+    'mmMatrix.R'
     'BGData.R'
     'utils.R'

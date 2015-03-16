@@ -58,7 +58,7 @@ object, and the remaining columns are used to fill the slot
 \code{\code{@geno}}. If the first row contains a header
 (\code{header=TRUE}), data in this row is used to determine variables names
 for \code{@pheno} and marker names for \code{@map} and \code{@geno}.
-Genotypes are stored in a distributed matrix (\code{dMatrix}). By default a
+Genotypes are stored in a distributed matrix (\code{mmMatrix}). By default a
 column-distributed (\code{\linkS4class{cDMatrix}}) is used for \code{@geno},
 but the user can modify this using the \code{distributed.by} argument. The
 number of chunks is either specified by the user (use \code{nChunks} when

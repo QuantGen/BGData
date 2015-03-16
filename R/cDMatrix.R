@@ -1,4 +1,4 @@
-#' An S4 class to represent a column-distributed \code{dMatrix}.
+#' An S4 class to represent a column-distributed \code{mmMatrix}.
 #'
 #' \code{cDMatrix} inherits from \code{\link{list}}. Each element of the list is
 #' an \code{ff_matrix} object.
@@ -10,7 +10,7 @@ cDMatrix<-setClass('cDMatrix',contains='list')
 #' @export
 setMethod('initialize','cDMatrix',function(.Object,nrow=1,ncol=1,vmode='byte',folderOut=NULL,nChunks=NULL,dimorder=c(2,1)){
     if(is.null(folderOut)){
-        folderOut<-paste0(tempdir(),'/dMatrix-',randomString())
+        folderOut<-paste0(tempdir(),'/mmMatrix-',randomString())
     }
     if(file.exists(folderOut)){
         stop(paste('Output folder',folderOut,'already exists. Please move it or pick a different one.'))
