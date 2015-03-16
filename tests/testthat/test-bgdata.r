@@ -1,6 +1,6 @@
 library(dMatrix)
 
-context("genData")
+context("BGData")
 
 # Create temporary directory
 tmpPath <- paste0("/tmp/dMatrix-", randomString(), "/")

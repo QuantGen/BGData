@@ -1,3 +1,7 @@
+#' @include dMatrix.R
+NULL
+
+
 setOldClass('ff_matrix') # Convert ff_matrix into an S4 class
 setClassUnion('geno',c('dMatrix','matrix','ff_matrix'))
 
@@ -8,12 +12,12 @@ setClassUnion('geno',c('dMatrix','matrix','ff_matrix'))
 #' @slot map A \code{\link{data.frame}} that contains a genetic map.
 #' @slot geno A \code{geno} object (\code{dMatrix}, \code{ff_matrix}, or
 #'   \code{\link{matrix}}) that contains genotypes.
-#' @export genData
-#' @exportClass genData
-genData<-setClass('genData',slots=c(pheno='data.frame',map='data.frame',geno='geno'))
+#' @export BGData
+#' @exportClass BGData
+BGData<-setClass('BGData',slots=c(pheno='data.frame',map='data.frame',geno='geno'))
 
 #' @export
-setMethod('initialize','genData',function(.Object,geno,pheno,map){
+setMethod('initialize','BGData',function(.Object,geno,pheno,map){
     if(!is(geno,'geno')){
         stop("Only dMatrix, ff_matrix, or regular matrix objects are allowed for geno.")
     }
@@ -38,12 +42,12 @@ setMethod('initialize','genData',function(.Object,geno,pheno,map){
 })
 
 
-#' Creates a \code{\linkS4class{genData}} object from a plaintext file.
+#' Creates a \code{\linkS4class{BGData}} object from a plaintext file.
 #' 
 #' \code{setGenData} assumes that the plaintext file (\code{fileIn}) contains 
 #' records of individuals in rows, and phenotypes, covariates and markers in 
 #' columns. The columns included in columns \code{1:nColSkip} are used to 
-#' populate the slot \code{\code{@@pheno}} of a \code{\linkS4class{genData}}
+#' populate the slot \code{\code{@@pheno}} of a \code{\linkS4class{BGData}}
 #' object, and the remaining columns are used to fill the slot
 #' \code{\code{@@geno}}. If the first row contains a header
 #' (\code{header=TRUE}), data in this row is used to determine variables names
@@ -56,9 +60,9 @@ setMethod('initialize','genData',function(.Object,geno,pheno,map){
 #' \code{ff_matrix} object has a number of cells that is smaller than 
 #' \code{.Machine$integer.max/1.2}. \code{setGenData} creates a folder 
 #' (\code{folderOut}) that contains the binary flat files (\code{geno_*.bin}) 
-#' and the \code{\linkS4class{genData}} object (typically named
-#' \code{genData.RData}. Optionally (if \code{returnData} is TRUE) it returns
-#' the \code{\linkS4class{genData}} object to the environment. The filename of
+#' and the \code{\linkS4class{BGData}} object (typically named
+#' \code{BGData.RData}. Optionally (if \code{returnData} is TRUE) it returns
+#' the \code{\linkS4class{BGData}} object to the environment. The filename of
 #' the \code{ff_matrix} objects are saved as relative names. Therefore, to be
 #' able to access the content of the data included in \code{@@geno} the working
 #' directory must either be the folder where these files are saved
@@ -76,7 +80,7 @@ setMethod('initialize','genData',function(.Object,geno,pheno,map){
 #' @param p The number of markers.
 #' @param folderOut The path to the folder where to save the binary files.
 #' @param returnData If TRUE, the function returns a 
-#'   \code{\linkS4class{genData}} object.
+#'   \code{\linkS4class{BGData}} object.
 #' @param na.strings The character string use to denote missing value.
 #' @param nColSkip The number of columns to be skipped to reach the genotype 
 #'   information in the file.
@@ -84,11 +88,11 @@ setMethod('initialize','genData',function(.Object,geno,pheno,map){
 #' @param verbose If TRUE, progress updates will be posted.
 #' @param nChunks The number of chunks to create.
 #' @param dimorder The physical layout of the chunks.
-#' @return If \code{returnData} is TRUE, a \code{\linkS4class{genData}} object 
+#' @return If \code{returnData} is TRUE, a \code{\linkS4class{BGData}} object 
 #'   is returned.
 #' @export
 setGenData<-function(fileIn,header,dataType,distributed.by='columns',n=NULL,p=NULL,
-                     folderOut=paste('genData_',sub("\\.[[:alnum:]]+$","",basename(fileIn)),sep=''),
+                     folderOut=paste('BGData_',sub("\\.[[:alnum:]]+$","",basename(fileIn)),sep=''),
                      returnData=TRUE,na.strings='NA',nColSkip=6,idCol=2,verbose=FALSE,nChunks=NULL,
                      dimorder=if(distributed.by=='rows') 2:1 else 1:2){
     
@@ -167,40 +171,40 @@ setGenData<-function(fileIn,header,dataType,distributed.by='columns',n=NULL,p=NU
     pheno<-as.data.frame(pheno,stringsAsFactors=FALSE)
     pheno[]<-lapply(pheno,type.convert,as.is=TRUE)
     
-    genData<-new('genData',geno=geno,pheno=pheno)
+    BGData<-new('BGData',geno=geno,pheno=pheno)
     
-    attr(genData,'origFile')<-list(path=fileIn,dataType=dataType)
-    attr(genData,'dateCreated')<-date()
+    attr(BGData,'origFile')<-list(path=fileIn,dataType=dataType)
+    attr(BGData,'dateCreated')<-date()
     
-    save(genData,file=paste(folderOut,'/genData.RData',sep=''))
+    save(BGData,file=paste(folderOut,'/BGData.RData',sep=''))
     
-    if(returnData){ return(genData) }
+    if(returnData){ return(BGData) }
 }
 
 
 #' @export
 loadGenData<-function(path,envir=.GlobalEnv){
     ##
-    # Use: to load a genData object using the name of the folder where the meta-data and data are stored.
+    # Use: to load a BGData object using the name of the folder where the meta-data and data are stored.
     # path: the name of the folder where the data and meta data are stored.
     # envir: the name of the environment where the object is returned.
     # See also: load2() and setGenData()
     ##
-    if('genData'%in%ls(envir=envir)){
-        stop('There is already an object called genData in the environment. Please move it.')
+    if('BGData'%in%ls(envir=envir)){
+        stop('There is already an object called BGData in the environment. Please move it.')
     }
-    if(!file.exists(paste0(path,'/genData.RData'))){
-        stop(paste('Could not find a genData object in path',path))
+    if(!file.exists(paste0(path,'/BGData.RData'))){
+        stop(paste('Could not find a BGData object in path',path))
     }
     cwd<-getwd()
     setwd(path)
-    load('genData.RData',envir)
-    cat('Loaded genData object into environment under name genData')
+    load('BGData.RData',envir)
+    cat('Loaded BGData object into environment under name BGData')
     # Open all chunks for reading (we do not store absolute paths to ff files,
     # so this has to happen in the same working directory)
-    chunks<-chunks(genData@geno)
+    chunks<-chunks(BGData@geno)
     for(i in 1:nrow(chunks)){
-        open(genData@geno[[i]])
+        open(BGData@geno[[i]])
     }
     # Restore working directory
     setwd(cwd)
@@ -210,7 +214,7 @@ loadGenData<-function(path,envir=.GlobalEnv){
 #' @export
 load2<-function(file,envir=parent.frame(),verbose=TRUE){
     ##
-    # Function to load genData or dMatrix objects
+    # Function to load BGData or dMatrix objects
     # file: the name of the .RData file to be loaded (and possibly a path)
     # envir: the environment where to load the data
     # verbose: TRUE/FALSE
@@ -239,10 +243,10 @@ load2<-function(file,envir=parent.frame(),verbose=TRUE){
         cat(' Object Name: ',objectName,'\n',sep='')
         cat(' Object Class: ',objectClass,'\n',sep='')
     }
-    if(!(objectClass%in%c('genData','rDMatrix','cDMatrix'))){ stop( ' Object class must be either genData, cDMatrix or rDMatrix')}
+    if(!(objectClass%in%c('BGData','rDMatrix','cDMatrix'))){ stop( ' Object class must be either BGData, cDMatrix or rDMatrix')}
     
     # Determining number of chunks
-    if(objectClass=='genData'){
+    if(objectClass=='BGData'){
         tmpChunks<-chunks(eval(parse(text=paste0(objectName,'@geno'))))
     }else{
         tmpChunks<-chunks(eval(parse(text=objectName)))
@@ -251,7 +255,7 @@ load2<-function(file,envir=parent.frame(),verbose=TRUE){
     # opening files
     for(i in 1:nrow(tmpChunks)){
         if(verbose){ cat(' Opening flat file ', i,'\n')  }
-        if(objectClass=='genData'){
+        if(objectClass=='BGData'){
             open(eval(parse(text=paste0(objectName,'@geno[[',i,']]'))))
         }else{
             open(eval(parse(text=paste0(objectName,'[[',i,']]'))))
@@ -266,19 +270,19 @@ load2<-function(file,envir=parent.frame(),verbose=TRUE){
 }
 
 
-#' Conducts an association study (GWAS) using a \code{\linkS4class{genData}}
+#' Conducts an association study (GWAS) using a \code{\linkS4class{BGData}}
 #' object.
 #' 
 #' This function conducts an association test using the formula provided by the 
 #' user (\code{formula}) plus one column of \code{@@geno}, one column at a time.
 #' The data from the association tests is obtained from a 
-#' \code{\linkS4class{genData}} object.
+#' \code{\linkS4class{BGData}} object.
 #' 
 #' @param formula A formula (e.g. weight~sex+age) with the response on the 
 #'   left-hand side and predictors (all the covariates except the markers) on 
 #'   the right-hand side. The variables included in the formula must be in the 
-#'   \code{@@pheno} object of the \code{\linkS4class{genData}}.
-#' @param data A \code{\linkS4class{genData}} object.
+#'   \code{@@pheno} object of the \code{\linkS4class{BGData}}.
+#' @param data A \code{\linkS4class{BGData}} object.
 #' @param method The regression method to be used. Currently, the following 
 #'   methods are implemented: \code{\link{lm}}, \code{\link{lm.fit}}, 
 #'   \code{\link{lsfit}}, \code{\link{glm}} and \code{\link[lme4]{lmer}}.
@@ -292,7 +296,7 @@ load2<-function(file,envir=parent.frame(),verbose=TRUE){
 #' @return Returns a matrix with estimates, SE, p-value, etc.
 #' @export
 GWAS<-function(formula,data,method,plot=FALSE,verbose=FALSE,min.pValue=1e-10,chunkSize=10,...){
-    if(class(data)!='genData'){ stop('data must genData')}
+    if(class(data)!='BGData'){ stop('data must BGData')}
     
     if(!method%in%c('lm','lm.fit','lsfit','glm','lmer','SKAT')){
         stop('Only lm, glm, lmer and SKAT have been implemented so far.')
@@ -376,7 +380,7 @@ GWAS.ols<-function(formula,data,plot=FALSE,verbose=FALSE,min.pValue=1e-10,chunkS
     ##
     # formula: the formula for the GWAS model without including the marker, e.g., y~1 or y~factor(sex)+age
     # all the variables in the formula must be in data@pheno
-    # data (genData) containing slots @pheno and @geno
+    # data (BGData) containing slots @pheno and @geno
     ##
     
     X <- model.matrix(formula,data@pheno)
@@ -426,7 +430,7 @@ GWAS.SKAT<-function(formula,data,groups,plot=FALSE,verbose=FALSE,min.pValue=1e-1
     ##
     # formula: the formula for the GWAS model without including the markers, e.g., y~1 or y~factor(sex)+age
     # all the variables in the formula must be in data@pheno
-    # data (genData) containing slots @pheno and @geno
+    # data (BGData) containing slots @pheno and @geno
     # groups: a vector mapping markers into groups (can be integer, character or factor).
     ##
     
@@ -449,7 +453,7 @@ GWAS.SKAT<-function(formula,data,groups,plot=FALSE,verbose=FALSE,min.pValue=1e-1
     }
     
     for(i in 1:p){
-        Z<-genData@geno[,groups==levels[i],drop=FALSE]
+        Z<-BGData@geno[,groups==levels[i],drop=FALSE]
         fm<-SKAT::SKAT(Z=Z,obj=H0,...)
         OUT[i,]<-c(ncol(Z),fm$p.value)
         
