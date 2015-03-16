@@ -1,14 +1,14 @@
 library(dMatrix)
 
-context("rDMatrix")
+context("cmmMatrix")
 
 # Prepare dummy data
 genotypes <- matrix(c(4, 4, 4, 3, 2, 3, 1, 2, 1), nrow = 3, ncol = 3)
 colnames(genotypes) <- paste0('mrk_', 1:3)
 rownames(genotypes) <- paste0('id_', 1:3)
 
-# Prepare rDMatrix object
-geno <- rDMatrix(nrow = 3, ncol = 3)
+# Prepare cmmMatrix object
+geno <- cmmMatrix(nrow = 3, ncol = 3)
 geno[] <- genotypes
 colnames(geno) <- paste0('mrk_', 1:3)
 rownames(geno) <- paste0('id_', 1:3)

@@ -1,8 +1,8 @@
-#' @include cDMatrix.R rDMatrix.R
+#' @include cmmMatrix.R rmmMatrix.R
 NULL
 
 
-setClassUnion('mmMatrix',c('cDMatrix','rDMatrix'))
+setClassUnion('mmMatrix',c('cmmMatrix','rmmMatrix'))
 
 
 get.dimnames<-function(x){
@@ -15,7 +15,7 @@ setMethod("dimnames",signature("mmMatrix"),get.dimnames)
 
 apply.DMatrix<-function(X,MARGIN,FUN,chunkSize=1e3,verbose=TRUE,...){
     FUN<-match.fun(FUN)
-    if(!(class(X)%in%c('rDMatrix','cDMatrix'))){ stop('X must be either mmMatrix or rMatrix') }
+    if(!(class(X)%in%c('rmmMatrix','cmmMatrix'))){ stop('X must be either mmMatrix or rMatrix') }
     
     n<-ifelse(MARGIN==1,nrow(X),ncol(X))
  
@@ -60,16 +60,16 @@ apply.DMatrix<-function(X,MARGIN,FUN,chunkSize=1e3,verbose=TRUE,...){
     return(ANS[,,drop=TRUE])
 }
 
-#' Apply function for \code{\linkS4class{rDMatrix}} or 
-#' \code{\linkS4class{cDMatrix}} objects.
+#' Apply function for \code{\linkS4class{rmmMatrix}} or 
+#' \code{\linkS4class{cmmMatrix}} objects.
 #' 
 #' This function brings chunks of data (of size \code{chunkSize}) from the 
 #' distributed array into RAM as \code{matrix} objects and calls \code{apply} of
 #' the base package to obtain the summaries for the chunk. Results from all the 
 #' chunks are collected and returned.
 #' 
-#' @param X Either an \code{\linkS4class{rDMatrix}} or a 
-#'   \code{\linkS4class{cDMatrix}} object.
+#' @param X Either an \code{\linkS4class{rmmMatrix}} or a 
+#'   \code{\linkS4class{cmmMatrix}} object.
 #' @param MARGIN Use 1 to obtain row summaries or 2 to obtain column summaries.
 #' @param chunkSize The number of columns or rows that are processed at a time 
 #'   (see Details).
@@ -159,18 +159,18 @@ setMethod("summary",signature("mmMatrix"),summary.DMatrix)
 
 #' Provides information about how data is distributed into binary files.
 #' 
-#' Row-distributed (\code{\linkS4class{rDMatrix}}) and column-distributed 
-#' matrices (\code{\linkS4class{cDMatrix}}) have the content of the array mapped
+#' Row-distributed (\code{\linkS4class{rmmMatrix}}) and column-distributed 
+#' matrices (\code{\linkS4class{cmmMatrix}}) have the content of the array mapped
 #' to possibly multiple binary files. Each chunk is an \code{ff_matrix} object. 
 #' \code{chunks} gives, for each chunk, the row or column indexes at which each 
 #' chunk start and ends.
 #' 
-#' @param x Either an \code{\linkS4class{rDMatrix}} or a 
-#'   \code{\linkS4class{cDMatrix}} object
+#' @param x Either an \code{\linkS4class{rmmMatrix}} or a 
+#'   \code{\linkS4class{cmmMatrix}} object
 #' @return A matrix with information per chunk in rows.
 #' @export
 chunks<-function(x){
-    if(class(x)=='cDMatrix'){
+    if(class(x)=='cmmMatrix'){
         n<-length(x)
         OUT<-matrix(nrow=n,ncol=3,NA)
         colnames(OUT)<-c('chunk','col.ini','col.end')
@@ -181,7 +181,7 @@ chunks<-function(x){
             OUT[i,]<-c(i,ini,end)
         }
         return(OUT)
-    }else if(class(x)=='rDMatrix'){
+    }else if(class(x)=='rmmMatrix'){
         n<-length(x)
         OUT<-matrix(nrow=n,ncol=3,NA)
         colnames(OUT)<-c('chunk','row.ini','row.end')

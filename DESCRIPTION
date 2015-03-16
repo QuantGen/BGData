@@ -33,8 +33,8 @@ Suggests:
     SKAT
 LazyData: true
 Collate:
-    'rDMatrix.R'
-    'cDMatrix.R'
+    'rmmMatrix.R'
+    'cmmMatrix.R'
     'mmMatrix.R'
     'BGData.R'
     'utils.R'

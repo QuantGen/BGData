@@ -3,15 +3,15 @@
 \docType{methods}
 \name{apply,mmMatrix-method}
 \alias{apply,mmMatrix-method}
-\title{Apply function for \code{\linkS4class{rDMatrix}} or
-\code{\linkS4class{cDMatrix}} objects.}
+\title{Apply function for \code{\linkS4class{rmmMatrix}} or
+\code{\linkS4class{cmmMatrix}} objects.}
 \usage{
 \S4method{apply}{mmMatrix}(X, MARGIN, FUN, chunkSize = 1000, verbose = TRUE,
   ...)
 }
 \arguments{
-\item{X}{Either an \code{\linkS4class{rDMatrix}} or a
-\code{\linkS4class{cDMatrix}} object.}
+\item{X}{Either an \code{\linkS4class{rmmMatrix}} or a
+\code{\linkS4class{cmmMatrix}} object.}
 
 \item{MARGIN}{Use 1 to obtain row summaries or 2 to obtain column summaries.}
 

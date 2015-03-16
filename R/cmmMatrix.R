@@ -1,14 +1,14 @@
 #' An S4 class to represent a column-distributed \code{mmMatrix}.
 #'
-#' \code{cDMatrix} inherits from \code{\link{list}}. Each element of the list is
+#' \code{cmmMatrix} inherits from \code{\link{list}}. Each element of the list is
 #' an \code{ff_matrix} object.
 #'
-#' @export cDMatrix
-#' @exportClass cDMatrix
-cDMatrix<-setClass('cDMatrix',contains='list')
+#' @export cmmMatrix
+#' @exportClass cmmMatrix
+cmmMatrix<-setClass('cmmMatrix',contains='list')
 
 #' @export
-setMethod('initialize','cDMatrix',function(.Object,nrow=1,ncol=1,vmode='byte',folderOut=NULL,nChunks=NULL,dimorder=c(2,1)){
+setMethod('initialize','cmmMatrix',function(.Object,nrow=1,ncol=1,vmode='byte',folderOut=NULL,nChunks=NULL,dimorder=c(2,1)){
     if(is.null(folderOut)){
         folderOut<-paste0(tempdir(),'/mmMatrix-',randomString())
     }
@@ -41,7 +41,7 @@ setMethod('initialize','cDMatrix',function(.Object,nrow=1,ncol=1,vmode='byte',fo
 })
 
 
-subset.cDMatrix<-function(x,i,j,drop){
+subset.cmmMatrix<-function(x,i,j,drop){
     if(class(i)=='logical'){
         i<-which(i)
     }else if(class(i)=='character'){
@@ -92,29 +92,29 @@ subset.cDMatrix<-function(x,i,j,drop){
 }
 
 #' @export
-setMethod("[",signature(x="cDMatrix",i="ANY",j="ANY",drop="ANY"),subset.cDMatrix)
+setMethod("[",signature(x="cmmMatrix",i="ANY",j="ANY",drop="ANY"),subset.cmmMatrix)
 
 #' @export
-setMethod("[",signature(x="cDMatrix",i="ANY",j="missing",drop="ANY"),function(x,i,drop){
+setMethod("[",signature(x="cmmMatrix",i="ANY",j="missing",drop="ANY"),function(x,i,drop){
     j<-1:ncol(x)
-    subset.cDMatrix(x,i,j,drop)
+    subset.cmmMatrix(x,i,j,drop)
 })
 
 #' @export
-setMethod("[",signature(x="cDMatrix",i="missing",j="ANY",drop="ANY"),function(x,j,drop) {
+setMethod("[",signature(x="cmmMatrix",i="missing",j="ANY",drop="ANY"),function(x,j,drop) {
     i<-1:nrow(x)
-    subset.cDMatrix(x,i,j,drop)
+    subset.cmmMatrix(x,i,j,drop)
 })
 
 #' @export
-setMethod("[",signature(x="cDMatrix",i="missing",j="missing",drop="ANY"),function(x,drop) {
+setMethod("[",signature(x="cmmMatrix",i="missing",j="missing",drop="ANY"),function(x,drop) {
     i<-1:nrow(x)
     j<-1:ncol(x)
-    subset.cDMatrix(x,i,j,drop)
+    subset.cmmMatrix(x,i,j,drop)
 })
 
 
-replace.cDMatrix<-function(x,i,j,...,value){
+replace.cmmMatrix<-function(x,i,j,...,value){
     Z<-matrix(nrow=length(i),ncol=length(j),data=value)
     CHUNKS<-chunks(x)
     for(k in 1:nrow(CHUNKS) ){
@@ -126,29 +126,29 @@ replace.cDMatrix<-function(x,i,j,...,value){
 }
 
 #' @export
-setReplaceMethod("[",signature(x="cDMatrix",i="ANY",j="ANY",value="ANY"),replace.cDMatrix)
+setReplaceMethod("[",signature(x="cmmMatrix",i="ANY",j="ANY",value="ANY"),replace.cmmMatrix)
 
 #' @export
-setReplaceMethod("[",signature(x="cDMatrix",i="ANY",j="missing",value="ANY"),function(x,i,value){
+setReplaceMethod("[",signature(x="cmmMatrix",i="ANY",j="missing",value="ANY"),function(x,i,value){
     j<-1:ncol(x)
-    replace.cDMatrix(x,i,j,value=value)
+    replace.cmmMatrix(x,i,j,value=value)
 })
 
 #' @export
-setReplaceMethod("[",signature(x="cDMatrix",i="missing",j="ANY",value="ANY"),function(x,j,value) {
+setReplaceMethod("[",signature(x="cmmMatrix",i="missing",j="ANY",value="ANY"),function(x,j,value) {
     i<-1:nrow(x)
-    replace.cDMatrix(x,i,j,value=value)
+    replace.cmmMatrix(x,i,j,value=value)
 })
 
 #' @export
-setReplaceMethod("[",signature(x="cDMatrix",i="missing",j="missing",value="ANY"),function(x,value) {
+setReplaceMethod("[",signature(x="cmmMatrix",i="missing",j="missing",value="ANY"),function(x,value) {
     i<-1:nrow(x)
     j<-1:ncol(x)
-    replace.cDMatrix(x,i,j,value=value)
+    replace.cmmMatrix(x,i,j,value=value)
 })
 
 
-dim.cDMatrix<-function(x){
+dim.cmmMatrix<-function(x){
     n<-nrow(x[[1]])
     p<-0
     for(i in 1:length(x)){
@@ -158,10 +158,10 @@ dim.cDMatrix<-function(x){
 }
 
 #' @export
-setMethod("dim",signature("cDMatrix"),dim.cDMatrix)
+setMethod("dim",signature("cmmMatrix"),dim.cmmMatrix)
 
 
-get.colnames.cDMatrix<-function(x){
+get.colnames.cmmMatrix<-function(x){
     out<-NULL
     if(!is.null(colnames(x[[1]]))){
         p<-dim(x)[2]
@@ -174,7 +174,7 @@ get.colnames.cDMatrix<-function(x){
     return(out)
 }
 
-set.colnames.cDMatrix<-function(x,value){
+set.colnames.cmmMatrix<-function(x,value){
     TMP<-chunks(x)
     for(i in 1:nrow(TMP)){
         colnames(x[[i]])<-value[(TMP[i,2]:TMP[i,3])]
@@ -183,18 +183,18 @@ set.colnames.cDMatrix<-function(x,value){
 }
 
 #' @export
-setMethod("colnames",signature("cDMatrix"),get.colnames.cDMatrix)
+setMethod("colnames",signature("cmmMatrix"),get.colnames.cmmMatrix)
 
 #' @export
-setMethod("colnames<-",signature("cDMatrix"),set.colnames.cDMatrix)
+setMethod("colnames<-",signature("cmmMatrix"),set.colnames.cmmMatrix)
 
 
-get.rownames.cDMatrix<-function(x){
+get.rownames.cmmMatrix<-function(x){
     out<-rownames(x[[1]])
     return(out)
 }
 
-set.rownames.cDMatrix<-function(x,value){
+set.rownames.cmmMatrix<-function(x,value){
     for(i in 1:length(x)){
         rownames(x[[i]])<-value
     }
@@ -202,13 +202,13 @@ set.rownames.cDMatrix<-function(x,value){
 }
 
 #' @export
-setMethod("rownames",signature("cDMatrix"),get.rownames.cDMatrix)
+setMethod("rownames",signature("cmmMatrix"),get.rownames.cmmMatrix)
 
 #' @export
-setMethod("rownames<-",signature("cDMatrix"),set.rownames.cDMatrix)
+setMethod("rownames<-",signature("cmmMatrix"),set.rownames.cmmMatrix)
 
 
-#' Finds the position of a set of columns in a cDMatrix object.
+#' Finds the position of a set of columns in a cmmMatrix object.
 colindexes<-function(x,columns){
 
     TMP<-chunks(x)

@@ -1,14 +1,14 @@
 #' An S4 class to represent a row-distributed \code{mmMatrix}
 #'
-#' \code{rDMatrix} inherits from \code{\link{list}}. Each element of the list is
+#' \code{rmmMatrix} inherits from \code{\link{list}}. Each element of the list is
 #' an \code{ff_matrix} object.
 #'
-#' @export rDMatrix
-#' @exportClass rDMatrix
-rDMatrix<-setClass('rDMatrix',contains='list')
+#' @export rmmMatrix
+#' @exportClass rmmMatrix
+rmmMatrix<-setClass('rmmMatrix',contains='list')
 
 #' @export
-setMethod('initialize','rDMatrix',function(.Object,nrow=1,ncol=1,vmode='byte',folderOut=NULL,nChunks=NULL,dimorder=c(2,1)){
+setMethod('initialize','rmmMatrix',function(.Object,nrow=1,ncol=1,vmode='byte',folderOut=NULL,nChunks=NULL,dimorder=c(2,1)){
     if(is.null(folderOut)){
         folderOut<-paste0(tempdir(),'/mmMatrix-',randomString())
     }
@@ -40,7 +40,7 @@ setMethod('initialize','rDMatrix',function(.Object,nrow=1,ncol=1,vmode='byte',fo
 })
 
 
-subset.rDMatrix<-function(x,i,j,drop){
+subset.rmmMatrix<-function(x,i,j,drop){
     if(class(i)=='logical'){
         i<-which(i)
     }else if(class(i)=='character'){
@@ -91,29 +91,29 @@ subset.rDMatrix<-function(x,i,j,drop){
 }
 
 #' @export
-setMethod("[",signature(x="rDMatrix",i="ANY",j="ANY",drop="ANY"),subset.rDMatrix)
+setMethod("[",signature(x="rmmMatrix",i="ANY",j="ANY",drop="ANY"),subset.rmmMatrix)
 
 #' @export
-setMethod("[",signature(x="rDMatrix",i="ANY",j="missing",drop="ANY"),function(x,i,drop){
+setMethod("[",signature(x="rmmMatrix",i="ANY",j="missing",drop="ANY"),function(x,i,drop){
     j<-1:ncol(x)
-    subset.rDMatrix(x,i,j,drop)
+    subset.rmmMatrix(x,i,j,drop)
 })
 
 #' @export
-setMethod("[",signature(x="rDMatrix",i="missing",j="ANY",drop="ANY"),function(x,j,drop) {
+setMethod("[",signature(x="rmmMatrix",i="missing",j="ANY",drop="ANY"),function(x,j,drop) {
     i<-1:nrow(x)
-    subset.rDMatrix(x,i,j,drop)
+    subset.rmmMatrix(x,i,j,drop)
 })
 
 #' @export
-setMethod("[",signature(x="rDMatrix",i="missing",j="missing",drop="ANY"),function(x,drop) {
+setMethod("[",signature(x="rmmMatrix",i="missing",j="missing",drop="ANY"),function(x,drop) {
     i<-1:nrow(x)
     j<-1:ncol(x)
-    subset.rDMatrix(x,i,j,drop)
+    subset.rmmMatrix(x,i,j,drop)
 })
 
 
-replace.rDMatrix<-function(x,i,j,...,value){
+replace.rmmMatrix<-function(x,i,j,...,value){
     Z<-matrix(nrow=length(i),ncol=length(j),data=value)
     CHUNKS<-chunks(x)
     for(k in 1:nrow(CHUNKS) ){
@@ -125,29 +125,29 @@ replace.rDMatrix<-function(x,i,j,...,value){
 }
 
 #' @export
-setReplaceMethod("[",signature(x="rDMatrix",i="ANY",j="ANY",value="ANY"),replace.rDMatrix)
+setReplaceMethod("[",signature(x="rmmMatrix",i="ANY",j="ANY",value="ANY"),replace.rmmMatrix)
 
 #' @export
-setReplaceMethod("[",signature(x="rDMatrix",i="ANY",j="missing",value="ANY"),function(x,i,value){
+setReplaceMethod("[",signature(x="rmmMatrix",i="ANY",j="missing",value="ANY"),function(x,i,value){
     j<-1:ncol(x)
-    replace.rDMatrix(x,i,j,value=value)
+    replace.rmmMatrix(x,i,j,value=value)
 })
 
 #' @export
-setReplaceMethod("[",signature(x="rDMatrix",i="missing",j="ANY",value="ANY"),function(x,j,value) {
+setReplaceMethod("[",signature(x="rmmMatrix",i="missing",j="ANY",value="ANY"),function(x,j,value) {
     i<-1:nrow(x)
-    replace.rDMatrix(x,i,j,value=value)
+    replace.rmmMatrix(x,i,j,value=value)
 })
 
 #' @export
-setReplaceMethod("[",signature(x="rDMatrix",i="missing",j="missing",value="ANY"),function(x,value) {
+setReplaceMethod("[",signature(x="rmmMatrix",i="missing",j="missing",value="ANY"),function(x,value) {
     i<-1:nrow(x)
     j<-1:ncol(x)
-    replace.rDMatrix(x,i,j,value=value)
+    replace.rmmMatrix(x,i,j,value=value)
 })
 
 
-dim.rDMatrix<-function(x){
+dim.rmmMatrix<-function(x){
     p<-ncol(x[[1]])
     n<-0
     for(i in 1:length(x)){
@@ -157,15 +157,15 @@ dim.rDMatrix<-function(x){
 }
 
 #' @export
-setMethod("dim",signature("rDMatrix"),dim.rDMatrix)
+setMethod("dim",signature("rmmMatrix"),dim.rmmMatrix)
 
 
-get.colnames.rDMatrix<-function(x){
+get.colnames.rmmMatrix<-function(x){
     out<-colnames(x[[1]])
     return(out)
 }
 
-set.colnames.rDMatrix<-function(x,value){
+set.colnames.rmmMatrix<-function(x,value){
     for(i in 1:length(x)){
         colnames(x[[i]])<-value
     }
@@ -173,13 +173,13 @@ set.colnames.rDMatrix<-function(x,value){
 }
 
 #' @export
-setMethod("colnames",signature("rDMatrix"),get.colnames.rDMatrix)
+setMethod("colnames",signature("rmmMatrix"),get.colnames.rmmMatrix)
 
 #' @export
-setMethod("colnames<-",signature("rDMatrix"),set.colnames.rDMatrix)
+setMethod("colnames<-",signature("rmmMatrix"),set.colnames.rmmMatrix)
 
 
-get.rownames.rDMatrix<-function(x){
+get.rownames.rmmMatrix<-function(x){
     out<-NULL
     if(!is.null(rownames(x[[1]]))){
         n<-dim(x)[1]
@@ -192,7 +192,7 @@ get.rownames.rDMatrix<-function(x){
     return(out)
 }
 
-set.rownames.rDMatrix<-function(x,value){
+set.rownames.rmmMatrix<-function(x,value){
     TMP<-chunks(x)
     for(i in 1:nrow(TMP)){
         rownames(x[[i]])<-value[(TMP[i,2]:TMP[i,3])]
@@ -201,13 +201,13 @@ set.rownames.rDMatrix<-function(x,value){
 }
 
 #' @export
-setMethod("rownames",signature("rDMatrix"),get.rownames.rDMatrix)
+setMethod("rownames",signature("rmmMatrix"),get.rownames.rmmMatrix)
 
 #' @export
-setMethod("rownames<-",signature("rDMatrix"),set.rownames.rDMatrix)
+setMethod("rownames<-",signature("rmmMatrix"),set.rownames.rmmMatrix)
 
 
-#' Finds the position of a set of rows in an rDMatrix object.
+#' Finds the position of a set of rows in an rmmMatrix object.
 rowindexes<-function(x,rows){
     TMP<-chunks(x)
     nRow<-(TMP[nrow(TMP),ncol(TMP)])
