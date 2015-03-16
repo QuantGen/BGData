@@ -12,13 +12,13 @@ nRows <- 3
 nCols <- 3
 genotypes <- simPED(filename = pedPath, n = nRows, p = nCols, returnGenos = TRUE)
 
-context("setGenData")
+context("read.PED.BGData")
 
-test_that("setGenData complains if folderOut already exists", {
+test_that("read.PED.BGData complains if folderOut already exists", {
     dirExistsPath <- paste0(tmpPath, "dirExists")
     dir.create(dirExistsPath, showWarnings = FALSE)
     expect_error(
-        setGenData(fileIn = pedPath, dataType = 'integer', header = TRUE,
+        read.PED.BGData(fileIn = pedPath, dataType = 'integer', header = TRUE,
                    n = nRows, folderOut = dirExistsPath)
     )
 })

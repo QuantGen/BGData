@@ -44,7 +44,7 @@ setMethod('initialize','BGData',function(.Object,geno,pheno,map){
 
 #' Creates a \code{\linkS4class{BGData}} object from a plaintext file.
 #' 
-#' \code{setGenData} assumes that the plaintext file (\code{fileIn}) contains 
+#' \code{read.PED.BGData} assumes that the plaintext file (\code{fileIn}) contains 
 #' records of individuals in rows, and phenotypes, covariates and markers in 
 #' columns. The columns included in columns \code{1:nColSkip} are used to 
 #' populate the slot \code{\code{@@pheno}} of a \code{\linkS4class{BGData}}
@@ -56,9 +56,9 @@ setMethod('initialize','BGData',function(.Object,geno,pheno,map){
 #' column-distributed (\code{\linkS4class{cDMatrix}}) is used for \code{@@geno},
 #' but the user can modify this using the \code{distributed.by} argument. The
 #' number of chunks is either specified by the user (use \code{nChunks} when
-#' calling \code{setGenData}) or determined internally so that each
+#' calling \code{read.PED.BGData}) or determined internally so that each
 #' \code{ff_matrix} object has a number of cells that is smaller than 
-#' \code{.Machine$integer.max/1.2}. \code{setGenData} creates a folder 
+#' \code{.Machine$integer.max/1.2}. \code{read.PED.BGData} creates a folder 
 #' (\code{folderOut}) that contains the binary flat files (\code{geno_*.bin}) 
 #' and the \code{\linkS4class{BGData}} object (typically named
 #' \code{BGData.RData}. Optionally (if \code{returnData} is TRUE) it returns
@@ -91,10 +91,10 @@ setMethod('initialize','BGData',function(.Object,geno,pheno,map){
 #' @return If \code{returnData} is TRUE, a \code{\linkS4class{BGData}} object 
 #'   is returned.
 #' @export
-setGenData<-function(fileIn,header,dataType,distributed.by='columns',n=NULL,p=NULL,
-                     folderOut=paste('BGData_',sub("\\.[[:alnum:]]+$","",basename(fileIn)),sep=''),
-                     returnData=TRUE,na.strings='NA',nColSkip=6,idCol=2,verbose=FALSE,nChunks=NULL,
-                     dimorder=if(distributed.by=='rows') 2:1 else 1:2){
+read.PED.BGData<-function(fileIn,header,dataType,distributed.by='columns',n=NULL,p=NULL,
+                          folderOut=paste('BGData_',sub("\\.[[:alnum:]]+$","",basename(fileIn)),sep=''),
+                          returnData=TRUE,na.strings='NA',nColSkip=6,idCol=2,verbose=FALSE,nChunks=NULL,
+                          dimorder=if(distributed.by=='rows') 2:1 else 1:2){
     
     if(file.exists(folderOut)){
         stop(paste('Output folder',folderOut,'already exists. Please move it or pick a different one.'))
@@ -188,7 +188,7 @@ loadGenData<-function(path,envir=.GlobalEnv){
     # Use: to load a BGData object using the name of the folder where the meta-data and data are stored.
     # path: the name of the folder where the data and meta data are stored.
     # envir: the name of the environment where the object is returned.
-    # See also: load2() and setGenData()
+    # See also: load2() and read.PED.BGData()
     ##
     if('BGData'%in%ls(envir=envir)){
         stop('There is already an object called BGData in the environment. Please move it.')
