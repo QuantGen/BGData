@@ -1,4 +1,4 @@
-Package: dMatrix
+Package: BGData
 Version: 0.0.0.9000
 License: MIT + file LICENSE
 Title: Memory Mapped Matrices and Data Structures for Genomic Data

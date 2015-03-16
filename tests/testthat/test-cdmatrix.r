@@ -1,4 +1,4 @@
-library(dMatrix)
+library(BGData)
 
 context("cmmMatrix")
 

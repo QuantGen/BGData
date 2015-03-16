@@ -1,4 +1,4 @@
 library(testthat)
-library(dMatrix)
+library(BGData)
 
-test_check("dMatrix")
+test_check("BGData")

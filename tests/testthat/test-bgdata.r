@@ -1,9 +1,9 @@
-library(dMatrix)
+library(BGData)
 
 context("BGData")
 
 # Create temporary directory
-tmpPath <- paste0("/tmp/dMatrix-", randomString(), "/")
+tmpPath <- paste0("/tmp/BGData-", randomString(), "/")
 dir.create(tmpPath)
 
 # Create example PED file
