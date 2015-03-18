@@ -453,7 +453,7 @@ GWAS.SKAT<-function(formula,data,groups,plot=FALSE,verbose=FALSE,min.pValue=1e-1
     }
     
     for(i in 1:p){
-        Z<-BGData@geno[,groups==levels[i],drop=FALSE]
+        Z<-data@geno[,groups==levels[i],drop=FALSE]
         fm<-SKAT::SKAT(Z=Z,obj=H0,...)
         OUT[i,]<-c(ncol(Z),fm$p.value)
         
