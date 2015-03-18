@@ -9,16 +9,16 @@ Description: Genetic data can be very large and often holding data in RAM is
     array almost at the same speed as accessing those cells in a regular matrix
     object (held in RAM). However, with ff the array size is limited by the
     largest integer supported by the system; with genomic data we often exceed
-    this. Therefore we are developing new classes (rDMatrix and cDMatrix) which
-    are essentially collections of ff objects. In these classes we distribute a
-    matrix either by rows (rDMatrix) or columns (cDMatrix) into multiple ff
-    objects. We have developed indexing and many other methods that allows the
-    user to deal with these objects as if they were regular matrices. In
-    addition we have developed methods that can take rDMatrix or cDMatrix as
-    input to compute genomic relationship matrices, etc. The classes cDMatrix
-    and rDMatrix were designed to hold genotype data (integer coding), the
-    class genData contains three slots @geno, @map and @pheno and can be used
-    to hold GWAS data.
+    this. Therefore we are developing new classes (rmmMatrix and cmmMatrix)
+    which are essentially collections of ff objects. In these classes we
+    distribute a matrix either by rows (rmmMatrix) or columns (cmmMatrix) into
+    multiple ff objects. We have developed indexing and many other methods that
+    allows the user to deal with these objects as if they were regular
+    matrices. In addition we have developed methods that can take rmmMatrix or
+    cmmMatrix as input to compute genomic relationship matrices, etc. The
+    classes cmmMatrix and rmmMatrix were designed to hold genotype data
+    (integer coding), the class BGData contains three slots @geno, @map and
+    @pheno and can be used to hold GWAS data.
 Authors@R: c(
     person("Gustavo", "de los Campos", email = "gcampos@uab.edu", role = c("aut", "cre")),
     person("Paulino Perez", email = "perpdgo@gmail.com", role = c("ctb")),

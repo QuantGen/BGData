@@ -20,8 +20,8 @@ read.PED.BGData(fileIn, header, dataType, distributed.by = "columns",
 'integer' for numeric coding.}
 
 \item{distributed.by}{If columns a column-distributed matrix
-(\code{\linkS4class{cDMatrix}}) is created, if rows a row-distributed
-matrix (\code{\linkS4class{rDMatrix}}).}
+(\code{\linkS4class{cmmMatrix}}) is created, if rows a row-distributed
+matrix (\code{\linkS4class{rmmMatrix}}).}
 
 \item{n}{The number of individuals.}
 
@@ -59,7 +59,7 @@ object, and the remaining columns are used to fill the slot
 (\code{header=TRUE}), data in this row is used to determine variables names
 for \code{@pheno} and marker names for \code{@map} and \code{@geno}.
 Genotypes are stored in a distributed matrix (\code{mmMatrix}). By default a
-column-distributed (\code{\linkS4class{cDMatrix}}) is used for \code{@geno},
+column-distributed (\code{\linkS4class{cmmMatrix}}) is used for \code{@geno},
 but the user can modify this using the \code{distributed.by} argument. The
 number of chunks is either specified by the user (use \code{nChunks} when
 calling \code{read.PED.BGData}) or determined internally so that each

@@ -6,7 +6,7 @@ getG<-function(x,nChunks=3,scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,i=1:nrow(x),j=
     # And of scaling the final output so that the average diagonal value is equal to one (scaleG=TRUE)
     # If scaleCol=centerCol=scaleG=FALSE it behaves as tcrossprod(X)
     # Arguments:
-    #   x: matrix, ff_matrix, rDMatrix or cDMatrix
+    #   x: matrix, ff_matrix, rmmMatrix or cmmMatrix
     #   nChunks: the number of columns that are processed at a time.
     #   scaleCol, centerCol: TRUE/FALSE whether columns must be centered and scaled before computing XX'
     #   i,j: (integer, boolean or character) indicating which columsn and which rows should be used.

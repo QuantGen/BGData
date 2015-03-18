@@ -53,7 +53,7 @@ setMethod('initialize','BGData',function(.Object,geno,pheno,map){
 #' (\code{header=TRUE}), data in this row is used to determine variables names
 #' for \code{@@pheno} and marker names for \code{@@map} and \code{@@geno}.
 #' Genotypes are stored in a distributed matrix (\code{mmMatrix}). By default a
-#' column-distributed (\code{\linkS4class{cDMatrix}}) is used for \code{@@geno},
+#' column-distributed (\code{\linkS4class{cmmMatrix}}) is used for \code{@@geno},
 #' but the user can modify this using the \code{distributed.by} argument. The
 #' number of chunks is either specified by the user (use \code{nChunks} when
 #' calling \code{read.PED.BGData}) or determined internally so that each
@@ -74,8 +74,8 @@ setMethod('initialize','BGData',function(.Object,geno,pheno,map){
 #' @param dataType The coding of genotypes. Use 'character' for A/C/G/T or 
 #'   'integer' for numeric coding.
 #' @param distributed.by If columns a column-distributed matrix 
-#'   (\code{\linkS4class{cDMatrix}}) is created, if rows a row-distributed 
-#'   matrix (\code{\linkS4class{rDMatrix}}).
+#'   (\code{\linkS4class{cmmMatrix}}) is created, if rows a row-distributed 
+#'   matrix (\code{\linkS4class{rmmMatrix}}).
 #' @param n The number of individuals.
 #' @param p The number of markers.
 #' @param folderOut The path to the folder where to save the binary files.
@@ -148,7 +148,7 @@ read.PED.BGData<-function(fileIn,header,dataType,distributed.by='columns',n=NULL
     pheno<-matrix(nrow=n,ncol=nColSkip)
     colnames(pheno)<-phtNames
     
-    geno<-new(ifelse(distributed.by=='columns','cDMatrix','rDMatrix'),nrow=n,ncol=p,vmode=vMode,folderOut=folderOut,nChunks=nChunks,dimorder=dimorder)
+    geno<-new(ifelse(distributed.by=='columns','cmmMatrix','rmmMatrix'),nrow=n,ncol=p,vmode=vMode,folderOut=folderOut,nChunks=nChunks,dimorder=dimorder)
     colnames(geno)<-mrkNames
     
     for(i in 1:n){
@@ -243,7 +243,7 @@ load2<-function(file,envir=parent.frame(),verbose=TRUE){
         cat(' Object Name: ',objectName,'\n',sep='')
         cat(' Object Class: ',objectClass,'\n',sep='')
     }
-    if(!(objectClass%in%c('BGData','rDMatrix','cDMatrix'))){ stop( ' Object class must be either BGData, cDMatrix or rDMatrix')}
+    if(!(objectClass%in%c('BGData','rmmMatrix','cmmMatrix'))){ stop( ' Object class must be either BGData, cmmMatrix or rmmMatrix')}
     
     # Determining number of chunks
     if(objectClass=='BGData'){
