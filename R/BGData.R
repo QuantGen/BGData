@@ -153,7 +153,7 @@ read.PED.BGData<-function(fileIn,header,dataType,distributed.by='columns',n=NULL
     
     for(i in 1:n){
         time<-proc.time()
-        xSkip<-scan(pedFile,n=nColSkip,what=character(),na.strings=na.strings,quiet=TRUE)
+        xSkip<-scan(pedFile,n=nColSkip,what=character(),quiet=TRUE)
         x<-scan(pedFile,n=p,what=dataType,na.strings=na.strings,quiet=TRUE)
         pheno[i,]<-xSkip
         IDs[i]<-xSkip[idCol]
