@@ -13,7 +13,7 @@ get.dimnames<-function(x){
 setMethod("dimnames",signature("mmMatrix"),get.dimnames)
 
 
-apply.DMatrix<-function(X,MARGIN,FUN,chunkSize=1e3,verbose=FALSE,...){
+apply.mmMatrix<-function(X,MARGIN,FUN,chunkSize=1e3,verbose=FALSE,...){
     FUN<-match.fun(FUN)
     if(!(class(X)%in%c('rmmMatrix','cmmMatrix'))){ stop('X must be either mmMatrix or rMatrix') }
     
@@ -75,55 +75,55 @@ apply.DMatrix<-function(X,MARGIN,FUN,chunkSize=1e3,verbose=FALSE,...){
 #'   (see Details).
 #' @return Returns a \code{matrix} or a \code{list} with results from FUN.
 #' @export
-setMethod("apply",signature("mmMatrix"),apply.DMatrix)
+setMethod("apply",signature("mmMatrix"),apply.mmMatrix)
 
 
-colMeans.DMatrix<-function(x,na.rm=TRUE,chunkSize=1e3,...){
+colMeans.mmMatrix<-function(x,na.rm=TRUE,chunkSize=1e3,...){
     if(na.rm){
         warning('Ignoring missing values')
     }
-    ANS<-apply.DMatrix(X=x,MARGIN=2,FUN=mean,chunkSize=chunkSize,na.rm=na.rm,...)
+    ANS<-apply.mmMatrix(X=x,MARGIN=2,FUN=mean,chunkSize=chunkSize,na.rm=na.rm,...)
     return(ANS)
 }
 
 #' @export
-setMethod("colMeans",signature("mmMatrix"),colMeans.DMatrix)
+setMethod("colMeans",signature("mmMatrix"),colMeans.mmMatrix)
 
 
-colSums.DMatrix<-function(x,na.rm=TRUE,chunkSize=1e3,...){
+colSums.mmMatrix<-function(x,na.rm=TRUE,chunkSize=1e3,...){
     if(na.rm){
         warning('Ignoring missing values')
     }
-    ANS<-apply.DMatrix(X=x,MARGIN=2,FUN=sum,chunkSize=chunkSize,na.rm=na.rm,...)
+    ANS<-apply.mmMatrix(X=x,MARGIN=2,FUN=sum,chunkSize=chunkSize,na.rm=na.rm,...)
     return(ANS)
 }
 
 #' @export
-setMethod("colSums",signature("mmMatrix"),colSums.DMatrix)
+setMethod("colSums",signature("mmMatrix"),colSums.mmMatrix)
 
 
-rowMeans.DMatrix<-function(x,na.rm=TRUE,chunkSize=1e3,...){
+rowMeans.mmMatrix<-function(x,na.rm=TRUE,chunkSize=1e3,...){
     if(na.rm){
         warning('Ignoring missing values')
     }
-    ANS<-apply.DMatrix(X=x,MARGIN=1,FUN=mean,chunkSize=chunkSize,na.rm=na.rm,...)
+    ANS<-apply.mmMatrix(X=x,MARGIN=1,FUN=mean,chunkSize=chunkSize,na.rm=na.rm,...)
     return(ANS)
 }
 
 #' @export
-setMethod("rowMeans",signature("mmMatrix"),rowMeans.DMatrix)
+setMethod("rowMeans",signature("mmMatrix"),rowMeans.mmMatrix)
 
 
-rowSums.DMatrix<-function(x,na.rm=TRUE,chunkSize=1e3,...){
+rowSums.mmMatrix<-function(x,na.rm=TRUE,chunkSize=1e3,...){
     if(na.rm){
         warning('Ignoring missing values')
     }
-    ANS<-apply.DMatrix(X=x,MARGIN=1,FUN=sum,chunkSize=chunkSize,na.rm=na.rm,...)
+    ANS<-apply.mmMatrix(X=x,MARGIN=1,FUN=sum,chunkSize=chunkSize,na.rm=na.rm,...)
     return(ANS)
 }
 
 #' @export
-setMethod("rowSums",signature("mmMatrix"),rowSums.DMatrix)
+setMethod("rowSums",signature("mmMatrix"),rowSums.mmMatrix)
 
 
 summary.num<-function(x){
@@ -138,15 +138,15 @@ summary.char<-function(x){
     return(out)
 }
 
-summary.DMatrix<-function(object,MARGIN=2,chunkSize=1e3,...){
+summary.mmMatrix<-function(object,MARGIN=2,chunkSize=1e3,...){
     # If MARGIN==1 summaries of columns are provided, this is the default, otherwise, row-summaries are returned.
     if(is.numeric(object[1,1])){
-        ANS<-apply.DMatrix(X=object,MARGIN=MARGIN,FUN=summary.num,chunkSize=chunkSize,...)
+        ANS<-apply.mmMatrix(X=object,MARGIN=MARGIN,FUN=summary.num,chunkSize=chunkSize,...)
     }else{
        if(is.character(object[1,1])|is.logical(object[1,1])){
-           ANS<-apply.DMatrix(X=object,MARGIN=MARGIN,FUN=summary.char,chunkSize=chunkSize,...)
+           ANS<-apply.mmMatrix(X=object,MARGIN=MARGIN,FUN=summary.char,chunkSize=chunkSize,...)
        }else{
-           ANS<-apply.DMatrix(X=object,MARGIN=MARGIN,FUN=summary,chunkSize=chunkSize,...)
+           ANS<-apply.mmMatrix(X=object,MARGIN=MARGIN,FUN=summary,chunkSize=chunkSize,...)
        }
 
     }
@@ -154,7 +154,7 @@ summary.DMatrix<-function(object,MARGIN=2,chunkSize=1e3,...){
 }
 
 #' @export
-setMethod("summary",signature("mmMatrix"),summary.DMatrix)
+setMethod("summary",signature("mmMatrix"),summary.mmMatrix)
 
 
 #' Provides information about how data is distributed into binary files.
