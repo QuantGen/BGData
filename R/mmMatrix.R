@@ -13,7 +13,7 @@ get.dimnames<-function(x){
 setMethod("dimnames",signature("mmMatrix"),get.dimnames)
 
 
-apply.DMatrix<-function(X,MARGIN,FUN,chunkSize=1e3,verbose=TRUE,...){
+apply.DMatrix<-function(X,MARGIN,FUN,chunkSize=1e3,verbose=FALSE,...){
     FUN<-match.fun(FUN)
     if(!(class(X)%in%c('rmmMatrix','cmmMatrix'))){ stop('X must be either mmMatrix or rMatrix') }
     
