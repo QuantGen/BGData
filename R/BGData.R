@@ -93,7 +93,7 @@ setMethod('initialize','BGData',function(.Object,geno,pheno,map){
 #' @export
 read.PED.BGData<-function(fileIn,header,dataType,distributed.by='columns',n=NULL,p=NULL,
                           folderOut=paste('BGData_',sub("\\.[[:alnum:]]+$","",basename(fileIn)),sep=''),
-                          returnData=TRUE,na.strings='NA',nColSkip=6,idCol=2,verbose=FALSE,nChunks=NULL,
+                          returnData=TRUE,na.strings=0,nColSkip=6,idCol=2,verbose=FALSE,nChunks=NULL,
                           dimorder=if(distributed.by=='rows') 2:1 else 1:2){
     
     if(file.exists(folderOut)){
