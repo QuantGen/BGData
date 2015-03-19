@@ -16,8 +16,8 @@ read.PED.BGData(fileIn, header, dataType, distributed.by = "columns",
 
 \item{header}{If TRUE, the file contains a header.}
 
-\item{dataType}{The coding of genotypes. Use 'character' for A/C/G/T or
-'integer' for numeric coding.}
+\item{dataType}{The coding of genotypes. Use 'character()' for A/C/G/T or
+'integer()' for numeric coding.}
 
 \item{distributed.by}{If columns a column-distributed matrix
 (\code{\linkS4class{cmmMatrix}}) is created, if rows a row-distributed

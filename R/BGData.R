@@ -71,8 +71,8 @@ setMethod('initialize','BGData',function(.Object,geno,pheno,map){
 #' 
 #' @param fileIn The path to the plaintext file.
 #' @param header If TRUE, the file contains a header.
-#' @param dataType The coding of genotypes. Use 'character' for A/C/G/T or 
-#'   'integer' for numeric coding.
+#' @param dataType The coding of genotypes. Use 'character()' for A/C/G/T or 
+#'   'integer()' for numeric coding.
 #' @param distributed.by If columns a column-distributed matrix 
 #'   (\code{\linkS4class{cmmMatrix}}) is created, if rows a row-distributed 
 #'   matrix (\code{\linkS4class{rmmMatrix}}).
@@ -99,14 +99,14 @@ read.PED.BGData<-function(fileIn,header,dataType,distributed.by='columns',n=NULL
     if(file.exists(folderOut)){
         stop(paste('Output folder',folderOut,'already exists. Please move it or pick a different one.'))
     }
-    if(!dataType%in%c('character','integer','numeric')){
-        stop('dataType must be either character, integer or numeric')
+    if(!typeof(dataType)%in%c('character','integer','numeric')){
+        stop('dataType must be either character(), integer() or numeric()')
     }
     if(!distributed.by%in%c('columns','rows')){
         stop('distributed.by must be either columns or rows')
     }
     
-    vMode<-ifelse(dataType%in%c('character','integer'),'byte','double')
+    vMode<-ifelse(typeof(dataType)%in%c('character','integer'),'byte','double')
     
     if(is.null(n)){
         # gzfile and readLines throw some warnings, but since it works, let's
@@ -173,7 +173,7 @@ read.PED.BGData<-function(fileIn,header,dataType,distributed.by='columns',n=NULL
     
     BGData<-new('BGData',geno=geno,pheno=pheno)
     
-    attr(BGData,'origFile')<-list(path=fileIn,dataType=dataType)
+    attr(BGData,'origFile')<-list(path=fileIn,dataType=typeof(dataType))
     attr(BGData,'dateCreated')<-date()
     
     save(BGData,file=paste(folderOut,'/BGData.RData',sep=''))
