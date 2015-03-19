@@ -4,12 +4,12 @@
 \alias{read.PED.BGData}
 \title{Creates a \code{\linkS4class{BGData}} object from a plaintext file.}
 \usage{
-read.PED.BGData(fileIn, header, dataType, distributed.by = "columns",
-  n = NULL, p = NULL, folderOut = paste("BGData_",
-  sub("\\\\.[[:alnum:]]+$", "", basename(fileIn)), sep = ""),
-  returnData = TRUE, na.strings = "NA", nColSkip = 6, idCol = 2,
-  verbose = FALSE, nChunks = NULL, dimorder = if (distributed.by ==
-  "rows") 2:1 else 1:2)
+read.PED.BGData(fileIn, header, dataType, n = NULL, p = NULL,
+  na.strings = 0, nColSkip = 6, idCol = 2, returnData = TRUE,
+  verbose = FALSE, nChunks = NULL, distributed.by = "columns",
+  folderOut = paste("BGData_", sub("\\\\.[[:alnum:]]+$", "",
+  basename(fileIn)), sep = ""), dimorder = if (distributed.by == "rows") 2:1
+  else 1:2)
 }
 \arguments{
 \item{fileIn}{The path to the plaintext file.}
@@ -19,18 +19,9 @@ read.PED.BGData(fileIn, header, dataType, distributed.by = "columns",
 \item{dataType}{The coding of genotypes. Use 'character()' for A/C/G/T or
 'integer()' for numeric coding.}
 
-\item{distributed.by}{If columns a column-distributed matrix
-(\code{\linkS4class{cmmMatrix}}) is created, if rows a row-distributed
-matrix (\code{\linkS4class{rmmMatrix}}).}
-
 \item{n}{The number of individuals.}
 
 \item{p}{The number of markers.}
-
-\item{folderOut}{The path to the folder where to save the binary files.}
-
-\item{returnData}{If TRUE, the function returns a
-\code{\linkS4class{BGData}} object.}
 
 \item{na.strings}{The character string use to denote missing value.}
 
@@ -39,9 +30,18 @@ information in the file.}
 
 \item{idCol}{The index of the ID column.}
 
+\item{returnData}{If TRUE, the function returns a
+\code{\linkS4class{BGData}} object.}
+
 \item{verbose}{If TRUE, progress updates will be posted.}
 
 \item{nChunks}{The number of chunks to create.}
+
+\item{distributed.by}{If columns a column-distributed matrix
+(\code{\linkS4class{cmmMatrix}}) is created, if rows a row-distributed
+matrix (\code{\linkS4class{rmmMatrix}}).}
+
+\item{folderOut}{The path to the folder where to save the binary files.}
 
 \item{dimorder}{The physical layout of the chunks.}
 }

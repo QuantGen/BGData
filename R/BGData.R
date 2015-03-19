@@ -73,27 +73,28 @@ setMethod('initialize','BGData',function(.Object,geno,pheno,map){
 #' @param header If TRUE, the file contains a header.
 #' @param dataType The coding of genotypes. Use 'character()' for A/C/G/T or 
 #'   'integer()' for numeric coding.
-#' @param distributed.by If columns a column-distributed matrix 
-#'   (\code{\linkS4class{cmmMatrix}}) is created, if rows a row-distributed 
-#'   matrix (\code{\linkS4class{rmmMatrix}}).
 #' @param n The number of individuals.
 #' @param p The number of markers.
-#' @param folderOut The path to the folder where to save the binary files.
-#' @param returnData If TRUE, the function returns a 
-#'   \code{\linkS4class{BGData}} object.
 #' @param na.strings The character string use to denote missing value.
 #' @param nColSkip The number of columns to be skipped to reach the genotype 
 #'   information in the file.
 #' @param idCol The index of the ID column.
+#' @param returnData If TRUE, the function returns a 
+#'   \code{\linkS4class{BGData}} object.
 #' @param verbose If TRUE, progress updates will be posted.
 #' @param nChunks The number of chunks to create.
+#' @param distributed.by If columns a column-distributed matrix 
+#'   (\code{\linkS4class{cmmMatrix}}) is created, if rows a row-distributed 
+#'   matrix (\code{\linkS4class{rmmMatrix}}).
+#' @param folderOut The path to the folder where to save the binary files.
 #' @param dimorder The physical layout of the chunks.
 #' @return If \code{returnData} is TRUE, a \code{\linkS4class{BGData}} object 
 #'   is returned.
 #' @export
-read.PED.BGData<-function(fileIn,header,dataType,distributed.by='columns',n=NULL,p=NULL,
+read.PED.BGData<-function(fileIn,header,dataType,n=NULL,p=NULL,na.strings=0,
+                          nColSkip=6,idCol=2,returnData=TRUE,verbose=FALSE,
+                          nChunks=NULL,distributed.by='columns',
                           folderOut=paste('BGData_',sub("\\.[[:alnum:]]+$","",basename(fileIn)),sep=''),
-                          returnData=TRUE,na.strings=0,nColSkip=6,idCol=2,verbose=FALSE,nChunks=NULL,
                           dimorder=if(distributed.by=='rows') 2:1 else 1:2){
     
     if(file.exists(folderOut)){
