@@ -112,7 +112,8 @@ read.PED.BGData.mmMatrix<-function(fileIn,header,dataType,n=NULL,p=NULL,na.strin
     vmode<-ifelse(typeof(dataType)%in%c('character','integer'),'byte','double')
     
     read.PED.BGData(fileIn=fileIn,header=header,dataType=dataType,class=class,
-                    n=n,p=p,returnData=returnData,verbose=verbose,nChunks=nChunks,
+                    n=n,p=p,na.strings=na.strings,nColSkip=nColSkip,idCol=idCol,
+                    returnData=returnData,verbose=verbose,nChunks=nChunks,
                     vmode=vmode,folderOut=folderOut,dimorder=dimorder)
 }
 
@@ -145,7 +146,8 @@ read.PED.BGData.matrix<-function(fileIn,header,dataType,n=NULL,p=NULL,
                                  verbose=FALSE){
     
     read.PED.BGData(fileIn=fileIn,header=header,dataType=dataType,class="matrix",
-                    n=n,p=p,returnData=TRUE,verbose=verbose)
+                    n=n,p=p,na.strings=na.strings,nColSkip=nColSkip,idCol=idCol,
+                    returnData=TRUE,verbose=verbose)
 }
 
 read.PED.BGData<-function(fileIn,header,dataType,class,n=NULL,p=NULL,na.strings=0,
