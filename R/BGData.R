@@ -42,59 +42,61 @@ setMethod('initialize','BGData',function(.Object,geno,pheno,map){
 })
 
 
-#' Creates a \code{\linkS4class{BGData}} object from a plaintext file.
+#' Creates a memory-mapped \code{\linkS4class{BGData}} object from a plaintext 
+#' PED-like file.
 #' 
-#' \code{read.PED.BGData} assumes that the plaintext file (\code{fileIn}) contains 
-#' records of individuals in rows, and phenotypes, covariates and markers in 
-#' columns. The columns included in columns \code{1:nColSkip} are used to 
-#' populate the slot \code{\code{@@pheno}} of a \code{\linkS4class{BGData}}
-#' object, and the remaining columns are used to fill the slot
-#' \code{\code{@@geno}}. If the first row contains a header
-#' (\code{header=TRUE}), data in this row is used to determine variables names
-#' for \code{@@pheno} and marker names for \code{@@map} and \code{@@geno}.
-#' Genotypes are stored in a distributed matrix (\code{mmMatrix}). By default a
-#' column-distributed (\code{\linkS4class{cmmMatrix}}) is used for \code{@@geno},
-#' but the user can modify this using the \code{distributed.by} argument. The
-#' number of chunks is either specified by the user (use \code{nChunks} when
-#' calling \code{read.PED.BGData}) or determined internally so that each
-#' \code{ff_matrix} object has a number of cells that is smaller than 
-#' \code{.Machine$integer.max/1.2}. \code{read.PED.BGData} creates a folder 
-#' (\code{folderOut}) that contains the binary flat files (\code{geno_*.bin}) 
-#' and the \code{\linkS4class{BGData}} object (typically named
-#' \code{BGData.RData}. Optionally (if \code{returnData} is TRUE) it returns
-#' the \code{\linkS4class{BGData}} object to the environment. The filename of
-#' the \code{ff_matrix} objects are saved as relative names. Therefore, to be
-#' able to access the content of the data included in \code{@@geno} the working
-#' directory must either be the folder where these files are saved
-#' (\code{folderOut}) or the object must be loaded using the \code{loadBGData}
-#' function included in the package.
+#' \code{read.PED.BGData.mmMatrix.mmMatrix} assumes that the plaintext file
+#' (\code{fileIn}) contains records of individuals in rows, and phenotypes,
+#' covariates and markers in columns. The columns included in columns
+#' \code{1:nColSkip} are used to populate the slot \code{\code{@@pheno}} of a 
+#' \code{\linkS4class{BGData}} object, and the remaining columns are used to 
+#' fill the slot \code{\code{@@geno}}. If the first row contains a header 
+#' (\code{header=TRUE}), data in this row is used to determine variables names 
+#' for \code{@@pheno} and marker names for \code{@@map} and \code{@@geno}. 
+#' Genotypes are stored in a distributed matrix (\code{mmMatrix}). By default a 
+#' column-distributed (\code{\linkS4class{cmmMatrix}}) is used for 
+#' \code{@@geno}, but the user can modify this using the \code{distributed.by} 
+#' argument. The number of chunks is either specified by the user (use 
+#' \code{nChunks} when calling \code{read.PED.BGData.mmMatrix}) or determined
+#' internally so that each \code{ff_matrix} object has a number of cells that is
+#' smaller than \code{.Machine$integer.max/1.2}. \code{read.PED.BGData.mmMatrix}
+#' creates a folder (\code{folderOut}) that contains the binary flat files
+#' (\code{geno_*.bin}) and the \code{\linkS4class{BGData}} object (typically
+#' named \code{BGData.RData}. Optionally (if \code{returnData} is TRUE) it
+#' returns the \code{\linkS4class{BGData}} object to the environment. The
+#' filename of the \code{ff_matrix} objects are saved as relative names.
+#' Therefore, to be able to access the content of the data included in
+#' \code{@@geno} the working directory must either be the folder where these
+#' files are saved (\code{folderOut}) or the object must be loaded using the
+#' \code{loadBGData} function included in the package.
 #' 
 #' @param fileIn The path to the plaintext file.
 #' @param header If TRUE, the file contains a header.
 #' @param dataType The coding of genotypes. Use 'character()' for A/C/G/T or 
 #'   'integer()' for numeric coding.
-#' @param distributed.by If columns a column-distributed matrix 
-#'   (\code{\linkS4class{cmmMatrix}}) is created, if rows a row-distributed 
-#'   matrix (\code{\linkS4class{rmmMatrix}}).
 #' @param n The number of individuals.
 #' @param p The number of markers.
-#' @param folderOut The path to the folder where to save the binary files.
-#' @param returnData If TRUE, the function returns a 
-#'   \code{\linkS4class{BGData}} object.
 #' @param na.strings The character string use to denote missing value.
 #' @param nColSkip The number of columns to be skipped to reach the genotype 
 #'   information in the file.
 #' @param idCol The index of the ID column.
+#' @param returnData If TRUE, the function returns a \code{\linkS4class{BGData}}
+#'   object.
 #' @param verbose If TRUE, progress updates will be posted.
 #' @param nChunks The number of chunks to create.
+#' @param distributed.by If columns a column-distributed matrix 
+#'   (\code{\linkS4class{cmmMatrix}}) is created, if rows a row-distributed 
+#'   matrix (\code{\linkS4class{rmmMatrix}}).
+#' @param folderOut The path to the folder where to save the binary files.
 #' @param dimorder The physical layout of the chunks.
-#' @return If \code{returnData} is TRUE, a \code{\linkS4class{BGData}} object 
-#'   is returned.
+#' @return If \code{returnData} is TRUE, a \code{\linkS4class{BGData}} object is
+#'   returned.
 #' @export
-read.PED.BGData<-function(fileIn,header,dataType,distributed.by='columns',n=NULL,p=NULL,
-                          folderOut=paste('BGData_',sub("\\.[[:alnum:]]+$","",basename(fileIn)),sep=''),
-                          returnData=TRUE,na.strings=0,nColSkip=6,idCol=2,verbose=FALSE,nChunks=NULL,
-                          dimorder=if(distributed.by=='rows') 2:1 else 1:2){
+read.PED.BGData.mmMatrix<-function(fileIn,header,dataType,n=NULL,p=NULL,na.strings=0,
+                                   nColSkip=6,idCol=2,returnData=TRUE,verbose=FALSE,
+                                   nChunks=NULL,distributed.by='columns',
+                                   folderOut=paste('BGData_',sub("\\.[[:alnum:]]+$","",basename(fileIn)),sep=''),
+                                   dimorder=if(distributed.by=='rows') 2:1 else 1:2){
     
     if(file.exists(folderOut)){
         stop(paste('Output folder',folderOut,'already exists. Please move it or pick a different one.'))
@@ -106,7 +108,50 @@ read.PED.BGData<-function(fileIn,header,dataType,distributed.by='columns',n=NULL
         stop('distributed.by must be either columns or rows')
     }
     
-    vMode<-ifelse(typeof(dataType)%in%c('character','integer'),'byte','double')
+    class<-ifelse(distributed.by=='columns','cmmMatrix','rmmMatrix')
+    vmode<-ifelse(typeof(dataType)%in%c('character','integer'),'byte','double')
+    
+    read.PED.BGData(fileIn=fileIn,header=header,dataType=dataType,class=class,
+                    n=n,p=p,returnData=returnData,verbose=verbose,nChunks=nChunks,
+                    vmode=vmode,folderOut=folderOut,dimorder=dimorder)
+}
+
+#' Creates a \code{\linkS4class{BGData}} object from a plaintext PED-like file.
+#' 
+#' \code{read.PED.BGData.matrix} assumes that the plaintext file (\code{fileIn})
+#' contains records of individuals in rows, and phenotypes, covariates and 
+#' markers in columns. The columns included in columns \code{1:nColSkip} are 
+#' used to populate the slot \code{\code{@@pheno}} of a 
+#' \code{\linkS4class{BGData}} object, and the remaining columns are used to 
+#' fill the slot \code{\code{@@geno}}. If the first row contains a header 
+#' (\code{header=TRUE}), data in this row is used to determine variables names 
+#' for \code{@@pheno} and marker names for \code{@@map} and \code{@@geno}.
+#' 
+#' @param fileIn The path to the plaintext file.
+#' @param header If TRUE, the file contains a header.
+#' @param dataType The coding of genotypes. Use 'character' for A/C/G/T or 
+#'   'integer' for numeric coding.
+#' @param n The number of individuals.
+#' @param p The number of markers.
+#' @param na.strings The character string use to denote missing value.
+#' @param nColSkip The number of columns to be skipped to reach the genotype 
+#'   information in the file.
+#' @param idCol The index of the ID column.
+#' @param verbose If TRUE, progress updates will be posted.
+#' @return Returns a \code{\linkS4class{BGData}} object.
+#' @export
+read.PED.BGData.matrix<-function(fileIn,header,dataType,n=NULL,p=NULL,
+                                 na.strings=0,nColSkip=6,idCol=2,
+                                 verbose=FALSE){
+    
+    read.PED.BGData(fileIn=fileIn,header=header,dataType=dataType,class="matrix",
+                    n=n,p=p,returnData=TRUE,verbose=verbose)
+}
+
+read.PED.BGData<-function(fileIn,header,dataType,class,n=NULL,p=NULL,na.strings=0,
+                          nColSkip=6,idCol=2,returnData=TRUE,verbose=FALSE,nChunks=NULL,
+                          vmode=NULL,folderOut=paste('BGData_',sub("\\.[[:alnum:]]+$","",basename(fileIn)),sep=''),
+                          dimorder=if(distributed.by=='rows') 2:1 else 1:2){
     
     if(is.null(n)){
         # gzfile and readLines throw some warnings, but since it works, let's
@@ -148,7 +193,12 @@ read.PED.BGData<-function(fileIn,header,dataType,distributed.by='columns',n=NULL
     pheno<-matrix(nrow=n,ncol=nColSkip)
     colnames(pheno)<-phtNames
     
-    geno<-new(ifelse(distributed.by=='columns','cmmMatrix','rmmMatrix'),nrow=n,ncol=p,vmode=vMode,folderOut=folderOut,nChunks=nChunks,dimorder=dimorder)
+    if(class=='matrix'){
+        geno<-matrix(nrow=n,ncol=p)
+    }else{
+        geno<-new(class,nrow=n,ncol=p,vmode=vmode,folderOut=folderOut,nChunks=nChunks,dimorder=dimorder)
+    }
+    
     colnames(geno)<-mrkNames
     
     for(i in 1:n){
@@ -173,12 +223,15 @@ read.PED.BGData<-function(fileIn,header,dataType,distributed.by='columns',n=NULL
     
     BGData<-new('BGData',geno=geno,pheno=pheno)
     
-    attr(BGData,'origFile')<-list(path=fileIn,dataType=typeof(dataType))
-    attr(BGData,'dateCreated')<-date()
+    if(class!='matrix'){
+        attr(BGData,'origFile')<-list(path=fileIn,dataType=typeof(dataType))
+        attr(BGData,'dateCreated')<-date()
+        save(BGData,file=paste(folderOut,'/BGData.RData',sep=''))
+    }
     
-    save(BGData,file=paste(folderOut,'/BGData.RData',sep=''))
-    
-    if(returnData){ return(BGData) }
+    if(returnData){
+        return(BGData)
+    }
 }
 
 
@@ -188,7 +241,7 @@ loadBGData<-function(path,envir=.GlobalEnv){
     # Use: to load a BGData object using the name of the folder where the meta-data and data are stored.
     # path: the name of the folder where the data and meta data are stored.
     # envir: the name of the environment where the object is returned.
-    # See also: load2() and read.PED.BGData()
+    # See also: load2() and read.PED.BGData.mmMatrix()
     ##
     if('BGData'%in%ls(envir=envir)){
         stop('There is already an object called BGData in the environment. Please move it.')
