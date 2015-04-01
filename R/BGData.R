@@ -67,8 +67,8 @@ setMethod('initialize','BGData',function(.Object,geno,pheno,map){
 #' filename of the \code{ff_matrix} objects are saved as relative names.
 #' Therefore, to be able to access the content of the data included in
 #' \code{@@geno} the working directory must either be the folder where these
-#' files are saved (\code{folderOut}) or the object must be loaded using the
-#' \code{loadBGData} function included in the package.
+#' files are saved (\code{folderOut}) or the object must be loaded either using
+#' \code{loadBGData} or \code{load2}.
 #' 
 #' @param fileIn The path to the plaintext file.
 #' @param header If TRUE, the file contains a header.
@@ -76,7 +76,8 @@ setMethod('initialize','BGData',function(.Object,geno,pheno,map){
 #'   'integer()' for numeric coding.
 #' @param n The number of individuals.
 #' @param p The number of markers.
-#' @param na.strings The character string use to denote missing value.
+#' @param na.strings The character string used in the plaintext file to denote
+#'   missing value.
 #' @param nColSkip The number of columns to be skipped to reach the genotype 
 #'   information in the file.
 #' @param idCol The index of the ID column.
@@ -91,6 +92,9 @@ setMethod('initialize','BGData',function(.Object,geno,pheno,map){
 #' @param dimorder The physical layout of the chunks.
 #' @return If \code{returnData} is TRUE, a \code{\linkS4class{BGData}} object is
 #'   returned.
+#' @seealso \code{\linkS4class{BGData}}, \code{mmMatrix},
+#'   \code{\linkS4class{rmmMatrix}}, \code{\linkS4class{cmmMatrix}},
+#'   \code{\link[ff]{ff}}
 #' @export
 read.PED.BGData.mmMatrix<-function(fileIn,header,dataType,n=NULL,p=NULL,na.strings=0,
                                    nColSkip=6,idCol=2,returnData=TRUE,verbose=FALSE,
@@ -134,12 +138,14 @@ read.PED.BGData.mmMatrix<-function(fileIn,header,dataType,n=NULL,p=NULL,na.strin
 #'   'integer' for numeric coding.
 #' @param n The number of individuals.
 #' @param p The number of markers.
-#' @param na.strings The character string use to denote missing value.
+#' @param na.strings The character string used in the plaintext file to denote
+#'   missing value.
 #' @param nColSkip The number of columns to be skipped to reach the genotype 
 #'   information in the file.
 #' @param idCol The index of the ID column.
 #' @param verbose If TRUE, progress updates will be posted.
 #' @return Returns a \code{\linkS4class{BGData}} object.
+#' @seealso \code{\linkS4class{BGData}}
 #' @export
 read.PED.BGData.matrix<-function(fileIn,header,dataType,n=NULL,p=NULL,
                                  na.strings=0,nColSkip=6,idCol=2,

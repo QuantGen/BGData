@@ -19,7 +19,8 @@ read.PED.BGData.matrix(fileIn, header, dataType, n = NULL, p = NULL,
 
 \item{p}{The number of markers.}
 
-\item{na.strings}{The character string use to denote missing value.}
+\item{na.strings}{The character string used in the plaintext file to denote
+missing value.}
 
 \item{nColSkip}{The number of columns to be skipped to reach the genotype
 information in the file.}
@@ -40,5 +41,8 @@ used to populate the slot \code{\code{@pheno}} of a
 fill the slot \code{\code{@geno}}. If the first row contains a header
 (\code{header=TRUE}), data in this row is used to determine variables names
 for \code{@pheno} and marker names for \code{@map} and \code{@geno}.
+}
+\seealso{
+\code{\linkS4class{BGData}}
 }
 

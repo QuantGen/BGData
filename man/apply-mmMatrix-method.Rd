@@ -6,8 +6,8 @@
 \title{Apply function for \code{\linkS4class{rmmMatrix}} or
 \code{\linkS4class{cmmMatrix}} objects.}
 \usage{
-\S4method{apply}{mmMatrix}(X, MARGIN, FUN, chunkSize = 1000, verbose = TRUE,
-  ...)
+\S4method{apply}{mmMatrix}(X, MARGIN, FUN, chunkSize = 1000,
+  verbose = FALSE, ...)
 }
 \arguments{
 \item{X}{Either an \code{\linkS4class{rmmMatrix}} or a
