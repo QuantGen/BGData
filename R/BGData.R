@@ -10,7 +10,7 @@ setClassUnion('geno',c('mmMatrix','matrix','ff_matrix'))
 #' 
 #' @slot pheno A \code{\link{data.frame}} that contains phenotypes.
 #' @slot map A \code{\link{data.frame}} that contains a genetic map.
-#' @slot geno A \code{geno} object (\code{mmMatrix}, \code{ff_matrix}, or
+#' @slot geno A \code{geno} object (\code{mmMatrix}, \code{ff_matrix}, or 
 #'   \code{\link{matrix}}) that contains genotypes.
 #' @export BGData
 #' @exportClass BGData
@@ -45,29 +45,29 @@ setMethod('initialize','BGData',function(.Object,geno,pheno,map){
 #' Creates a memory-mapped \code{\linkS4class{BGData}} object from a plaintext 
 #' PED-like file.
 #' 
-#' \code{read.PED.BGData.mmMatrix.mmMatrix} assumes that the plaintext file
-#' (\code{fileIn}) contains records of individuals in rows, and phenotypes,
-#' covariates and markers in columns. The columns included in columns
-#' \code{1:nColSkip} are used to populate the slot \code{\code{@@pheno}} of a 
-#' \code{\linkS4class{BGData}} object, and the remaining columns are used to 
-#' fill the slot \code{\code{@@geno}}. If the first row contains a header 
+#' \code{readPED} assumes that the plaintext file (\code{fileIn}) contains 
+#' records of individuals in rows, and phenotypes, covariates and markers in 
+#' columns. The columns included in columns \code{1:nColSkip} are used to 
+#' populate the slot \code{\code{@@pheno}} of a \code{\linkS4class{BGData}} 
+#' object, and the remaining columns are used to fill the slot 
+#' \code{\code{@@geno}}. If the first row contains a header 
 #' (\code{header=TRUE}), data in this row is used to determine variables names 
 #' for \code{@@pheno} and marker names for \code{@@map} and \code{@@geno}. 
 #' Genotypes are stored in a distributed matrix (\code{mmMatrix}). By default a 
 #' column-distributed (\code{\linkS4class{cmmMatrix}}) is used for 
 #' \code{@@geno}, but the user can modify this using the \code{distributed.by} 
 #' argument. The number of chunks is either specified by the user (use 
-#' \code{nChunks} when calling \code{read.PED.BGData.mmMatrix}) or determined
-#' internally so that each \code{ff_matrix} object has a number of cells that is
-#' smaller than \code{.Machine$integer.max/1.2}. \code{read.PED.BGData.mmMatrix}
-#' creates a folder (\code{folderOut}) that contains the binary flat files
-#' (\code{geno_*.bin}) and the \code{\linkS4class{BGData}} object (typically
-#' named \code{BGData.RData}. Optionally (if \code{returnData} is TRUE) it
-#' returns the \code{\linkS4class{BGData}} object to the environment. The
-#' filename of the \code{ff_matrix} objects are saved as relative names.
-#' Therefore, to be able to access the content of the data included in
-#' \code{@@geno} the working directory must either be the folder where these
-#' files are saved (\code{folderOut}) or the object must be loaded either using
+#' \code{nChunks} when calling \code{readPED}) or determined internally so that 
+#' each \code{ff_matrix} object has a number of cells that is smaller than 
+#' \code{.Machine$integer.max/1.2}. \code{readPED} creates a folder 
+#' (\code{folderOut}) that contains the binary flat files (\code{geno_*.bin}) 
+#' and the \code{\linkS4class{BGData}} object (typically named 
+#' \code{BGData.RData}. Optionally (if \code{returnData} is TRUE) it returns the
+#' \code{\linkS4class{BGData}} object to the environment. The filename of the 
+#' \code{ff_matrix} objects are saved as relative names. Therefore, to be able 
+#' to access the content of the data included in \code{@@geno} the working 
+#' directory must either be the folder where these files are saved 
+#' (\code{folderOut}) or the object must be loaded either using 
 #' \code{loadBGData} or \code{load2}.
 #' 
 #' @param fileIn The path to the plaintext file.
@@ -76,7 +76,7 @@ setMethod('initialize','BGData',function(.Object,geno,pheno,map){
 #'   'integer()' for numeric coding.
 #' @param n The number of individuals.
 #' @param p The number of markers.
-#' @param na.strings The character string used in the plaintext file to denote
+#' @param na.strings The character string used in the plaintext file to denote 
 #'   missing value.
 #' @param nColSkip The number of columns to be skipped to reach the genotype 
 #'   information in the file.
@@ -92,16 +92,16 @@ setMethod('initialize','BGData',function(.Object,geno,pheno,map){
 #' @param dimorder The physical layout of the chunks.
 #' @return If \code{returnData} is TRUE, a \code{\linkS4class{BGData}} object is
 #'   returned.
-#' @seealso \code{\linkS4class{BGData}}, \code{mmMatrix},
-#'   \code{\linkS4class{rmmMatrix}}, \code{\linkS4class{cmmMatrix}},
+#' @seealso \code{\linkS4class{BGData}}, \code{mmMatrix}, 
+#'   \code{\linkS4class{rmmMatrix}}, \code{\linkS4class{cmmMatrix}}, 
 #'   \code{\link[ff]{ff}}
 #' @export
-read.PED.BGData.mmMatrix<-function(fileIn,header,dataType,n=NULL,p=NULL,na.strings=0,
-                                   nColSkip=6,idCol=2,returnData=TRUE,verbose=FALSE,
-                                   nChunks=NULL,distributed.by='columns',
-                                   folderOut=paste('BGData_',sub("\\.[[:alnum:]]+$","",basename(fileIn)),sep=''),
-                                   dimorder=if(distributed.by=='rows') 2:1 else 1:2){
-    
+readPED<-function(fileIn,header,dataType,n=NULL,p=NULL,na.strings=0,
+                  nColSkip=6,idCol=2,returnData=TRUE,verbose=FALSE,
+                  nChunks=NULL,distributed.by='columns',
+                  folderOut=paste('BGData_',sub("\\.[[:alnum:]]+$","",basename(fileIn)),sep=''),
+                  dimorder=if(distributed.by=='rows') 2:1 else 1:2){
+
     if(file.exists(folderOut)){
         stop(paste('Output folder',folderOut,'already exists. Please move it or pick a different one.'))
     }
@@ -111,11 +111,11 @@ read.PED.BGData.mmMatrix<-function(fileIn,header,dataType,n=NULL,p=NULL,na.strin
     if(!distributed.by%in%c('columns','rows')){
         stop('distributed.by must be either columns or rows')
     }
-    
+
     class<-ifelse(distributed.by=='columns','cmmMatrix','rmmMatrix')
     vmode<-ifelse(typeof(dataType)%in%c('character','integer'),'byte','double')
-    
-    read.PED.BGData(fileIn=fileIn,header=header,dataType=dataType,class=class,
+
+    readPED.default(fileIn=fileIn,header=header,dataType=dataType,class=class,
                     n=n,p=p,na.strings=na.strings,nColSkip=nColSkip,idCol=idCol,
                     returnData=returnData,verbose=verbose,nChunks=nChunks,
                     vmode=vmode,folderOut=folderOut,dimorder=dimorder)
@@ -123,7 +123,7 @@ read.PED.BGData.mmMatrix<-function(fileIn,header,dataType,n=NULL,p=NULL,na.strin
 
 #' Creates a \code{\linkS4class{BGData}} object from a plaintext PED-like file.
 #' 
-#' \code{read.PED.BGData.matrix} assumes that the plaintext file (\code{fileIn})
+#' \code{readPED.matrix} assumes that the plaintext file (\code{fileIn}) 
 #' contains records of individuals in rows, and phenotypes, covariates and 
 #' markers in columns. The columns included in columns \code{1:nColSkip} are 
 #' used to populate the slot \code{\code{@@pheno}} of a 
@@ -138,7 +138,7 @@ read.PED.BGData.mmMatrix<-function(fileIn,header,dataType,n=NULL,p=NULL,na.strin
 #'   'integer' for numeric coding.
 #' @param n The number of individuals.
 #' @param p The number of markers.
-#' @param na.strings The character string used in the plaintext file to denote
+#' @param na.strings The character string used in the plaintext file to denote 
 #'   missing value.
 #' @param nColSkip The number of columns to be skipped to reach the genotype 
 #'   information in the file.
@@ -147,20 +147,20 @@ read.PED.BGData.mmMatrix<-function(fileIn,header,dataType,n=NULL,p=NULL,na.strin
 #' @return Returns a \code{\linkS4class{BGData}} object.
 #' @seealso \code{\linkS4class{BGData}}
 #' @export
-read.PED.BGData.matrix<-function(fileIn,header,dataType,n=NULL,p=NULL,
-                                 na.strings=0,nColSkip=6,idCol=2,
-                                 verbose=FALSE){
-    
-    read.PED.BGData(fileIn=fileIn,header=header,dataType=dataType,class="matrix",
+readPED.matrix<-function(fileIn,header,dataType,n=NULL,p=NULL,
+                         na.strings=0,nColSkip=6,idCol=2,
+                         verbose=FALSE){
+
+    readPED.default(fileIn=fileIn,header=header,dataType=dataType,class="matrix",
                     n=n,p=p,na.strings=na.strings,nColSkip=nColSkip,idCol=idCol,
                     returnData=TRUE,verbose=verbose)
 }
 
-read.PED.BGData<-function(fileIn,header,dataType,class,n=NULL,p=NULL,na.strings=0,
+readPED.default<-function(fileIn,header,dataType,class,n=NULL,p=NULL,na.strings=0,
                           nColSkip=6,idCol=2,returnData=TRUE,verbose=FALSE,nChunks=NULL,
                           vmode=NULL,folderOut=paste('BGData_',sub("\\.[[:alnum:]]+$","",basename(fileIn)),sep=''),
                           dimorder=if(distributed.by=='rows') 2:1 else 1:2){
-    
+
     if(is.null(n)){
         # gzfile and readLines throw some warnings, but since it works, let's
         # disable warnings for this block
@@ -195,20 +195,20 @@ read.PED.BGData<-function(fileIn,header,dataType,class,n=NULL,p=NULL,na.strings=
         phtNames<-paste('v_',1:nColSkip,sep='')
         mrkNames<-paste('mrk_',1:p,sep='')
     }
-    
+
     IDs<-rep(NA,n)
-    
+
     pheno<-matrix(nrow=n,ncol=nColSkip)
     colnames(pheno)<-phtNames
-    
+
     if(class=='matrix'){
         geno<-matrix(nrow=n,ncol=p)
     }else{
         geno<-new(class,nrow=n,ncol=p,vmode=vmode,folderOut=folderOut,nChunks=nChunks,dimorder=dimorder)
     }
-    
+
     colnames(geno)<-mrkNames
-    
+
     for(i in 1:n){
         time<-proc.time()
         xSkip<-scan(pedFile,n=nColSkip,what=character(),quiet=TRUE)
@@ -221,22 +221,22 @@ read.PED.BGData<-function(fileIn,header,dataType,class,n=NULL,p=NULL,na.strings=
         }
     }
     close(pedFile)
-    
+
     # Adding names
     rownames(geno)<-IDs
     rownames(pheno)<-IDs
-    
+
     pheno<-as.data.frame(pheno,stringsAsFactors=FALSE)
     pheno[]<-lapply(pheno,type.convert,as.is=TRUE)
-    
+
     BGData<-new('BGData',geno=geno,pheno=pheno)
-    
+
     if(class!='matrix'){
         attr(BGData,'origFile')<-list(path=fileIn,dataType=typeof(dataType))
         attr(BGData,'dateCreated')<-date()
         save(BGData,file=paste(folderOut,'/BGData.RData',sep=''))
     }
-    
+
     if(returnData){
         return(BGData)
     }
@@ -249,7 +249,7 @@ loadBGData<-function(path,envir=.GlobalEnv){
     # Use: to load a BGData object using the name of the folder where the meta-data and data are stored.
     # path: the name of the folder where the data and meta data are stored.
     # envir: the name of the environment where the object is returned.
-    # See also: load2() and read.PED.BGData.mmMatrix()
+    # See also: load2() and readPED()
     ##
     if('BGData'%in%ls(envir=envir)){
         stop('There is already an object called BGData in the environment. Please move it.')
@@ -281,38 +281,38 @@ load2<-function(file,envir=parent.frame(),verbose=TRUE){
     # verbose: TRUE/FALSE
     # See also: loadBGData()
     ##
-    
+
     # determining the object name
-    lsOLD<-ls(); 
+    lsOLD<-ls();
     load(file=file)
     lsNEW<-ls();
-    objectName<-lsNEW[(!lsNEW%in%lsOLD)&(lsNEW!='lsOLD')];  
-    
+    objectName<-lsNEW[(!lsNEW%in%lsOLD)&(lsNEW!='lsOLD')];
+
     # determining path and filename
     path<-dirname(file)
     fname<-basename(file)
-    
+
     # stores current working directiory and sets working directory to path
     cwd<-getwd()
     setwd(path)
-    
+
     # determining object class
     objectClass<-class(eval(parse(text=objectName)))
-    
-    if(verbose){ 
+
+    if(verbose){
         cat(' Meta data (',fname,') and its data were stored at folder ',path,'.\n',sep='')
         cat(' Object Name: ',objectName,'\n',sep='')
         cat(' Object Class: ',objectClass,'\n',sep='')
     }
     if(!(objectClass%in%c('BGData','rmmMatrix','cmmMatrix'))){ stop( ' Object class must be either BGData, cmmMatrix or rmmMatrix')}
-    
+
     # Determining number of chunks
     if(objectClass=='BGData'){
         tmpChunks<-chunks(eval(parse(text=paste0(objectName,'@geno'))))
     }else{
         tmpChunks<-chunks(eval(parse(text=objectName)))
     }
-    
+
     # opening files
     for(i in 1:nrow(tmpChunks)){
         if(verbose){ cat(' Opening flat file ', i,'\n')  }
@@ -321,17 +321,17 @@ load2<-function(file,envir=parent.frame(),verbose=TRUE){
         }else{
             open(eval(parse(text=paste0(objectName,'[[',i,']]'))))
         }
-    }  
+    }
     # sending the object to envir
     assign(objectName,get(objectName), envir=envir)
-    
+
     # restoring the working directory
     setwd(cwd)
     if(verbose){ cat(' Original directory (',getwd(),') restored \n',sep='')}
 }
 
 
-#' Conducts an association study (GWAS) using a \code{\linkS4class{BGData}}
+#' Conducts an association study (GWAS) using a \code{\linkS4class{BGData}} 
 #' object.
 #' 
 #' This function conducts an association test using the formula provided by the 
@@ -358,18 +358,18 @@ load2<-function(file,envir=parent.frame(),verbose=TRUE){
 #' @export
 GWAS<-function(formula,data,method,plot=FALSE,verbose=FALSE,min.pValue=1e-10,chunkSize=10,...){
     if(class(data)!='BGData'){ stop('data must BGData')}
-    
+
     if(!method%in%c('lm','lm.fit','lsfit','glm','lmer','SKAT')){
         stop('Only lm, glm, lmer and SKAT have been implemented so far.')
     }
     ## We can have 'specialized methods, for instance for OLS it is better to use lsfit that is what GWAS.ols do
     if(method%in%c('lm','lm.fit','lsfit','SKAT')){
         if(method%in%c('lm','lm.fit','lsfit')){
-            OUT<-GWAS.ols(formula=formula,data=data,plot=plot,verbose=verbose,min.pValue=min.pValue,chunkSize=chunkSize,...)	
+            OUT<-GWAS.ols(formula=formula,data=data,plot=plot,verbose=verbose,min.pValue=min.pValue,chunkSize=chunkSize,...)
         }
         if(method=='SKAT'){
-            OUT<-GWAS.SKAT(formula=formula,data=data,plot=plot,verbose=verbose,min.pValue=min.pValue,...)	
-        }           
+            OUT<-GWAS.SKAT(formula=formula,data=data,plot=plot,verbose=verbose,min.pValue=min.pValue,...)
+        }
     }else{
         if(method=='lmer'&&!requireNamespace("lme4",quietly=TRUE)){
             stop("lme4 needed for this function to work. Please install it.",call.=FALSE)
@@ -395,13 +395,13 @@ GWAS<-function(formula,data,method,plot=FALSE,verbose=FALSE,min.pValue=1e-10,chu
         nChunks<-ceiling(p/chunkSize)
         end<-0
         tmpRow<-0
-        
+
         for(i in 1:nChunks){
             time.in<-proc.time()[3]
             ini<-end+1
             end<-min(ini+chunkSize-1,p)
             Z<-data@geno[,ini:end,drop=FALSE]
-            
+
             for(j in 1:(end-ini+1)){
                 pheno$z<-Z[,j]
                 fm<-FUN(GWAS.model,data=pheno,...)
@@ -443,7 +443,7 @@ GWAS.ols<-function(formula,data,plot=FALSE,verbose=FALSE,min.pValue=1e-10,chunkS
     # all the variables in the formula must be in data@pheno
     # data (BGData) containing slots @pheno and @geno
     ##
-    
+
     X <- model.matrix(formula,data@pheno)
     X <- X[match(rownames(data@pheno),rownames(X)),]
     y<-data@pheno[,as.character(terms(formula)[[2]])]
@@ -453,7 +453,7 @@ GWAS.ols<-function(formula,data,plot=FALSE,verbose=FALSE,min.pValue=1e-10,chunkS
     colnames(OUT)<-colnames(tmp)
     rownames(OUT)<-colnames(data@geno)
     X<-cbind(0,X)
-    
+
     if(plot){
         tmp<-paste(as.character(formula[2]),as.character(formula[3]),sep='~')
         plot(numeric()~numeric(),xlim=c(0,p),ylim=c(0,-log(min.pValue,base=10)),ylab='-log(p-value)',xlab='Marker',main=tmp)
@@ -461,20 +461,20 @@ GWAS.ols<-function(formula,data,plot=FALSE,verbose=FALSE,min.pValue=1e-10,chunkS
     nChunks<-ceiling(p/chunkSize)
     end<-0
     tmpRow<-0
-    
+
     for(i in 1:nChunks){
         time.in<-proc.time()[3]
         ini<-end+1
         end<-min(ini+chunkSize-1,p)
         Z<-data@geno[,ini:end,drop=FALSE]
-        
+
         for(j in 1:(end-ini+1)){
             X[,1]<-Z[,j]
             tmpRow<-tmpRow+1
             fm<-lsfit(x=X,y=y,intercept=FALSE)
             tmp<-ls.print(fm,print=FALSE)$coef.table[[1]][1,]
             OUT[tmpRow,]<-tmp
-            
+
             if(plot){
                 tmp.x=c(tmpRow-1,tmpRow)
                 tmp.y=-log(OUT[c(tmpRow-1,tmpRow),4],base=10)
@@ -494,30 +494,30 @@ GWAS.SKAT<-function(formula,data,groups,plot=FALSE,verbose=FALSE,min.pValue=1e-1
     # data (BGData) containing slots @pheno and @geno
     # groups: a vector mapping markers into groups (can be integer, character or factor).
     ##
-    
+
     if(!requireNamespace("SKAT",quietly=TRUE)){
         stop("SKAT needed for this function to work. Please install it.",call.=FALSE)
     }
 
     p<-length(unique(groups))
-    
+
     OUT<-matrix(nrow=p,ncol=2,NA)
     colnames(OUT)<-c('nMrk','p-value')
     levels<-unique(groups)
     rownames(OUT)<-levels
-    
+
     H0<-SKAT::SKAT_Null_Model(formula,data=data@pheno,...)
-    
+
     if(plot){
         tmp<-paste(as.character(formula[2]),as.character(formula[3]),sep='~')
         plot(numeric()~numeric(),xlim=c(0,p),ylim=c(0,-log(min.pValue,base=10)),ylab='-log(p-value)',xlab='Marker',main=tmp)
     }
-    
+
     for(i in 1:p){
         Z<-data@geno[,groups==levels[i],drop=FALSE]
         fm<-SKAT::SKAT(Z=Z,obj=H0,...)
         OUT[i,]<-c(ncol(Z),fm$p.value)
-        
+
         if(plot){
             tmp.x=c(i-1,i)
             tmp.y=-log(OUT[tmp.x,2],base=10)
