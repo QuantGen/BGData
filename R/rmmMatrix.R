@@ -207,6 +207,12 @@ setMethod("rownames",signature("rmmMatrix"),get.rownames.rmmMatrix)
 setMethod("rownames<-",signature("rmmMatrix"),set.rownames.rmmMatrix)
 
 
+#' @export
+as.matrix.rmmMatrix<-function(x){
+    x[,,drop=FALSE]
+}
+
+
 #' Finds the position of a set of rows in an rmmMatrix object.
 rowindexes<-function(x,rows){
     TMP<-chunks(x)

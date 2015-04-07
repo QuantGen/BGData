@@ -208,6 +208,12 @@ setMethod("rownames",signature("cmmMatrix"),get.rownames.cmmMatrix)
 setMethod("rownames<-",signature("cmmMatrix"),set.rownames.cmmMatrix)
 
 
+#' @export
+as.matrix.cmmMatrix<-function(x){
+    x[,,drop=FALSE]
+}
+
+
 #' Finds the position of a set of columns in a cmmMatrix object.
 colindexes<-function(x,columns){
 
