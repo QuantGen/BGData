@@ -37,6 +37,7 @@ setMethod('initialize','rmmMatrix',function(.Object,nrow=1,ncol=1,vmode='byte',f
         physical(ffList[[i]])$filename<-filename
     }
     .Object<-callNextMethod(.Object,ffList)
+    return(.Object)
 })
 
 
