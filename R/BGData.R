@@ -159,7 +159,7 @@ readPED.matrix<-function(fileIn,header,dataType,n=NULL,p=NULL,
 readPED.default<-function(fileIn,header,dataType,class,n=NULL,p=NULL,na.strings=0,
                           nColSkip=6,idCol=2,returnData=TRUE,verbose=FALSE,nChunks=NULL,
                           vmode=NULL,folderOut=paste('BGData_',sub("\\.[[:alnum:]]+$","",basename(fileIn)),sep=''),
-                          dimorder=if(distributed.by=='rows') 2:1 else 1:2){
+                          dimorder=NULL){
 
     if(is.null(n)){
         # gzfile and readLines throw some warnings, but since it works, let's
@@ -204,6 +204,13 @@ readPED.default<-function(fileIn,header,dataType,class,n=NULL,p=NULL,na.strings=
     if(class=='matrix'){
         geno<-matrix(nrow=n,ncol=p)
     }else{
+        if(is.null(dimorder)){
+            if(class=='rmmMatrix'){
+                dimorder<-2:1
+            }else{
+                dimorder<-1:2
+            }
+        }
         geno<-new(class,nrow=n,ncol=p,vmode=vmode,folderOut=folderOut,nChunks=nChunks,dimorder=dimorder)
     }
 
