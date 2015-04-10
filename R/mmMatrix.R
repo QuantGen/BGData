@@ -5,6 +5,16 @@ NULL
 setClassUnion('mmMatrix',c('cmmMatrix','rmmMatrix'))
 
 
+show<-function(object){
+    d<-dim(object)
+    cat(d[1], 'x', d[2], 'distributed matrix of class', class(object))
+    NULL
+}
+
+#' @export
+setMethod("show",signature(object="mmMatrix"),show)
+
+
 get.dimnames<-function(x){
     list(rownames(x), colnames(x))
 }
