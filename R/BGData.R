@@ -270,9 +270,9 @@ loadBGData<-function(path,envir=.GlobalEnv){
     cat('Loaded BGData object into environment under name BGData')
     # Open all chunks for reading (we do not store absolute paths to ff files,
     # so this has to happen in the same working directory)
-    chunks<-chunks(BGData@geno)
+    chunks<-chunks(get('BGData', envir=envir)@geno)
     for(i in 1:nrow(chunks)){
-        open(BGData@geno[[i]])
+        open(get('BGData', envir=envir)@geno[[i]])
     }
     # Restore working directory
     setwd(cwd)
