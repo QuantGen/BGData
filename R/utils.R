@@ -77,6 +77,14 @@ getG<-function(x,nChunks=3,scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,i=1:nrow(x),j=
 
 #' Generate and store a simulated plaintext raw PED file (see \code{--recodeA}
 #' in PLINK) or PED-like file for testing purposes.
+#' 
+#' @param filename The path where to save the generated file.
+#' @param n The number of observations to generate.
+#' @param p The number of markers to generate.
+#' @param genoChars The alphabet used to generate the genotypes.
+#' @param na.string The symbol used to denote missing values.
+#' @param propNA The probability of generating NAs.
+#' @param returnGenos Whether to return the genotypes from the function.
 #' @export
 simPED<-function(filename,n,p,genoChars=0:2,na.string=NA,propNA=.02,returnGenos=FALSE){
     if(file.exists(filename)){

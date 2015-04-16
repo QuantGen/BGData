@@ -8,6 +8,21 @@ in PLINK) or PED-like file for testing purposes.}
 simPED(filename, n, p, genoChars = 0:2, na.string = NA, propNA = 0.02,
   returnGenos = FALSE)
 }
+\arguments{
+\item{filename}{The path where to save the generated file.}
+
+\item{n}{The number of observations to generate.}
+
+\item{p}{The number of markers to generate.}
+
+\item{genoChars}{The alphabet used to generate the genotypes.}
+
+\item{na.string}{The symbol used to denote missing values.}
+
+\item{propNA}{The probability of generating NAs.}
+
+\item{returnGenos}{Whether to return the genotypes from the function.}
+}
 \description{
 Generate and store a simulated plaintext raw PED file (see \code{--recodeA}
 in PLINK) or PED-like file for testing purposes.
