@@ -75,8 +75,10 @@ getG<-function(x,nChunks=3,scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,i=1:nrow(x),j=
 }
 
 
+#' Generate and store a simulated plaintext raw PED file (see \code{--recodeA}
+#' in PLINK) or PED-like file for testing purposes.
 #' @export
-simPED<-function(filename,n,p,genoChars=1:4,na.string=0,propNA=.02,returnGenos=FALSE){
+simPED<-function(filename,n,p,genoChars=0:2,na.string=NA,propNA=.02,returnGenos=FALSE){
     if(file.exists(filename)){
         stop(paste('File',filename,'already exists. Please move it or pick a different name.'))
     }

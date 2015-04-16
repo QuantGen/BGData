@@ -29,7 +29,7 @@ Genomic relationship matrix
 \description{
 Offers options for centering and scaling G=WW' where \code{W <- scale(X,
 center=centerCol, scale=scaleCol)} and of scaling the final output so that
-the average diagonal value is equal to one (\code{scaleG=TRUE}) If
+the average diagonal value is equal to one (\code{scaleG=TRUE}). If
 \code{scaleCol=centerCol} and \code{scaleG=FALSE} it behaves as
 \code{tcrossprod(X)}.
 }

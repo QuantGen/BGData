@@ -42,8 +42,8 @@ setMethod('initialize','BGData',function(.Object,geno,pheno,map){
 })
 
 
-#' Creates a memory-mapped \code{\linkS4class{BGData}} object from a plaintext 
-#' PED-like file.
+#' Creates a memory-mapped \code{\linkS4class{BGData}} object from a plaintext
+#' raw PED file (generated with \code{--recodeA} in PLINK) or PED-like file.
 #' 
 #' \code{readPED} assumes that the plaintext file (\code{fileIn}) contains 
 #' records of individuals in rows, and phenotypes, covariates and markers in 
@@ -96,7 +96,7 @@ setMethod('initialize','BGData',function(.Object,geno,pheno,map){
 #'   \code{\linkS4class{rmmMatrix}}, \code{\linkS4class{cmmMatrix}}, 
 #'   \code{\link[ff]{ff}}
 #' @export
-readPED<-function(fileIn,header,dataType,n=NULL,p=NULL,na.strings=0,
+readPED<-function(fileIn,header,dataType,n=NULL,p=NULL,na.strings=NA,
                   nColSkip=6,idCol=2,returnData=TRUE,verbose=FALSE,
                   nChunks=NULL,distributed.by='columns',
                   folderOut=paste('BGData_',sub("\\.[[:alnum:]]+$","",basename(fileIn)),sep=''),
@@ -156,7 +156,7 @@ readPED.matrix<-function(fileIn,header,dataType,n=NULL,p=NULL,
                     returnData=TRUE,verbose=verbose)
 }
 
-readPED.default<-function(fileIn,header,dataType,class,n=NULL,p=NULL,na.strings=0,
+readPED.default<-function(fileIn,header,dataType,class,n=NULL,p=NULL,na.strings=NA,
                           nColSkip=6,idCol=2,returnData=TRUE,verbose=FALSE,nChunks=NULL,
                           vmode=NULL,folderOut=paste('BGData_',sub("\\.[[:alnum:]]+$","",basename(fileIn)),sep=''),
                           dimorder=NULL){

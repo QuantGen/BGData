@@ -3,9 +3,9 @@
 \name{readPED}
 \alias{readPED}
 \title{Creates a memory-mapped \code{\linkS4class{BGData}} object from a plaintext
-PED-like file.}
+raw PED file (generated with \code{--recodeA} in PLINK) or PED-like file.}
 \usage{
-readPED(fileIn, header, dataType, n = NULL, p = NULL, na.strings = 0,
+readPED(fileIn, header, dataType, n = NULL, p = NULL, na.strings = NA,
   nColSkip = 6, idCol = 2, returnData = TRUE, verbose = FALSE,
   nChunks = NULL, distributed.by = "columns", folderOut = paste("BGData_",
   sub("\\\\.[[:alnum:]]+$", "", basename(fileIn)), sep = ""), dimorder = if
