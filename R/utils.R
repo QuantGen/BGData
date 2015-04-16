@@ -1,20 +1,23 @@
+#' Computes a genomic relationship matrix G=XX'.
+#' 
+#' Offers options for centering and scaling G=WW' where \code{W <- scale(X, 
+#' center=centerCol, scale=scaleCol)} and of scaling the final output so that 
+#' the average diagonal value is equal to one (\code{scaleG=TRUE}). If 
+#' \code{scaleCol=centerCol} and \code{scaleG=FALSE} it behaves as 
+#' \code{tcrossprod(X)}.
+#' 
+#' @param x matrix, ff_matrix, rmmMatrix or cmmMatrix
+#' @param nChunks The number of columns that are processed at a time.
+#' @param scaleCol TRUE/FALSE whether columns must be centered before computing 
+#'   XX'.
+#' @param scaleG TRUE/FALSE whether columns must be scaled before computing XX'.
+#' @param i (integer, boolean or character) Indicates which rows should be used.
+#'   By default, all rows are used.
+#' @param j (integer, boolean or character) Indicates which columns should be 
+#'   used. By default, all columns are used.
+#' @return Genomic relationship matrix
 #' @export
 getG<-function(x,nChunks=3,scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,i=1:nrow(x),j=1:ncol(x),minVar=1e-5){
-    ###
-    # Computes a genomic relationship matrix G=XX'
-    # Offers options for centering and scaling G=WW' where W=scale(X,center=centerCol,scale=scaleCol)
-    # And of scaling the final output so that the average diagonal value is equal to one (scaleG=TRUE)
-    # If scaleCol=centerCol=scaleG=FALSE it behaves as tcrossprod(X)
-    # Arguments:
-    #   x: matrix, ff_matrix, rmmMatrix or cmmMatrix
-    #   nChunks: the number of columns that are processed at a time.
-    #   scaleCol, centerCol: TRUE/FALSE whether columns must be centered and scaled before computing XX'
-    #   i,j: (integer, boolean or character) indicating which columsn and which rows should be used.
-    #        By default all columns and rows are used.
-    #  Genomic relationship matrix
-    # Value: G=XX'
-    ###
-    
     nX<-nrow(x);       pX<-ncol(x)
     n<-length(i); 	p<-length(j)
     
