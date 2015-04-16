@@ -250,14 +250,14 @@ readPED.default<-function(fileIn,header,dataType,class,n=NULL,p=NULL,na.strings=
 }
 
 
+#' Loads a BGData object using the name of the folder where the metadata and
+#' data are stored.
+#' 
+#' @param path The name of the folder where the data and meta data are stored.
+#' @param envir The name of the environment where the object is returned.
+#' @seealso \code{\link{load2}} and \code{\link{readPED}}
 #' @export
 loadBGData<-function(path,envir=.GlobalEnv){
-    ##
-    # Use: to load a BGData object using the name of the folder where the meta-data and data are stored.
-    # path: the name of the folder where the data and meta data are stored.
-    # envir: the name of the environment where the object is returned.
-    # See also: load2() and readPED()
-    ##
     if('BGData'%in%ls(envir=envir)){
         stop('There is already an object called BGData in the environment. Please move it.')
     }
