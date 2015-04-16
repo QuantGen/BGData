@@ -279,16 +279,14 @@ loadBGData<-function(path,envir=.GlobalEnv){
 }
 
 
+#' Loads BGData or mmMatrix objects.
+#' 
+#' @param file The name of the .RData file to be loaded (and possibly a path).
+#' @param envir The environment where to load the data.
+#' @param verbose TRUE/FALSE
+#' @seealso \code{\link{loadBGData}}
 #' @export
 load2<-function(file,envir=parent.frame(),verbose=TRUE){
-    ##
-    # Function to load BGData or mmMatrix objects
-    # file: the name of the .RData file to be loaded (and possibly a path)
-    # envir: the environment where to load the data
-    # verbose: TRUE/FALSE
-    # See also: loadBGData()
-    ##
-
     # determining the object name
     lsOLD<-ls();
     load(file=file)
