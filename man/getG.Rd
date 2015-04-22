@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{getG}
 \alias{getG}
-\title{Computes a genomic relationship matrix G=XX'.}
+\title{Computes a genomic relationship matrix G=XX hola'.}
 \usage{
 getG(x, nChunks = 3, scaleCol = TRUE, scaleG = TRUE, verbose = TRUE,
   i = 1:nrow(x), j = 1:ncol(x), minVar = 1e-05)
