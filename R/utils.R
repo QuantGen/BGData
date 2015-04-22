@@ -38,9 +38,9 @@ getG<-function(x,nChunks=3,scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,i=1:nrow(x),j=
     
     for(k in 1:nChunks){
         ini<-end+1;
-        end<-min(p,end+delta-1)
+        end<-min(p,ini+delta-1)
         if(verbose){
-            cat("Submatrix: ",k," (out of",nChunks,")\n");
+            cat("Submatrix: ",k," (out of",nChunks,ini,":",end,")\n");
             cat("  =>Acquiring genotypes...\n")
         }
         
