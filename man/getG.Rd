@@ -11,8 +11,9 @@ getG(x, nChunks = 3, scaleCol = TRUE, scaleG = TRUE, verbose = TRUE,
 \item{x}{matrix, ff_matrix, rmmMatrix or cmmMatrix}
 
 \item{nChunks}{The number of columns that are processed at a time.}
-
-\item{scaleCol}{TRUE/FALSE whether columns must be centered before computing
+\item{centerCol}{TRUE/FALSE whether columns must be centered before computing
+XX'.}
+\item{scaleCol}{TRUE/FALSE whether columns must be scaled before computing
 XX'.}
 
 \item{scaleG}{TRUE/FALSE whether columns must be scaled before computing XX'.}
@@ -32,5 +33,6 @@ center=centerCol, scale=scaleCol)} and of scaling the final output so that
 the average diagonal value is equal to one (\code{scaleG=TRUE}). If
 \code{scaleCol=centerCol} and \code{scaleG=FALSE} it behaves as
 \code{tcrossprod(X)}.
+\code{getG(x,scaleCol=FALSE,centerCol=FALSE,scaleG=FALSE)} should be equal than \code{tcrossprod(x)}.
 }
 
