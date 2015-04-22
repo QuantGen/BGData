@@ -12,9 +12,9 @@ getG(x, nChunks = 3, scaleCol = TRUE, scaleG = TRUE, verbose = TRUE,
 
 \item{nChunks}{The number of columns that are processed at a time.}
 \item{centerCol}{TRUE/FALSE whether columns must be centered before computing
-XX'.}
+xx'.}
 \item{scaleCol}{TRUE/FALSE whether columns must be scaled before computing
-XX'.}
+xx'.}
 
 \item{scaleG}{TRUE/FALSE whether columns must be scaled before computing XX'.}
 
@@ -28,11 +28,7 @@ used. By default, all columns are used.}
 Genomic relationship matrix
 }
 \description{
-Offers options for centering and scaling G=WW' where \code{W <- scale(X,
-center=centerCol, scale=scaleCol)} and of scaling the final output so that
-the average diagonal value is equal to one (\code{scaleG=TRUE}). If
-\code{scaleCol=centerCol} and \code{scaleG=FALSE} it behaves as
-\code{tcrossprod(X)}.
-\code{getG(x,scaleCol=FALSE,centerCol=FALSE,scaleG=FALSE)} should be equal than \code{tcrossprod(x)}.
+Offers options for centering and scaling the columns of x before computing xx'. If
+centerCol=FALSE,scaleCol=FALSE and scaleG=FALSE, getG() produces the same outcome than tcrossprod().
 }
 
