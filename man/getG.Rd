@@ -25,7 +25,7 @@ By default, all rows are used.}
 used. By default, all columns are used.}
 }
 \value{
-Genomic relationship matrix
+A positive semi-definite symmetric numeric matrix.
 }
 \description{
 Offers options for centering and scaling the columns of x before computing xx'. If
