@@ -17,8 +17,8 @@
 #'   used. By default, all columns are used.
 #' @return Genomic relationship matrix
 #' @export
-getG<-function(x,nChunks=3,scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,i=1:nrow(x),j=1:ncol(x),minVar=1e-5){
-    nX<-nrow(x);       pX<-ncol(x)
+getG<-function(x,nChunks=ceiling(ncol(x)/1e3),centerCol=TRUE,scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,i=1:nrow(x),j=1:ncol(x),minVar=1e-5){
+    nX<-nrow(x); pX<-ncol(x)
     n<-length(i); 	p<-length(j)
     
     if(n>nX|p>pX){ stop('Index out of bounds')}
@@ -40,7 +40,7 @@ getG<-function(x,nChunks=3,scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,i=1:nrow(x),j=
         ini<-end+1;
         end<-min(p,ini+delta-1)
         if(verbose){
-            cat("Submatrix: ",k," (out of",nChunks,ini,":",end,")\n");
+        	cat("Submatrix: ",k," (cols ", ini,":",end," ~",round(100*end/p,1),"% done)\n",sep="");
             cat("  =>Acquiring genotypes...\n")
         }
         
@@ -59,8 +59,8 @@ getG<-function(x,nChunks=3,scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,i=1:nrow(x),j=
         
         if(ncol(X)>0){
             if(verbose){ cat("  =>Computing...\n") }
-            if(scaleCol){
-                X<-scale(X,center=TRUE,scale=scaleCol)
+            if(centerCol|scaleCol){
+                X<-scale(X,center=centerCol,scale=scaleCol)
             }
             TMP<-is.na(X)
             if(any(TMP)){    X<-ifelse(TMP,0,X) }
@@ -73,7 +73,6 @@ getG<-function(x,nChunks=3,scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,i=1:nrow(x),j=
     }
     return(G)
 }
-
 
 #' Generate and store a simulated plaintext raw PED file (see \code{--recodeA}
 #' in PLINK) or PED-like file for testing purposes.
