@@ -35,8 +35,8 @@ brought into RAM for processing (10 by default).}
 Returns a matrix with estimates, SE, p-value, etc.
 }
 \description{
-Implements a GWAS using sinle marker regressions. The regression model includes all the covariates
-included in the righy-hand-sie of the (\code{formula}) plus one column of \code{@geno}, one column at a time.
+Implements single marker regressions. The regression model includes all the covariates
+specified in the righy-hand-sie of the \code{formula} plus one column of \code{@geno}, one column at a time.
 The data from the association tests is obtained from a
 \code{\linkS4class{BGData}} object.
 }
