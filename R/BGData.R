@@ -361,7 +361,7 @@ load2<-function(file,envir=parent.frame(),verbose=TRUE){
 #'   brought into RAM for processing (10 by default).
 #' @return Returns a matrix with estimates, SE, p-value, etc.
 #' @export
-GWAS<-function(formula,data,method,plot=FALSE,verbose=FALSE,min.pValue=1e-10,chunkSize=10,...){
+GWAS<-function(formula,data,method,plot=FALSE,verbose=FALSE,min.pValue=1e-10,chunkSize=5000,...){
     if(class(data)!='BGData'){ stop('data must BGData')}
 
     if(!method%in%c('lm','lm.fit','lsfit','glm','lmer','SKAT')){
