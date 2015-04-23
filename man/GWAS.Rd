@@ -2,7 +2,7 @@
 % Please edit documentation in R/BGData.R
 \name{GWAS}
 \alias{GWAS}
-\title{Conducts an association study (GWAS) using a \code{\linkS4class{BGData}}
+\title{Performs single marker regressions using a \code{\linkS4class{BGData}}
 object.}
 \usage{
 GWAS(formula, data, method, plot = FALSE, verbose = FALSE,
@@ -35,8 +35,8 @@ brought into RAM for processing (10 by default).}
 Returns a matrix with estimates, SE, p-value, etc.
 }
 \description{
-This function conducts an association test using the formula provided by the
-user (\code{formula}) plus one column of \code{@geno}, one column at a time.
+Implements a GWAS using sinle marker regressions. The regression model includes all the covariates
+included in the righy-hand-sie of the (\code{formula}) plus one column of \code{@geno}, one column at a time.
 The data from the association tests is obtained from a
 \code{\linkS4class{BGData}} object.
 }
