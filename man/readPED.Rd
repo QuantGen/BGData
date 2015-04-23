@@ -68,13 +68,10 @@ each \code{ff_matrix} object has a number of cells that is smaller than
 \code{.Machine$integer.max/1.2}. \code{readPED} creates a folder
 (\code{folderOut}) that contains the binary flat files (\code{geno_*.bin})
 and the \code{\linkS4class{BGData}} object (typically named
-\code{BGData.RData}. Optionally (if \code{returnData} is TRUE) it returns the
-\code{\linkS4class{BGData}} object to the environment. The filename of the
-\code{ff_matrix} objects are saved as relative names. Therefore, to be able
-to access the content of the data included in \code{@geno} the working
-directory must either be the folder where these files are saved
-(\code{folderOut}) or the object must be loaded either using
-\code{loadBGData} or \code{load2}.
+\code{BGData.bin}. Optionally (if \code{returnData} is TRUE) it returns the
+\code{\linkS4class{BGData}} object to the environment. To load a
+\code{\linkS4class{BGData}} object once it has been written to disk, use
+either \code{loadBGData} or \code{load2}.
 }
 \seealso{
 \code{\linkS4class{BGData}}, \code{mmMatrix},

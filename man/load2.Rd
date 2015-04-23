@@ -2,19 +2,19 @@
 % Please edit documentation in R/BGData.R
 \name{load2}
 \alias{load2}
-\title{Loads BGData or mmMatrix objects.}
+\title{Loads BGData objects.}
 \usage{
 load2(file, envir = parent.frame(), verbose = TRUE)
 }
 \arguments{
-\item{file}{The name of the .RData file to be loaded (and possibly a path).}
+\item{file}{The name of the BGData.bin file to be loaded (and possibly a path).}
 
 \item{envir}{The environment where to load the data.}
 
 \item{verbose}{TRUE/FALSE}
 }
 \description{
-Loads BGData or mmMatrix objects.
+Loads BGData objects.
 }
 \seealso{
 \code{\link{loadBGData}}
