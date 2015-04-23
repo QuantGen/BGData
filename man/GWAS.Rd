@@ -29,7 +29,7 @@ the association tests are run.}
 the limits of the vertical axis of the Manhattan plot.}
 
 \item{chunkSize}{Represents the number of columns of \code{@geno} that are
-brought into RAM for processing (10 by default).}
+brought into RAM for processing (5000 by default).}
 }
 \value{
 Returns a matrix with estimates, SE, p-value, etc.
