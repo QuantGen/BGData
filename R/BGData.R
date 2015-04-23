@@ -336,13 +336,13 @@ load2<-function(file,envir=parent.frame(),verbose=TRUE){
 }
 
 
-#' Conducts an association study (GWAS) using a \code{\linkS4class{BGData}} 
+#' Performs single marker regressions using a \code{\linkS4class{BGData}} 
 #' object.
 #' 
-#' This function conducts an association test using the formula provided by the 
-#' user (\code{formula}) plus one column of \code{@@geno}, one column at a time.
-#' The data from the association tests is obtained from a 
-#' \code{\linkS4class{BGData}} object.
+#' Implements single marker regressions. The regression model includes all the
+#' covariates specified in the right-hand-side of the \code{formula} plus one
+#' column of \code{@@geno}, one column at a time. The data from the association
+#' tests is obtained from a \code{\linkS4class{BGData}} object.
 #' 
 #' @param formula A formula (e.g. weight~sex+age) with the response on the 
 #'   left-hand side and predictors (all the covariates except the markers) on 
@@ -358,7 +358,7 @@ load2<-function(file,envir=parent.frame(),verbose=TRUE){
 #' @param min.pValue Numeric, the minimum p-value expected, used to determine 
 #'   the limits of the vertical axis of the Manhattan plot.
 #' @param chunkSize Represents the number of columns of \code{@@geno} that are 
-#'   brought into RAM for processing (10 by default).
+#'   brought into RAM for processing (5000 by default).
 #' @return Returns a matrix with estimates, SE, p-value, etc.
 #' @export
 GWAS<-function(formula,data,method,plot=FALSE,verbose=FALSE,min.pValue=1e-10,chunkSize=5000,...){

@@ -6,7 +6,7 @@
 object.}
 \usage{
 GWAS(formula, data, method, plot = FALSE, verbose = FALSE,
-  min.pValue = 1e-10, chunkSize = 10, ...)
+  min.pValue = 1e-10, chunkSize = 5000, ...)
 }
 \arguments{
 \item{formula}{A formula (e.g. weight~sex+age) with the response on the
@@ -35,9 +35,9 @@ brought into RAM for processing (5000 by default).}
 Returns a matrix with estimates, SE, p-value, etc.
 }
 \description{
-Implements single marker regressions. The regression model includes all the covariates
-specified in the righy-hand-sie of the \code{formula} plus one column of \code{@geno}, one column at a time.
-The data from the association tests is obtained from a
-\code{\linkS4class{BGData}} object.
+Implements single marker regressions. The regression model includes all the
+covariates specified in the right-hand-side of the \code{formula} plus one
+column of \code{@geno}, one column at a time. The data from the association
+tests is obtained from a \code{\linkS4class{BGData}} object.
 }
 

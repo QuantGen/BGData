@@ -2,21 +2,24 @@
 % Please edit documentation in R/utils.R
 \name{getG}
 \alias{getG}
-\title{Computes a genomic relationship matrix G=xx.}
+\title{Computes a genomic relationship matrix G=xx'.}
 \usage{
-getG(x, nChunks = 3, scaleCol = TRUE, scaleG = TRUE, verbose = TRUE,
-  i = 1:nrow(x), j = 1:ncol(x), minVar = 1e-05)
+getG(x, nChunks = ceiling(ncol(x)/1000), centerCol = TRUE,
+  scaleCol = TRUE, scaleG = TRUE, verbose = TRUE, i = 1:nrow(x),
+  j = 1:ncol(x), minVar = 1e-05)
 }
 \arguments{
 \item{x}{matrix, ff_matrix, rmmMatrix or cmmMatrix}
 
 \item{nChunks}{The number of columns that are processed at a time.}
+
 \item{centerCol}{TRUE/FALSE whether columns must be centered before computing
 xx'.}
+
 \item{scaleCol}{TRUE/FALSE whether columns must be scaled before computing
 xx'.}
 
-\item{scaleG}{TRUE/FALSE whether columns must be scaled before computing XX'.}
+\item{scaleG}{TRUE/FALSE whether columns must be scaled before computing xx'.}
 
 \item{i}{(integer, boolean or character) Indicates which rows should be used.
 By default, all rows are used.}
@@ -28,7 +31,9 @@ used. By default, all columns are used.}
 A positive semi-definite symmetric numeric matrix.
 }
 \description{
-Offers options for centering and scaling the columns of x before computing xx'. If
-centerCol=FALSE,scaleCol=FALSE and scaleG=FALSE, getG() produces the same outcome than tcrossprod().
+Offers options for centering and scaling the columns of x before computing
+xx'. If \code{centerCol=FALSE}, \code{scaleCol=FALSE} and
+\code{scaleG=FALSE}, \code{getG} produces the same outcome than
+\code{tcrossprod}.
 }
 

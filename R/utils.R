@@ -1,21 +1,22 @@
-#' Computes a genomic relationship matrix G=XX'.
+#' Computes a genomic relationship matrix G=xx'.
 #' 
-#' Offers options for centering and scaling G=WW' where \code{W <- scale(X, 
-#' center=centerCol, scale=scaleCol)} and of scaling the final output so that 
-#' the average diagonal value is equal to one (\code{scaleG=TRUE}). If 
-#' \code{scaleCol=centerCol} and \code{scaleG=FALSE} it behaves as 
-#' \code{tcrossprod(X)}.
+#' Offers options for centering and scaling the columns of x before computing
+#' xx'. If \code{centerCol=FALSE}, \code{scaleCol=FALSE} and
+#' \code{scaleG=FALSE}, \code{getG} produces the same outcome than
+#' \code{tcrossprod}.
 #' 
 #' @param x matrix, ff_matrix, rmmMatrix or cmmMatrix
 #' @param nChunks The number of columns that are processed at a time.
-#' @param scaleCol TRUE/FALSE whether columns must be centered before computing 
-#'   XX'.
-#' @param scaleG TRUE/FALSE whether columns must be scaled before computing XX'.
+#' @param centerCol TRUE/FALSE whether columns must be centered before computing
+#'   xx'.
+#' @param scaleCol TRUE/FALSE whether columns must be scaled before computing
+#'   xx'.
+#' @param scaleG TRUE/FALSE whether columns must be scaled before computing xx'.
 #' @param i (integer, boolean or character) Indicates which rows should be used.
 #'   By default, all rows are used.
 #' @param j (integer, boolean or character) Indicates which columns should be 
 #'   used. By default, all columns are used.
-#' @return Genomic relationship matrix
+#' @return A positive semi-definite symmetric numeric matrix.
 #' @export
 getG<-function(x,nChunks=ceiling(ncol(x)/1e3),centerCol=TRUE,scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,i=1:nrow(x),j=1:ncol(x),minVar=1e-5){
     nX<-nrow(x); pX<-ncol(x)
