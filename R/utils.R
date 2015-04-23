@@ -18,9 +18,10 @@
 #'   used. By default, all columns are used.
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @export
-getG<-function(x,nChunks=ceiling(ncol(x)/1e3),centerCol=TRUE,scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,i=1:nrow(x),j=1:ncol(x),minVar=1e-5){
+getG<-function(x,nChunks=ceiling(ncol(x)/1e3),scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,i=1:nrow(x),j=1:ncol(x),minVar=1e-5){
     nX<-nrow(x); pX<-ncol(x)
     n<-length(i); 	p<-length(j)
+    centerCol=TRUE
     
     if(n>nX|p>pX){ stop('Index out of bounds')}
     
@@ -40,32 +41,34 @@ getG<-function(x,nChunks=ceiling(ncol(x)/1e3),centerCol=TRUE,scaleCol=TRUE,scale
     for(k in 1:nChunks){
         ini<-end+1;
         end<-min(p,ini+delta-1)
-        if(verbose){
-        	cat("Submatrix: ",k," (cols ", ini,":",end," ~",round(100*end/p,1),"% done)\n",sep="");
-            cat("  =>Acquiring genotypes...\n")
-        }
-        
-        # subset
-        tmp<-j[ini:end]
-        X=x[i,tmp,drop=FALSE];
-        
-        if(scaleCol){
-            VAR<-apply(X=X,FUN=var,MARGIN=2,na.rm=TRUE)
-            tmp<-which(VAR<minVar)
-            if(length(tmp)>0){
-                X<-X[,-tmp]
-                VAR<-VAR[-tmp]
+        if(ini<=p){
+            if(verbose){
+        	    cat("Chunk: ",k," (cols ", ini,":",end," ~",round(100*end/p,1),"% done)\n",sep="");
+                cat("  =>Acquiring genotypes...\n")
             }
-        }
         
-        if(ncol(X)>0){
-            if(verbose){ cat("  =>Computing...\n") }
-            if(centerCol|scaleCol){
-                X<-scale(X,center=centerCol,scale=scaleCol)
+            # subset
+            tmp<-j[ini:end]
+            X=x[i,tmp,drop=FALSE];
+        
+            if(scaleCol){
+                VAR<-apply(X=X,FUN=var,MARGIN=2,na.rm=TRUE)
+                tmp<-which(VAR<minVar)
+                if(length(tmp)>0){
+                    X<-X[,-tmp]
+                    VAR<-VAR[-tmp]
+                }
             }
-            TMP<-is.na(X)
-            if(any(TMP)){    X<-ifelse(TMP,0,X) }
-            G<-G+tcrossprod(X)
+        
+            if(ncol(X)>0){
+                if(verbose){ cat("  =>Computing...\n") }
+                if(centerCol|scaleCol){
+                    X<-scale(X,center=centerCol,scale=scaleCol)
+                }
+                TMP<-is.na(X)
+                if(any(TMP)){    X<-ifelse(TMP,0,X) }
+                G<-G+tcrossprod(X)
+            }
         }
     }
     if(scaleG){
