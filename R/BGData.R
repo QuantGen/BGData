@@ -134,8 +134,8 @@ readPED<-function(fileIn,header,dataType,n=NULL,p=NULL,na.strings='NA',
 #' 
 #' @param fileIn The path to the plaintext file.
 #' @param header If TRUE, the file contains a header.
-#' @param dataType The coding of genotypes. Use 'character' for A/C/G/T or 
-#'   'integer' for numeric coding.
+#' @param dataType The coding of genotypes. Use 'character()' for A/C/G/T or 
+#'   'integer()' for numeric coding.
 #' @param n The number of individuals.
 #' @param p The number of markers.
 #' @param na.strings The character string used in the plaintext file to denote 
