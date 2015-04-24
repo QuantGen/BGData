@@ -19,10 +19,13 @@
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @export
 getG<-function(x,nChunks=ceiling(ncol(x)/1e3),scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,i=1:nrow(x),j=1:ncol(x),minVar=1e-5){
-    nX<-nrow(x); pX<-ncol(x)
-    n<-length(i); 	p<-length(j)
+    nX<-nrow(x); pX<-ncol(x); centerCol=TRUE # if this is made a parameter the imputation od NAs need to be modified.
     
-    centerCol=TRUE # if this is made a parameter the imputation od NAs need to be modified.
+    # converting boolean to integer index (it leads to a more efficient subsetting than booleans)
+    if(is.logical(i)){ i<-which(i) }
+    if(is.logical(j)){ j<-which(j) }
+    
+    n<-length(i); 	p<-length(j)
     
     if(n>nX|p>pX){ stop('Index out of bounds')}
     
@@ -44,7 +47,7 @@ getG<-function(x,nChunks=ceiling(ncol(x)/1e3),scaleCol=TRUE,scaleG=TRUE,verbose=
         if(ini<=p){
             end<-min(p,ini+delta-1)
             if(verbose){
-        	    cat("Chunk: ",k," (cols ", ini,":",end," ~",round(100*end/p,1),"% done)\n",sep="");
+        	    cat("Chunk: ",k," (markers ", ini,":",end," ~",round(100*end/p,1),"% done)\n",sep="");
                 cat("  =>Acquiring genotypes...\n")
             }
         
