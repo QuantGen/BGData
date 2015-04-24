@@ -21,7 +21,8 @@
 getG<-function(x,nChunks=ceiling(ncol(x)/1e3),scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,i=1:nrow(x),j=1:ncol(x),minVar=1e-5){
     nX<-nrow(x); pX<-ncol(x)
     n<-length(i); 	p<-length(j)
-    centerCol=TRUE
+    
+    centerCol=TRUE # if this is made a parameter the imputation od NAs need to be modified.
     
     if(n>nX|p>pX){ stop('Index out of bounds')}
     
@@ -40,8 +41,8 @@ getG<-function(x,nChunks=ceiling(ncol(x)/1e3),scaleCol=TRUE,scaleG=TRUE,verbose=
     
     for(k in 1:nChunks){
         ini<-end+1;
-        end<-min(p,ini+delta-1)
         if(ini<=p){
+            end<-min(p,ini+delta-1)
             if(verbose){
         	    cat("Chunk: ",k," (cols ", ini,":",end," ~",round(100*end/p,1),"% done)\n",sep="");
                 cat("  =>Acquiring genotypes...\n")
