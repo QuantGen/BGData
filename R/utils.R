@@ -7,8 +7,6 @@
 #' 
 #' @param x matrix, ff_matrix, rmmMatrix or cmmMatrix
 #' @param nChunks The number of columns that are processed at a time.
-#' @param centerCol TRUE/FALSE whether columns must be centered before computing
-#'   xx'.
 #' @param scaleCol TRUE/FALSE whether columns must be scaled before computing
 #'   xx'.
 #' @param scaleG TRUE/FALSE whether columns must be scaled before computing xx'.

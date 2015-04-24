@@ -4,17 +4,13 @@
 \alias{getG}
 \title{Computes a genomic relationship matrix G=xx'.}
 \usage{
-getG(x, nChunks = ceiling(ncol(x)/1000), centerCol = TRUE,
-  scaleCol = TRUE, scaleG = TRUE, verbose = TRUE, i = 1:nrow(x),
-  j = 1:ncol(x), minVar = 1e-05)
+getG(x, nChunks = ceiling(ncol(x)/1000), scaleCol = TRUE, scaleG = TRUE,
+  verbose = TRUE, i = 1:nrow(x), j = 1:ncol(x), minVar = 1e-05)
 }
 \arguments{
 \item{x}{matrix, ff_matrix, rmmMatrix or cmmMatrix}
 
 \item{nChunks}{The number of columns that are processed at a time.}
-
-\item{centerCol}{TRUE/FALSE whether columns must be centered before computing
-xx'.}
 
 \item{scaleCol}{TRUE/FALSE whether columns must be scaled before computing
 xx'.}
