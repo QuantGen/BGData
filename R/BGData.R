@@ -105,9 +105,12 @@ readPED<-function(fileIn,header,dataType,n=NULL,p=NULL,na.strings='NA',
     if(file.exists(folderOut)){
         stop(paste('Output folder',folderOut,'already exists. Please move it or pick a different one.'))
     }
-    if(!typeof(dataType)%in%c('character','integer','numeric')){
-        stop('dataType must be either character(), integer() or numeric()')
+
+    dataType<-normalizeType(dataType)
+    if(!typeof(dataType)%in%c('character','integer','double')){
+        stop('dataType must be either character(), integer() or double()')
     }
+
     if(!distributed.by%in%c('columns','rows')){
         stop('distributed.by must be either columns or rows')
     }
@@ -151,9 +154,9 @@ readPED.matrix<-function(fileIn,header,dataType,n=NULL,p=NULL,
                          na.strings='NA',nColSkip=6,idCol=2,
                          verbose=FALSE){
 
-    readPED.default(fileIn=fileIn,header=header,dataType=dataType,class="matrix",
-                    n=n,p=p,na.strings=na.strings,nColSkip=nColSkip,idCol=idCol,
-                    returnData=TRUE,verbose=verbose)
+    readPED.default(fileIn=fileIn,header=header,dataType=normalizeType(dataType),
+                    class="matrix",n=n,p=p,na.strings=na.strings,nColSkip=nColSkip,
+                    idCol=idCol,returnData=TRUE,verbose=verbose)
 }
 
 readPED.default<-function(fileIn,header,dataType,class,n=NULL,p=NULL,na.strings='NA',

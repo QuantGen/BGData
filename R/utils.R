@@ -127,3 +127,23 @@ randomString<-function(){
     paste(sample(c(0:9,letters,LETTERS),size=5,replace=TRUE),collapse="")
 }
 
+
+normalizeType<-function(val){
+    type<-typeof(val)
+    # detect strings
+    if(type=='character'&&length(val)>0){
+        # convert to type if type and value match
+        convert<-try(vector(mode=val),silent=TRUE)
+        if(class(convert)=='try-error'){
+            # return a character type if conversion failed
+            warning('could no convert type, using character instead')
+            character()
+        }else{
+            # return conversion result otherwise
+            convert
+        }
+        # value doesn't contain type information and can be handled by typeof
+    }else{
+        val
+    }
+}
