@@ -5,7 +5,7 @@
 \title{Creates a \code{\linkS4class{BGData}} object from a plaintext PED-like file.}
 \usage{
 readPED.matrix(fileIn, header, dataType, n = NULL, p = NULL,
-  na.strings = 0, nColSkip = 6, idCol = 2, verbose = FALSE)
+  na.strings = "NA", nColSkip = 6, idCol = 2, verbose = FALSE)
 }
 \arguments{
 \item{fileIn}{The path to the plaintext file.}

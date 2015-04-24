@@ -96,7 +96,7 @@ setMethod('initialize','BGData',function(.Object,geno,pheno,map){
 #'   \code{\linkS4class{rmmMatrix}}, \code{\linkS4class{cmmMatrix}}, 
 #'   \code{\link[ff]{ff}}
 #' @export
-readPED<-function(fileIn,header,dataType,n=NULL,p=NULL,na.strings=NA,
+readPED<-function(fileIn,header,dataType,n=NULL,p=NULL,na.strings='NA',
                   nColSkip=6,idCol=2,returnData=TRUE,verbose=FALSE,
                   nChunks=NULL,distributed.by='columns',
                   folderOut=paste('BGData_',sub("\\.[[:alnum:]]+$","",basename(fileIn)),sep=''),
@@ -148,7 +148,7 @@ readPED<-function(fileIn,header,dataType,n=NULL,p=NULL,na.strings=NA,
 #' @seealso \code{\linkS4class{BGData}}
 #' @export
 readPED.matrix<-function(fileIn,header,dataType,n=NULL,p=NULL,
-                         na.strings=0,nColSkip=6,idCol=2,
+                         na.strings='NA',nColSkip=6,idCol=2,
                          verbose=FALSE){
 
     readPED.default(fileIn=fileIn,header=header,dataType=dataType,class="matrix",
@@ -156,7 +156,7 @@ readPED.matrix<-function(fileIn,header,dataType,n=NULL,p=NULL,
                     returnData=TRUE,verbose=verbose)
 }
 
-readPED.default<-function(fileIn,header,dataType,class,n=NULL,p=NULL,na.strings=NA,
+readPED.default<-function(fileIn,header,dataType,class,n=NULL,p=NULL,na.strings='NA',
                           nColSkip=6,idCol=2,returnData=TRUE,verbose=FALSE,nChunks=NULL,
                           vmode=NULL,folderOut=paste('BGData_',sub("\\.[[:alnum:]]+$","",basename(fileIn)),sep=''),
                           dimorder=NULL){
