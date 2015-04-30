@@ -62,13 +62,10 @@ setMethod('initialize','BGData',function(.Object,geno,pheno,map){
 #' \code{.Machine$integer.max/1.2}. \code{readPED} creates a folder 
 #' (\code{folderOut}) that contains the binary flat files (\code{geno_*.bin}) 
 #' and the \code{\linkS4class{BGData}} object (typically named 
-#' \code{BGData.RData}. Optionally (if \code{returnData} is TRUE) it returns the
-#' \code{\linkS4class{BGData}} object to the environment. The filename of the 
-#' \code{ff_matrix} objects are saved as relative names. Therefore, to be able 
-#' to access the content of the data included in \code{@@geno} the working 
-#' directory must either be the folder where these files are saved 
-#' (\code{folderOut}) or the object must be loaded either using 
-#' \code{loadBGData} or \code{load2}.
+#' \code{BGData.bin}. Optionally (if \code{returnData} is TRUE) it returns the 
+#' \code{\linkS4class{BGData}} object to the environment. To load a
+#' \code{\linkS4class{BGData}} object once it has been written to disk, use
+#' either \code{loadBGData} or \code{load2}.
 #' 
 #' @param fileIn The path to the plaintext file.
 #' @param header If TRUE, the file contains a header.
@@ -244,7 +241,7 @@ readPED.default<-function(fileIn,header,dataType,class,n=NULL,p=NULL,na.strings=
     if(class!='matrix'){
         attr(BGData,'origFile')<-list(path=fileIn,dataType=typeof(dataType))
         attr(BGData,'dateCreated')<-date()
-        save(BGData,file=paste(folderOut,'/BGData.RData',sep=''))
+        save(BGData,file=paste(folderOut,'/BGData.bin',sep=''))
     }
 
     if(returnData){
@@ -264,12 +261,12 @@ loadBGData<-function(path,envir=.GlobalEnv){
     if('BGData'%in%ls(envir=envir)){
         stop('There is already an object called BGData in the environment. Please move it.')
     }
-    if(!file.exists(paste0(path,'/BGData.RData'))){
+    if(!file.exists(paste0(path,'/BGData.bin'))){
         stop(paste('Could not find a BGData object in path',path))
     }
     cwd<-getwd()
     setwd(path)
-    load('BGData.RData',envir)
+    load('BGData.bin',envir)
     cat('Loaded BGData object into environment under name BGData')
     # Open all chunks for reading (we do not store absolute paths to ff files,
     # so this has to happen in the same working directory)
@@ -282,9 +279,9 @@ loadBGData<-function(path,envir=.GlobalEnv){
 }
 
 
-#' Loads BGData or mmMatrix objects.
+#' Loads BGData objects.
 #' 
-#' @param file The name of the .RData file to be loaded (and possibly a path).
+#' @param file The name of the BGData.bin file to be loaded (and possibly a path).
 #' @param envir The environment where to load the data.
 #' @param verbose TRUE/FALSE
 #' @seealso \code{\link{loadBGData}}
