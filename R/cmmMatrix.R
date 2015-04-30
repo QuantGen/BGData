@@ -217,7 +217,7 @@ as.matrix.cmmMatrix<-function(x){
 #' Finds the position of a set of columns in a cmmMatrix object.
 colindexes<-function(x,columns){
     CHUNKS<-chunks(x)
-    nCol<-CHUNKS[nrow(CHUNKS),ncol(CHUNKS)]
+    nCol<-CHUNKS[nrow(CHUNKS),3]
 
     INDEX<-matrix(nrow=nCol,ncol=3)
     colnames(INDEX)<-c('chunk','col.global','col.local')

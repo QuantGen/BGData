@@ -217,7 +217,7 @@ as.matrix.rmmMatrix<-function(x){
 #' Finds the position of a set of rows in an rmmMatrix object.
 rowindexes<-function(x,rows){
     CHUNKS<-chunks(x)
-    nRow<-CHUNKS[nrow(CHUNKS),ncol(CHUNKS)]
+    nRow<-CHUNKS[nrow(CHUNKS),3]
 
     INDEX<-matrix(nrow=nRow,ncol=3)
     colnames(INDEX)<-c('chunk','row.global','row.local')
