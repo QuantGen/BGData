@@ -229,11 +229,8 @@ colindexes<-function(x,columns=NULL){
         INDEX[ini:end,1]<-i
         INDEX[ini:end,3]<-1:ncol(x[[i]])
     }
-    if(!is.null(columns)){ INDEX<-INDEX[columns,] }
-    if(is.vector(INDEX)){
-        tmp<-names(INDEX)
-        INDEX<-matrix(INDEX,ncol=3)
-        colnames(INDEX)<-tmp
+    if(!is.null(columns)){
+        INDEX<-INDEX[columns,,drop=FALSE]
     }
     return(INDEX)
 }
