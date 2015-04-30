@@ -178,7 +178,6 @@ setMethod("summary",signature("mmMatrix"),summary.mmMatrix)
 #' @param x Either an \code{\linkS4class{rmmMatrix}} or a 
 #'   \code{\linkS4class{cmmMatrix}} object
 #' @return A matrix with information per chunk in rows.
-#' @export
 chunks<-function(x){
     if(class(x)=='cmmMatrix'){
         n<-length(x)

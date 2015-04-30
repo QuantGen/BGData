@@ -5,7 +5,7 @@
 #'
 #' @export rmmMatrix
 #' @exportClass rmmMatrix
-rmmMatrix<-setClass('rmmMatrix',contains='list')
+rmmMatrix<-setClass('rmmMatrix',slots=c(chunks='matrix',indexes='matrix'),contains='list')
 
 #' @export
 setMethod('initialize','rmmMatrix',function(.Object,nrow=1,ncol=1,vmode='byte',folderOut=NULL,nChunks=NULL,dimorder=c(2,1)){
@@ -37,6 +37,8 @@ setMethod('initialize','rmmMatrix',function(.Object,nrow=1,ncol=1,vmode='byte',f
         physical(ffList[[i]])$filename<-filename
     }
     .Object<-callNextMethod(.Object,ffList)
+    .Object@chunks=chunks(.Object)
+    .Object@indexes=rowindexes(.Object)
     return(.Object)
 })
 
@@ -70,7 +72,7 @@ subset.rmmMatrix<-function(x,i,j,drop){
     colnames(Z)<-colnames(x)[j]
     rownames(Z)<-rownames(x)[i]
 
-    INDEXES<-rowindexes(x,rows=sortedRows)
+    INDEXES<-x@indexes[sortedRows,,drop=FALSE]
 
     whatChunks<-unique(INDEXES[,1])
     end<-0
@@ -116,10 +118,10 @@ setMethod("[",signature(x="rmmMatrix",i="missing",j="missing",drop="ANY"),functi
 
 replace.rmmMatrix<-function(x,i,j,...,value){
     Z<-matrix(nrow=length(i),ncol=length(j),data=value)
-    CHUNKS<-chunks(x)
+    CHUNKS<-x@chunks
     for(k in 1:nrow(CHUNKS) ){
         rows_z<-(i>=CHUNKS[k,2])&(i<=CHUNKS[k,3])
-        rowLocal<-rowindexes(x,i[rows_z])[,3]
+        rowLocal<-(x@indexes[i[rows_z],,drop=FALSE])[,3]
         x[[k]][rowLocal,j]<-Z[rows_z,]
     }
     return(x)
@@ -185,7 +187,7 @@ get.rownames.rmmMatrix<-function(x){
     if(!is.null(rownames(x[[1]]))){
         n<-dim(x)[1]
         out<-rep('',n)
-        TMP<-chunks(x)
+        TMP<-x@chunks
         for(i in 1:nrow(TMP)){
             out[(TMP[i,2]:TMP[i,3])]<-rownames(x[[i]])
         }
@@ -194,7 +196,7 @@ get.rownames.rmmMatrix<-function(x){
 }
 
 set.rownames.rmmMatrix<-function(x,value){
-    TMP<-chunks(x)
+    TMP<-x@chunks
     for(i in 1:nrow(TMP)){
         rownames(x[[i]])<-value[(TMP[i,2]:TMP[i,3])]
     }
@@ -216,7 +218,7 @@ as.matrix.rmmMatrix<-function(x){
 
 #' Finds the position of a set of rows in an rmmMatrix object.
 rowindexes<-function(x,rows=NULL){
-    CHUNKS<-chunks(x)
+    CHUNKS<-x@chunks
     nRow<-CHUNKS[nrow(CHUNKS),3]
 
     INDEX<-matrix(nrow=nRow,ncol=3)

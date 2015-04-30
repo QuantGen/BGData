@@ -5,7 +5,7 @@
 #'
 #' @export cmmMatrix
 #' @exportClass cmmMatrix
-cmmMatrix<-setClass('cmmMatrix',contains='list')
+cmmMatrix<-setClass('cmmMatrix',slots=c(chunks='matrix',indexes='matrix'),contains='list')
 
 #' @export
 setMethod('initialize','cmmMatrix',function(.Object,nrow=1,ncol=1,vmode='byte',folderOut=NULL,nChunks=NULL,dimorder=c(2,1)){
@@ -37,6 +37,8 @@ setMethod('initialize','cmmMatrix',function(.Object,nrow=1,ncol=1,vmode='byte',f
         physical(ffList[[i]])$filename<-filename
     }
     .Object<-callNextMethod(.Object,ffList)
+    .Object@chunks=chunks(.Object)
+    .Object@indexes=colindexes(.Object)
     return(.Object)
 })
 
@@ -70,7 +72,7 @@ subset.cmmMatrix<-function(x,i,j,drop){
     colnames(Z)<-colnames(x)[j]
     rownames(Z)<-rownames(x)[i]
 
-    INDEXES<-colindexes(x,columns=sortedColumns)
+    INDEXES<-x@indexes[sortedColumns,,drop=FALSE]
 
     whatChunks<-unique(INDEXES[,1])
     end<-0
@@ -116,10 +118,10 @@ setMethod("[",signature(x="cmmMatrix",i="missing",j="missing",drop="ANY"),functi
 
 replace.cmmMatrix<-function(x,i,j,...,value){
     Z<-matrix(nrow=length(i),ncol=length(j),data=value)
-    CHUNKS<-chunks(x)
+    CHUNKS<-x@chunks
     for(k in 1:nrow(CHUNKS) ){
         col_z<-(j>=CHUNKS[k,2])&(j<=CHUNKS[k,3])
-        colLocal<-colindexes(x,j[col_z])[,3]
+        colLocal<-(x@indexes[j[col_z],,drop=FALSE])[,3]
         x[[k]][i,colLocal]<-Z[,col_z]
     }
     return(x)
@@ -166,7 +168,7 @@ get.colnames.cmmMatrix<-function(x){
     if(!is.null(colnames(x[[1]]))){
         p<-dim(x)[2]
         out<-rep('',p)
-        TMP<-chunks(x)
+        TMP<-x@chunks
         for(i in 1:nrow(TMP)){
             out[(TMP[i,2]:TMP[i,3])]<-colnames(x[[i]])
         }
@@ -175,7 +177,7 @@ get.colnames.cmmMatrix<-function(x){
 }
 
 set.colnames.cmmMatrix<-function(x,value){
-    TMP<-chunks(x)
+    TMP<-x@chunks
     for(i in 1:nrow(TMP)){
         colnames(x[[i]])<-value[(TMP[i,2]:TMP[i,3])]
     }
@@ -216,7 +218,7 @@ as.matrix.cmmMatrix<-function(x){
 
 #' Finds the position of a set of columns in a cmmMatrix object.
 colindexes<-function(x,columns=NULL){
-    CHUNKS<-chunks(x)
+    CHUNKS<-x@chunks
     nCol<-CHUNKS[nrow(CHUNKS),3]
 
     INDEX<-matrix(nrow=nCol,ncol=3)
