@@ -148,6 +148,72 @@ setReplaceMethod("[",signature(x="rmmMatrix",i="missing",j="missing",value="ANY"
 })
 
 
+#' @export
+rbind.rmmMatrix<-function(...,vmode='byte',folderOut=NULL,nChunks=NULL,dimorder=c(2,1),deparse.level=1){
+    allargs<-list(...)
+    alldims<-unique(sapply(allargs,function(arg){
+        dims<-dim(arg)
+        if(is.null(dims)){
+            c(1, length(arg))
+        }else{
+            dims
+        }
+    }))
+    numcols<-unique(alldims[2,])
+    if(length(numcols)>1){
+        stop('all params need the same number of columns')
+    }
+    numrows<-sum(alldims[1,])
+    mmmatrix<-rmmMatrix(nrow=numrows,ncol=numcols,vmode=vmode,folderOut=folderOut,nChunks=nChunks,dimorder=dimorder)
+    currow<-1
+    for(arg in 1:ncol(alldims)){
+        argrows<-alldims[1,arg]
+        for(argrow in 1:argrows){
+            if(argrows>1){
+                mmmatrix[currow,]<-allargs[[arg]][argrow,]
+            }else{
+                mmmatrix[currow,]<-allargs[[arg]]
+            }
+            currow<-currow+1
+        }
+    }
+    mmmatrix
+}
+
+
+#' @export
+cbind.rmmMatrix<-function(...,vmode='byte',folderOut=NULL,nChunks=NULL,dimorder=c(2,1),deparse.level=1){
+    allargs<-list(...)
+    alldims<-unique(sapply(allargs,function(arg){
+        dims<-dim(arg)
+        if(is.null(dims)){
+            c(length(arg), 1)
+        }else{
+            dims
+        }
+    }))
+    numrows<-unique(alldims[1,])
+    if(length(numrows)>1){
+        stop('all params need the same number of rows')
+    }
+    numcols<-sum(alldims[2,])
+    mmmatrix<-rmmMatrix(nrow=numrows,ncol=numcols,vmode=vmode,folderOut=folderOut,nChunks=nChunks,dimorder=dimorder)
+    curcol<-1
+    for(arg in 1:ncol(alldims)){
+        argcols<-alldims[2,arg]
+        for(argcol in 1:argcols){
+            if(argcols>1){
+                mmmatrix[,curcol]<-allargs[[arg]][,argcol]
+            }else{
+                mmmatrix[,curcol]<-allargs[[arg]]
+            }
+            curcol<-curcol+1
+        }
+    }
+    mmmatrix
+}
+
+
 dim.rmmMatrix<-function(x){
     p<-ncol(x[[1]])
     n<-0
