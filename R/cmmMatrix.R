@@ -214,6 +214,21 @@ as.matrix.cmmMatrix<-function(x){
 }
 
 
+#' @export
+chunks.cmmMatrix<-function(x){
+    n<-length(x)
+    OUT<-matrix(nrow=n,ncol=3,NA)
+    colnames(OUT)<-c('chunk','col.ini','col.end')
+    end<-0
+    for(i in 1:n){
+        ini<-end+1
+        end<-ini+ncol(x[[i]])-1
+        OUT[i,]<-c(i,ini,end)
+    }
+    return(OUT)
+}
+
+
 #' Finds the position of a set of columns in a cmmMatrix object.
 colindexes<-function(x,columns=NULL){
     CHUNKS<-chunks(x)

@@ -180,29 +180,5 @@ setMethod("summary",signature("mmMatrix"),summary.mmMatrix)
 #' @return A matrix with information per chunk in rows.
 #' @export
 chunks<-function(x){
-    if(class(x)=='cmmMatrix'){
-        n<-length(x)
-        OUT<-matrix(nrow=n,ncol=3,NA)
-        colnames(OUT)<-c('chunk','col.ini','col.end')
-        end<-0
-        for(i in 1:n){
-            ini<-end+1
-            end<-ini+ncol(x[[i]])-1
-            OUT[i,]<-c(i,ini,end)
-        }
-        return(OUT)
-    }else if(class(x)=='rmmMatrix'){
-        n<-length(x)
-        OUT<-matrix(nrow=n,ncol=3,NA)
-        colnames(OUT)<-c('chunk','row.ini','row.end')
-        end<-0
-        for(i in 1:n){
-            ini<-end+1
-            end<-ini+nrow(x[[i]])-1
-            OUT[i,]<-c(i,ini,end)
-        }
-        return(OUT)
-    }else{
-        stop("Unsupported type.")
-    }
+    UseMethod('chunks')
 }

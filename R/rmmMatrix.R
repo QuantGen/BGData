@@ -214,6 +214,21 @@ as.matrix.rmmMatrix<-function(x){
 }
 
 
+#' @export
+chunks.rmmMatrix<-function(x){
+    n<-length(x)
+    OUT<-matrix(nrow=n,ncol=3,NA)
+    colnames(OUT)<-c('chunk','row.ini','row.end')
+    end<-0
+    for(i in 1:n){
+        ini<-end+1
+        end<-ini+nrow(x[[i]])-1
+        OUT[i,]<-c(i,ini,end)
+    }
+    return(OUT)
+}
+
+
 #' Finds the position of a set of rows in an rmmMatrix object.
 rowindexes<-function(x,rows=NULL){
     CHUNKS<-chunks(x)

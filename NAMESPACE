@@ -2,6 +2,8 @@
 
 S3method(as.matrix,cmmMatrix)
 S3method(as.matrix,rmmMatrix)
+S3method(chunks,cmmMatrix)
+S3method(chunks,rmmMatrix)
 export(BGData)
 export(GWAS)
 export(chunks)
