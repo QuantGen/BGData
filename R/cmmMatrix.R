@@ -70,12 +70,12 @@ subset.cmmMatrix<-function(x,i,j,drop){
     colnames(Z)<-colnames(x)[j]
     rownames(Z)<-rownames(x)[i]
 
-    INDEXES<-colindexes(x,columns=sortedColumns)
+    INDEX<-index(x)[sortedColumns,,drop=FALSE]
 
-    whatChunks<-unique(INDEXES[,1])
+    whatChunks<-unique(INDEX[,1])
     end<-0
     for(k in whatChunks){
-        TMP<-matrix(data=INDEXES[INDEXES[,1]==k,],ncol=3)
+        TMP<-matrix(data=INDEX[INDEX[,1]==k,],ncol=3)
         ini<-end+1
         end<-ini+nrow(TMP)-1
         Z[,ini:end]<-x[[k]][i,TMP[,3],drop=FALSE]
@@ -117,7 +117,7 @@ setMethod("[",signature(x="cmmMatrix",i="missing",j="missing",drop="ANY"),functi
 replace.cmmMatrix<-function(x,i,j,...,value){
     Z<-matrix(nrow=length(i),ncol=length(j),data=value)
     CHUNKS<-chunks(x)
-    INDEX<-colindexes(x)
+    INDEX<-index(x)
     for(k in 1:nrow(CHUNKS)){
         col_z<-(j>=CHUNKS[k,2])&(j<=CHUNKS[k,3])
         colLocal<-INDEX[j[col_z],3]
@@ -230,8 +230,7 @@ chunks.cmmMatrix<-function(x){
 }
 
 
-#' Finds the position of a set of columns in a cmmMatrix object.
-colindexes<-function(x,columns=NULL){
+index.cmmMatrix<-function(x){
     CHUNKS<-chunks(x)
     nColIndex<-CHUNKS[nrow(CHUNKS),3]
     INDEX<-matrix(nrow=nColIndex,ncol=3)
@@ -244,9 +243,6 @@ colindexes<-function(x,columns=NULL){
         end<-ini+nColChunk-1
         INDEX[ini:end,1]<-i
         INDEX[ini:end,3]<-1:nColChunk
-    }
-    if(!is.null(columns)){
-        INDEX<-INDEX[columns,,drop=FALSE]
     }
     return(INDEX)
 }

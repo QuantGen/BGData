@@ -70,12 +70,12 @@ subset.rmmMatrix<-function(x,i,j,drop){
     colnames(Z)<-colnames(x)[j]
     rownames(Z)<-rownames(x)[i]
 
-    INDEXES<-rowindexes(x,rows=sortedRows)
+    INDEX<-index(x)[sortedRows,,drop=FALSE]
 
-    whatChunks<-unique(INDEXES[,1])
+    whatChunks<-unique(INDEX[,1])
     end<-0
     for(k in whatChunks){
-        TMP<-matrix(data=INDEXES[INDEXES[,1]==k,],ncol=3)
+        TMP<-matrix(data=INDEX[INDEX[,1]==k,],ncol=3)
         ini<-end+1
         end<-ini+nrow(TMP)-1
         Z[ini:end,]<-x[[k]][TMP[,3],j,drop=FALSE]
@@ -117,7 +117,7 @@ setMethod("[",signature(x="rmmMatrix",i="missing",j="missing",drop="ANY"),functi
 replace.rmmMatrix<-function(x,i,j,...,value){
     Z<-matrix(nrow=length(i),ncol=length(j),data=value)
     CHUNKS<-chunks(x)
-    INDEX<-rowindexes(x)
+    INDEX<-index(x)
     for(k in 1:nrow(CHUNKS)){
         rows_z<-(i>=CHUNKS[k,2])&(i<=CHUNKS[k,3])
         rowLocal<-INDEX[i[rows_z],3]
@@ -230,8 +230,7 @@ chunks.rmmMatrix<-function(x){
 }
 
 
-#' Finds the position of a set of rows in an rmmMatrix object.
-rowindexes<-function(x,rows=NULL){
+index.rmmMatrix<-function(x){
     CHUNKS<-chunks(x)
     nRowIndex<-CHUNKS[nrow(CHUNKS),3]
     INDEX<-matrix(nrow=nRowIndex,ncol=3)
@@ -244,9 +243,6 @@ rowindexes<-function(x,rows=NULL){
         end<-ini+nRowChunk-1
         INDEX[ini:end,1]<-i
         INDEX[ini:end,3]<-1:nRowChunk
-    }
-    if(!is.null(rows)){
-        INDEX<-INDEX[rows,,drop=FALSE]
     }
     return(INDEX)
 }

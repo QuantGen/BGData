@@ -182,3 +182,9 @@ setMethod("summary",signature("mmMatrix"),summary.mmMatrix)
 chunks<-function(x){
     UseMethod('chunks')
 }
+
+
+#' Finds the position of a set of rows or columns in an rmmMatrix or cmmMatrix object.
+index<-function(x){
+    UseMethod('index')
+}
