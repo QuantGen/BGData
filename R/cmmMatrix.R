@@ -117,10 +117,15 @@ setMethod("[",signature(x="cmmMatrix",i="missing",j="missing",drop="ANY"),functi
 replace.cmmMatrix<-function(x,i,j,...,value){
     Z<-matrix(nrow=length(i),ncol=length(j),data=value)
     CHUNKS<-chunks(x)
-    INDEX<-index(x)
+    ellipsis<-list(...)
+    if(is.null(ellipsis$index)){
+        index<-index(x)
+    }else{
+        index<-ellipsis$index
+    }
     for(k in 1:nrow(CHUNKS)){
         col_z<-(j>=CHUNKS[k,2])&(j<=CHUNKS[k,3])
-        colLocal<-INDEX[j[col_z],3]
+        colLocal<-index[j[col_z],3]
         x[[k]][i,colLocal]<-Z[,col_z]
     }
     return(x)

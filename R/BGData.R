@@ -215,6 +215,7 @@ readPED.default<-function(fileIn,header,dataType,class,n=NULL,p=NULL,na.strings=
             }
         }
         geno<-new(class,nrow=n,ncol=p,vmode=vmode,folderOut=folderOut,nChunks=nChunks,dimorder=dimorder)
+        index<-index(geno)
     }
 
     colnames(geno)<-mrkNames
@@ -225,7 +226,11 @@ readPED.default<-function(fileIn,header,dataType,class,n=NULL,p=NULL,na.strings=
         x<-scan(pedFile,n=p,what=dataType,na.strings=na.strings,quiet=TRUE)
         pheno[i,]<-xSkip
         IDs[i]<-xSkip[idCol]
-        geno[i,]<-x
+        if(class=='matrix'){
+            geno[i,]<-x
+        }else{
+            geno<-`[<-`(geno,i,1:ncol(geno),index=index,value=x)
+        }
         if(verbose){
             cat('Subject',i,' ',round(proc.time()[3]-time[3],3),'sec/subject.','\n')
         }
