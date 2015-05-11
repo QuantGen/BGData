@@ -16,8 +16,10 @@ readPED(fileIn, header, dataType, n = NULL, p = NULL, na.strings = "NA",
 
 \item{header}{If TRUE, the file contains a header.}
 
-\item{dataType}{The coding of genotypes. Use 'character()' for A/C/G/T or
-'integer()' for numeric coding.}
+\item{dataType}{The coding of genotypes. Use \code{integer()} or
+\code{double()} for numeric coding. Character coding is currently not
+supported: use the \code{--recodeA} option of PLINK to convert the PED file
+into a raw file.}
 
 \item{n}{The number of individuals.}
 

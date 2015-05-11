@@ -42,7 +42,7 @@ setMethod('initialize','BGData',function(.Object,geno,pheno,map){
 })
 
 
-#' Creates a memory-mapped \code{\linkS4class{BGData}} object from a plaintext
+#' Creates a memory-mapped \code{\linkS4class{BGData}} object from a plaintext 
 #' raw PED file (generated with \code{--recodeA} in PLINK) or PED-like file.
 #' 
 #' \code{readPED} assumes that the plaintext file (\code{fileIn}) contains 
@@ -72,8 +72,10 @@ setMethod('initialize','BGData',function(.Object,geno,pheno,map){
 #' 
 #' @param fileIn The path to the plaintext file.
 #' @param header If TRUE, the file contains a header.
-#' @param dataType The coding of genotypes. Use 'character()' for A/C/G/T or 
-#'   'integer()' for numeric coding.
+#' @param dataType The coding of genotypes. Use \code{integer()} or
+#'   \code{double()} for numeric coding. Character coding is currently not
+#'   supported: use the \code{--recodeA} option of PLINK to convert the PED file
+#'   into a raw file.
 #' @param n The number of individuals.
 #' @param p The number of markers.
 #' @param na.strings The character string used in the plaintext file to denote 
@@ -107,8 +109,8 @@ readPED<-function(fileIn,header,dataType,n=NULL,p=NULL,na.strings='NA',
     }
 
     dataType<-normalizeType(dataType)
-    if(!typeof(dataType)%in%c('character','integer','double')){
-        stop('dataType must be either character(), integer() or double()')
+    if(!typeof(dataType)%in%c('integer','double')){
+        stop('dataType must be either integer() or double()')
     }
 
     if(!distributed.by%in%c('columns','rows')){
@@ -116,7 +118,7 @@ readPED<-function(fileIn,header,dataType,n=NULL,p=NULL,na.strings='NA',
     }
 
     class<-ifelse(distributed.by=='columns','cmmMatrix','rmmMatrix')
-    vmode<-ifelse(typeof(dataType)%in%c('character','integer'),'byte','double')
+    vmode<-ifelse(typeof(dataType)=='integer','byte','double')
 
     readPED.default(fileIn=fileIn,header=header,dataType=dataType,class=class,
                     n=n,p=p,na.strings=na.strings,nColSkip=nColSkip,idCol=idCol,
@@ -137,8 +139,8 @@ readPED<-function(fileIn,header,dataType,n=NULL,p=NULL,na.strings='NA',
 #' 
 #' @param fileIn The path to the plaintext file.
 #' @param header If TRUE, the file contains a header.
-#' @param dataType The coding of genotypes. Use 'character()' for A/C/G/T or 
-#'   'integer()' for numeric coding.
+#' @param dataType The coding of genotypes. Use \code{character()} for A/C/G/T
+#'   or \code{integer()} for numeric coding.
 #' @param n The number of individuals.
 #' @param p The number of markers.
 #' @param na.strings The character string used in the plaintext file to denote 

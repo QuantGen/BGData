@@ -12,8 +12,8 @@ readPED.matrix(fileIn, header, dataType, n = NULL, p = NULL,
 
 \item{header}{If TRUE, the file contains a header.}
 
-\item{dataType}{The coding of genotypes. Use 'character()' for A/C/G/T or
-'integer()' for numeric coding.}
+\item{dataType}{The coding of genotypes. Use \code{character()} for A/C/G/T
+or \code{integer()} for numeric coding.}
 
 \item{n}{The number of individuals.}
 
