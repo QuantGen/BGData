@@ -42,6 +42,12 @@ setMethod('initialize','rmmMatrix',function(.Object,nrow=1,ncol=1,vmode='byte',f
 
 
 subset.rmmMatrix<-function(x,i,j,drop){
+    if(missing(i)){
+        i<-1:nrow(x)
+    }
+    if(missing(j)){
+        j<-1:ncol(x)
+    }
     if(class(i)=='logical'){
         i<-which(i)
     }else if(class(i)=='character'){
@@ -92,29 +98,16 @@ subset.rmmMatrix<-function(x,i,j,drop){
 }
 
 #' @export
-setMethod("[",signature(x="rmmMatrix",i="ANY",j="ANY",drop="ANY"),subset.rmmMatrix)
-
-#' @export
-setMethod("[",signature(x="rmmMatrix",i="ANY",j="missing",drop="ANY"),function(x,i,drop){
-    j<-1:ncol(x)
-    subset.rmmMatrix(x,i,j,drop)
-})
-
-#' @export
-setMethod("[",signature(x="rmmMatrix",i="missing",j="ANY",drop="ANY"),function(x,j,drop) {
-    i<-1:nrow(x)
-    subset.rmmMatrix(x,i,j,drop)
-})
-
-#' @export
-setMethod("[",signature(x="rmmMatrix",i="missing",j="missing",drop="ANY"),function(x,drop) {
-    i<-1:nrow(x)
-    j<-1:ncol(x)
-    subset.rmmMatrix(x,i,j,drop)
-})
+setMethod("[",signature(x="rmmMatrix"),subset.rmmMatrix)
 
 
 replace.rmmMatrix<-function(x,i,j,...,value){
+    if(missing(i)){
+        i<-1:nrow(x)
+    }
+    if(missing(j)){
+        j<-1:ncol(x)
+    }
     Z<-matrix(nrow=length(i),ncol=length(j),data=value)
     CHUNKS<-chunks(x)
     ellipsis<-list(...)
@@ -132,26 +125,7 @@ replace.rmmMatrix<-function(x,i,j,...,value){
 }
 
 #' @export
-setReplaceMethod("[",signature(x="rmmMatrix",i="ANY",j="ANY",value="ANY"),replace.rmmMatrix)
-
-#' @export
-setReplaceMethod("[",signature(x="rmmMatrix",i="ANY",j="missing",value="ANY"),function(x,i,value){
-    j<-1:ncol(x)
-    replace.rmmMatrix(x,i,j,value=value)
-})
-
-#' @export
-setReplaceMethod("[",signature(x="rmmMatrix",i="missing",j="ANY",value="ANY"),function(x,j,value) {
-    i<-1:nrow(x)
-    replace.rmmMatrix(x,i,j,value=value)
-})
-
-#' @export
-setReplaceMethod("[",signature(x="rmmMatrix",i="missing",j="missing",value="ANY"),function(x,value) {
-    i<-1:nrow(x)
-    j<-1:ncol(x)
-    replace.rmmMatrix(x,i,j,value=value)
-})
+setReplaceMethod("[",signature(x="rmmMatrix"),replace.rmmMatrix)
 
 
 dim.rmmMatrix<-function(x){
