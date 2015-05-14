@@ -37,4 +37,5 @@ Collate:
     'cmmMatrix.R'
     'mmMatrix.R'
     'BGData.R'
+    'package.R'
     'utils.R'
