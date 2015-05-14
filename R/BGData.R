@@ -528,6 +528,7 @@ GWAS.SKAT<-function(formula,data,groups,plot=FALSE,verbose=FALSE,min.pValue=1e-1
     }
 
     for(i in 1:p){
+        time.in<-proc.time()[3]
         Z<-data@geno[,groups==levels[i],drop=FALSE]
         fm<-SKAT::SKAT(Z=Z,obj=H0,...)
         OUT[i,]<-c(ncol(Z),fm$p.value)
@@ -538,9 +539,9 @@ GWAS.SKAT<-function(formula,data,groups,plot=FALSE,verbose=FALSE,min.pValue=1e-1
             if(i>1){ lines(x=tmp.x,y=tmp.y,col=8,lwd=.5) }
             points(y=tmp.y[2],col=2,cex=.5,x=i)
         }
-    }
-    if(verbose){
-        cat(sep='','Group ',i,' of ', p,' (',round(proc.time()[3]-time.in,2),' seconds/chunk, ',round(i/p*100,3),'% done )\n')
+        if(verbose){
+            cat(sep='','Group ',i,' of ', p,' (',round(proc.time()[3]-time.in,2),' seconds/chunk, ',round(i/p*100,3),'% done )\n')
+        }
     }
     return(OUT)
 }
