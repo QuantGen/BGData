@@ -189,7 +189,7 @@ setMethod("rownames<-",signature("rmmMatrix"),set.rownames.rmmMatrix)
 
 
 #' @export
-as.matrix.rmmMatrix<-function(x){
+as.matrix.rmmMatrix<-function(x,...){
     x[,,drop=FALSE]
 }
 
