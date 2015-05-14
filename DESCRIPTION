@@ -27,6 +27,8 @@ Encoding: UTF-8
 Depends:
     R (>= 3.0.0),
     ff
+Imports:
+    methods
 Suggests:
     testthat,
     lme4,
