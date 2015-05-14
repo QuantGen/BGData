@@ -462,7 +462,7 @@ GWAS.ols<-function(formula,data,plot=FALSE,verbose=FALSE,min.pValue=1e-10,chunkS
     X <- X[match(rownames(data@pheno),rownames(X)),]
     y<-data@pheno[,as.character(terms(formula)[[2]])]
     p<-ncol(data@geno)
-    tmp<-ls.print(lsfit(x=X,y=y,intercept=FALSE),print=FALSE)$coef.table[[1]]
+    tmp<-ls.print(lsfit(x=X,y=y,intercept=FALSE),print.it=FALSE)$coef.table[[1]]
     OUT<-matrix(nrow=p,ncol=ncol(tmp),NA)
     colnames(OUT)<-colnames(tmp)
     rownames(OUT)<-colnames(data@geno)
@@ -486,7 +486,7 @@ GWAS.ols<-function(formula,data,plot=FALSE,verbose=FALSE,min.pValue=1e-10,chunkS
             X[,1]<-Z[,j]
             tmpRow<-tmpRow+1
             fm<-lsfit(x=X,y=y,intercept=FALSE)
-            tmp<-ls.print(fm,print=FALSE)$coef.table[[1]][1,]
+            tmp<-ls.print(fm,print.it=FALSE)$coef.table[[1]][1,]
             OUT[tmpRow,]<-tmp
 
             if(plot){

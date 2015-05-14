@@ -105,13 +105,13 @@ simPED<-function(filename,n,p,genoChars=0:2,na.string=NA,propNA=.02,returnGenos=
     fileOut<-file(filename,open='w')
     pedP<-6+p
     header<-c(c('FID','IID','PAT','MAT','SEX','PHENOTYPE'),markerNames)
-    write(header,ncol=pedP,append=TRUE,file=fileOut)
+    write(header,ncolumns=pedP,append=TRUE,file=fileOut)
     for(i in 1:n){
         geno<-sample(genoChars,size=p,replace=TRUE)
         geno[runif(p)<propNA]<-na.string
         pheno<-c(0,subjectNames[i],rep(NA,4))
         x<-c(pheno,geno)
-        write(x,ncol=pedP,append=TRUE,file=fileOut)
+        write(x,ncolumns=pedP,append=TRUE,file=fileOut)
         if(returnGenos){
             OUT[i,]<-geno
         }
