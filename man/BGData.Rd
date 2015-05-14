@@ -6,6 +6,6 @@
 \alias{BGData-package}
 \title{BGData: Memory Mapped Matrices and Data-Structures for Genomic Data for R}
 \description{
-More info in the wiki: \link{https://github.com/QuantGen/BGData/wiki}
+More info in the wiki: \url{https://github.com/QuantGen/BGData/wiki}
 }
 
