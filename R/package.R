@@ -5,4 +5,5 @@
 #' @docType package
 #' @name BGData
 #' @import methods
+#' @import ff
 NULL
