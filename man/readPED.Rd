@@ -56,26 +56,25 @@ If \code{returnData} is TRUE, a \code{\linkS4class{BGData}} object is
 \code{readPED} assumes that the plaintext file (\code{fileIn}) contains
 records of individuals in rows, and phenotypes, covariates and markers in
 columns. The columns included in columns \code{1:nColSkip} are used to
-populate the slot \code{\code{@pheno}} of a \code{\linkS4class{BGData}}
-object, and the remaining columns are used to fill the slot
-\code{\code{@geno}}. If the first row contains a header
-(\code{header=TRUE}), data in this row is used to determine variables names
-for \code{@pheno} and marker names for \code{@map} and \code{@geno}.
-Genotypes are stored in a distributed matrix (\code{mmMatrix}). By default a
-column-distributed (\code{\linkS4class{cmmMatrix}}) is used for
-\code{@geno}, but the user can modify this using the \code{distributed.by}
-argument. The number of chunks is either specified by the user (use
-\code{nChunks} when calling \code{readPED}) or determined internally so that
-each \code{ff_matrix} object has a number of cells that is smaller than
-\code{.Machine$integer.max/1.2}. \code{readPED} creates a folder
-(\code{folderOut}) that contains the binary flat files (\code{geno_*.bin})
-and the \code{\linkS4class{BGData}} object (typically named
-\code{BGData.RData}. Optionally (if \code{returnData} is TRUE) it returns the
-\code{\linkS4class{BGData}} object to the environment. The filename of the
-\code{ff_matrix} objects are saved as relative names. Therefore, to be able
-to access the content of the data included in \code{@geno} the working
-directory must either be the folder where these files are saved
-(\code{folderOut}) or the object must be loaded either using
+populate the slot \code{@pheno} of a \code{\linkS4class{BGData}} object, and
+the remaining columns are used to fill the slot \code{@geno}. If the first
+row contains a header (\code{header=TRUE}), data in this row is used to
+determine variables names for \code{@pheno} and marker names for
+\code{@map} and \code{@geno}. Genotypes are stored in a distributed matrix
+(\code{mmMatrix}). By default a column-distributed
+(\code{\linkS4class{cmmMatrix}}) is used for \code{@geno}, but the user can
+modify this using the \code{distributed.by} argument. The number of chunks is
+either specified by the user (use \code{nChunks} when calling \code{readPED})
+or determined internally so that each \code{ff_matrix} object has a number of
+cells that is smaller than \code{.Machine$integer.max/1.2}. \code{readPED}
+creates a folder (\code{folderOut}) that contains the binary flat files
+(\code{geno_*.bin}) and the \code{\linkS4class{BGData}} object (typically
+named \code{BGData.RData}. Optionally (if \code{returnData} is TRUE) it
+returns the \code{\linkS4class{BGData}} object to the environment. The
+filename of the \code{ff_matrix} objects are saved as relative names.
+Therefore, to be able to access the content of the data included in
+\code{@geno} the working directory must either be the folder where these
+files are saved (\code{folderOut}) or the object must be loaded either using
 \code{loadBGData} or \code{load2}.
 }
 \seealso{

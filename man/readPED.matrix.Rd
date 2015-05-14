@@ -36,11 +36,11 @@ Returns a \code{\linkS4class{BGData}} object.
 \code{readPED.matrix} assumes that the plaintext file (\code{fileIn})
 contains records of individuals in rows, and phenotypes, covariates and
 markers in columns. The columns included in columns \code{1:nColSkip} are
-used to populate the slot \code{\code{@pheno}} of a
-\code{\linkS4class{BGData}} object, and the remaining columns are used to
-fill the slot \code{\code{@geno}}. If the first row contains a header
-(\code{header=TRUE}), data in this row is used to determine variables names
-for \code{@pheno} and marker names for \code{@map} and \code{@geno}.
+used to populate the slot \code{@pheno} of a \code{\linkS4class{BGData}}
+object, and the remaining columns are used to fill the slot \code{@geno}. If
+the first row contains a header (\code{header=TRUE}), data in this row is
+used to determine variables names for \code{@pheno} and marker names for
+\code{@map} and \code{@geno}.
 }
 \seealso{
 \code{\linkS4class{BGData}}
