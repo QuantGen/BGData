@@ -139,26 +139,7 @@ dim.rmmMatrix<-function(x){
 }
 
 
-get.colnames.rmmMatrix<-function(x){
-    out<-colnames(x[[1]])
-    return(out)
-}
-
-set.colnames.rmmMatrix<-function(x,value){
-    for(i in 1:length(x)){
-        colnames(x[[i]])<-value
-    }
-    x
-}
-
-#' @export
-setMethod("colnames",signature("rmmMatrix"),get.colnames.rmmMatrix)
-
-#' @export
-setMethod("colnames<-",signature("rmmMatrix"),set.colnames.rmmMatrix)
-
-
-get.rownames.rmmMatrix<-function(x){
+getRownames<-function(x){
     out<-NULL
     if(!is.null(rownames(x[[1]]))){
         n<-dim(x)[1]
@@ -171,6 +152,28 @@ get.rownames.rmmMatrix<-function(x){
     return(out)
 }
 
+getColnames<-function(x){
+    out<-colnames(x[[1]])
+    return(out)
+}
+
+#' @export
+dimnames.rmmMatrix<-function(x){
+    list(getRownames(x),getColnames(x))
+}
+
+
+set.colnames.rmmMatrix<-function(x,value){
+    for(i in 1:length(x)){
+        colnames(x[[i]])<-value
+    }
+    x
+}
+
+#' @export
+setMethod("colnames<-",signature("rmmMatrix"),set.colnames.rmmMatrix)
+
+
 set.rownames.rmmMatrix<-function(x,value){
     TMP<-chunks(x)
     for(i in 1:nrow(TMP)){
@@ -178,9 +181,6 @@ set.rownames.rmmMatrix<-function(x,value){
     }
     x
 }
-
-#' @export
-setMethod("rownames",signature("rmmMatrix"),get.rownames.rmmMatrix)
 
 #' @export
 setMethod("rownames<-",signature("rmmMatrix"),set.rownames.rmmMatrix)

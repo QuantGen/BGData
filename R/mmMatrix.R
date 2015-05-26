@@ -15,14 +15,6 @@ show<-function(object){
 setMethod("show",signature(object="mmMatrix"),show)
 
 
-get.dimnames<-function(x){
-    list(rownames(x), colnames(x))
-}
-
-#' @export
-setMethod("dimnames",signature("mmMatrix"),get.dimnames)
-
-
 apply.mmMatrix<-function(X,MARGIN,FUN,chunkSize=1e3,verbose=FALSE,...){
     FUN<-match.fun(FUN)
     if(!(class(X)%in%c('rmmMatrix','cmmMatrix'))){ stop('X must be either mmMatrix or rMatrix') }

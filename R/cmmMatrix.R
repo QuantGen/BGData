@@ -139,7 +139,12 @@ dim.cmmMatrix<-function(x){
 }
 
 
-get.colnames.cmmMatrix<-function(x){
+getRownames<-function(x){
+    out<-rownames(x[[1]])
+    return(out)
+}
+
+getColnames<-function(x){
     out<-NULL
     if(!is.null(colnames(x[[1]]))){
         p<-dim(x)[2]
@@ -152,6 +157,12 @@ get.colnames.cmmMatrix<-function(x){
     return(out)
 }
 
+#' @export
+dimnames.cmmMatrix<-function(x){
+    list(getRownames(x),getColnames(x))
+}
+
+
 set.colnames.cmmMatrix<-function(x,value){
     TMP<-chunks(x)
     for(i in 1:nrow(TMP)){
@@ -161,16 +172,8 @@ set.colnames.cmmMatrix<-function(x,value){
 }
 
 #' @export
-setMethod("colnames",signature("cmmMatrix"),get.colnames.cmmMatrix)
-
-#' @export
 setMethod("colnames<-",signature("cmmMatrix"),set.colnames.cmmMatrix)
 
-
-get.rownames.cmmMatrix<-function(x){
-    out<-rownames(x[[1]])
-    return(out)
-}
 
 set.rownames.cmmMatrix<-function(x,value){
     for(i in 1:length(x)){
@@ -178,9 +181,6 @@ set.rownames.cmmMatrix<-function(x,value){
     }
     x
 }
-
-#' @export
-setMethod("rownames",signature("cmmMatrix"),get.rownames.cmmMatrix)
 
 #' @export
 setMethod("rownames<-",signature("cmmMatrix"),set.rownames.cmmMatrix)
