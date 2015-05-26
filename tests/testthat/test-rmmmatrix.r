@@ -15,75 +15,75 @@ rownames(geno) <- paste0('id_', 1:3)
 
 test_that("subsetting", {
     
-    expect_equal(all.equal(geno[], genotypes), TRUE)
+    expect_true(all.equal(geno[], genotypes))
     
-    # expect_equal(all.equal(geno[1], genotypes[1]), TRUE) Not implemented yet
-    expect_equal(all.equal(geno[1, ], genotypes[1, ]), TRUE)
-    expect_equal(all.equal(geno[, 1], genotypes[, 1]), TRUE)
-    expect_equal(all.equal(geno[1, 1], genotypes[1, 1]), TRUE)
-    expect_equal(all.equal(geno[1, , drop = FALSE], genotypes[1, , drop = FALSE]), TRUE)
-    expect_equal(all.equal(geno[, 1, drop = FALSE], genotypes[, 1, drop = FALSE]), TRUE)
-    expect_equal(all.equal(geno[1, 1, drop = FALSE], genotypes[1, 1, drop = FALSE]), TRUE)
+    # expect_true(all.equal(geno[1], genotypes[1])) Not implemented yet
+    expect_true(all.equal(geno[1, ], genotypes[1, ]))
+    expect_true(all.equal(geno[, 1], genotypes[, 1]))
+    expect_true(all.equal(geno[1, 1], genotypes[1, 1]))
+    expect_true(all.equal(geno[1, , drop = FALSE], genotypes[1, , drop = FALSE]))
+    expect_true(all.equal(geno[, 1, drop = FALSE], genotypes[, 1, drop = FALSE]))
+    expect_true(all.equal(geno[1, 1, drop = FALSE], genotypes[1, 1, drop = FALSE]))
     
-    # expect_equal(all.equal(geno[1:2], genotypes[1:2]), TRUE)  Not implemented yet
-    expect_equal(all.equal(geno[1:2, ], genotypes[1:2, ]), TRUE)
-    expect_equal(all.equal(geno[, 1:2], genotypes[, 1:2]), TRUE)
-    expect_equal(all.equal(geno[1:2, 1:2], genotypes[1:2, 1:2]), TRUE)
-    expect_equal(all.equal(geno[1:2, , drop = FALSE], genotypes[1:2, , drop = FALSE]), TRUE)
-    expect_equal(all.equal(geno[, 1:2, drop = FALSE], genotypes[, 1:2, drop = FALSE]), TRUE)
-    expect_equal(all.equal(geno[1:2, 1:2, drop = FALSE], genotypes[1:2, 1:2, drop = FALSE]), TRUE)
+    # expect_true(all.equal(geno[1:2], genotypes[1:2]))  Not implemented yet
+    expect_true(all.equal(geno[1:2, ], genotypes[1:2, ]))
+    expect_true(all.equal(geno[, 1:2], genotypes[, 1:2]))
+    expect_true(all.equal(geno[1:2, 1:2], genotypes[1:2, 1:2]))
+    expect_true(all.equal(geno[1:2, , drop = FALSE], genotypes[1:2, , drop = FALSE]))
+    expect_true(all.equal(geno[, 1:2, drop = FALSE], genotypes[, 1:2, drop = FALSE]))
+    expect_true(all.equal(geno[1:2, 1:2, drop = FALSE], genotypes[1:2, 1:2, drop = FALSE]))
     
-    # expect_equal(all.equal(geno[2:1], genotypes[2:1]), TRUE) Not implemented yet
-    expect_equal(all.equal(geno[2:1, ], genotypes[2:1, ]), TRUE)
-    expect_equal(all.equal(geno[, 2:1], genotypes[, 2:1]), TRUE)
-    expect_equal(all.equal(geno[2:1, 2:1], genotypes[2:1, 2:1]), TRUE)
-    expect_equal(all.equal(geno[2:1, , drop = FALSE], genotypes[2:1, , drop = FALSE]), TRUE)
-    expect_equal(all.equal(geno[, 2:1, drop = FALSE], genotypes[, 2:1, drop = FALSE]), TRUE)
-    expect_equal(all.equal(geno[2:1, 2:1, drop = FALSE], genotypes[2:1, 2:1, drop = FALSE]), TRUE)
+    # expect_true(all.equal(geno[2:1], genotypes[2:1])) Not implemented yet
+    expect_true(all.equal(geno[2:1, ], genotypes[2:1, ]))
+    expect_true(all.equal(geno[, 2:1], genotypes[, 2:1]))
+    expect_true(all.equal(geno[2:1, 2:1], genotypes[2:1, 2:1]))
+    expect_true(all.equal(geno[2:1, , drop = FALSE], genotypes[2:1, , drop = FALSE]))
+    expect_true(all.equal(geno[, 2:1, drop = FALSE], genotypes[, 2:1, drop = FALSE]))
+    expect_true(all.equal(geno[2:1, 2:1, drop = FALSE], genotypes[2:1, 2:1, drop = FALSE]))
     
-    # expect_equal(all.equal(geno[c(3, 1)], genotypes[c(3, 1)]), TRUE) Not implemented yet
-    expect_equal(all.equal(geno[c(3, 1), ], genotypes[c(3, 1), ]), TRUE)
-    expect_equal(all.equal(geno[, c(3, 1)], genotypes[, c(3, 1)]), TRUE)
-    expect_equal(all.equal(geno[c(3, 1), c(3, 1)], genotypes[c(3, 1), c(3, 1)]), TRUE)
-    expect_equal(all.equal(geno[c(3, 1), , drop = FALSE], genotypes[c(3, 1), , drop = FALSE]), TRUE)
-    expect_equal(all.equal(geno[, c(3, 1), drop = FALSE], genotypes[, c(3, 1), drop = FALSE]), TRUE)
-    expect_equal(all.equal(geno[c(3, 1), c(3, 1), drop = FALSE], genotypes[c(3, 1), c(3, 1), drop = FALSE]), TRUE)
+    # expect_true(all.equal(geno[c(3, 1)], genotypes[c(3, 1)])) Not implemented yet
+    expect_true(all.equal(geno[c(3, 1), ], genotypes[c(3, 1), ]))
+    expect_true(all.equal(geno[, c(3, 1)], genotypes[, c(3, 1)]))
+    expect_true(all.equal(geno[c(3, 1), c(3, 1)], genotypes[c(3, 1), c(3, 1)]))
+    expect_true(all.equal(geno[c(3, 1), , drop = FALSE], genotypes[c(3, 1), , drop = FALSE]))
+    expect_true(all.equal(geno[, c(3, 1), drop = FALSE], genotypes[, c(3, 1), drop = FALSE]))
+    expect_true(all.equal(geno[c(3, 1), c(3, 1), drop = FALSE], genotypes[c(3, 1), c(3, 1), drop = FALSE]))
     
-    # expect_equal(all.equal(geno[genotypes > 1], genotypes[genotypes > 1]), TRUE) Not implemented yet
-    expect_equal(all.equal(geno[c(TRUE, FALSE, TRUE), ], genotypes[c(TRUE, FALSE, TRUE), ]), TRUE)
-    expect_equal(all.equal(geno[, c(TRUE, FALSE, TRUE)], genotypes[, c(TRUE, FALSE, TRUE)]), TRUE)
-    expect_equal(all.equal(geno[c(TRUE, FALSE, TRUE), c(TRUE, FALSE, TRUE)], genotypes[c(TRUE, FALSE, TRUE), c(TRUE, FALSE, TRUE)]), TRUE)
-    expect_equal(all.equal(geno[c(TRUE, FALSE, TRUE), , drop = FALSE], genotypes[c(TRUE, FALSE, TRUE), , drop = FALSE]), TRUE)
-    expect_equal(all.equal(geno[, c(TRUE, FALSE, TRUE), drop = FALSE], genotypes[, c(TRUE, FALSE, TRUE), drop = FALSE]), TRUE)
-    expect_equal(all.equal(geno[c(TRUE, FALSE, TRUE), c(TRUE, FALSE, TRUE), drop = FALSE], genotypes[c(TRUE, FALSE, TRUE), c(TRUE, FALSE, TRUE), drop = FALSE]), TRUE)
+    # expect_true(all.equal(geno[genotypes > 1], genotypes[genotypes > 1])) Not implemented yet
+    expect_true(all.equal(geno[c(TRUE, FALSE, TRUE), ], genotypes[c(TRUE, FALSE, TRUE), ]))
+    expect_true(all.equal(geno[, c(TRUE, FALSE, TRUE)], genotypes[, c(TRUE, FALSE, TRUE)]))
+    expect_true(all.equal(geno[c(TRUE, FALSE, TRUE), c(TRUE, FALSE, TRUE)], genotypes[c(TRUE, FALSE, TRUE), c(TRUE, FALSE, TRUE)]))
+    expect_true(all.equal(geno[c(TRUE, FALSE, TRUE), , drop = FALSE], genotypes[c(TRUE, FALSE, TRUE), , drop = FALSE]))
+    expect_true(all.equal(geno[, c(TRUE, FALSE, TRUE), drop = FALSE], genotypes[, c(TRUE, FALSE, TRUE), drop = FALSE]))
+    expect_true(all.equal(geno[c(TRUE, FALSE, TRUE), c(TRUE, FALSE, TRUE), drop = FALSE], genotypes[c(TRUE, FALSE, TRUE), c(TRUE, FALSE, TRUE), drop = FALSE]))
     
-    expect_equal(all.equal(geno['id_1', ], genotypes['id_1', ]), TRUE)
-    expect_equal(all.equal(geno[, 'mrk_1'], genotypes[, 'mrk_1']), TRUE)
-    expect_equal(all.equal(geno['id_1', 'mrk_1'], genotypes['id_1', 'mrk_1']), TRUE)
-    expect_equal(all.equal(geno['id_1', , drop = FALSE], genotypes['id_1', , drop = FALSE]), TRUE)
-    expect_equal(all.equal(geno[, 'mrk_1', drop = FALSE], genotypes[, 'mrk_1', drop = FALSE]), TRUE)
-    expect_equal(all.equal(geno['id_1', 'mrk_1', drop = FALSE], genotypes['id_1', 'mrk_1', drop = FALSE]), TRUE)
+    expect_true(all.equal(geno['id_1', ], genotypes['id_1', ]))
+    expect_true(all.equal(geno[, 'mrk_1'], genotypes[, 'mrk_1']))
+    expect_true(all.equal(geno['id_1', 'mrk_1'], genotypes['id_1', 'mrk_1']))
+    expect_true(all.equal(geno['id_1', , drop = FALSE], genotypes['id_1', , drop = FALSE]))
+    expect_true(all.equal(geno[, 'mrk_1', drop = FALSE], genotypes[, 'mrk_1', drop = FALSE]))
+    expect_true(all.equal(geno['id_1', 'mrk_1', drop = FALSE], genotypes['id_1', 'mrk_1', drop = FALSE]))
     
-    expect_equal(all.equal(geno[c('id_1', 'id_2'), ], genotypes[c('id_1', 'id_2'), ]), TRUE)
-    expect_equal(all.equal(geno[, c('mrk_1', 'mrk_2')], genotypes[, c('mrk_1', 'mrk_2')]), TRUE)
-    expect_equal(all.equal(geno[c('id_1', 'id_2'), c('mrk_1', 'mrk_2')], genotypes[c('id_1', 'id_2'), c('mrk_1', 'mrk_2')]), TRUE)
-    expect_equal(all.equal(geno[c('id_1', 'id_2'), , drop = FALSE], genotypes[c('id_1', 'id_2'), , drop = FALSE]), TRUE)
-    expect_equal(all.equal(geno[, c('mrk_1', 'mrk_2'), drop = FALSE], genotypes[, c('mrk_1', 'mrk_2'), drop = FALSE]), TRUE)
-    expect_equal(all.equal(geno[c('id_1', 'id_2'), c('mrk_1', 'mrk_2'), drop = FALSE], genotypes[c('id_1', 'id_2'), c('mrk_1', 'mrk_2'), drop = FALSE]), TRUE)
+    expect_true(all.equal(geno[c('id_1', 'id_2'), ], genotypes[c('id_1', 'id_2'), ]))
+    expect_true(all.equal(geno[, c('mrk_1', 'mrk_2')], genotypes[, c('mrk_1', 'mrk_2')]))
+    expect_true(all.equal(geno[c('id_1', 'id_2'), c('mrk_1', 'mrk_2')], genotypes[c('id_1', 'id_2'), c('mrk_1', 'mrk_2')]))
+    expect_true(all.equal(geno[c('id_1', 'id_2'), , drop = FALSE], genotypes[c('id_1', 'id_2'), , drop = FALSE]))
+    expect_true(all.equal(geno[, c('mrk_1', 'mrk_2'), drop = FALSE], genotypes[, c('mrk_1', 'mrk_2'), drop = FALSE]))
+    expect_true(all.equal(geno[c('id_1', 'id_2'), c('mrk_1', 'mrk_2'), drop = FALSE], genotypes[c('id_1', 'id_2'), c('mrk_1', 'mrk_2'), drop = FALSE]))
     
-    expect_equal(all.equal(geno[c('id_2', 'id_1'), ], genotypes[c('id_2', 'id_1'), ]), TRUE)
-    expect_equal(all.equal(geno[, c('mrk_2', 'mrk_1')], genotypes[, c('mrk_2', 'mrk_1')]), TRUE)
-    expect_equal(all.equal(geno[c('id_2', 'id_1'), c('mrk_2', 'mrk_1')], genotypes[c('id_2', 'id_1'), c('mrk_2', 'mrk_1')]), TRUE)
-    expect_equal(all.equal(geno[c('id_2', 'id_1'), , drop = FALSE], genotypes[c('id_2', 'id_1'), , drop = FALSE]), TRUE)
-    expect_equal(all.equal(geno[, c('mrk_2', 'mrk_1'), drop = FALSE], genotypes[, c('mrk_2', 'mrk_1'), drop = FALSE]), TRUE)
-    expect_equal(all.equal(geno[c('id_2', 'id_1'), c('mrk_2', 'mrk_1'), drop = FALSE], genotypes[c('id_2', 'id_1'), c('mrk_2', 'mrk_1'), drop = FALSE]), TRUE)
+    expect_true(all.equal(geno[c('id_2', 'id_1'), ], genotypes[c('id_2', 'id_1'), ]))
+    expect_true(all.equal(geno[, c('mrk_2', 'mrk_1')], genotypes[, c('mrk_2', 'mrk_1')]))
+    expect_true(all.equal(geno[c('id_2', 'id_1'), c('mrk_2', 'mrk_1')], genotypes[c('id_2', 'id_1'), c('mrk_2', 'mrk_1')]))
+    expect_true(all.equal(geno[c('id_2', 'id_1'), , drop = FALSE], genotypes[c('id_2', 'id_1'), , drop = FALSE]))
+    expect_true(all.equal(geno[, c('mrk_2', 'mrk_1'), drop = FALSE], genotypes[, c('mrk_2', 'mrk_1'), drop = FALSE]))
+    expect_true(all.equal(geno[c('id_2', 'id_1'), c('mrk_2', 'mrk_1'), drop = FALSE], genotypes[c('id_2', 'id_1'), c('mrk_2', 'mrk_1'), drop = FALSE]))
     
-    expect_equal(all.equal(geno[c('id_3', 'id_1'), ], genotypes[c('id_3', 'id_1'), ]), TRUE)
-    expect_equal(all.equal(geno[, c('mrk_3', 'mrk_1')], genotypes[, c('mrk_3', 'mrk_1')]), TRUE)
-    expect_equal(all.equal(geno[c('id_3', 'id_1'), c('mrk_3', 'mrk_1')], genotypes[c('id_3', 'id_1'), c('mrk_3', 'mrk_1')]), TRUE)
-    expect_equal(all.equal(geno[c('id_3', 'id_1'), , drop = FALSE], genotypes[c('id_3', 'id_1'), , drop = FALSE]), TRUE)
-    expect_equal(all.equal(geno[, c('mrk_3', 'mrk_1'), drop = FALSE], genotypes[, c('mrk_3', 'mrk_1'), drop = FALSE]), TRUE)
-    expect_equal(all.equal(geno[c('id_3', 'id_1'), c('mrk_3', 'mrk_1'), drop = FALSE], genotypes[c('id_3', 'id_1'), c('mrk_3', 'mrk_1'), drop = FALSE]), TRUE)
+    expect_true(all.equal(geno[c('id_3', 'id_1'), ], genotypes[c('id_3', 'id_1'), ]))
+    expect_true(all.equal(geno[, c('mrk_3', 'mrk_1')], genotypes[, c('mrk_3', 'mrk_1')]))
+    expect_true(all.equal(geno[c('id_3', 'id_1'), c('mrk_3', 'mrk_1')], genotypes[c('id_3', 'id_1'), c('mrk_3', 'mrk_1')]))
+    expect_true(all.equal(geno[c('id_3', 'id_1'), , drop = FALSE], genotypes[c('id_3', 'id_1'), , drop = FALSE]))
+    expect_true(all.equal(geno[, c('mrk_3', 'mrk_1'), drop = FALSE], genotypes[, c('mrk_3', 'mrk_1'), drop = FALSE]))
+    expect_true(all.equal(geno[c('id_3', 'id_1'), c('mrk_3', 'mrk_1'), drop = FALSE], genotypes[c('id_3', 'id_1'), c('mrk_3', 'mrk_1'), drop = FALSE]))
     
 })
 
@@ -153,10 +153,10 @@ test_that("dim", {
 
 test_that("apply", {
     
-    expect_equal(all.equal(colMeans(geno), colMeans(genotypes)), TRUE)
-    expect_equal(all.equal(colSums(geno), colSums(genotypes)), TRUE)
-    expect_equal(all.equal(rowMeans(geno), rowMeans(genotypes)), TRUE)
-    expect_equal(all.equal(rowSums(geno), rowSums(genotypes)), TRUE)
+    expect_true(all.equal(colMeans(geno), colMeans(genotypes)))
+    expect_true(all.equal(colSums(geno), colSums(genotypes)))
+    expect_true(all.equal(rowMeans(geno), rowMeans(genotypes)))
+    expect_true(all.equal(rowSums(geno), rowSums(genotypes)))
     
     # Introduce NA
     genotypes_na <- genotypes
@@ -168,15 +168,15 @@ test_that("apply", {
     expect_warning(rowMeans(geno))
     expect_warning(rowSums(geno))
     
-    expect_equal(all.equal(colMeans(geno, na.rm=FALSE), colMeans(genotypes_na, na.rm=FALSE)), TRUE)
-    expect_equal(all.equal(colSums(geno, na.rm=FALSE), colSums(genotypes_na, na.rm=FALSE)), TRUE)
-    expect_equal(all.equal(rowMeans(geno, na.rm=FALSE), rowMeans(genotypes_na, na.rm=FALSE)), TRUE)
-    expect_equal(all.equal(rowSums(geno, na.rm=FALSE), rowSums(genotypes_na, na.rm=FALSE)), TRUE)
+    expect_true(all.equal(colMeans(geno, na.rm=FALSE), colMeans(genotypes_na, na.rm=FALSE)))
+    expect_true(all.equal(colSums(geno, na.rm=FALSE), colSums(genotypes_na, na.rm=FALSE)))
+    expect_true(all.equal(rowMeans(geno, na.rm=FALSE), rowMeans(genotypes_na, na.rm=FALSE)))
+    expect_true(all.equal(rowSums(geno, na.rm=FALSE), rowSums(genotypes_na, na.rm=FALSE)))
     
-    expect_equal(all.equal(colMeans(geno, na.rm=TRUE), colMeans(genotypes_na, na.rm=TRUE)), TRUE)
-    expect_equal(all.equal(colSums(geno, na.rm=TRUE), colSums(genotypes_na, na.rm=TRUE)), TRUE)
-    expect_equal(all.equal(rowMeans(geno, na.rm=TRUE), rowMeans(genotypes_na, na.rm=TRUE)), TRUE)
-    expect_equal(all.equal(rowSums(geno, na.rm=TRUE), rowSums(genotypes_na, na.rm=TRUE)), TRUE)
+    expect_true(all.equal(colMeans(geno, na.rm=TRUE), colMeans(genotypes_na, na.rm=TRUE)))
+    expect_true(all.equal(colSums(geno, na.rm=TRUE), colSums(genotypes_na, na.rm=TRUE)))
+    expect_true(all.equal(rowMeans(geno, na.rm=TRUE), rowMeans(genotypes_na, na.rm=TRUE)))
+    expect_true(all.equal(rowSums(geno, na.rm=TRUE), rowSums(genotypes_na, na.rm=TRUE)))
     
     # Revert NA
     geno[] <- genotypes
