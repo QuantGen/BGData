@@ -163,7 +163,15 @@ dimnames.rmmMatrix<-function(x){
 }
 
 
-set.colnames.rmmMatrix<-function(x,value){
+setRownames<-function(x,value){
+    TMP<-chunks(x)
+    for(i in 1:nrow(TMP)){
+        rownames(x[[i]])<-value[(TMP[i,2]:TMP[i,3])]
+    }
+    return(x)
+}
+
+setColnames<-function(x,value){
     for(i in 1:length(x)){
         colnames(x[[i]])<-value
     }
@@ -171,19 +179,17 @@ set.colnames.rmmMatrix<-function(x,value){
 }
 
 #' @export
-setMethod("colnames<-",signature("rmmMatrix"),set.colnames.rmmMatrix)
-
-
-set.rownames.rmmMatrix<-function(x,value){
-    TMP<-chunks(x)
-    for(i in 1:nrow(TMP)){
-        rownames(x[[i]])<-value[(TMP[i,2]:TMP[i,3])]
+`dimnames<-.rmmMatrix`<-function(x,value){
+    d<-dim(x)
+    rownames<-value[[1]]
+    colnames<-value[[2]]
+    if(!is.list(value)||length(value)!=2||!(is.null(rownames)||length(rownames)==d[1])||!(is.null(colnames)||length(colnames)==d[2])){
+        stop('invalid dimnames')
     }
-    x
+    x<-setRownames(x,rownames)
+    x<-setColnames(x,colnames)
+    return(x)
 }
-
-#' @export
-setMethod("rownames<-",signature("rmmMatrix"),set.rownames.rmmMatrix)
 
 
 #' @export

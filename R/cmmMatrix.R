@@ -163,27 +163,33 @@ dimnames.cmmMatrix<-function(x){
 }
 
 
-set.colnames.cmmMatrix<-function(x,value){
+setRownames<-function(x,value){
+    for(i in 1:length(x)){
+        rownames(x[[i]])<-value
+    }
+    return(x)
+}
+
+setColnames<-function(x,value){
     TMP<-chunks(x)
     for(i in 1:nrow(TMP)){
         colnames(x[[i]])<-value[(TMP[i,2]:TMP[i,3])]
     }
-    x
+    return(x)
 }
 
 #' @export
-setMethod("colnames<-",signature("cmmMatrix"),set.colnames.cmmMatrix)
-
-
-set.rownames.cmmMatrix<-function(x,value){
-    for(i in 1:length(x)){
-        rownames(x[[i]])<-value
+`dimnames<-.cmmMatrix`<-function(x,value){
+    d<-dim(x)
+    rownames<-value[[1]]
+    colnames<-value[[2]]
+    if(!is.list(value)||length(value)!=2||!(is.null(rownames)||length(rownames)==d[1])||!(is.null(colnames)||length(colnames)==d[2])){
+        stop('invalid dimnames')
     }
-    x
+    x<-setRownames(x,rownames)
+    x<-setColnames(x,colnames)
+    return(x)
 }
-
-#' @export
-setMethod("rownames<-",signature("cmmMatrix"),set.rownames.cmmMatrix)
 
 
 #' @export
