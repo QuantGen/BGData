@@ -128,6 +128,7 @@ replace.rmmMatrix<-function(x,i,j,...,value){
 setReplaceMethod("[",signature(x="rmmMatrix"),replace.rmmMatrix)
 
 
+#' @export
 dim.rmmMatrix<-function(x){
     p<-ncol(x[[1]])
     n<-0
@@ -136,9 +137,6 @@ dim.rmmMatrix<-function(x){
     }
     return(c(n,p))
 }
-
-#' @export
-setMethod("dim",signature("rmmMatrix"),dim.rmmMatrix)
 
 
 get.colnames.rmmMatrix<-function(x){

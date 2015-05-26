@@ -128,6 +128,7 @@ replace.cmmMatrix<-function(x,i,j,...,value){
 setReplaceMethod("[",signature(x="cmmMatrix"),replace.cmmMatrix)
 
 
+#' @export
 dim.cmmMatrix<-function(x){
     n<-nrow(x[[1]])
     p<-0
@@ -136,9 +137,6 @@ dim.cmmMatrix<-function(x){
     }
     return(c(n,p))
 }
-
-#' @export
-setMethod("dim",signature("cmmMatrix"),dim.cmmMatrix)
 
 
 get.colnames.cmmMatrix<-function(x){
