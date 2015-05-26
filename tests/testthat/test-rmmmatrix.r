@@ -147,6 +147,10 @@ test_that("replacement", {
     
 })
 
+test_that("dim", {
+    expect_equal(dim(geno), dim(genotypes))
+})
+
 test_that("apply", {
     
     expect_equal(all.equal(colMeans(geno), colMeans(genotypes)), TRUE)
