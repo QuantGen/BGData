@@ -139,12 +139,14 @@ dim.cmmMatrix<-function(x){
 }
 
 
-getRownames<-function(x){
+# This function looks like an S3 method, but isn't one.
+rownames.cmmMatrix<-function(x){
     out<-rownames(x[[1]])
     return(out)
 }
 
-getColnames<-function(x){
+# This function looks like an S3 method, but isn't one.
+colnames.cmmMatrix<-function(x){
     out<-NULL
     if(!is.null(colnames(x[[1]]))){
         p<-dim(x)[2]
@@ -159,18 +161,20 @@ getColnames<-function(x){
 
 #' @export
 dimnames.cmmMatrix<-function(x){
-    list(getRownames(x),getColnames(x))
+    list(rownames.cmmMatrix(x),colnames.cmmMatrix(x))
 }
 
 
-setRownames<-function(x,value){
+# This function looks like an S3 method, but isn't one.
+`rownames<-.cmmMatrix`<-function(x,value){
     for(i in 1:length(x)){
         rownames(x[[i]])<-value
     }
     return(x)
 }
 
-setColnames<-function(x,value){
+# This function looks like an S3 method, but isn't one.
+`colnames<-.cmmMatrix`<-function(x,value){
     TMP<-chunks(x)
     for(i in 1:nrow(TMP)){
         colnames(x[[i]])<-value[(TMP[i,2]:TMP[i,3])]
@@ -186,8 +190,8 @@ setColnames<-function(x,value){
     if(!is.list(value)||length(value)!=2||!(is.null(rownames)||length(rownames)==d[1])||!(is.null(colnames)||length(colnames)==d[2])){
         stop('invalid dimnames')
     }
-    x<-setRownames(x,rownames)
-    x<-setColnames(x,colnames)
+    x<-`rownames<-.cmmMatrix`(x,rownames)
+    x<-`colnames<-.cmmMatrix`(x,colnames)
     return(x)
 }
 
