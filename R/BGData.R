@@ -3,7 +3,9 @@ NULL
 
 
 setOldClass('ff_matrix') # Convert ff_matrix into an S4 class
-setClassUnion('geno',c('mmMatrix','matrix','ff_matrix'))
+setOldClass('BEDMatrix') # Convert BEDMatrix into an S4 class
+
+setClassUnion('geno',c('mmMatrix','BEDMatrix','matrix','ff_matrix'))
 
 
 #' An S4 class to represent GWAS data.

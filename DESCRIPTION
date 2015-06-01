@@ -32,7 +32,8 @@ Imports:
 Suggests:
     testthat,
     lme4,
-    SKAT
+    SKAT,
+    BEDMatrix
 LazyData: true
 Collate:
     'rmmMatrix.R'
