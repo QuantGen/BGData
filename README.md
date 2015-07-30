@@ -135,7 +135,7 @@ A data structure for genomic data is useful when defining methods that act on bo
 
 ```R
 # lm (set plot=TRUE to get a Manhattan plot of the p values)
-fmLM <- GWAS(formula=Obesity.BMI~GENDER+Litter, data=BGData, method='lm')
+fmLM <- GWAS(formula=Obesity.BMI~GENDER+Litter, data=BGData, method='lm',plot=T)
 
 # glm (set plot=TRUE to get a Manhattan plot of the p values)
 BGData@pheno$GENDER01 <- ifelse(BGData@pheno[,'GENDER'] == 'M', 1, 0)
