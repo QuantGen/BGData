@@ -76,6 +76,7 @@ A `BGData` object can be generated from any plaintext file that stores individua
 A `BGData` object has three slots: `@pheno`, `@geno`, and `@map`. The phenotypes go into `@pheno`, the genotypes into `@geno`, and `@map` is filled with a placeholder that can be replaced later on.
 
 ```R
+library(BGData)
 BGData <- readPED(fileIn='mice.raw', header=TRUE,
                   dataType=integer(), nColSkip=17, idCol=1)
 head(BGData@pheno)
@@ -91,7 +92,7 @@ rm(BGData)
 # Note: The working directory must be the one where the binary files 
 #       (geno_*.bin) are saved.
 setwd('BGData_mice.ped/')
-load('BGData.RData')
+load2('BGData.RData') # note: because we are laoding just the meta data we use load2()
 head(BGData@pheno)
 dim(BGData@geno)
 dim(BGData@map)
