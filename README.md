@@ -10,8 +10,6 @@ Genetic data can be very large and holding data in RAM is often not feasible. On
 
 The [ff package for R](http://cran.r-project.org/web/packages/ff/index.html) implements memory mapped arrays and provides a very fast implementation of indexing operations, which allows accessing cells of the array almost at the same speed as accessing those cells in a regular matrix object that is held in RAM. However, with `ff` the array size is limited to the size of an integer; with genomic data we often exceed this.
 
-
-
 We are therefore developing new classes (`rmmMatrix` and `cmmMatrix`) which are essentially collections of `ff` objects. In these classes we distribute a matrix either by rows (`rmmMatrix`) or columns (`cmmMatrix`) into multiple `ff` objects. We have developed indexing and many other methods that allow the user to deal with these objects as if they were regular matrices. In addition we have developed methods that can take `rmmMatrix` or `cmmMatrix` as input to compute genomic relationship matrices, etc.
 
 The classes `cmmMatrix` and `rmmMatrix` were designed to hold genotype data. The class `BGData` contains three slots `@geno`, `@pheno` and `@map`, and can be used to hold GWAS data.
@@ -66,10 +64,10 @@ Alternatively, you can download the most recent version as a bundle for [Windows
 The `BGData` package has to be installed to follow along. The example data used in this introduction was generated from the `mice` dataset of the `BGLR` package and serves as an example on how to create a `BGData` object from a plaintext file. We have uploaded it for convenience and it can be downloaded at https://github.com/QuantGen/BGData/raw/data/mice.ped.gz, but you can also generate it in the following way:
 
 ```R
+## Writes genotypes in an ASCII files
 library(BGLR)
 data(mice)
-write.table(cbind(mice.pheno, mice.X), 'mice.ped', quote=FALSE,
-            row.names=FALSE)
+write.table(cbind(mice.pheno, mice.X), 'mice.raw', quote=F,row.names=F)
 ```
 
 ### Converting a plaintext file (e.g. in PED format) to a `BGData` object
@@ -78,7 +76,7 @@ A `BGData` object can be generated from any plaintext file that stores individua
 A `BGData` object has three slots: `@pheno`, `@geno`, and `@map`. The phenotypes go into `@pheno`, the genotypes into `@geno`, and `@map` is filled with a placeholder that can be replaced later on.
 
 ```R
-BGData <- readPED(fileIn='mice.ped.gz', header=TRUE,
+BGData <- readPED(fileIn='mice.raw', header=TRUE,
                   dataType=integer(), nColSkip=17, idCol=1)
 head(BGData@pheno)
 dim(BGData@geno)
