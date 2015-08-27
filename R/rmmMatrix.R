@@ -31,7 +31,7 @@ setMethod('initialize','rmmMatrix',function(.Object,nrow=1,ncol=1,vmode='byte',f
         ini<-end+1
         end<-min(nrow,ini+chunkSize-1)
         filename=paste0('geno_',i,'.bin')
-        ffList[[i]]<-ff(vmode=vmode,dim=c((end-ini+1),ncol),dimorder=dimorder,filename=paste0(folderOut,'/',filename))
+        ffList[[i]]<-ff(vmode=vmode,dim=c((end-ini+1),ncol),dimorder=dimorder,filename=paste0(folderOut,.Platform$file.sep,filename))
         # Change ff path to a relative one
         physical(ffList[[i]])$pattern<-'ff'
         physical(ffList[[i]])$filename<-filename
