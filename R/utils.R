@@ -20,8 +20,8 @@ crossprods.chunk<-function(chunk,x,y=NULL,nChunks,use_tcrossprod=FALSE){
 }
 
 #' Computes crossprod (x'y or x'x) or tcrossprod (xy' or xx', used when use_tcrossprod=TRUE) in parallel.
-#' @param x matrix, ff_matrix, rmmMatrix or cmmMatrix
-#' @param y, vector, matrix, ff_matrix, rmmMatrix or cmmMatrix. By default
+#' @param x matrix, ff_matrix, RowLinkedMatrix or ColumnLinkedMatrix
+#' @param y, vector, matrix, ff_matrix, RowLinkedMatrix or ColumnLinkedMatrix By default
 #' @param nChunks the number of 'chunks' used when X and y are partitioned.
 #' @param mc.cores  the number of cores (passed to mclapply)
 #' @param use_tcrossprod  if FALSE crossprods computes x'y or x'x (if y=NULL), otherwise crossprods computes xy' or xx' (if y=NULL).
@@ -56,7 +56,7 @@ crossprods<-function(x,y=NULL,nChunks=detectCores(),mc.cores=detectCores(),use_t
 #' \code{scaleG=FALSE}, \code{getG} produces the same outcome than
 #' \code{tcrossprod}.
 #' 
-#' @param x matrix, ff_matrix, rmmMatrix or cmmMatrix
+#' @param x matrix, ff_matrix, RowLinkedMatrix or ColumnLinkedMatrix
 #' @param nChunks The number of columns that are processed at a time.
 #' @param scaleCol TRUE/FALSE whether columns must be scaled before computing
 #'   xx'.

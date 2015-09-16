@@ -1,18 +1,17 @@
-#' @include mmMatrix.R
+#' @importClassesFrom LinkedMatrix LinkedMatrix
 NULL
-
 
 setOldClass('ff_matrix') # Convert ff_matrix into an S4 class
 setOldClass('BEDMatrix') # Convert BEDMatrix into an S4 class
 
-setClassUnion('geno',c('mmMatrix','BEDMatrix','matrix','ff_matrix'))
+setClassUnion('geno',c('LinkedMatrix','BEDMatrix','matrix','ff_matrix'))
 
 
 #' An S4 class to represent GWAS data.
 #' 
 #' @slot pheno A \code{\link{data.frame}} that contains phenotypes.
 #' @slot map A \code{\link{data.frame}} that contains a genetic map.
-#' @slot geno A \code{geno} object (\code{mmMatrix}, \code{ff_matrix}, or 
+#' @slot geno A \code{geno} object (\code{LinkedMatrix}, \code{ff_matrix}, or
 #'   \code{\link{matrix}}) that contains genotypes.
 #' @export BGData
 #' @exportClass BGData
@@ -21,7 +20,7 @@ BGData<-setClass('BGData',slots=c(pheno='data.frame',map='data.frame',geno='geno
 #' @export
 setMethod('initialize','BGData',function(.Object,geno,pheno,map){
     if(!is(geno,'geno')){
-        stop("Only mmMatrix, ff_matrix, or regular matrix objects are allowed for geno.")
+        stop("Only LinkedMatrix, BEDMatrix, ff_matrix, or regular matrix objects are allowed for geno.")
     }
     if(is.null(colnames(geno))){
         colnames(geno)<-paste0('mrk_',1:ncol(geno))
@@ -55,8 +54,8 @@ setMethod('initialize','BGData',function(.Object,geno,pheno,map){
 #' row contains a header (\code{header=TRUE}), data in this row is used to
 #' determine variables names for \code{@@pheno} and marker names for
 #' \code{@@map} and \code{@@geno}. Genotypes are stored in a distributed matrix
-#' (\code{mmMatrix}). By default a column-distributed
-#' (\code{\linkS4class{cmmMatrix}}) is used for \code{@@geno}, but the user can
+#' (\code{LinkedMatrix}). By default a column-distributed
+#' (\code{\linkS4class{ColumnLinkedMatrix}}) is used for \code{@@geno}, but the user can
 #' modify this using the \code{distributed.by} argument. The number of chunks is
 #' either specified by the user (use \code{nChunks} when calling \code{readPED})
 #' or determined internally so that each \code{ff_matrix} object has a number of
@@ -89,14 +88,14 @@ setMethod('initialize','BGData',function(.Object,geno,pheno,map){
 #' @param verbose If TRUE, progress updates will be posted.
 #' @param nChunks The number of chunks to create.
 #' @param distributed.by If columns a column-distributed matrix 
-#'   (\code{\linkS4class{cmmMatrix}}) is created, if rows a row-distributed 
-#'   matrix (\code{\linkS4class{rmmMatrix}}).
+#'   (\code{\linkS4class{ColumnLinkedMatrix}}) is created, if rows a row-distributed
+#'   matrix (\code{\linkS4class{RowLinkedMatrix}}).
 #' @param folderOut The path to the folder where to save the binary files.
 #' @param dimorder The physical layout of the chunks.
 #' @return If \code{returnData} is TRUE, a \code{\linkS4class{BGData}} object is
 #'   returned.
-#' @seealso \code{\linkS4class{BGData}}, \code{mmMatrix}, 
-#'   \code{\linkS4class{rmmMatrix}}, \code{\linkS4class{cmmMatrix}}, 
+#' @seealso \code{\linkS4class{BGData}}, \code{LinkedMatrix},
+#'   \code{\linkS4class{ColumnLinkedMatrix}}, \code{\linkS4class{RowLinkedMatrix}},
 #'   \code{\link[ff]{ff}}
 #' @export
 readPED<-function(fileIn,header,dataType,n=NULL,p=NULL,na.strings='NA',
@@ -118,7 +117,7 @@ readPED<-function(fileIn,header,dataType,n=NULL,p=NULL,na.strings='NA',
         stop('distributed.by must be either columns or rows')
     }
 
-    class<-ifelse(distributed.by=='columns','cmmMatrix','rmmMatrix')
+    class<-ifelse(distributed.by=='columns','ColumnLinkedMatrix','RowLinkedMatrix')
     vmode<-ifelse(typeof(dataType)=='integer','byte','double')
 
     readPED.default(fileIn=fileIn,header=header,dataType=dataType,class=class,
@@ -211,14 +210,72 @@ readPED.default<-function(fileIn,header,dataType,class,n=NULL,p=NULL,na.strings=
         geno<-matrix(nrow=n,ncol=p)
     }else{
         if(is.null(dimorder)){
-            if(class=='rmmMatrix'){
+            if(class=='RowLinkedMatrix'){
                 dimorder<-2:1
             }else{
                 dimorder<-1:2
             }
         }
-        geno<-new(class,nrow=n,ncol=p,vmode=vmode,folderOut=folderOut,nChunks=nChunks,dimorder=dimorder)
-        index<-index(geno)
+
+        # Handle chunking logic
+        if(is.null(folderOut)){
+            folderOut<-paste0(tempdir(),'/BGData-',randomString())
+        }
+        if(file.exists(folderOut)){
+            stop(paste('Output folder',folderOut,'already exists. Please move it or pick a different one.'))
+        }
+        dir.create(folderOut)
+
+        # Determine chunk size and number of chunks
+        if(is.null(nChunks)){
+            if(class=='RowLinkedMatrix'){
+                chunkSize<-min(n,floor(.Machine$integer.max/p/1.2))
+                nChunks<-ceiling(n/chunkSize)
+            }else{
+                chunkSize<-min(p,floor(.Machine$integer.max/n/1.2))
+                nChunks<-ceiling(p/chunkSize)
+            }
+        }else{
+            if(class=='RowLinkedMatrix'){
+                chunkSize<-ceiling(n/nChunks)
+                if(chunkSize*p >= .Machine$integer.max/1.2){
+                    stop('More chunks are needed')
+                }
+            }else{
+                chunkSize<-ceiling(p/nChunks)
+                if(chunkSize*n >= .Machine$integer.max/1.2){
+                    stop('More chunks are needed')
+                }
+            }
+        }
+
+        # Initialize list
+        geno<-new(class)
+        end<-0
+        if(class=='RowLinkedMatrix'){
+            for(i in 1:nChunks){
+                ini<-end+1
+                end<-min(n,ini+chunkSize-1)
+                filename=paste0('geno_',i,'.bin')
+                geno[[i]]<-ff(vmode=vmode,dim=c((end-ini+1),p),dimorder=dimorder,filename=paste0(folderOut,.Platform$file.sep,filename))
+                # Change ff path to a relative one
+                physical(geno[[i]])$pattern<-'ff'
+                physical(geno[[i]])$filename<-filename
+            }
+        }else{
+            for(i in 1:nChunks){
+                ini<-end+1
+                end<-min(p,ini+chunkSize-1)
+                filename=paste0('geno_',i,'.bin')
+                geno[[i]]<-ff(vmode=vmode,dim=c(n,(end-ini+1)),dimorder=dimorder,filename=paste0(folderOut,.Platform$file.sep,filename))
+                # Change ff path to a relative one
+                physical(geno[[i]])$pattern<-'ff'
+                physical(geno[[i]])$filename<-filename
+            }
+        }
+
+        # Generate index
+        index<-LinkedMatrix::index(geno)
     }
 
     colnames(geno)<-mrkNames
@@ -296,7 +353,7 @@ load.BGData<-function(file,envir=parent.frame(),verbose=TRUE){
     }
 
     # Determine number of chunks
-    chunks<-chunks(get(objectName)@geno)
+    chunks<-LinkedMatrix::chunks(get(objectName)@geno)
 
     # Open all chunks for reading (we do not store absolute paths to ff files,
     # so this has to happen in the same working directory)

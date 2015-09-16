@@ -10,9 +10,9 @@ Genetic data can be very large and holding data in RAM is often not feasible. On
 
 The [ff package for R](http://cran.r-project.org/web/packages/ff/index.html) implements memory mapped arrays and provides a very fast implementation of indexing operations, which allows accessing cells of the array almost at the same speed as accessing those cells in a regular matrix object that is held in RAM. However, with `ff` the array size is limited to the size of an integer; with genomic data we often exceed this.
 
-We are therefore developing new classes (`rmmMatrix` and `cmmMatrix`) which are essentially collections of `ff` objects. In these classes we distribute a matrix either by rows (`rmmMatrix`) or columns (`cmmMatrix`) into multiple `ff` objects. We have developed indexing and many other methods that allow the user to deal with these objects as if they were regular matrices. In addition we have developed methods that can take `rmmMatrix` or `cmmMatrix` as input to compute genomic relationship matrices, etc.
+We are therefore developing new classes (`RowLinkedMatrix` and `ColumnLinkedMatrix`) which are essentially collections of `ff` objects. In these classes we distribute a matrix either by rows (`RowLinkedMatrix`) or columns (`ColumnLinkedMatrix`) into multiple `ff` objects. We have developed indexing and many other methods that allow the user to deal with these objects as if they were regular matrices. In addition we have developed methods that can take `RowLinkedMatrix` or `ColumnLinkedMatrix` as input to compute genomic relationship matrices, etc.
 
-The classes `cmmMatrix` and `rmmMatrix` were designed to hold genotype data. The class `BGData` contains three slots `@geno`, `@pheno` and `@map`, and can be used to hold GWAS data.
+The classes `ColumnLinkedMatrix` and `RowLinkedMatrix` were designed to hold genotype data. The class `BGData` contains three slots `@geno`, `@pheno` and `@map`, and can be used to hold GWAS data.
 
 ![Conceptual Diagram](https://docs.google.com/drawings/d/1m2bV3-woWrO9F9_RXxw30FlzUORXzcnaIPJUlxc-MMk/pub?w=739&h=559)
 
@@ -22,26 +22,26 @@ The classes `cmmMatrix` and `rmmMatrix` were designed to hold genotype data. The
 - Paulino Perez (perpdgo@gmail.com)
 
 ## Classes & Methods
-- `rmmMatrix`: row-distributed matrix (collection of `ff` objects)
-- `cmmMatrix`: column-distributed matrix (collection of `ff` objects)
-- `mmMatrix` : distributed matrix (a class-union of `rmmMatrix`  and `cmmMatrix`)
-- `BGData`: a structure to hold genotype and phenotype data. Objects of this class contain three slots: `@geno` (`rmmMatrix`, `cmmMatrix`, `ff_matrix` or `matrix`), `@pheno` (data.frame), and `@map` (data.frame).
+- `RowLinkedMatrix`: row-distributed matrix (collection of `ff` objects)
+- `ColumnLinkedMatrix`: column-distributed matrix (collection of `ff` objects)
+- `LinkedMatrix` : distributed matrix (a class-union of `RowLinkedMatrix`  and `ColumnLinkedMatrix`)
+- `BGData`: a structure to hold genotype and phenotype data. Objects of this class contain three slots: `@geno` (`RowLinkedMatrix`, `ColumnLinkedMatrix`, `ff_matrix` or `matrix`), `@pheno` (data.frame), and `@map` (data.frame).
 
-### Methods Implemented for `rmmMatrix` and `cmmMatrix`
+### Methods Implemented for `RowLinkedMatrix` and `ColumnLinkedMatrix`
 - `[` and `[<-` for subsetting and replacement, respectively
 - `dim(x)`, `nrow(x)`, `ncol(x) `  
 - `rownames(x)`, `colnames(x)`, `dimnames(x)`
 - `colSums(x)`, `colMeans(x)`, `rowSums(x)`, `rowMeans(x)`
 - `summary(x)`
 - `apply(x)` with the same parameters and similar behavior than the generic function apply()
-- `chunks(x)` returns information about how the `rmmMatrix` or `cmmMatrix` is split into chunks (each chunk is an `ff` object)
-- `colindexes(x, columns)` returns the global (in the `cmmMatrix` object) and local (in each of the `ff` objects that constitute the chunks of the `cmmMatrix`) indexes for a set of columns
-- `rowindexes(x, columns)` returns the global (in the `rmmMatrix` object) and local (in each of the `ff` objects that constitute the chunks of the `rmmMatrix`) indexes for a set of rows
+- `chunks(x)` returns information about how the `RowLinkedMatrix` or `ColumnLinkedMatrix` is split into chunks (each chunk is an `ff` object)
+- `colindexes(x, columns)` returns the global (in the `ColumnLinkedMatrix` object) and local (in each of the `ff` objects that constitute the chunks of the `ColumnLinkedMatrix`) indexes for a set of columns
+- `rowindexes(x, columns)` returns the global (in the `RowLinkedMatrix` object) and local (in each of the `ff` objects that constitute the chunks of the `RowLinkedMatrix`) indexes for a set of rows
 - `getG(x, ...)` computes a genomic relationship matrix (XX') with options for centering and scaling
-- `as.matrix(x)` converts an `mmMatrix` to a matrix (if small enough)
+- `as.matrix(x)` converts an `LinkedMatrix` to a matrix (if small enough)
 
 ### Methods Implemented for `BGData`
-- Both `readPED` and `readPED.matrix` create a `BGData` object from a plaintext file containing the phenotypes and genotypes (individuals in rows, phenotypes in the first few columns, markers in the remaining columns, e.g. the raw format in [PLINK](http://pngu.mgh.harvard.edu/~purcell/plink/dataman.shtml)). `readPED` stores genotype information in an `rmmMatrix` or `cmmMatrix` (dependending on the value of the `distributed.by` parameter) while `readPED.matrix` uses a regular matrix.
+- Both `readPED` and `readPED.matrix` create a `BGData` object from a plaintext file containing the phenotypes and genotypes (individuals in rows, phenotypes in the first few columns, markers in the remaining columns, e.g. the raw format in [PLINK](http://pngu.mgh.harvard.edu/~purcell/plink/dataman.shtml)). `readPED` stores genotype information in an `RowLinkedMatrix` or `ColumnLinkedMatrix` (dependending on the value of the `distributed.by` parameter) while `readPED.matrix` uses a regular matrix.
 - `GWAS` uses a `BGData` object to conduct single marker association tests using regression methods such as `lm()`, `glm()` or `lmer()`
 
 
@@ -85,7 +85,7 @@ dim(BGData@map)
 ```
 
 ### Reloading a `BGData` object from the filesystem
-The genotypes in a `BGData` object are backed by an efficient binary representation of the original dataset on the filesystem, an `mmMatrix`. By default `readPED` stores this representation as files called `geno_*.bin` in the current working directory in a folder that starts with `BGData_` followed by the filename without extension. To reload a `BGData` object from the filesystem, load the accompanying `BGData.RData` file in that directory. There is one caveat, though: you have to change your current working directory to the one that contains the file for it to work.
+The genotypes in a `BGData` object are backed by an efficient binary representation of the original dataset on the filesystem, an `LinkedMatrix`. By default `readPED` stores this representation as files called `geno_*.bin` in the current working directory in a folder that starts with `BGData_` followed by the filename without extension. To reload a `BGData` object from the filesystem, load the accompanying `BGData.RData` file in that directory. There is one caveat, though: you have to change your current working directory to the one that contains the file for it to work.
 
 ```R
 rm(BGData)
@@ -99,7 +99,7 @@ dim(BGData@map)
 ```
 
 ### Exploring operators
-An `mmMatrix` object (the datatype of the contents of the `@geno` slot of a `BGData` object) behaves like any other matrix, even though its data is stored on the filesystem and is never read into memory in its entirety at a given time. This allows for convenient analysis of large datasets, with seamless integration into the rest of R's capabilities. Subsetting, replacement, and other functions have been implemented.
+An `LinkedMatrix` object (the datatype of the contents of the `@geno` slot of a `BGData` object) behaves like any other matrix, even though its data is stored on the filesystem and is never read into memory in its entirety at a given time. This allows for convenient analysis of large datasets, with seamless integration into the rest of R's capabilities. Subsetting, replacement, and other functions have been implemented.
 
 ```R
 # Subsetting

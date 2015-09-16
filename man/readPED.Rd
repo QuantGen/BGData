@@ -41,8 +41,8 @@ object.}
 \item{nChunks}{The number of chunks to create.}
 
 \item{distributed.by}{If columns a column-distributed matrix
-(\code{\linkS4class{cmmMatrix}}) is created, if rows a row-distributed
-matrix (\code{\linkS4class{rmmMatrix}}).}
+(\code{\linkS4class{ColumnLinkedMatrix}}) is created, if rows a row-distributed
+matrix (\code{\linkS4class{RowLinkedMatrix}}).}
 
 \item{folderOut}{The path to the folder where to save the binary files.}
 
@@ -61,8 +61,8 @@ the remaining columns are used to fill the slot \code{@geno}. If the first
 row contains a header (\code{header=TRUE}), data in this row is used to
 determine variables names for \code{@pheno} and marker names for
 \code{@map} and \code{@geno}. Genotypes are stored in a distributed matrix
-(\code{mmMatrix}). By default a column-distributed
-(\code{\linkS4class{cmmMatrix}}) is used for \code{@geno}, but the user can
+(\code{LinkedMatrix}). By default a column-distributed
+(\code{\linkS4class{ColumnLinkedMatrix}}) is used for \code{@geno}, but the user can
 modify this using the \code{distributed.by} argument. The number of chunks is
 either specified by the user (use \code{nChunks} when calling \code{readPED})
 or determined internally so that each \code{ff_matrix} object has a number of
@@ -78,8 +78,8 @@ files are saved (\code{folderOut}) or the object must be loaded using
 \code{load.BGData}.
 }
 \seealso{
-\code{\linkS4class{BGData}}, \code{mmMatrix},
-  \code{\linkS4class{rmmMatrix}}, \code{\linkS4class{cmmMatrix}},
+\code{\linkS4class{BGData}}, \code{LinkedMatrix},
+  \code{\linkS4class{ColumnLinkedMatrix}}, \code{\linkS4class{RowLinkedMatrix}},
   \code{\link[ff]{ff}}
 }
 

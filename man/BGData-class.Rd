@@ -15,7 +15,7 @@ An S4 class to represent GWAS data.
 
 \item{\code{map}}{A \code{\link{data.frame}} that contains a genetic map.}
 
-\item{\code{geno}}{A \code{geno} object (\code{mmMatrix}, \code{ff_matrix}, or
+\item{\code{geno}}{A \code{geno} object (\code{LinkedMatrix}, \code{ff_matrix}, or
 \code{\link{matrix}}) that contains genotypes.}
 }}
 
