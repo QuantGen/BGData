@@ -7,4 +7,5 @@
 #' @import methods
 #' @import parallel
 #' @import ff
+#' @importClassesFrom LinkedMatrix LinkedMatrix
 NULL

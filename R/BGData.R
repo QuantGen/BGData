@@ -1,4 +1,4 @@
-#' @importClassesFrom LinkedMatrix LinkedMatrix
+#' @include package.R
 NULL
 
 setOldClass('ff_matrix') # Convert ff_matrix into an S4 class

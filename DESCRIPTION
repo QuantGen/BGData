@@ -38,6 +38,6 @@ Suggests:
     BEDMatrix
 LazyData: true
 Collate:
-    'BGData.R'
     'package.R'
+    'BGData.R'
     'utils.R'
