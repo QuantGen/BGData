@@ -1,3 +1,45 @@
+
+crossprods.chunk<-function(x,y=NULL,chunk,nChunks,use_tcrossprod=FALSE){
+  ## Performs crossprod() or tcrossprod()
+  #  for a chunk (set of columns or sets of rows) of X
+ 
+  n<-ifelse(use_tcrossprod,ncol(x),nrow(x))
+ 
+  if(!is.null(y)){ y=as.matrix(y) }
+  chunkID=rep(1:nChunks,each=ceiling(n/nChunks))[1:n]
+  if(!is.null(y)){ y=y[chunkID==chunk,]}
+
+  if(use_tcrossprod){
+      X=X[,chunkID==chunk]
+      Xy=tcrossprod(X,y)
+  }else{
+      X=X[chunkID==chunk,]
+      Xy=crossprod(X,y)
+  }
+  return(Xy)
+}
+
+
+crossprods<-function(x,y=NULL,nChunks=detectCores(),mc.cores=detectCores(),use_tcrossprod=FALSE){
+  # Computes crossprod(x,y) or tcrossprod(x,y)
+  #
+  library(parallel)
+  if(nChunks==1){
+    Xy=crossprod(x,y)
+  }else{ 
+    tmpIndex=1:nChunks
+    TMP=mclapply(X=tmpIndex,FUN=crossprods.chunk,x=x,y=y,nChunks=nChunks,mc.cores=mc.cores,use_tcrossprod=use_tcrossprod)
+     ## We now need to add up chunks sequentially
+     Xy=TMP[[1]]
+     if(length(TMP)>1){
+        for(i in 2:length(TMP)){
+          Xy=Xy+TMP[[i]]
+        }
+     }
+   }
+   return(Xy)
+}
+
 #' Computes a genomic relationship matrix G=xx'.
 #' 
 #' Offers options for centering and scaling the columns of x before computing
@@ -16,7 +58,8 @@
 #'   used. By default, all columns are used.
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @export
-getG<-function(x,nChunks=ceiling(ncol(x)/1e3),scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,i=1:nrow(x),j=1:ncol(x),minVar=1e-5){
+getG<-function(x,nChunks=ceiling(ncol(x)/1e3),scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,i=1:nrow(x),j=1:ncol(x),minVar=1e-5,
+               nChunks2=1,mc.cores=detectCores()){
     nX<-nrow(x); pX<-ncol(x); centerCol=TRUE # if this is made a parameter the imputation od NAs need to be modified.
     
     # converting boolean to integer index (it leads to a more efficient subsetting than booleans)
@@ -69,7 +112,7 @@ getG<-function(x,nChunks=ceiling(ncol(x)/1e3),scaleCol=TRUE,scaleG=TRUE,verbose=
                 }
                 TMP<-is.na(X)
                 if(any(TMP)){    X<-ifelse(TMP,0,X) }
-                G<-G+tcrossprod(X)
+                G<-G+crossprods(X,use_tcrossprod=TRUE,nChunks=nChunks2,mc.cores=mc.cores)
             }
         }
     }
