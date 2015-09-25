@@ -25,7 +25,11 @@ crossprods<-function(x,y=NULL,nChunks=detectCores(),mc.cores=detectCores(),use_t
   #
   library(parallel)
   if(nChunks==1){
-    Xy=crossprod(x,y)
+    if(use_tcrossprod){
+     Xy=tcrossprod(x,y)
+    }else{
+      Xy=crossprod(x,y)
+    }
   }else{ 
     tmpIndex=1:nChunks
     TMP=mclapply(X=tmpIndex,FUN=crossprods.chunk,x=x,y=y,nChunks=nChunks,mc.cores=mc.cores,use_tcrossprod=use_tcrossprod)
