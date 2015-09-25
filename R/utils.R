@@ -124,6 +124,7 @@ getG<-function(x,nChunks=ceiling(ncol(x)/1e3),scaleCol=TRUE,scaleG=TRUE,verbose=
         tmp<-mean(diag(G))
         G<-G/tmp
     }
+    
     return(G)
 }
 
