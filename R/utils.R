@@ -7,13 +7,13 @@ crossprods.chunk<-function(x,y=NULL,chunk,nChunks,use_tcrossprod=FALSE){
  
   if(!is.null(y)){ y=as.matrix(y) }
   chunkID=rep(1:nChunks,each=ceiling(n/nChunks))[1:n]
-  if(!is.null(y)){ y=y[chunkID==chunk,]}
+  if(!is.null(y)){ y=y[chunkID==chunk,,drop=FALSE]}
 
   if(use_tcrossprod){
-      X=X[,chunkID==chunk]
+      X=X[,chunkID==chunk,drop=FALSE]
       Xy=tcrossprod(X,y)
   }else{
-      X=X[chunkID==chunk,]
+      X=X[chunkID==chunk,,drop=FALSE]
       Xy=crossprod(X,y)
   }
   return(Xy)
