@@ -28,7 +28,8 @@ Depends:
     R (>= 3.0.0),
     ff
 Imports:
-    methods
+    methods,
+    parallel
 Suggests:
     testthat,
     lme4,

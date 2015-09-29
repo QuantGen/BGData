@@ -29,8 +29,6 @@ crossprods.chunk<-function(x,y=NULL,chunk,nChunks,use_tcrossprod=FALSE){
 #' @export
 crossprods<-function(x,y=NULL,nChunks=detectCores(),mc.cores=detectCores(),use_tcrossprod=FALSE){
   # Computes crossprod(x,y) or tcrossprod(x,y)
-  #
-  library(parallel)
   if(nChunks==1){
     if(use_tcrossprod){
      Xy=tcrossprod(x,y)
