@@ -127,6 +127,8 @@ getG<-function(x,nChunks=ceiling(ncol(x)/1e3),scaleCol=TRUE,scaleG=TRUE,verbose=
               if(doParallel){
                 print('hello')
                 TMP<-crossprods(x=X,use_tcrossprod=TRUE,nChunks=nChunks2,mc.cores=mc.cores)
+                TMP2=tcrossprod(X)
+                print(all.equal(TMP,TMP2))
                 G<-G+TMP
               }else{
                 G<-G+tcrossprod(X)
