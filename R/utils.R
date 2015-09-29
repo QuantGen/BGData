@@ -1,5 +1,5 @@
 
-crossprods.chunk<-function(x,y=NULL,chunk,nChunks,use_tcrossprod=FALSE){
+crossprods.chunk<-function(chunk,x,y=NULL,nChunks,use_tcrossprod=FALSE){
   ## Performs crossprod() or tcrossprod()
   #  for a chunk (set of columns or sets of rows) of X
  
