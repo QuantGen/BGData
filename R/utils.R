@@ -123,15 +123,13 @@ getG<-function(x,nChunks=ceiling(ncol(x)/1e3),scaleCol=TRUE,scaleG=TRUE,verbose=
                 }
                 TMP<-is.na(X)
                 if(any(TMP)){    X<-ifelse(TMP,0,X) }
-                if(nChunks2>1){
-                  if(useCrossprods){
-                      G<-G+crossprods(x=X,use_tcrossprod=TRUE,nChunks=nChunks2,mc.cores=mc.cores)
-                  }else{
-                      G<-G+tcrossprod(X)
-                  }
-                }else{
-                  G<-G+tcrossprod(X)
-                }
+
+              if(useCrossprods){
+                G<-G+crossprods(x=X,use_tcrossprod=TRUE,nChunks=nChunks2,mc.cores=mc.cores)
+              }else{
+                G<-G+tcrossprod(X)
+              }
+
             }
         }
     }
