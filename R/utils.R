@@ -10,10 +10,10 @@ crossprods.chunk<-function(chunk,x,y=NULL,nChunks,use_tcrossprod=FALSE){
   if(!is.null(y)){ y=y[chunkID==chunk,,drop=FALSE]}
 
   if(use_tcrossprod){
-      X=X[,chunkID==chunk,drop=FALSE]
+      X=x[,chunkID==chunk,drop=FALSE]
       Xy=tcrossprod(X,y)
   }else{
-      X=X[chunkID==chunk,,drop=FALSE]
+      X=x[chunkID==chunk,,drop=FALSE]
       Xy=crossprod(X,y)
   }
   return(Xy)
