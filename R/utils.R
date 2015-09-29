@@ -63,7 +63,7 @@ crossprods<-function(x,y=NULL,nChunks=detectCores(),mc.cores=detectCores(),use_t
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @export
 getG<-function(x,nChunks=ceiling(ncol(x)/1e3),scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,i=1:nrow(x),j=1:ncol(x),minVar=1e-5,
-               nChunks2=1,mc.cores=detectCores()){
+               nChunks2=detectCores(),mc.cores=detectCores()){
     nX<-nrow(x); pX<-ncol(x); centerCol=TRUE # if this is made a parameter the imputation od NAs need to be modified.
     
     # converting boolean to integer index (it leads to a more efficient subsetting than booleans)
@@ -116,7 +116,11 @@ getG<-function(x,nChunks=ceiling(ncol(x)/1e3),scaleCol=TRUE,scaleG=TRUE,verbose=
                 }
                 TMP<-is.na(X)
                 if(any(TMP)){    X<-ifelse(TMP,0,X) }
-                G<-G+crossprods(x=X,use_tcrossprod=TRUE,nChunks=nChunks2,mc.cores=mc.cores)
+                if(nChunks2>1){
+                  G<-G+crossprods(x=X,use_tcrossprod=TRUE,nChunks=nChunks2,mc.cores=mc.cores)
+                }else{
+                  G<-G+tcrossprod(X)
+                }
             }
         }
     }
