@@ -1,7 +1,7 @@
 
 crossprods.chunk<-function(chunk,x,y=NULL,nChunks,use_tcrossprod=FALSE){
   ## Performs crossprod() or tcrossprod()
-  #  for a chunk (set of columns or sets of rows) of X
+  #  for a chunk (set of columns or sets of rows) of x
  
   n<-ifelse(use_tcrossprod,ncol(x),nrow(x))
  
@@ -68,7 +68,7 @@ crossprods<-function(x,y=NULL,nChunks=detectCores(),mc.cores=detectCores(),use_t
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @export
 getG<-function(x,nChunks=ceiling(ncol(x)/1e3),scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,i=1:nrow(x),j=1:ncol(x),minVar=1e-5,
-               nChunks2=detectCores(),mc.cores=detectCores(),doParallel=T){
+               nChunks2=detectCores(),mc.cores=detectCores()){
     nX<-nrow(x); pX<-ncol(x); centerCol=TRUE # if this is made a parameter the imputation od NAs need to be modified.
     
     # converting boolean to integer index (it leads to a more efficient subsetting than booleans)
@@ -122,16 +122,12 @@ getG<-function(x,nChunks=ceiling(ncol(x)/1e3),scaleCol=TRUE,scaleG=TRUE,verbose=
                 TMP<-is.na(X)
                 if(any(TMP)){    X<-ifelse(TMP,0,X) }
 
-              if(doParallel){
-                print('hello')
+              if(nChunks2>1){
                 TMP<-crossprods(x=X,use_tcrossprod=TRUE,nChunks=nChunks2,mc.cores=mc.cores)
-                TMP2=tcrossprod(X)
-                print(all.equal(TMP,TMP2))
-                G<-G+TMP
               }else{
-                G<-G+tcrossprod(X)
+                TMP<-tcrossprod(X)
               }
-
+              G<-G+TMP
             }
         }
     }
