@@ -139,6 +139,99 @@ getG<-function(x,nChunks=ceiling(ncol(x)/1e3),scaleCol=TRUE,scaleG=TRUE,verbose=
     return(G)
 }
 
+getG2<-function(x,nChunks=ceiling(ncol(x)/1e3),scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,i=NULL,j=NULL,minVar=1e-5,
+              i1=NULL,i2=NULL,nChunks2=detectCores(),mc.cores=detectCores()){
+    nX<-nrow(x); pX<-ncol(x); centerCol=TRUE # if this is made a parameter the imputation od NAs need to be modified.
+    
+    if(is.null(i)){
+      if(is.null(i1)|is.null(i2)){
+        i=1:nrow(x)
+        i1=NULL
+        i2=NULL
+      }else{
+        i=c(i1,i2)  
+      }
+    }else{ 
+      i1=NULL
+      i2=NULL
+    }
+    
+    if(is.null(j)){ j=1:ncol(x) }
+    
+    # need to make this more general, convert character to boolean, booleand to integer
+    if(is.logical(i)){ i<-which(i) }
+    if(is.logical(j)){ j<-which(j) }
+    
+    n<-length(i); 	p<-length(j)
+    
+    if( (min(i)<1)|(max(i)>nX)){ stop('Index out of bounds') }
+    if( (min(j)<1)|(max(j)>pX)){ stop('Index out of bounds') }
+    
+    if(is.null(i1)){
+      G<-matrix(0,nrow=n,ncol=n)
+      rownames(G)<-rownames(tmp)
+      colnames(G)<-rownames(G)
+    }else{
+      n1=length(i1)
+      n2<-length(i2)
+      G<-matrix(nrow=n1,ncol=n2,0)
+      tmp=rownames(x)
+      rownames(G)<-tmp[i1]
+      colnames(G)<-tmp[i2]
+    }
+    
+    #*#
+    end<-0;
+    delta<-ceiling(p/nChunks);
+    
+    for(k in 1:nChunks){
+        ini<-end+1;
+        if(ini<=p){
+            end<-min(p,ini+delta-1)
+            if(verbose){
+        	    cat("Chunk: ",k," (markers ", ini,":",end," ~",round(100*end/p,1),"% done)\n",sep="");
+                cat("  =>Acquiring genotypes...\n")
+            }
+        
+            # subset
+            tmp<-j[ini:end]
+            X=x[i,tmp,drop=FALSE];
+        
+            if(scaleCol){
+                VAR<-apply(X=X,FUN=var,MARGIN=2,na.rm=TRUE)
+                tmp<-which(VAR<minVar)
+                if(length(tmp)>0){
+                    X<-X[,-tmp]
+                    VAR<-VAR[-tmp]
+                }
+            }
+        
+            if(ncol(X)>0){
+                if(verbose){ cat("  =>Computing...\n") }
+                if(centerCol|scaleCol){
+                    X<-scale(X,center=centerCol,scale=scaleCol)
+                }
+                TMP<-is.na(X)
+                if(any(TMP)){    X<-ifelse(TMP,0,X) }
+
+              if(nChunks2>1){
+                TMP<-crossprods(x=X,use_tcrossprod=TRUE,nChunks=nChunks2,mc.cores=mc.cores)
+              }else{
+                TMP<-tcrossprod(X)
+              }
+              G<-G+TMP
+            }
+        }
+    }
+    if(scaleG){
+        tmp<-mean(diag(G))
+        G<-G/tmp
+    }
+    
+    return(G)
+}
+
+
 #' Generate and store a simulated plaintext raw PED file (see \code{--recodeA}
 #' in PLINK) or PED-like file for testing purposes.
 #' 
