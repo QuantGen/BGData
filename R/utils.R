@@ -139,10 +139,11 @@ getG<-function(x,nChunks=ceiling(ncol(x)/1e3),scaleCol=TRUE,scaleG=TRUE,verbose=
     return(G)
 }
 
-getG2<-function(x,nChunks=ceiling(ncol(x)/1e3),scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,i=NULL,j=NULL,minVar=1e-5,
+getG2<-function(x,nChunks=ceiling(ncol(x)/1e3),scales=NULL,centers=NULL,scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,i=NULL,j=NULL,minVar=1e-5,
               i1=NULL,i2=NULL,nChunks2=detectCores(),mc.cores=detectCores()){
     nX<-nrow(x); pX<-ncol(x); centerCol=TRUE # if this is made a parameter the imputation od NAs need to be modified.
     
+    # here we need to be sure that if i1 or i2 is null both must be null
     if(is.null(i)){
       if(is.null(i1)|is.null(i2)){
         i=1:nrow(x)
@@ -150,6 +151,7 @@ getG2<-function(x,nChunks=ceiling(ncol(x)/1e3),scaleCol=TRUE,scaleG=TRUE,verbose
         i2=NULL
       }else{
         i=c(i1,i2)  
+        if(scaleG){ sumDiag=0 }
       }
     }else{ 
       i1=NULL
@@ -169,8 +171,9 @@ getG2<-function(x,nChunks=ceiling(ncol(x)/1e3),scaleCol=TRUE,scaleG=TRUE,verbose
     
     if(is.null(i1)){
       G<-matrix(0,nrow=n,ncol=n)
-      rownames(G)<-rownames(tmp)
-      colnames(G)<-rownames(G)
+      tmp<-rownames(G)
+      rownames(G)<-tmp
+      colnames(G)<-tmp
     }else{
       n1=length(i1)
       n2<-length(i2)
@@ -180,7 +183,6 @@ getG2<-function(x,nChunks=ceiling(ncol(x)/1e3),scaleCol=TRUE,scaleG=TRUE,verbose
       colnames(G)<-tmp[i2]
     }
     
-    #*#
     end<-0;
     delta<-ceiling(p/nChunks);
     
@@ -198,12 +200,12 @@ getG2<-function(x,nChunks=ceiling(ncol(x)/1e3),scaleCol=TRUE,scaleG=TRUE,verbose
             X=x[i,tmp,drop=FALSE];
         
             if(scaleCol){
-                VAR<-apply(X=X,FUN=var,MARGIN=2,na.rm=TRUE)
-                tmp<-which(VAR<minVar)
-                if(length(tmp)>0){
-                    X<-X[,-tmp]
-                    VAR<-VAR[-tmp]
-                }
+              VAR<-apply(X=X,FUN=var,MARGIN=2,na.rm=TRUE)
+              tmp<-which(VAR<minVar)
+              if(length(tmp)>0){
+                  X<-X[,-tmp]
+                  VAR<-VAR[-tmp]
+              }
             }
         
             if(ncol(X)>0){
@@ -215,9 +217,21 @@ getG2<-function(x,nChunks=ceiling(ncol(x)/1e3),scaleCol=TRUE,scaleG=TRUE,verbose
                 if(any(TMP)){    X<-ifelse(TMP,0,X) }
 
               if(nChunks2>1){
-                TMP<-crossprods(x=X,use_tcrossprod=TRUE,nChunks=nChunks2,mc.cores=mc.cores)
+                if(is.null(i1){
+                  TMP<-crossprods(x=X,use_tcrossprod=TRUE,nChunks=nChunks2,mc.cores=mc.cores)
+                }else{
+                  X1<-X[1:n1,,drop=FALSE]
+                  X2<-X[-(1:n1),,drop=FALSE]
+                  TMP<-crossprods(x=X1,y=X2,use_tcrossprod=TRUE,nChunks=nChunks2,mc.cores=mc.cores)
+                }
               }else{
-                TMP<-tcrossprod(X)
+                if(is.null(i1)){
+                  TMP<-tcrossprod(X)
+                }else{
+                  X1<-X[1:n1,,drop=FALSE]
+                  X2<-X[-(1:n1),,drop=FALSE]
+                  TMP<-tcrossprod(x=X1,y=X2)
+                }
               }
               G<-G+TMP
             }
