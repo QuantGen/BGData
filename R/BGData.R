@@ -167,45 +167,26 @@ readPED.default<-function(fileIn,header,dataType,class,n=NULL,p=NULL,na.strings=
                           dimorder=NULL){
 
     if(is.null(n)){
-        # gzfile and readLines throw some warnings, but since it works, let's
-        # disable warnings for this block
-        warnLevel<-unlist(options('warn'))
-        options(warn=-1)
-        detN<-gzfile(fileIn,open='r')
-        n <- 0
-        while(length(readLines(detN,n=1))>0){
-            n<-n+1
-        }
-        if(header){
-            n<-n-1
-        }
-        close(detN)
-        # restore previous warning level
-        options(warn=warnLevel)
+        n<-getLineCount(fileIn,header)
     }
     if(header){
-        pedFile<-gzfile(fileIn,open='r')
-        tmp<-scan(pedFile,nlines=1,what=character(),quiet=TRUE)
-        p<-length(tmp)-nColSkip
-        phtNames<-tmp[1:nColSkip]
-        mrkNames<-tmp[-(1:nColSkip)]
+        headerLine<-getFileHeader(fileIn)
+        p<-length(headerLine)-nColSkip
+        phtNames<-headerLine[1:nColSkip]
+        mrkNames<-headerLine[-(1:nColSkip)]
     }else{
         if(is.null(p)){
-            detP<-gzfile(fileIn,open='r')
-            tmp<-scan(detP,nlines=1,what=character(),quiet=TRUE)
-            p<-length(tmp)-nColSkip
-            close(detP)
+            p<-getColumnCount(fileIn)-nColSkip
         }
-        pedFile<-gzfile(fileIn,open='r')
         phtNames<-paste('v_',1:nColSkip,sep='')
         mrkNames<-paste('mrk_',1:p,sep='')
     }
 
-    IDs<-rep(NA,n)
-
+    # Prepare pheno and add colnames
     pheno<-matrix(nrow=n,ncol=nColSkip)
     colnames(pheno)<-phtNames
 
+    # Prepare geno and add colnames
     if(class=='matrix'){
         geno<-matrix(nrow=n,ncol=p)
     }else{
@@ -277,15 +258,18 @@ readPED.default<-function(fileIn,header,dataType,class,n=NULL,p=NULL,na.strings=
         # Generate index
         index<-LinkedMatrix::index(geno)
     }
-
     colnames(geno)<-mrkNames
 
+    # Parse PED file
+    pedFile<-gzfile(fileIn,open='r')
+    if(header){
+        scan(pedFile,nlines=1,what=character(),quiet=TRUE)
+    }
     for(i in 1:n){
         time<-proc.time()
         xSkip<-scan(pedFile,n=nColSkip,what=character(),quiet=TRUE)
         x<-scan(pedFile,n=p,what=dataType,na.strings=na.strings,quiet=TRUE)
         pheno[i,]<-xSkip
-        IDs[i]<-xSkip[idCol]
         if(class=='matrix'){
             geno[i,]<-x
         }else{
@@ -297,15 +281,16 @@ readPED.default<-function(fileIn,header,dataType,class,n=NULL,p=NULL,na.strings=
     }
     close(pedFile)
 
-    # Adding names
-    rownames(geno)<-IDs
-    rownames(pheno)<-IDs
+    # Add rownames
+    rownames(geno)<-pheno[, idCol]
+    rownames(pheno)<-pheno[, idCol]
 
+    # Convert pheno to a data.frame
     pheno<-as.data.frame(pheno,stringsAsFactors=FALSE)
     pheno[]<-lapply(pheno,type.convert,as.is=TRUE)
 
+    # Construct BGData object
     BGData<-new('BGData',geno=geno,pheno=pheno)
-
     if(class!='matrix'){
         attr(BGData,'origFile')<-list(path=fileIn,dataType=typeof(dataType))
         attr(BGData,'dateCreated')<-date()

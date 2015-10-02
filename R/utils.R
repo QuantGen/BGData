@@ -497,6 +497,41 @@ simPED<-function(filename,n,p,genoChars=0:2,na.string=NA,propNA=.02,returnGenos=
 }
 
 
+getLineCount<-function(path,header){
+    # gzfile and readLines throw some warnings, but since it works, let's
+    # disable warnings for this block
+    warnLevel<-unlist(options('warn'))
+    options(warn=-1)
+    file<-gzfile(path,open='r')
+    n <- 0
+    while(length(readLines(file,n=1))>0){
+        n<-n+1
+    }
+    if(header){
+        n<-n-1
+    }
+    close(file)
+    # restore previous warning level
+    options(warn=warnLevel)
+    return(n)
+}
+
+
+getFileHeader<-function(path){
+    file<-gzfile(path,open='r')
+    header<-scan(file,nlines=1,what=character(),quiet=TRUE)
+    close(file)
+    return(header)
+}
+
+
+getColumnCount<-function(path){
+    header<-getFileHeader(path)
+    p<-length(header)
+    return(p)
+}
+
+
 randomString<-function(){
     paste(sample(c(0:9,letters,LETTERS),size=5,replace=TRUE),collapse="")
 }
