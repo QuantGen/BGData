@@ -196,7 +196,7 @@ getG2<-function(x,nChunks=ceiling(ncol(x)/2e5),scales=NULL,centers=NULL,scaleCol
               tmp<-which(scales.chunk<sqrt(minVar))
               if(length(tmp)>0){
                   X<-X[,-tmp]
-                  scales<-scales[-tmp]
+                  scales.chunk<-scales.chunk[-tmp]
               }
               K<-K+length(scales.chunk)
             }else{
@@ -219,7 +219,7 @@ getG2<-function(x,nChunks=ceiling(ncol(x)/2e5),scales=NULL,centers=NULL,scaleCol
                   		TMP<-crossprods(x=X,use_tcrossprod=TRUE,nChunks=nChunks2,mc.cores=mc.cores)
                 	}else{
                   		X1<-X[1:n,,drop=FALSE]
-                  		X2<-X[(n+1):(n1+n2),,drop=FALSE]
+                  		X2<-X[(n+1):(n+n2),,drop=FALSE]
                   		TMP<-crossprods(x=X1,y=X2,use_tcrossprod=TRUE,nChunks=nChunks2,mc.cores=mc.cores)
                 	}
               	}else{
@@ -227,7 +227,7 @@ getG2<-function(x,nChunks=ceiling(ncol(x)/2e5),scales=NULL,centers=NULL,scaleCol
                   		TMP<-tcrossprod(X)
                 	}else{
                   		X1<-X[1:n,,drop=FALSE]
-                  		X2<-X[(n+1):(n1+n2),,drop=FALSE]
+                  		X2<-X[(n+1):(n+n2),,drop=FALSE]
                   		TMP<-tcrossprod(x=X1,y=X2)
                 	}
               	}
@@ -249,6 +249,7 @@ getG2<-function(x,nChunks=ceiling(ncol(x)/2e5),scales=NULL,centers=NULL,scaleCol
     return(G)
 }
 
+#G12<-getG2(X,i=i1,i2=i2)
 
 
 #' Generate and store a simulated plaintext raw PED file (see \code{--recodeA}
