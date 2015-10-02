@@ -261,7 +261,7 @@ readPED.default<-function(fileIn,header,dataType,class,n=NULL,p=NULL,na.strings=
 }
 
 
-#' Loads BGData or mmMatrix objects.
+#' Loads BGData objects.
 #' 
 #' @param file The name of the .RData file to be loaded (and possibly a path).
 #' @param envir The environment where to load the data.
@@ -286,28 +286,21 @@ load2<-function(file,envir=parent.frame(),verbose=TRUE){
     # determining object class
     objectClass<-class(get(objectName))
 
+    if(objectClass!='BGData'){ stop( ' Object class must be BGData')}
+
     if(verbose){
         cat(' Meta data (',fname,') and its data were stored at folder ',path,'.\n',sep='')
         cat(' Object Name: ',objectName,'\n',sep='')
         cat(' Object Class: ',objectClass,'\n',sep='')
     }
-    if(!(objectClass%in%c('BGData','rmmMatrix','cmmMatrix'))){ stop( ' Object class must be either BGData, cmmMatrix or rmmMatrix')}
 
     # Determining number of chunks
-    if(objectClass=='BGData'){
-        tmpChunks<-chunks(get(objectName)@geno)
-    }else{
-        tmpChunks<-chunks(get(objectName))
-    }
+    tmpChunks<-chunks(get(objectName)@geno)
 
     # opening files
     for(i in 1:nrow(tmpChunks)){
         if(verbose){ cat(' Opening flat file ', i,'\n')  }
-        if(objectClass=='BGData'){
-            open(get(objectName)@geno[[i]])
-        }else{
-            open(get(objectName)[[i]])
-        }
+        open(get(objectName)@geno[[i]])
     }
     # sending the object to envir
     assign(objectName,get(objectName), envir=envir)
