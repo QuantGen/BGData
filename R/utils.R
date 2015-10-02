@@ -139,47 +139,34 @@ getG<-function(x,nChunks=ceiling(ncol(x)/1e3),scaleCol=TRUE,scaleG=TRUE,verbose=
     return(G)
 }
 
-getG2<-function(x,nChunks=ceiling(ncol(x)/1e3),scales=NULL,centers=NULL,scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,i=NULL,j=NULL,minVar=1e-5,
-              i1=NULL,i2=NULL,nChunks2=detectCores(),mc.cores=detectCores()){
+getG2<-function(x,nChunks=ceiling(ncol(x)/2e5),scales=NULL,centers=NULL,scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,
+                i=1:nrow(x),i2=NULL,j=1:ncol(x),minVar=1e-5,nChunks2=detectCores(),mc.cores=detectCores()){
+                
     nX<-nrow(x); pX<-ncol(x); centerCol=TRUE # if this is made a parameter the imputation od NAs need to be modified.
-    
-    # here we need to be sure that if i1 or i2 is null both must be null
-    if(is.null(i)){
-      if(is.null(i1)|is.null(i2)){
-        i=1:nrow(x)
-        i1=NULL
-        i2=NULL
-      }else{
-        i=c(i1,i2)  
-        if(scaleG){ sumDiag=0 }
-      }
-    }else{ 
-      i1=NULL
-      i2=NULL
-    }
-    
-    if(is.null(j)){ j=1:ncol(x) }
-    
+        
     # need to make this more general, convert character to boolean, booleand to integer
     if(is.logical(i)){ i<-which(i) }
     if(is.logical(j)){ j<-which(j) }
     
-    n<-length(i); 	p<-length(j)
+    K<-0
+    
+    n<-length(i)
+    p<-length(j)
+    n2<-length(i2)
     
     if( (min(i)<1)|(max(i)>nX)){ stop('Index out of bounds') }
     if( (min(j)<1)|(max(j)>pX)){ stop('Index out of bounds') }
     
-    if(is.null(i1)){
+    if(is.null(i2)){
       G<-matrix(0,nrow=n,ncol=n)
       tmp<-rownames(G)
       rownames(G)<-tmp
       colnames(G)<-tmp
     }else{
-      n1=length(i1)
       n2<-length(i2)
-      G<-matrix(nrow=n1,ncol=n2,0)
+      G<-matrix(nrow=n,ncol=n2,0)
       tmp=rownames(x)
-      rownames(G)<-tmp[i1]
+      rownames(G)<-tmp[i]
       colnames(G)<-tmp[i2]
     }
     
@@ -191,59 +178,77 @@ getG2<-function(x,nChunks=ceiling(ncol(x)/1e3),scales=NULL,centers=NULL,scaleCol
         if(ini<=p){
             end<-min(p,ini+delta-1)
             if(verbose){
-        	    cat("Chunk: ",k," (markers ", ini,":",end," ~",round(100*end/p,1),"% done)\n",sep="");
+        	    cat("Working with chunk: ",k," (markers ", ini,":",end," ~",round(100*ini/p,1),"% done)\n",sep="");
                 cat("  =>Acquiring genotypes...\n")
             }
         
             # subset
-            tmp<-j[ini:end]
-            X=x[i,tmp,drop=FALSE];
+            tmpCol<-j[ini:end]
+            X=x[c(i,i2),tmpCol,drop=FALSE];
         
             if(scaleCol){
-              VAR<-apply(X=X,FUN=var,MARGIN=2,na.rm=TRUE)
-              tmp<-which(VAR<minVar)
+              if(is.null(scales)){
+              	scales.chunk<-apply(X=X,FUN=sd,MARGIN=2,na.rm=TRUE)
+              }else{
+              	scales.chunk=scales[tmpCol]
+              
+              }
+              tmp<-which(scales.chunk<sqrt(minVar))
               if(length(tmp)>0){
                   X<-X[,-tmp]
-                  VAR<-VAR[-tmp]
+                  scales<-scales[-tmp]
               }
+              K<-K+length(scales.chunk)
+            }else{
+            	scales.chunk=FALSE
+            	if(!is.null(i2)){
+            		K<-K+sum(apply(X=X,FUN=var,MARGIN=2,na.rm=TRUE))
+            	}
             }
         
             if(ncol(X)>0){
                 if(verbose){ cat("  =>Computing...\n") }
                 if(centerCol|scaleCol){
-                    X<-scale(X,center=centerCol,scale=scaleCol)
+                    X<-scale(X,center=centerCol,scale=scales.chunk)
                 }
                 TMP<-is.na(X)
                 if(any(TMP)){    X<-ifelse(TMP,0,X) }
 
-              if(nChunks2>1){
-                if(is.null(i1){
-                  TMP<-crossprods(x=X,use_tcrossprod=TRUE,nChunks=nChunks2,mc.cores=mc.cores)
-                }else{
-                  X1<-X[1:n1,,drop=FALSE]
-                  X2<-X[-(1:n1),,drop=FALSE]
-                  TMP<-crossprods(x=X1,y=X2,use_tcrossprod=TRUE,nChunks=nChunks2,mc.cores=mc.cores)
-                }
-              }else{
-                if(is.null(i1)){
-                  TMP<-tcrossprod(X)
-                }else{
-                  X1<-X[1:n1,,drop=FALSE]
-                  X2<-X[-(1:n1),,drop=FALSE]
-                  TMP<-tcrossprod(x=X1,y=X2)
-                }
-              }
-              G<-G+TMP
+              	if(nChunks2>1){
+                	if(is.null(i2)){
+                  		TMP<-crossprods(x=X,use_tcrossprod=TRUE,nChunks=nChunks2,mc.cores=mc.cores)
+                	}else{
+                  		X1<-X[1:n,,drop=FALSE]
+                  		X2<-X[(n+1):(n1+n2),,drop=FALSE]
+                  		TMP<-crossprods(x=X1,y=X2,use_tcrossprod=TRUE,nChunks=nChunks2,mc.cores=mc.cores)
+                	}
+              	}else{
+                	if(is.null(i2)){
+                  		TMP<-tcrossprod(X)
+                	}else{
+                  		X1<-X[1:n,,drop=FALSE]
+                  		X2<-X[(n+1):(n1+n2),,drop=FALSE]
+                  		TMP<-tcrossprod(x=X1,y=X2)
+                	}
+              	}
+              	G<-G+TMP
             }
         }
     }
     if(scaleG){
-        tmp<-mean(diag(G))
-        G<-G/tmp
+    	if(is.null(i2)){
+	        tmp<-mean(diag(G))
+    	    G<-G/tmp
+    	}else{
+    		if(K>0){
+    			G<-G/K
+    		}
+    	}
     }
     
     return(G)
 }
+
 
 
 #' Generate and store a simulated plaintext raw PED file (see \code{--recodeA}
