@@ -313,7 +313,7 @@ load2<-function(file,envir=parent.frame(),verbose=TRUE){
     setwd(path)
 
     # determining object class
-    objectClass<-class(eval(parse(text=objectName)))
+    objectClass<-class(get(objectName))
 
     if(verbose){
         cat(' Meta data (',fname,') and its data were stored at folder ',path,'.\n',sep='')
@@ -324,18 +324,18 @@ load2<-function(file,envir=parent.frame(),verbose=TRUE){
 
     # Determining number of chunks
     if(objectClass=='BGData'){
-        tmpChunks<-chunks(eval(parse(text=paste0(objectName,'@geno'))))
+        tmpChunks<-chunks(get(objectName)@geno)
     }else{
-        tmpChunks<-chunks(eval(parse(text=objectName)))
+        tmpChunks<-chunks(get(objectName))
     }
 
     # opening files
     for(i in 1:nrow(tmpChunks)){
         if(verbose){ cat(' Opening flat file ', i,'\n')  }
         if(objectClass=='BGData'){
-            open(eval(parse(text=paste0(objectName,'@geno[[',i,']]'))))
+            open(get(objectName)@geno[[i]])
         }else{
-            open(eval(parse(text=paste0(objectName,'[[',i,']]'))))
+            open(get(objectName)[[i]])
         }
     }
     # sending the object to envir
