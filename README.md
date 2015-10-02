@@ -29,7 +29,7 @@ The classes `ColumnLinkedMatrix` and `RowLinkedMatrix` were designed to hold gen
 
 ### Methods Implemented for `RowLinkedMatrix` and `ColumnLinkedMatrix`
 - `[` and `[<-` for subsetting and replacement, respectively
-- `dim(x)`, `nrow(x)`, `ncol(x) `  
+- `dim(x)`, `nrow(x)`, `ncol(x)`
 - `rownames(x)`, `colnames(x)`, `dimnames(x)`
 - `colSums(x)`, `colMeans(x)`, `rowSums(x)`, `rowMeans(x)`
 - `summary(x)`
@@ -38,10 +38,10 @@ The classes `ColumnLinkedMatrix` and `RowLinkedMatrix` were designed to hold gen
 - `colindexes(x, columns)` returns the global (in the `ColumnLinkedMatrix` object) and local (in each of the `ff` objects that constitute the chunks of the `ColumnLinkedMatrix`) indexes for a set of columns
 - `rowindexes(x, columns)` returns the global (in the `RowLinkedMatrix` object) and local (in each of the `ff` objects that constitute the chunks of the `RowLinkedMatrix`) indexes for a set of rows
 - `getG(x, ...)` computes a genomic relationship matrix (XX') with options for centering and scaling
-- `as.matrix(x)` converts an `LinkedMatrix` to a matrix (if small enough)
+- `as.matrix(x)` converts a `LinkedMatrix` to a matrix (if small enough)
 
 ### Methods Implemented for `BGData`
-- Both `readPED` and `readPED.matrix` create a `BGData` object from a plaintext file containing the phenotypes and genotypes (individuals in rows, phenotypes in the first few columns, markers in the remaining columns, e.g. the raw format in [PLINK](http://pngu.mgh.harvard.edu/~purcell/plink/dataman.shtml)). `readPED` stores genotype information in an `RowLinkedMatrix` or `ColumnLinkedMatrix` (dependending on the value of the `distributed.by` parameter) while `readPED.matrix` uses a regular matrix.
+- Both `readPED` and `readPED.matrix` create a `BGData` object from a plaintext file containing the phenotypes and genotypes (individuals in rows, phenotypes in the first few columns, markers in the remaining columns, e.g. the raw format in [PLINK](http://pngu.mgh.harvard.edu/~purcell/plink/dataman.shtml)). `readPED` stores genotype information in a `RowLinkedMatrix` or `ColumnLinkedMatrix` (dependending on the value of the `distributed.by` parameter) while `readPED.matrix` uses a regular matrix.
 - `GWAS` uses a `BGData` object to conduct single marker association tests using regression methods such as `lm()`, `glm()` or `lmer()`
 
 
@@ -64,7 +64,7 @@ Alternatively, you can download the most recent version as a bundle for [Windows
 The `BGData` package has to be installed to follow along. The example data used in this introduction was generated from the `mice` dataset of the `BGLR` package and serves as an example on how to create a `BGData` object from a plaintext file. We have uploaded it for convenience and it can be downloaded at https://github.com/QuantGen/BGData/raw/data/mice.raw.gz, but you can also generate it in the following way:
 
 ```R
-## Writes genotypes in an ASCII files
+# Writes genotypes in an ASCII file
 library(BGLR)
 data(mice)
 gzmice <- gzfile('mice.raw.gz', 'w')
@@ -78,51 +78,44 @@ A `BGData` object has three slots: `@pheno`, `@geno`, and `@map`. The phenotypes
 
 ```R
 library(BGData)
-BGData <- readPED(fileIn='mice.raw.gz', header=TRUE,
-                  dataType=integer(), nColSkip=17, idCol=1)
-head(BGData@pheno)
-dim(BGData@geno)
-dim(BGData@map)
+BGData <- readPED(fileIn='mice.raw.gz', header=TRUE, dataType=integer(), nColSkip=17, idCol=1)
+str(BGData)
 ```
 
 ### Reloading a `BGData` object from the filesystem
-The genotypes in a `BGData` object are backed by an efficient binary representation of the original dataset on the filesystem, an `LinkedMatrix`. By default `readPED` stores this representation as files called `geno_*.bin` in the current working directory in a folder that starts with `BGData_` followed by the filename without extension. To reload a `BGData` object from the filesystem, load the accompanying `BGData.RData` file in that directory using the `load.BGData` function.
+The genotypes in a `BGData` object are backed by an efficient binary representation of the original dataset on the filesystem, a `LinkedMatrix`. By default `readPED` stores this representation as files called `geno_*.bin` in the current working directory in a folder that starts with `BGData_` followed by the filename without extension. To reload a `BGData` object from the filesystem, load the accompanying `BGData.RData` file in that directory using the `load.BGData` function.
 
 ```R
 rm(BGData)
 load.BGData('BGData_mice.ped/BGData.RData')
-head(BGData@pheno)
 dim(BGData@geno)
-dim(BGData@map)
 ```
 
 `BGData` objects can also be loaded using the regular `load` function, but you have to change your current working directory to the one that contains the file for it to work.
 
 ```R
 rm(BGData)
-# Note: The working directory must be the one where the binary files (geno_*.bin) are saved.
+# The working directory must be the one where the binary files (geno_*.bin) are saved.
 setwd('BGData_mice.ped/')
 load('BGData.RData')
-head(BGData@pheno)
 dim(BGData@geno)
-dim(BGData@map)
 ```
 
 ### Exploring operators
-An `LinkedMatrix` object (the datatype of the contents of the `@geno` slot of a `BGData` object) behaves like any other matrix, even though its data is stored on the filesystem and is never read into memory in its entirety at a given time. This allows for convenient analysis of large datasets, with seamless integration into the rest of R's capabilities. Subsetting, replacement, and other functions have been implemented.
+A `LinkedMatrix` object (the datatype of the contents of the `@geno` slot of a `BGData` object) behaves like any other matrix, even though its data is stored on the filesystem and is never read into memory in its entirety at a given time. This allows for convenient analysis of large datasets, with seamless integration into the rest of R's capabilities. Subsetting, replacement, and other functions have been implemented.
 
 ```R
 # Subsetting
-BGData@geno[1,]
-BGData@geno[,1]
-BGData@geno[1:10,]
-BGData@geno[,1:10]
-BGData@geno[1,1]
+BGData@geno[1, ]
+BGData@geno[, 1]
+BGData@geno[1:10, ]
+BGData@geno[, 1:10]
+BGData@geno[1, 1]
 
 # Replacement
-BGData@geno[1,1] <- NA
+BGData@geno[1, 1] <- NA
 
-# Other generic
+# Other methods
 dim(BGData@geno)
 nrow(BGData@geno)
 ncol(BGData@geno)
@@ -145,29 +138,25 @@ A data structure for genomic data is useful when defining methods that act on bo
 
 ```R
 # lm (set plot=TRUE to get a Manhattan plot of the p values)
-fmLM <- GWAS(formula=Obesity.BMI~GENDER+Litter, data=BGData, method='lm',plot=T)
+fmLM <- GWAS(formula=Obesity.BMI~GENDER+Litter, data=BGData, method='lm', plot=T)
 
 # glm (set plot=TRUE to get a Manhattan plot of the p values)
-BGData@pheno$GENDER01 <- ifelse(BGData@pheno[,'GENDER'] == 'M', 1, 0)
-fmGLM <- GWAS(formula=GENDER01~Obesity.BMI, data=BGData, method='glm',
-              family='binomial')
+BGData@pheno$GENDER01 <- ifelse(BGData@pheno[, 'GENDER'] == 'M', 1, 0)
+fmGLM <- GWAS(formula=GENDER01~Obesity.BMI, data=BGData, method='glm', family='binomial')
 
 # lmer (set plot=TRUE to get a Manhattan plot of the p values)
-fmLMER <- GWAS(formula=Obesity.BMI~GENDER+Litter+(1|cage), 
-               data=BGData, method='lmer')
+fmLMER <- GWAS(formula=Obesity.BMI~GENDER+Litter+(1|cage), data=BGData, method='lmer')
 
-# SKAT (set plot=TRUE to get a Manhattan plot of the p values) 
-groups <- ceiling(1:ncol(genData@geno) / 5)
-fmSKAT <- GWAS(formula=Obesity.BMI~GENDER+Litter, 
-               data=genData, method='SKAT', groups=groups)
+# SKAT (set plot=TRUE to get a Manhattan plot of the p values)
+groups <- ceiling(1:ncol(BGData@geno) / 5)
+fmSKAT <- GWAS(formula=Obesity.BMI~GENDER+Litter, data=BGData, method='SKAT', groups=groups)
 ```
 
 ### Adding columns to phenotype data
 `@pheno` is stored as a regular data frame and can be modified. These changes will also be available in functions such as `GWAS`.
 
 ```R
-newPheno <- data.frame(SUBJECT.NAME=BGData@pheno$SUBJECT.NAME,
-                       NEWCOLUMN=1:nrow(BGData@pheno))
+newPheno <- data.frame(SUBJECT.NAME=BGData@pheno$SUBJECT.NAME, NEWCOLUMN=1:nrow(BGData@pheno))
 BGData@pheno <- merge(BGData@pheno, newPheno, by='SUBJECT.NAME', sort=FALSE)
 ```
 
