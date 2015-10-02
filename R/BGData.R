@@ -122,7 +122,7 @@ readPED<-function(fileIn,header,dataType,n=NULL,p=NULL,na.strings='NA',
 
     readPED.default(fileIn=fileIn,header=header,dataType=dataType,class=class,
                     n=n,p=p,na.strings=na.strings,nColSkip=nColSkip,idCol=idCol,
-                    returnData=returnData,verbose=verbose,nChunks=nChunks,
+                    verbose=verbose,returnData=returnData,nChunks=nChunks,
                     vmode=vmode,folderOut=folderOut,dimorder=dimorder)
 }
 
@@ -158,11 +158,11 @@ readPED.matrix<-function(fileIn,header,dataType,n=NULL,p=NULL,
 
     readPED.default(fileIn=fileIn,header=header,dataType=normalizeType(dataType),
                     class="matrix",n=n,p=p,na.strings=na.strings,nColSkip=nColSkip,
-                    idCol=idCol,returnData=TRUE,verbose=verbose)
+                    idCol=idCol,verbose=verbose,returnData=TRUE)
 }
 
 readPED.default<-function(fileIn,header,dataType,class,n=NULL,p=NULL,na.strings='NA',
-                          nColSkip=6,idCol=2,returnData=TRUE,verbose=FALSE,nChunks=NULL,
+                          nColSkip=6,idCol=2,verbose=FALSE,returnData=TRUE,nChunks=NULL,
                           vmode=NULL,folderOut=paste('BGData_',sub("\\.[[:alnum:]]+$","",basename(fileIn)),sep=''),
                           dimorder=NULL){
 
