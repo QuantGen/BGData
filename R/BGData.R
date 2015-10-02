@@ -263,49 +263,56 @@ readPED.default<-function(fileIn,header,dataType,class,n=NULL,p=NULL,na.strings=
 
 #' Loads BGData objects.
 #' 
-#' @param file The name of the .RData file to be loaded (and possibly a path).
+#' @param file The name of the .RData file to be loaded.
 #' @param envir The environment where to load the data.
 #' @param verbose TRUE/FALSE
-#' @seealso \code{\link{loadBGData}}
 #' @export
 load2<-function(file,envir=parent.frame(),verbose=TRUE){
-    # determining the object name
-    lsOLD<-ls();
-    load(file=file)
-    lsNEW<-ls();
-    objectName<-lsNEW[(!lsNEW%in%lsOLD)&(lsNEW!='lsOLD')];
 
-    # determining path and filename
+    # Determine object name
+    lsOLD<-ls()
+    load(file=file)
+    lsNEW<-ls()
+    objectName<-lsNEW[(!lsNEW%in%lsOLD)&(lsNEW!='lsOLD')]
+
+    # Determine path and filename
     path<-dirname(file)
     fname<-basename(file)
 
-    # stores current working directiory and sets working directory to path
+    # Store current working directory and set working directory to path
     cwd<-getwd()
     setwd(path)
 
-    # determining object class
+    # Determine object class
     objectClass<-class(get(objectName))
-
-    if(objectClass!='BGData'){ stop( ' Object class must be BGData')}
+    if(objectClass!='BGData'){
+        stop('Object class must be BGData')
+    }
 
     if(verbose){
-        cat(' Meta data (',fname,') and its data were stored at folder ',path,'.\n',sep='')
-        cat(' Object Name: ',objectName,'\n',sep='')
-        cat(' Object Class: ',objectClass,'\n',sep='')
+        cat('Meta data (',fname,') and its data were stored at folder ',path,'.\n',sep='')
+        cat('Object Name: ',objectName,'\n',sep='')
+        cat('Object Class: ',objectClass,'\n',sep='')
     }
 
-    # Determining number of chunks
-    tmpChunks<-chunks(get(objectName)@geno)
+    # Determine number of chunks
+    chunks<-chunks(get(objectName)@geno)
 
-    # opening files
-    for(i in 1:nrow(tmpChunks)){
-        if(verbose){ cat(' Opening flat file ', i,'\n')  }
+    # Open all chunks for reading (we do not store absolute paths to ff files,
+    # so this has to happen in the same working directory)
+    for(i in 1:nrow(chunks)){
+        if(verbose){
+            cat('Opening flat file ',i,'\n')
+        }
         open(get(objectName)@geno[[i]])
     }
-    # sending the object to envir
-    assign(objectName,get(objectName), envir=envir)
 
-    # restoring the working directory
+    # Send the object to envir
+    assign(objectName,get(objectName),envir=envir)
+
+    # Restore the working directory
     setwd(cwd)
-    if(verbose){ cat(' Original directory (',getwd(),') restored \n',sep='')}
+    if(verbose){
+        cat('Original directory (',getwd(),') restored \n',sep='')
+    }
 }
