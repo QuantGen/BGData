@@ -61,7 +61,7 @@ Alternatively, you can download the most recent version as a bundle for [Windows
 
 ### Prerequisites
 
-The `BGData` package has to be installed to follow along. The example data used in this introduction was generated from the `mice` dataset of the `BGLR` package and serves as an example on how to create a `BGData` object from a plaintext file. We have uploaded it for convenience and it can be downloaded at https://github.com/QuantGen/BGData/raw/data/mice.ped.gz, but you can also generate it in the following way:
+The `BGData` package has to be installed to follow along. The example data used in this introduction was generated from the `mice` dataset of the `BGLR` package and serves as an example on how to create a `BGData` object from a plaintext file. We have uploaded it for convenience and it can be downloaded at https://github.com/QuantGen/BGData/raw/data/mice.raw.gz, but you can also generate it in the following way:
 
 ```R
 ## Writes genotypes in an ASCII files
