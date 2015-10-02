@@ -153,3 +153,23 @@ test_that("it reads a PED file into a matrix object", {
     genotypes <- restoreGenotypes()
     
 })
+
+context("load2")
+
+test_that("it loads BGData objects", {
+    
+    # Create dummy BGData object without returning data
+    path <- paste0(tmpPath, 'BGData-', randomString())
+    readPED(fileIn = pedPath, header = TRUE, dataType = integer(), folderOut = path,
+            returnData = FALSE)
+    expect_true(!("BGData" %in% ls()))
+    
+    # Append BGData.RData to path
+    path <- paste0(path, '/', 'BGData.RData')
+
+    # Load BGData object
+    load2(path, verbose = FALSE)
+    expect_true("BGData" %in% ls())
+    expect_equal(dim(BGData@geno), c(nRows, nCols))
+    
+})
