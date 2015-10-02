@@ -74,8 +74,8 @@ returns the \code{\linkS4class{BGData}} object to the environment. The
 filename of the \code{ff_matrix} objects are saved as relative names.
 Therefore, to be able to access the content of the data included in
 \code{@geno} the working directory must either be the folder where these
-files are saved (\code{folderOut}) or the object must be loaded either using
-\code{loadBGData} or \code{load2}.
+files are saved (\code{folderOut}) or the object must be loaded using
+\code{load2}.
 }
 \seealso{
 \code{\linkS4class{BGData}}, \code{mmMatrix},

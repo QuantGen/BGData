@@ -68,8 +68,8 @@ setMethod('initialize','BGData',function(.Object,geno,pheno,map){
 #' filename of the \code{ff_matrix} objects are saved as relative names.
 #' Therefore, to be able to access the content of the data included in
 #' \code{@@geno} the working directory must either be the folder where these
-#' files are saved (\code{folderOut}) or the object must be loaded either using 
-#' \code{loadBGData} or \code{load2}.
+#' files are saved (\code{folderOut}) or the object must be loaded using
+#' \code{load2}.
 #' 
 #' @param fileIn The path to the plaintext file.
 #' @param header If TRUE, the file contains a header.
@@ -258,35 +258,6 @@ readPED.default<-function(fileIn,header,dataType,class,n=NULL,p=NULL,na.strings=
     if(returnData){
         return(BGData)
     }
-}
-
-
-#' Loads a BGData object using the name of the folder where the metadata and
-#' data are stored.
-#' 
-#' @param path The name of the folder where the data and meta data are stored.
-#' @param envir The name of the environment where the object is returned.
-#' @seealso \code{\link{load2}} and \code{\link{readPED}}
-#' @export
-loadBGData<-function(path,envir=.GlobalEnv){
-    if('BGData'%in%ls(envir=envir)){
-        stop('There is already an object called BGData in the environment. Please move it.')
-    }
-    if(!file.exists(paste0(path,'/BGData.RData'))){
-        stop(paste('Could not find a BGData object in path',path))
-    }
-    cwd<-getwd()
-    setwd(path)
-    load('BGData.RData',envir)
-    cat('Loaded BGData object into environment under name BGData')
-    # Open all chunks for reading (we do not store absolute paths to ff files,
-    # so this has to happen in the same working directory)
-    chunks<-chunks(get('BGData', envir=envir)@geno)
-    for(i in 1:nrow(chunks)){
-        open(get('BGData', envir=envir)@geno[[i]])
-    }
-    # Restore working directory
-    setwd(cwd)
 }
 
 
