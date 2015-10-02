@@ -86,14 +86,23 @@ dim(BGData@map)
 ```
 
 ### Reloading a `BGData` object from the filesystem
-The genotypes in a `BGData` object are backed by an efficient binary representation of the original dataset on the filesystem, an `LinkedMatrix`. By default `readPED` stores this representation as files called `geno_*.bin` in the current working directory in a folder that starts with `BGData_` followed by the filename without extension. To reload a `BGData` object from the filesystem, load the accompanying `BGData.RData` file in that directory. There is one caveat, though: you have to change your current working directory to the one that contains the file for it to work.
+The genotypes in a `BGData` object are backed by an efficient binary representation of the original dataset on the filesystem, an `LinkedMatrix`. By default `readPED` stores this representation as files called `geno_*.bin` in the current working directory in a folder that starts with `BGData_` followed by the filename without extension. To reload a `BGData` object from the filesystem, load the accompanying `BGData.RData` file in that directory using the `load.BGData` function.
 
 ```R
 rm(BGData)
-# Note: The working directory must be the one where the binary files 
-#       (geno_*.bin) are saved.
+load.BGData('BGData_mice.ped/BGData.RData')
+head(BGData@pheno)
+dim(BGData@geno)
+dim(BGData@map)
+```
+
+`BGData` objects can also be loaded using the regular `load` function, but you have to change your current working directory to the one that contains the file for it to work.
+
+```R
+rm(BGData)
+# Note: The working directory must be the one where the binary files (geno_*.bin) are saved.
 setwd('BGData_mice.ped/')
-load.BGData('BGData.RData') # note: because we are laoding just the meta data we use load.BGData()
+load('BGData.RData')
 head(BGData@pheno)
 dim(BGData@geno)
 dim(BGData@map)
