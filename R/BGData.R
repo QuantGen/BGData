@@ -69,7 +69,7 @@ setMethod('initialize','BGData',function(.Object,geno,pheno,map){
 #' Therefore, to be able to access the content of the data included in
 #' \code{@@geno} the working directory must either be the folder where these
 #' files are saved (\code{folderOut}) or the object must be loaded using
-#' \code{load2}.
+#' \code{load.BGData}.
 #' 
 #' @param fileIn The path to the plaintext file.
 #' @param header If TRUE, the file contains a header.
@@ -267,7 +267,7 @@ readPED.default<-function(fileIn,header,dataType,class,n=NULL,p=NULL,na.strings=
 #' @param envir The environment where to load the data.
 #' @param verbose TRUE/FALSE
 #' @export
-load2<-function(file,envir=parent.frame(),verbose=TRUE){
+load.BGData<-function(file,envir=parent.frame(),verbose=TRUE){
 
     # Determine object name
     lsOLD<-ls()

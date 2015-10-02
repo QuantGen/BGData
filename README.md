@@ -92,7 +92,7 @@ rm(BGData)
 # Note: The working directory must be the one where the binary files 
 #       (geno_*.bin) are saved.
 setwd('BGData_mice.ped/')
-load2('BGData.RData') # note: because we are laoding just the meta data we use load2()
+load.BGData('BGData.RData') # note: because we are laoding just the meta data we use load.BGData()
 head(BGData@pheno)
 dim(BGData@geno)
 dim(BGData@map)
