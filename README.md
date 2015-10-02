@@ -67,7 +67,8 @@ The `BGData` package has to be installed to follow along. The example data used 
 ## Writes genotypes in an ASCII files
 library(BGLR)
 data(mice)
-write.table(cbind(mice.pheno, mice.X), 'mice.raw', quote=F,row.names=F)
+gzmice <- gzfile('mice.raw.gz', 'w')
+write.table(cbind(mice.pheno, mice.X), gzmice, quote=F, row.names=F)
 ```
 
 ### Converting a plaintext file (e.g. in PED format) to a `BGData` object
@@ -77,7 +78,7 @@ A `BGData` object has three slots: `@pheno`, `@geno`, and `@map`. The phenotypes
 
 ```R
 library(BGData)
-BGData <- readPED(fileIn='mice.raw', header=TRUE,
+BGData <- readPED(fileIn='mice.raw.gz', header=TRUE,
                   dataType=integer(), nColSkip=17, idCol=1)
 head(BGData@pheno)
 dim(BGData@geno)
