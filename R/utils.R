@@ -2,18 +2,23 @@
 crossprods.chunk<-function(chunk,x,y=NULL,nChunks,use_tcrossprod=FALSE){
   ## Performs crossprod() or tcrossprod()
   #  for a chunk (set of columns or sets of rows) of x
- 
-  n<-ifelse(use_tcrossprod,ncol(x),nrow(x))
- 
-  if(!is.null(y)){ y=as.matrix(y) }
-  chunkID=rep(1:nChunks,each=ceiling(n/nChunks))[1:n]
-  if(!is.null(y)){ y=y[,chunkID==chunk,drop=FALSE]}
-
+  if(!is.null(y)){ 
+        y=as.matrix(y)
+  	nY<-ifelse(use_tcrossprod,ncol(y),nrow(y))
+        chunkIDy=rep(1:nChunks,each=ceiling(nY/nChunks))[1:nY]
+  	if(use_tcrossprod){
+  		y=y[,chunkID==chunk,drop=FALSE]
+  	}else{
+  		y=y[chunkID==chunk,,drop=FALSE]  	
+  	}
+  }
+  nX<-ifelse(use_tcrossprod,ncol(x),nrow(x))
+  chunkIDx=rep(1:nChunks,each=ceiling(nX/nChunks))[1:nX]
   if(use_tcrossprod){
-      X=x[,chunkID==chunk,drop=FALSE]
+      X=x[,chunkIDx==chunk,drop=FALSE]
       Xy=tcrossprod(X,y)
   }else{
-      X=x[chunkID==chunk,,drop=FALSE]
+      X=x[chunkIDx==chunk,,drop=FALSE]
       Xy=crossprod(X,y)
   }
   return(Xy)
