@@ -7,9 +7,9 @@ crossprods.chunk<-function(chunk,x,y=NULL,nChunks,use_tcrossprod=FALSE){
   	nY<-ifelse(use_tcrossprod,ncol(y),nrow(y))
         chunkIDy=rep(1:nChunks,each=ceiling(nY/nChunks))[1:nY]
   	if(use_tcrossprod){
-  		y=y[,chunkID==chunk,drop=FALSE]
+  		y=y[,chunkIDy==chunk,drop=FALSE]
   	}else{
-  		y=y[chunkID==chunk,,drop=FALSE]  	
+  		y=y[chunkIDy==chunk,,drop=FALSE]  	
   	}
   }
   nX<-ifelse(use_tcrossprod,ncol(x),nrow(x))
@@ -144,10 +144,10 @@ getG<-function(x,nChunks=ceiling(ncol(x)/1e3),scaleCol=TRUE,scaleG=TRUE,verbose=
     return(G)
 }
 
-getG2<-function(x,nChunks=ceiling(ncol(x)/2e5),scales=NULL,centers=NULL,scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,
+getG2<-function(x,nChunks=ceiling(ncol(x)/2e5),scales=NULL,centers=NULL,scaleCol=FALSE,centerCol=FALSE,scaleG=FALSE,verbose=TRUE,
                 i=1:nrow(x),i2=NULL,j=1:ncol(x),minVar=1e-5,nChunks2=detectCores(),mc.cores=detectCores()){
                 
-    nX<-nrow(x); pX<-ncol(x); centerCol=TRUE # if this is made a parameter the imputation od NAs need to be modified.
+    nX<-nrow(x); pX<-ncol(x); #centerCol=TRUE # if this is made a parameter the imputation od NAs need to be modified.
         
     # need to make this more general, convert character to boolean, booleand to integer
     if(is.logical(i)){ i<-which(i) }
@@ -183,7 +183,7 @@ getG2<-function(x,nChunks=ceiling(ncol(x)/2e5),scales=NULL,centers=NULL,scaleCol
         if(ini<=p){
             end<-min(p,ini+delta-1)
             if(verbose){
-        	    cat("Working with chunk: ",k," (markers ", ini,":",end," ~",round(100*ini/p,1),"% done)\n",sep="");
+        	cat("Working with chunk: ",k," (markers ", ini,":",end," ~",round(100*ini/p,1),"% done)\n",sep="");
                 cat("  =>Acquiring genotypes...\n")
             }
         
