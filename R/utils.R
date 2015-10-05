@@ -32,7 +32,22 @@ crossprods.chunk<-function(chunk,x,y=NULL,nChunks,use_tcrossprod=FALSE){
 #' @param use_tcrossprod  if FALSE crossprods computes x'y or x'x (if y=NULL), otherwise crossprods computes xy' or xx' (if y=NULL).
 #' @return xx', x'x, x'y, or xy' depending on whether y is provided and on whether use_tcrossprod=TRUE/FALSE
 #' @export
+
+
 crossprods<-function(x,y=NULL,nChunks=detectCores(),mc.cores=detectCores(),use_tcrossprod=FALSE){
+  if(!is.null(y)){
+    if(use_tcrossprod){
+      if(ncol(x)!=ncol(y)){
+      	stop('Error in tcrossprod.parallel: non-conformable arguments.')
+      }
+    }else{
+      if(nrow(x)!=nrow(y)){
+      	stop('Error in crossprod.parallel: non-conformable arguments.')
+      }    
+    }
+  }
+
+
   # Computes crossprod(x,y) or tcrossprod(x,y)
   if(nChunks==1){
     if(use_tcrossprod){
@@ -54,7 +69,6 @@ crossprods<-function(x,y=NULL,nChunks=detectCores(),mc.cores=detectCores(),use_t
    return(Xy)
 }
 
-
 crossprod.parallel<-function(x,y=NULL,nChunks=detectCores(),mc.cores=detectCores()){
 	ans<-crossprods(x=x,y=y,nChunks=nChunks,mc.cores=mc.cores,use_tcrossprod=FALSE)
 	return(ans)
@@ -62,6 +76,92 @@ crossprod.parallel<-function(x,y=NULL,nChunks=detectCores(),mc.cores=detectCores
 tcrossprod.parallel<-function(x,y=NULL,nChunks=detectCores(),mc.cores=detectCores()){
 	ans<-crossprods(x=x,y=y,nChunks=nChunks,mc.cores=mc.cores,use_tcrossprod=TRUE)
 	return(ans)
+}
+
+
+if(FALSE){ # Tests for crossprod and tcrossprod
+      W=matrix(nrow=10,ncol=20,rnorm(200))
+      Z=matrix(nrow=10,ncol=2,rnorm(20))
+
+	# TESTING X'X;
+      TMP=crossprod(W)  
+      
+      TMP2=crossprod.parallel(W)
+      stopifnot(all.equal(TMP,TMP2))
+
+      TMP2=crossprod.parallel(W,nChunks=3,mc.cores=3)
+      stopifnot(all.equal(TMP,TMP2))
+
+      TMP2=crossprod.parallel(W,nChunks=1,mc.cores=3)
+      stopifnot(all.equal(TMP,TMP2))
+
+      TMP2=crossprod.parallel(W,nChunks=3,mc.cores=2)
+      stopifnot(all.equal(TMP,TMP2))
+
+      TMP2=crossprod.parallel(W,nChunks=1,mc.cores=1)
+      stopifnot(all.equal(TMP,TMP2))            
+      
+
+	# TESTING XX';
+      TMP=tcrossprod(W)  
+      
+      TMP2=tcrossprod.parallel(W)
+      stopifnot(all.equal(TMP,TMP2))
+
+      TMP2=tcrossprod.parallel(W,nChunks=3,mc.cores=3)
+      stopifnot(all.equal(TMP,TMP2))
+
+      TMP2=tcrossprod.parallel(W,nChunks=1,mc.cores=3)
+      stopifnot(all.equal(TMP,TMP2))
+
+      TMP2=tcrossprod.parallel(W,nChunks=3,mc.cores=2)
+      stopifnot(all.equal(TMP,TMP2))
+
+      TMP2=tcrossprod.parallel(W,nChunks=1,mc.cores=1)
+      stopifnot(all.equal(TMP,TMP2))            
+    
+     # Testing X'y
+      TMP=crossprod(W,y=Z)  
+      
+      TMP2=crossprod.parallel(W,y=Z)
+      stopifnot(all.equal(TMP,TMP2))
+
+      TMP2=crossprod.parallel(W,y=Z,nChunks=3,mc.cores=3)
+      stopifnot(all.equal(TMP,TMP2))
+
+      TMP2=crossprod.parallel(W,y=Z,nChunks=1,mc.cores=3)
+      stopifnot(all.equal(TMP,TMP2))
+
+      TMP2=crossprod.parallel(W,y=Z,nChunks=3,mc.cores=2)
+      stopifnot(all.equal(TMP,TMP2))
+
+      TMP2=crossprod.parallel(W,y=Z,nChunks=1,mc.cores=1)
+      stopifnot(all.equal(TMP,TMP2))      
+      
+  
+     # Testing XY'
+
+	  W=matrix(nrow=10,ncol=20,rnorm(200))
+	  Z=matrix(nrow=5,ncol=20,rnorm(100))
+
+
+      TMP=tcrossprod(W,y=Z)  
+      
+      TMP2=tcrossprod.parallel(W,y=Z)
+      stopifnot(all.equal(TMP,TMP2))
+
+      TMP2=tcrossprod.parallel(W,y=Z,nChunks=3,mc.cores=3)
+      stopifnot(all.equal(TMP,TMP2))
+
+      TMP2=tcrossprod.parallel(W,y=Z,nChunks=1,mc.cores=3)
+      stopifnot(all.equal(TMP,TMP2))
+
+      TMP2=tcrossprod.parallel(W,y=Z,nChunks=3,mc.cores=2)
+      stopifnot(all.equal(TMP,TMP2))
+      
+      TMP2=tcrossprod.parallel(W,y=Z,nChunks=1,mc.cores=1)
+      stopifnot(all.equal(TMP,TMP2))      
+      
 }
 
 #' Computes a genomic relationship matrix G=xx'.
