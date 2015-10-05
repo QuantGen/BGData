@@ -69,6 +69,7 @@ library(BGLR)
 data(mice)
 gzmice <- gzfile('mice.raw.gz', 'w')
 write.table(cbind(mice.pheno, mice.X), gzmice, quote=F, row.names=F)
+close(gzmice)
 ```
 
 ### Converting a plaintext file (e.g. in PED format) to a `BGData` object
