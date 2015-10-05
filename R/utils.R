@@ -54,6 +54,15 @@ crossprods<-function(x,y=NULL,nChunks=detectCores(),mc.cores=detectCores(),use_t
    return(Xy)
 }
 
+crossprod.parallel<-function(x,y=NULL,nChunks=detectCores(),mc.cores=detectCores()){
+	ans<-crossprods(x=x,y=y,x,nChunks=detectCores(),mc.cores=detectCores(),use_tcrossprod=FALSE)
+	return(ans)
+}
+tcrossprod.parallel<-function(x,y=NULL,nChunks=detectCores(),mc.cores=detectCores()){
+	ans<-crossprods(x=x,y=y,x,nChunks=detectCores(),mc.cores=detectCores(),use_tcrossprod=TRUE)
+	return(ans)
+}
+
 #' Computes a genomic relationship matrix G=xx'.
 #' 
 #' Offers options for centering and scaling the columns of x before computing
