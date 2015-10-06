@@ -338,11 +338,11 @@ load.BGData<-function(file,envir=parent.frame(),verbose=TRUE){
     }
 
     # Determine number of chunks
-    chunks<-LinkedMatrix::chunks(get(objectName)@geno)
+    chunks<-length(get(objectName)@geno)
 
     # Open all chunks for reading (we do not store absolute paths to ff files,
     # so this has to happen in the same working directory)
-    for(i in 1:nrow(chunks)){
+    for(i in 1:chunks){
         if(verbose){
             cat('Opening flat file ',i,'\n')
         }
