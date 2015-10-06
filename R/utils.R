@@ -162,7 +162,7 @@ if(FALSE){ # Tests for crossprod and tcrossprod
       TMP2=tcrossprod.parallel(W,y=Z,nChunks=1,mc.cores=1)
       stopifnot(all.equal(TMP,TMP2))      
       
-}
+}# end of tests
 
 #' Computes a genomic relationship matrix G=xx'.
 #' 
@@ -382,7 +382,83 @@ getGij<-function(x,i1,i2,scales,centers,scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,n
      return(G)
 }
 
-#G12<-getG2(X,i=i1,i2=i2)
+
+# Tests for Gij
+
+if(FALSE){
+
+## Tests for getGij
+ n=155
+ p=1237
+ X=matrix(nrow=n,ncol=p,data=rnorm(n*p))
+ 
+ centers=colMeans(X)
+ scales=apply(X=X,MARGIN=2,FUN=sd)
+ 
+ nChunks=c(1,2,3)
+ mc.cores<-nChunks
+ nChunks2=nChunks
+ 
+ for(i in 1:3){
+ 	for(j in 1:3){
+ 		for(k in 1:3){
+  			print(paste(i,j,k))
+ 	    	
+ 
+ 	    	# all scalings
+ 			i1=sample(1:nrow(X),size=3)
+ 			i2=sample(1:nrow(X),size=4)
+ 			G=tcrossprod(scale(X)); G=G/mean(diag(G))
+ 			G_12<-getGij(x=X,i1=i1,i2=i2,centers=colMeans(X),scales=apply(FUN=sd,X=X,MARGIN=2)*sqrt((n-1)/n),scaleG=T,verbose=F,scaleCol=TRUE)
+ 			stopifnot(all.equal(G[i1,i2],G_12))
+ 			
+ 			i2=i1
+ 			G_12<-getGij(x=X,i1=i1,i2=i2,centers=colMeans(X),scales=apply(FUN=sd,X=X,MARGIN=2)*sqrt((n-1)/n),scaleG=T,verbose=F)
+ 			stopifnot(all.equal(G[i1,i2],G_12))
+
+ 
+ 	    	# without scaling to average diagonal=1
+			i1=sample(1:nrow(X),size=3)
+ 			i2=sample(1:nrow(X),size=4)
+
+ 			G=tcrossprod(scale(X)*sqrt(n/(n-1)))
+ 			G_12<-getGij(x=X,i1=i1,i2=i2,centers=colMeans(X),scales=apply(FUN=sd,X=X,MARGIN=2)*sqrt((n-1)/n),scaleG=F,verbose=F)
+ 			stopifnot(all.equal(G[i1,i2],G_12))
+ 			
+ 			i2=i1
+ 			G_12<-getGij(x=X,i1=i1,i2=i2,centers=colMeans(X),scales=apply(FUN=sd,X=X,MARGIN=2)*sqrt((n-1)/n),scaleG=F,verbose=F)
+ 			stopifnot(all.equal(G[i1,i2],G_12))
+
+
+
+			# without scaling columns, but scaling average diagonal =1
+			i1=sample(1:nrow(X),size=3)
+ 			i2=sample(1:nrow(X),size=4)
+
+ 			G=tcrossprod(scale(X,center=T,scale=F)); G=G/ncol(X)
+ 			G_12<-getGij(x=X,i1=i1,i2=i2,centers=colMeans(X),scales=rep(1,ncol(X)),scaleG=T,verbose=F)
+			stopifnot(all.equal(G[i1,i2],G_12))
+
+
+			i2=i1
+ 			G_12<-getGij(x=X,i1=i1,i2=i2,centers=colMeans(X),scales=rep(1,ncol(X)),scaleG=T,verbose=F)
+			stopifnot(all.equal(G[i1,i2],G_12))			
+			
+			# no scaling at all
+			i1=sample(1:nrow(X),size=3)
+ 			i2=sample(1:nrow(X),size=4)
+
+ 			G=tcrossprod(scale(X,center=T,scale=F))
+ 			G_12<-getGij(x=X,i1=i1,i2=i2,centers=colMeans(X),scales=rep(1,ncol(X)),scaleG=F,verbose=F)
+			stopifnot(all.equal(G[i1,i2],G_12))
+
+			i2=i1 			
+ 			G_12<-getGij(x=X,i1=i1,i2=i2,centers=colMeans(X),scales=rep(1,ncol(X)),scaleG=F,verbose=F)
+			stopifnot(all.equal(G[i1,i2],G_12)) 			
+ 		}
+ 	}
+ }
+} # end of tests
 
 
 #' Performs single marker regressions using a \code{\linkS4class{BGData}} 
