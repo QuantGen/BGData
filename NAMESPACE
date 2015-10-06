@@ -2,8 +2,10 @@
 
 export(BGData)
 export(GWAS)
-export(crossprods)
+export(crossprod.parallel)
+export(tcrossprod.parallel)
 export(getG)
+export(getGij)
 export(load.BGData)
 export(readPED)
 export(readPED.matrix)
