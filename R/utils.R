@@ -254,6 +254,49 @@ getG<-function(x,nChunks=ceiling(ncol(x)/1e4),scaleCol=TRUE,scaleG=TRUE,verbose=
     return(G)
 }
 
+
+
+## Tests for getG
+if(FALSE){
+ n=155
+ p=1237
+ X=matrix(nrow=n,ncol=p,data=rnorm(n*p)
+ nChunks=c(1,2,3)
+ mc.cores<-nChunks
+ nChunks2=nChunks
+ for(i in 1:3){
+ 	for(j in 1:3){
+ 		for(k in 1:3){
+ 			print(paste(i,j,k))
+ 	    		# all scalings
+ 			G=tcrossprod(scale(X)); G=G/mean(diag(G))
+ 			G2<-getG(x=X,scaleG=T,scaleCol=T,verbose=F,nChunks=i,mc.cores=j,nChunks2=k)
+ 			stopifnot(all.equal(G,G2))
+ 
+ 	    		# without scaling to average diagonal=1
+ 			G=tcrossprod(scale(X))
+ 			G2<-getG(x=X,scaleG=F,scaleCol=T,verbose=F,nChunks=i,mc.cores=j,nChunks2=k)
+ 			stopifnot(all.equal(G,G2))
+
+			# without scaling columns, but scaling average diagonal =1
+ 			G=tcrossprod(scale(X,center=T,scale=F)); G=G/mean(diag(G))
+ 			G2<-getG(x=X,scaleG=T,scaleCol=F,verbose=F,nChunks=i,mc.cores=j,nChunks2=k)
+ 			stopifnot(all.equal(G,G2))
+
+			# no scaling at all
+ 			G=tcrossprod(scale(X,center=T,scale=F))
+ 			G2<-getG(x=X,scaleG=F,scaleCol=F,verbose=F,nChunks=i,mc.cores=j,nChunks2=k)
+ 			stopifnot(all.equal(G,G2))
+ 		}
+ 	}
+ }
+ 
+  X[sample(1:100,size=20)]<-NA
+  G<-getG(X)
+  stopifnot(!any(is.na(G)))
+=
+}
+
 getGij<-function(x,i1,i2,scales,centers,scaleG=TRUE,verbose=TRUE,nChunks=ceiling(ncol(x)/1e4),
                 j=1:ncol(x),minVar=1e-5,nChunks2=(detectCores()-1),mc.cores=(detectCores()-1),impute=TRUE){
                 
