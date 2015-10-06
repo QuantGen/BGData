@@ -254,34 +254,29 @@ getG<-function(x,nChunks=ceiling(ncol(x)/1e4),scaleCol=TRUE,scaleG=TRUE,verbose=
     return(G)
 }
 
-getG2<-function(x,nChunks=ceiling(ncol(x)/1e4),scales=NULL,centers=NULL,scaleCol=TRUE,centerCol=TRUE,scaleG=TRUE,verbose=TRUE,
-                i=1:nrow(x),i2=NULL,j=1:ncol(x),minVar=1e-5,nChunks2=(detectCores()-1),mc.cores=(detectCores()-1),impute=TRUE){
+getGij<-function(x,i1,i2,scales,centers,scaleG=TRUE,verbose=TRUE,nChunks=ceiling(ncol(x)/1e4),
+                j=1:ncol(x),minVar=1e-5,nChunks2=(detectCores()-1),mc.cores=(detectCores()-1),impute=TRUE){
                 
-    nX<-nrow(x); pX<-ncol(x); #centerCol=TRUE # if this is made a parameter the imputation od NAs need to be modified.
+    nX<-nrow(x); pX<-ncol(x)
+    K=0
         
     # need to make this more general, convert character to boolean, booleand to integer
-    if(is.logical(i)){ i<-which(i) }
+    if(is.logical(i1)){ i1<-which(i1) }
+    if(is.logical(i2)){ i1<-which(i2) }
     if(is.logical(j)){ j<-which(j) }
     
-    n<-length(i)
+    n1<-length(i1)
     p<-length(j)
     n2<-length(i2)
     
-    if( (min(i)<1)|(max(i)>nX)){ stop('Index out of bounds') }
+    if( (min(i1)<1)|(max(i1)>nX)){ stop('Index out of bounds') }
+    if( (min(i2)<1)|(max(i2)>nX)){ stop('Index out of bounds') }
     if( (min(j)<1)|(max(j)>pX)){ stop('Index out of bounds') }
     
-    if(is.null(i2)){
-      G<-matrix(0,nrow=n,ncol=n)
-      tmp<-rownames(G)
-      rownames(G)<-tmp
-      colnames(G)<-tmp
-    }else{
-      n2<-length(i2)
-      G<-matrix(nrow=n,ncol=n2,0)
-      tmp=rownames(x)
-      rownames(G)<-tmp[i]
-      colnames(G)<-tmp[i2]
-    }
+    G<-matrix(nrow=n1,ncol=n2,0)
+    tmp=rownames(x)
+    rownames(G)<-tmp[i1]
+    colnames(G)<-tmp[i2]
     
     end<-0;
     delta<-ceiling(p/nChunks);
@@ -297,56 +292,35 @@ getG2<-function(x,nChunks=ceiling(ncol(x)/1e4),scales=NULL,centers=NULL,scaleCol
         
             # subset
             tmpCol<-j[ini:end]
-            X=x[c(i,i2),tmpCol,drop=FALSE];
-        
-            if(scaleCol){
-              if(is.null(scales)){
-              	scales.chunk<-apply(X=X,FUN=sd,MARGIN=2,na.rm=TRUE)
-              }else{
-              	scales.chunk=scales[tmpCol]
-              }
-              tmp<-which(scales.chunk<sqrt(minVar))
-              if(length(tmp)>0){
-                X<-X[,-tmp]
-                scales.chunk<-scales.chunk[-tmp]
-              }
-
-            }else{   
-                scales.chunk=FALSE  
+            K<-K+length(tmpCol)
+            X1=x[i1,tmpCol,drop=FALSE];
+            X2=x[i2,tmpCol,drop=FALSE];
+            centers.chunk=centers[tmpCol]
+            scales.chunk=scales[tmpCol]
+            tmp<-which(scales.chunk<sqrt(minVar))
+            if(length(tmp)>0){
+               K<-K-length(tmp)
+               X1<-X1[,-tmp]
+               X2<-X2[,-tmp]
+               scales.chunk<-scales.chunk[-tmp]
+               centers.chunk<-centers.chunk[-tmp]
             }
-  
-            if(ncol(X)>0){
+            
+            if(ncol(X1)>0){
                 if(verbose){ cat("  =>Computing...\n") }
-                if(centerCol|scaleCol){
-                    X<-scale(X,center=centerCol,scale=scales.chunk)
-                }
-                TMP<-is.na(X)
-                if(any(TMP)){    X<-ifelse(TMP,0,X) }
-
-              	if(nChunks2>1){
-                	if(is.null(i2)){
-                  		TMP<-crossprods(x=X,use_tcrossprod=TRUE,nChunks=nChunks2,mc.cores=mc.cores)
-                	}else{
-                  		X1<-X[1:n,,drop=FALSE]
-                  		X2<-X[(n+1):(n+n2),,drop=FALSE]
-                  		TMP<-crossprods(x=X1,y=X2,use_tcrossprod=TRUE,nChunks=nChunks2,mc.cores=mc.cores)
-                	}
-              	}else{
-                	if(is.null(i2)){
-                  		TMP<-tcrossprod(X)
-                	}else{
-                  		X1<-X[1:n,,drop=FALSE]
-                  		X2<-X[(n+1):(n+n2),,drop=FALSE]
-                  		TMP<-tcrossprod(x=X1,y=X2)
-                	}
-              	}
+                X1<-scale(X1,center=centers.chunk,scale=scales.chunk)
+                TMP<-is.na(X1)
+                if(any(TMP)){    X1<-ifelse(TMP,0,X1) }
+                X2<-scale(X2,center=centers.chunk,scale=scales.chunk)
+                TMP<-is.na(X2)
+                if(any(TMP)){    X2<-ifelse(TMP,0,X2) }
+		TMP<-tcrossprod.parallel(x=X1,y=X2,mc.core=mc.cores,nChunks=nChunks2)
               	G<-G+TMP
             }
         }
     }
     if(scaleG){
- 	 tmp<-mean(diag(G))
-    	 G<-G/tmp
+    	 G<-G/K
      }
      return(G)
 }
