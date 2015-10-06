@@ -141,8 +141,8 @@ if(FALSE){ # Tests for crossprod and tcrossprod
   
      # Testing XY'
 
-	  W=matrix(nrow=10,ncol=20,rnorm(200))
-	  Z=matrix(nrow=5,ncol=20,rnorm(100))
+      W=matrix(nrow=10,ncol=20,rnorm(200))
+      Z=matrix(nrow=5,ncol=20,rnorm(100))
 
 
       TMP=tcrossprod(W,y=Z)  
@@ -294,7 +294,7 @@ if(FALSE){
   X[sample(1:100,size=20)]<-NA
   G<-getG(X)
   stopifnot(!any(is.na(G)))
-=
+
 }
 
 getGij<-function(x,i1,i2,scales,centers,scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,nChunks=ceiling(ncol(x)/1e4),
