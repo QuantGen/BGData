@@ -297,7 +297,7 @@ if(FALSE){
 =
 }
 
-getGij<-function(x,i1,i2,scales,centers,scaleG=TRUE,verbose=TRUE,nChunks=ceiling(ncol(x)/1e4),
+getGij<-function(x,i1,i2,scales,centers,scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,nChunks=ceiling(ncol(x)/1e4),
                 j=1:ncol(x),minVar=1e-5,nChunks2=(detectCores()-1),mc.cores=(detectCores()-1),impute=TRUE){
                 
     nX<-nrow(x); pX<-ncol(x)
@@ -335,21 +335,26 @@ getGij<-function(x,i1,i2,scales,centers,scaleG=TRUE,verbose=TRUE,nChunks=ceiling
         
             # subset
             tmpCol<-j[ini:end]
-            K<-K+length(tmpCol)
+            #K<-K+length(tmpCol)
             X1=x[i1,tmpCol,drop=FALSE];
             X2=x[i2,tmpCol,drop=FALSE];
+            
             centers.chunk=centers[tmpCol]
             scales.chunk=scales[tmpCol]
-            tmp<-which(scales.chunk<sqrt(minVar))
-            if(length(tmp)>0){
-               K<-K-length(tmp)
-               X1<-X1[,-tmp]
-               X2<-X2[,-tmp]
-               scales.chunk<-scales.chunk[-tmp]
-               centers.chunk<-centers.chunk[-tmp]
+            if(scaleCol){
+            	tmp<-which(scales.chunk<sqrt(minVar))
+            	
+            	if(length(tmp)>0){
+        	  #K<-K-length(tmp)
+               	  X1<-X1[,-tmp]
+               	  X2<-X2[,-tmp]
+               	  scales.chunk<-scales.chunk[-tmp]
+               	  centers.chunk<-centers.chunk[-tmp]
+            	}
             }
             
             if(ncol(X1)>0){
+            	scales.chunk<-ifelse(scaleCol,scales.chunk,FALSE)
                 if(verbose){ cat("  =>Computing...\n") }
                 X1<-scale(X1,center=centers.chunk,scale=scales.chunk)
                 TMP<-is.na(X1)
@@ -359,6 +364,13 @@ getGij<-function(x,i1,i2,scales,centers,scaleG=TRUE,verbose=TRUE,nChunks=ceiling
                 if(any(TMP)){    X2<-ifelse(TMP,0,X2) }
 		TMP<-tcrossprod.parallel(x=X1,y=X2,mc.core=mc.cores,nChunks=nChunks2)
               	G<-G+TMP
+            }
+            if(scaleG){
+            	if(scaleCol){
+            	   K<-K+ncol(X1)
+            	}else{
+            	   K<-K+sum(scales.chunk^2)	
+            	}
             }
         }
     }
