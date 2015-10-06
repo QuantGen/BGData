@@ -182,7 +182,7 @@ if(FALSE){ # Tests for crossprod and tcrossprod
 #'   used. By default, all columns are used.
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @export
-getG<-function(x,nChunks=ceiling(ncol(x)/1e3),scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,i=1:nrow(x),j=1:ncol(x),minVar=1e-5,
+getG<-function(x,nChunks=ceiling(ncol(x)/1e4),scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,i=1:nrow(x),j=1:ncol(x),minVar=1e-5,
                nChunks2=detectCores(),mc.cores=detectCores()){
     nX<-nrow(x); pX<-ncol(x); centerCol=TRUE # if this is made a parameter the imputation od NAs need to be modified.
     
@@ -254,16 +254,14 @@ getG<-function(x,nChunks=ceiling(ncol(x)/1e3),scaleCol=TRUE,scaleG=TRUE,verbose=
     return(G)
 }
 
-getG2<-function(x,nChunks=ceiling(ncol(x)/2e5),scales=NULL,centers=NULL,scaleCol=FALSE,centerCol=FALSE,scaleG=FALSE,verbose=TRUE,
-                i=1:nrow(x),i2=NULL,j=1:ncol(x),minVar=1e-5,nChunks2=detectCores(),mc.cores=detectCores()){
+getG2<-function(x,nChunks=ceiling(ncol(x)/1e4),scales=NULL,centers=NULL,scaleCol=TRUE,centerCol=TRUE,scaleG=TRUE,verbose=TRUE,
+                i=1:nrow(x),i2=NULL,j=1:ncol(x),minVar=1e-5,nChunks2=(detectCores()-1),mc.cores=(detectCores()-1),impute=TRUE){
                 
     nX<-nrow(x); pX<-ncol(x); #centerCol=TRUE # if this is made a parameter the imputation od NAs need to be modified.
         
     # need to make this more general, convert character to boolean, booleand to integer
     if(is.logical(i)){ i<-which(i) }
     if(is.logical(j)){ j<-which(j) }
-    
-    K<-0
     
     n<-length(i)
     p<-length(j)
@@ -306,21 +304,17 @@ getG2<-function(x,nChunks=ceiling(ncol(x)/2e5),scales=NULL,centers=NULL,scaleCol
               	scales.chunk<-apply(X=X,FUN=sd,MARGIN=2,na.rm=TRUE)
               }else{
               	scales.chunk=scales[tmpCol]
-              
               }
               tmp<-which(scales.chunk<sqrt(minVar))
               if(length(tmp)>0){
-                  X<-X[,-tmp]
-                  scales.chunk<-scales.chunk[-tmp]
+                X<-X[,-tmp]
+                scales.chunk<-scales.chunk[-tmp]
               }
-              K<-K+length(scales.chunk)
-            }else{
-            	scales.chunk=FALSE
-            	if(!is.null(i2)){
-            		K<-K+sum(apply(X=X,FUN=var,MARGIN=2,na.rm=TRUE))
-            	}
+
+            }else{   
+                scales.chunk=FALSE  
             }
-        
+  
             if(ncol(X)>0){
                 if(verbose){ cat("  =>Computing...\n") }
                 if(centerCol|scaleCol){
@@ -351,17 +345,10 @@ getG2<-function(x,nChunks=ceiling(ncol(x)/2e5),scales=NULL,centers=NULL,scaleCol
         }
     }
     if(scaleG){
-    	if(is.null(i2)){
-	        tmp<-mean(diag(G))
-    	    G<-G/tmp
-    	}else{
-    		if(K>0){
-    			G<-G/K
-    		}
-    	}
-    }
-    
-    return(G)
+ 	 tmp<-mean(diag(G))
+    	 G<-G/tmp
+     }
+     return(G)
 }
 
 #G12<-getG2(X,i=i1,i2=i2)
