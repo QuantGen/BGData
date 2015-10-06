@@ -338,9 +338,9 @@ getGij<-function(x,i1,i2,scales,centers,scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,n
             #K<-K+length(tmpCol)
             X1=x[i1,tmpCol,drop=FALSE];
             X2=x[i2,tmpCol,drop=FALSE];
-            
             centers.chunk=centers[tmpCol]
             scales.chunk=scales[tmpCol]
+            
             if(scaleCol){
             	tmp<-which(scales.chunk<sqrt(minVar))
             	
@@ -354,7 +354,9 @@ getGij<-function(x,i1,i2,scales,centers,scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,n
             }
             
             if(ncol(X1)>0){
-            	scales.chunk<-ifelse(scaleCol,scales.chunk,FALSE)
+            	if(!scaleCol){
+            		scales.chunk<-FALSE
+                }
                 if(verbose){ cat("  =>Computing...\n") }
                 X1<-scale(X1,center=centers.chunk,scale=scales.chunk)
                 TMP<-is.na(X1)
