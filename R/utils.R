@@ -297,8 +297,9 @@ if(FALSE){
 
 }
 
-getGij<-function(x,i1,i2,scales,centers,scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,nChunks=ceiling(ncol(x)/1e4),
-                j=1:ncol(x),minVar=1e-5,nChunks2=(detectCores()-1),mc.cores=(detectCores()-1),impute=TRUE){
+getGij<-function(x,i1,i2,scales,centers,scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,nChunks=ceiling(ncol(x)/1e4),returnG=TRUE,
+                j=1:ncol(x),minVar=1e-5,nChunks2=(detectCores()-1),mc.cores=(detectCores()-1),impute=TRUE,
+                saveG=FALSE,saveType='RData',saveName='Gij'){
                 
     nX<-nrow(x); pX<-ncol(x)
     K=0
@@ -379,7 +380,17 @@ getGij<-function(x,i1,i2,scales,centers,scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,n
     if(scaleG){
     	 G<-G/K
      }
-     return(G)
+     
+     if(saveG){
+     	if(saveType=='RData'){
+     		save(G,file=paste0(saveName,'.RData'))
+     	}
+     	if(saveType=='ff'){
+     		Gij=as.ff(G,file=paste0(saveName,'.bin'))
+     		save(Gij,file=paste0(saveName,'.ff'))
+     	}
+     }
+     if(returnG){  return(G) }
 }
 
 
