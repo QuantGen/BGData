@@ -260,7 +260,7 @@ getG<-function(x,nChunks=ceiling(ncol(x)/1e4),scaleCol=TRUE,scaleG=TRUE,verbose=
 if(FALSE){
  n=155
  p=1237
- X=matrix(nrow=n,ncol=p,data=rnorm(n*p)
+ X=matrix(nrow=n,ncol=p,data=rnorm(n*p))
  nChunks=c(1,2,3)
  mc.cores<-nChunks
  nChunks2=nChunks
