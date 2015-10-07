@@ -7,9 +7,9 @@ raw PED file (generated with \code{--recodeA} in PLINK) or PED-like file.}
 \usage{
 readPED(fileIn, header, dataType, n = NULL, p = NULL, na.strings = "NA",
   nColSkip = 6, idCol = 2, verbose = FALSE, nNodes = NULL,
-  distributed.by = "rows", folderOut = paste("BGData_",
-  sub("\\\\.[[:alnum:]]+$", "", basename(fileIn)), sep = ""), dimorder = if
-  (distributed.by == "rows") 2:1 else 1:2)
+  linked.by = "rows", folderOut = paste("BGData_", sub("\\\\.[[:alnum:]]+$",
+  "", basename(fileIn)), sep = ""), dimorder = if (linked.by == "rows") 2:1
+  else 1:2)
 }
 \arguments{
 \item{fileIn}{The path to the plaintext file.}
@@ -37,9 +37,9 @@ information in the file.}
 
 \item{nNodes}{The number of nodes to create.}
 
-\item{distributed.by}{If columns a column-distributed matrix
-(\code{\linkS4class{ColumnLinkedMatrix}}) is created, if rows a row-distributed
-matrix (\code{\linkS4class{RowLinkedMatrix}}).}
+\item{linked.by}{If \code{columns} a column-linked matrix
+(\code{\linkS4class{ColumnLinkedMatrix}}) is created, if \code{rows} a
+row-linked matrix (\code{\linkS4class{RowLinkedMatrix}}).}
 
 \item{folderOut}{The path to the folder where to save the binary files.}
 
@@ -56,7 +56,7 @@ determine variables names for \code{@pheno} and marker names for
 \code{@map} and \code{@geno}. Genotypes are stored in a distributed matrix
 (\code{LinkedMatrix}). By default a column-distributed
 (\code{\linkS4class{ColumnLinkedMatrix}}) is used for \code{@geno}, but the
-user can modify this using the \code{distributed.by} argument. The number of
+user can modify this using the \code{linked.by} argument. The number of
 nodes is either specified by the user (use \code{nNodes} when calling
 \code{readPED}) or determined internally so that each \code{ff_matrix} object
 has a number of cells that is smaller than \code{.Machine$integer.max/1.2}.

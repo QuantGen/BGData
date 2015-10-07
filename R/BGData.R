@@ -56,7 +56,7 @@ setMethod('initialize','BGData',function(.Object,geno,pheno,map){
 #' \code{@@map} and \code{@@geno}. Genotypes are stored in a distributed matrix 
 #' (\code{LinkedMatrix}). By default a column-distributed 
 #' (\code{\linkS4class{ColumnLinkedMatrix}}) is used for \code{@@geno}, but the
-#' user can modify this using the \code{distributed.by} argument. The number of
+#' user can modify this using the \code{linked.by} argument. The number of
 #' nodes is either specified by the user (use \code{nNodes} when calling
 #' \code{readPED}) or determined internally so that each \code{ff_matrix} object
 #' has a number of cells that is smaller than \code{.Machine$integer.max/1.2}.
@@ -83,9 +83,9 @@ setMethod('initialize','BGData',function(.Object,geno,pheno,map){
 #' @param idCol The index of the ID column.
 #' @param verbose If TRUE, progress updates will be posted.
 #' @param nNodes The number of nodes to create.
-#' @param distributed.by If columns a column-distributed matrix 
-#'   (\code{\linkS4class{ColumnLinkedMatrix}}) is created, if rows a row-distributed
-#'   matrix (\code{\linkS4class{RowLinkedMatrix}}).
+#' @param linked.by If \code{columns} a column-linked matrix 
+#'   (\code{\linkS4class{ColumnLinkedMatrix}}) is created, if \code{rows} a
+#'   row-linked matrix (\code{\linkS4class{RowLinkedMatrix}}).
 #' @param folderOut The path to the folder where to save the binary files.
 #' @param dimorder The physical layout of the underlying \code{ff} object of each node.
 #' @seealso \code{\linkS4class{BGData}}, \code{LinkedMatrix},
@@ -94,9 +94,9 @@ setMethod('initialize','BGData',function(.Object,geno,pheno,map){
 #' @export
 readPED<-function(fileIn,header,dataType,n=NULL,p=NULL,na.strings='NA',
                   nColSkip=6,idCol=2,verbose=FALSE,
-                  nNodes=NULL,distributed.by='rows',
+                  nNodes=NULL,linked.by='rows',
                   folderOut=paste('BGData_',sub("\\.[[:alnum:]]+$","",basename(fileIn)),sep=''),
-                  dimorder=if(distributed.by=='rows') 2:1 else 1:2){
+                  dimorder=if(linked.by=='rows') 2:1 else 1:2){
 
     if(file.exists(folderOut)){
         stop(paste('Output folder',folderOut,'already exists. Please move it or pick a different one.'))
@@ -107,11 +107,11 @@ readPED<-function(fileIn,header,dataType,n=NULL,p=NULL,na.strings='NA',
         stop('dataType must be either integer() or double()')
     }
 
-    if(!distributed.by%in%c('columns','rows')){
-        stop('distributed.by must be either columns or rows')
+    if(!linked.by%in%c('columns','rows')){
+        stop('linked.by must be either columns or rows')
     }
 
-    class<-ifelse(distributed.by=='columns','ColumnLinkedMatrix','RowLinkedMatrix')
+    class<-ifelse(linked.by=='columns','ColumnLinkedMatrix','RowLinkedMatrix')
     vmode<-ifelse(typeof(dataType)=='integer','byte','double')
 
     readPED.default(fileIn=fileIn,header=header,dataType=dataType,class=class,
