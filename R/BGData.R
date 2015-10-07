@@ -56,8 +56,8 @@ setMethod('initialize','BGData',function(.Object,geno,pheno,map){
 #' \code{@@map} and \code{@@geno}. Genotypes are stored in a distributed matrix
 #' (\code{LinkedMatrix}). By default a column-distributed
 #' (\code{\linkS4class{ColumnLinkedMatrix}}) is used for \code{@@geno}, but the user can
-#' modify this using the \code{distributed.by} argument. The number of chunks is
-#' either specified by the user (use \code{nChunks} when calling \code{readPED})
+#' modify this using the \code{distributed.by} argument. The number of nodes is
+#' either specified by the user (use \code{nNodes} when calling \code{readPED})
 #' or determined internally so that each \code{ff_matrix} object has a number of
 #' cells that is smaller than \code{.Machine$integer.max/1.2}. \code{readPED}
 #' creates a folder (\code{folderOut}) that contains the binary flat files
@@ -86,12 +86,12 @@ setMethod('initialize','BGData',function(.Object,geno,pheno,map){
 #' @param returnData If TRUE, the function returns a \code{\linkS4class{BGData}}
 #'   object.
 #' @param verbose If TRUE, progress updates will be posted.
-#' @param nChunks The number of chunks to create.
+#' @param nNodes The number of nodes to create.
 #' @param distributed.by If columns a column-distributed matrix 
 #'   (\code{\linkS4class{ColumnLinkedMatrix}}) is created, if rows a row-distributed
 #'   matrix (\code{\linkS4class{RowLinkedMatrix}}).
 #' @param folderOut The path to the folder where to save the binary files.
-#' @param dimorder The physical layout of the chunks.
+#' @param dimorder The physical layout of each node.
 #' @return If \code{returnData} is TRUE, a \code{\linkS4class{BGData}} object is
 #'   returned.
 #' @seealso \code{\linkS4class{BGData}}, \code{LinkedMatrix},
@@ -100,7 +100,7 @@ setMethod('initialize','BGData',function(.Object,geno,pheno,map){
 #' @export
 readPED<-function(fileIn,header,dataType,n=NULL,p=NULL,na.strings='NA',
                   nColSkip=6,idCol=2,returnData=TRUE,verbose=FALSE,
-                  nChunks=NULL,distributed.by='rows',
+                  nNodes=NULL,distributed.by='rows',
                   folderOut=paste('BGData_',sub("\\.[[:alnum:]]+$","",basename(fileIn)),sep=''),
                   dimorder=if(distributed.by=='rows') 2:1 else 1:2){
 
@@ -122,7 +122,7 @@ readPED<-function(fileIn,header,dataType,n=NULL,p=NULL,na.strings='NA',
 
     readPED.default(fileIn=fileIn,header=header,dataType=dataType,class=class,
                     n=n,p=p,na.strings=na.strings,nColSkip=nColSkip,idCol=idCol,
-                    verbose=verbose,returnData=returnData,nChunks=nChunks,
+                    verbose=verbose,returnData=returnData,nNodes=nNodes,
                     vmode=vmode,folderOut=folderOut,dimorder=dimorder)
 }
 
@@ -162,7 +162,7 @@ readPED.matrix<-function(fileIn,header,dataType,n=NULL,p=NULL,
 }
 
 readPED.default<-function(fileIn,header,dataType,class,n=NULL,p=NULL,na.strings='NA',
-                          nColSkip=6,idCol=2,verbose=FALSE,returnData=TRUE,nChunks=NULL,
+                          nColSkip=6,idCol=2,verbose=FALSE,returnData=TRUE,nNodes=NULL,
                           vmode=NULL,folderOut=paste('BGData_',sub("\\.[[:alnum:]]+$","",basename(fileIn)),sep=''),
                           dimorder=NULL){
 
@@ -198,7 +198,7 @@ readPED.default<-function(fileIn,header,dataType,class,n=NULL,p=NULL,na.strings=
             }
         }
 
-        # Handle chunking logic
+        # Create output directory
         if(is.null(folderOut)){
             folderOut<-paste0(tempdir(),'/BGData-',randomString())
         }
@@ -207,25 +207,25 @@ readPED.default<-function(fileIn,header,dataType,class,n=NULL,p=NULL,na.strings=
         }
         dir.create(folderOut)
 
-        # Determine chunk size and number of chunks
-        if(is.null(nChunks)){
+        # Determine chunk size and number of nodes
+        if(is.null(nNodes)){
             if(class=='RowLinkedMatrix'){
                 chunkSize<-min(n,floor(.Machine$integer.max/p/1.2))
-                nChunks<-ceiling(n/chunkSize)
+                nNodes<-ceiling(n/chunkSize)
             }else{
                 chunkSize<-min(p,floor(.Machine$integer.max/n/1.2))
-                nChunks<-ceiling(p/chunkSize)
+                nNodes<-ceiling(p/chunkSize)
             }
         }else{
             if(class=='RowLinkedMatrix'){
-                chunkSize<-ceiling(n/nChunks)
+                chunkSize<-ceiling(n/nNodes)
                 if(chunkSize*p >= .Machine$integer.max/1.2){
-                    stop('More chunks are needed')
+                    stop('More nodes are needed')
                 }
             }else{
-                chunkSize<-ceiling(p/nChunks)
+                chunkSize<-ceiling(p/nNodes)
                 if(chunkSize*n >= .Machine$integer.max/1.2){
-                    stop('More chunks are needed')
+                    stop('More nodes are needed')
                 }
             }
         }
@@ -234,7 +234,7 @@ readPED.default<-function(fileIn,header,dataType,class,n=NULL,p=NULL,na.strings=
         geno<-new(class)
         end<-0
         if(class=='RowLinkedMatrix'){
-            for(i in 1:nChunks){
+            for(i in 1:nNodes){
                 ini<-end+1
                 end<-min(n,ini+chunkSize-1)
                 filename=paste0('geno_',i,'.bin')
@@ -244,7 +244,7 @@ readPED.default<-function(fileIn,header,dataType,class,n=NULL,p=NULL,na.strings=
                 physical(geno[[i]])$filename<-filename
             }
         }else{
-            for(i in 1:nChunks){
+            for(i in 1:nNodes){
                 ini<-end+1
                 end<-min(p,ini+chunkSize-1)
                 filename=paste0('geno_',i,'.bin')
@@ -337,12 +337,12 @@ load.BGData<-function(file,envir=parent.frame(),verbose=TRUE){
         cat('Object Class: ',objectClass,'\n',sep='')
     }
 
-    # Determine number of chunks
-    chunks<-length(get(objectName)@geno)
+    # Determine number of nodes
+    nNodes<-length(get(objectName)@geno)
 
-    # Open all chunks for reading (we do not store absolute paths to ff files,
+    # Open all nodes for reading (we do not store absolute paths to ff files,
     # so this has to happen in the same working directory)
-    for(i in 1:chunks){
+    for(i in 1:nNodes){
         if(verbose){
             cat('Opening flat file ',i,'\n')
         }
