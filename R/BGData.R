@@ -87,7 +87,7 @@ setMethod('initialize','BGData',function(.Object,geno,pheno,map){
 #'   (\code{\linkS4class{ColumnLinkedMatrix}}) is created, if rows a row-distributed
 #'   matrix (\code{\linkS4class{RowLinkedMatrix}}).
 #' @param folderOut The path to the folder where to save the binary files.
-#' @param dimorder The physical layout of each node.
+#' @param dimorder The physical layout of the underlying \code{ff} object of each node.
 #' @seealso \code{\linkS4class{BGData}}, \code{LinkedMatrix},
 #'   \code{\linkS4class{ColumnLinkedMatrix}}, \code{\linkS4class{RowLinkedMatrix}},
 #'   \code{\link[ff]{ff}}
@@ -184,13 +184,6 @@ readPED.default<-function(fileIn,header,dataType,class,n=NULL,p=NULL,na.strings=
     if(class=='matrix'){
         geno<-matrix(nrow=n,ncol=p)
     }else{
-        if(is.null(dimorder)){
-            if(class=='RowLinkedMatrix'){
-                dimorder<-2:1
-            }else{
-                dimorder<-1:2
-            }
-        }
 
         # Create output directory
         if(is.null(folderOut)){
@@ -221,6 +214,15 @@ readPED.default<-function(fileIn,header,dataType,class,n=NULL,p=NULL,na.strings=
                 if(chunkSize*n >= .Machine$integer.max/1.2){
                     stop('More nodes are needed')
                 }
+            }
+        }
+
+        # Determine dimorder for ff
+        if(is.null(dimorder)){
+            if(class=='RowLinkedMatrix'){
+                dimorder<-2:1
+            }else{
+                dimorder<-1:2
             }
         }
 

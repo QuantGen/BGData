@@ -43,7 +43,7 @@ matrix (\code{\linkS4class{RowLinkedMatrix}}).}
 
 \item{folderOut}{The path to the folder where to save the binary files.}
 
-\item{dimorder}{The physical layout of each node.}
+\item{dimorder}{The physical layout of the underlying \code{ff} object of each node.}
 }
 \description{
 \code{readPED} assumes that the plaintext file (\code{fileIn}) contains
