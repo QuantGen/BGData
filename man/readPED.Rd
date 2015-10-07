@@ -6,8 +6,8 @@
 raw PED file (generated with \code{--recodeA} in PLINK) or PED-like file.}
 \usage{
 readPED(fileIn, header, dataType, n = NULL, p = NULL, na.strings = "NA",
-  nColSkip = 6, idCol = 2, returnData = TRUE, verbose = FALSE,
-  nNodes = NULL, distributed.by = "rows", folderOut = paste("BGData_",
+  nColSkip = 6, idCol = 2, verbose = FALSE, nNodes = NULL,
+  distributed.by = "rows", folderOut = paste("BGData_",
   sub("\\\\.[[:alnum:]]+$", "", basename(fileIn)), sep = ""), dimorder = if
   (distributed.by == "rows") 2:1 else 1:2)
 }
@@ -33,9 +33,6 @@ information in the file.}
 
 \item{idCol}{The index of the ID column.}
 
-\item{returnData}{If TRUE, the function returns a \code{\linkS4class{BGData}}
-object.}
-
 \item{verbose}{If TRUE, progress updates will be posted.}
 
 \item{nNodes}{The number of nodes to create.}
@@ -48,10 +45,6 @@ matrix (\code{\linkS4class{RowLinkedMatrix}}).}
 
 \item{dimorder}{The physical layout of each node.}
 }
-\value{
-If \code{returnData} is TRUE, a \code{\linkS4class{BGData}} object is
-  returned.
-}
 \description{
 \code{readPED} assumes that the plaintext file (\code{fileIn}) contains
 records of individuals in rows, and phenotypes, covariates and markers in
@@ -62,20 +55,18 @@ row contains a header (\code{header=TRUE}), data in this row is used to
 determine variables names for \code{@pheno} and marker names for
 \code{@map} and \code{@geno}. Genotypes are stored in a distributed matrix
 (\code{LinkedMatrix}). By default a column-distributed
-(\code{\linkS4class{ColumnLinkedMatrix}}) is used for \code{@geno}, but the user can
-modify this using the \code{distributed.by} argument. The number of nodes is
-either specified by the user (use \code{nNodes} when calling \code{readPED})
-or determined internally so that each \code{ff_matrix} object has a number of
-cells that is smaller than \code{.Machine$integer.max/1.2}. \code{readPED}
-creates a folder (\code{folderOut}) that contains the binary flat files
-(\code{geno_*.bin}) and the \code{\linkS4class{BGData}} object (typically
-named \code{BGData.RData}. Optionally (if \code{returnData} is TRUE) it
-returns the \code{\linkS4class{BGData}} object to the environment. The
-filename of the \code{ff_matrix} objects are saved as relative names.
-Therefore, to be able to access the content of the data included in
-\code{@geno} the working directory must either be the folder where these
-files are saved (\code{folderOut}) or the object must be loaded using
-\code{load.BGData}.
+(\code{\linkS4class{ColumnLinkedMatrix}}) is used for \code{@geno}, but the
+user can modify this using the \code{distributed.by} argument. The number of
+nodes is either specified by the user (use \code{nNodes} when calling
+\code{readPED}) or determined internally so that each \code{ff_matrix} object
+has a number of cells that is smaller than \code{.Machine$integer.max/1.2}.
+\code{readPED} creates a folder (\code{folderOut}) that contains the binary
+flat files (\code{geno_*.bin}) and the \code{\linkS4class{BGData}} object
+(typically named \code{BGData.RData}. The filename of the \code{ff_matrix}
+objects are saved as relative names. Therefore, to be able to access the
+content of the data included in \code{@geno} the working directory must
+either be the folder where these files are saved (\code{folderOut}) or the
+object must be loaded using \code{load.BGData}.
 }
 \seealso{
 \code{\linkS4class{BGData}}, \code{LinkedMatrix},

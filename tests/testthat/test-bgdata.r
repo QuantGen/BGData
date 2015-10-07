@@ -177,8 +177,7 @@ test_that("it loads BGData objects", {
     
     # Create dummy BGData object without returning data
     path <- paste0(tmpPath, 'BGData-', randomString())
-    readPED(fileIn = pedPath, header = TRUE, dataType = integer(), folderOut = path,
-            returnData = FALSE)
+    readPED(fileIn = pedPath, header = TRUE, dataType = integer(), folderOut = path)
     expect_true(!("BGData" %in% ls()))
     
     # Append BGData.RData to path

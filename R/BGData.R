@@ -50,25 +50,23 @@ setMethod('initialize','BGData',function(.Object,geno,pheno,map){
 #' records of individuals in rows, and phenotypes, covariates and markers in 
 #' columns. The columns included in columns \code{1:nColSkip} are used to 
 #' populate the slot \code{@@pheno} of a \code{\linkS4class{BGData}} object, and
-#' the remaining columns are used to fill the slot \code{@@geno}. If the first
-#' row contains a header (\code{header=TRUE}), data in this row is used to
-#' determine variables names for \code{@@pheno} and marker names for
-#' \code{@@map} and \code{@@geno}. Genotypes are stored in a distributed matrix
-#' (\code{LinkedMatrix}). By default a column-distributed
-#' (\code{\linkS4class{ColumnLinkedMatrix}}) is used for \code{@@geno}, but the user can
-#' modify this using the \code{distributed.by} argument. The number of nodes is
-#' either specified by the user (use \code{nNodes} when calling \code{readPED})
-#' or determined internally so that each \code{ff_matrix} object has a number of
-#' cells that is smaller than \code{.Machine$integer.max/1.2}. \code{readPED}
-#' creates a folder (\code{folderOut}) that contains the binary flat files
-#' (\code{geno_*.bin}) and the \code{\linkS4class{BGData}} object (typically
-#' named \code{BGData.RData}. Optionally (if \code{returnData} is TRUE) it
-#' returns the \code{\linkS4class{BGData}} object to the environment. The
-#' filename of the \code{ff_matrix} objects are saved as relative names.
-#' Therefore, to be able to access the content of the data included in
-#' \code{@@geno} the working directory must either be the folder where these
-#' files are saved (\code{folderOut}) or the object must be loaded using
-#' \code{load.BGData}.
+#' the remaining columns are used to fill the slot \code{@@geno}. If the first 
+#' row contains a header (\code{header=TRUE}), data in this row is used to 
+#' determine variables names for \code{@@pheno} and marker names for 
+#' \code{@@map} and \code{@@geno}. Genotypes are stored in a distributed matrix 
+#' (\code{LinkedMatrix}). By default a column-distributed 
+#' (\code{\linkS4class{ColumnLinkedMatrix}}) is used for \code{@@geno}, but the
+#' user can modify this using the \code{distributed.by} argument. The number of
+#' nodes is either specified by the user (use \code{nNodes} when calling
+#' \code{readPED}) or determined internally so that each \code{ff_matrix} object
+#' has a number of cells that is smaller than \code{.Machine$integer.max/1.2}.
+#' \code{readPED} creates a folder (\code{folderOut}) that contains the binary
+#' flat files (\code{geno_*.bin}) and the \code{\linkS4class{BGData}} object
+#' (typically named \code{BGData.RData}. The filename of the \code{ff_matrix}
+#' objects are saved as relative names. Therefore, to be able to access the
+#' content of the data included in \code{@@geno} the working directory must
+#' either be the folder where these files are saved (\code{folderOut}) or the
+#' object must be loaded using \code{load.BGData}.
 #' 
 #' @param fileIn The path to the plaintext file.
 #' @param header If TRUE, the file contains a header.
@@ -83,8 +81,6 @@ setMethod('initialize','BGData',function(.Object,geno,pheno,map){
 #' @param nColSkip The number of columns to be skipped to reach the genotype 
 #'   information in the file.
 #' @param idCol The index of the ID column.
-#' @param returnData If TRUE, the function returns a \code{\linkS4class{BGData}}
-#'   object.
 #' @param verbose If TRUE, progress updates will be posted.
 #' @param nNodes The number of nodes to create.
 #' @param distributed.by If columns a column-distributed matrix 
@@ -92,14 +88,12 @@ setMethod('initialize','BGData',function(.Object,geno,pheno,map){
 #'   matrix (\code{\linkS4class{RowLinkedMatrix}}).
 #' @param folderOut The path to the folder where to save the binary files.
 #' @param dimorder The physical layout of each node.
-#' @return If \code{returnData} is TRUE, a \code{\linkS4class{BGData}} object is
-#'   returned.
 #' @seealso \code{\linkS4class{BGData}}, \code{LinkedMatrix},
 #'   \code{\linkS4class{ColumnLinkedMatrix}}, \code{\linkS4class{RowLinkedMatrix}},
 #'   \code{\link[ff]{ff}}
 #' @export
 readPED<-function(fileIn,header,dataType,n=NULL,p=NULL,na.strings='NA',
-                  nColSkip=6,idCol=2,returnData=TRUE,verbose=FALSE,
+                  nColSkip=6,idCol=2,verbose=FALSE,
                   nNodes=NULL,distributed.by='rows',
                   folderOut=paste('BGData_',sub("\\.[[:alnum:]]+$","",basename(fileIn)),sep=''),
                   dimorder=if(distributed.by=='rows') 2:1 else 1:2){
@@ -122,7 +116,7 @@ readPED<-function(fileIn,header,dataType,n=NULL,p=NULL,na.strings='NA',
 
     readPED.default(fileIn=fileIn,header=header,dataType=dataType,class=class,
                     n=n,p=p,na.strings=na.strings,nColSkip=nColSkip,idCol=idCol,
-                    verbose=verbose,returnData=returnData,nNodes=nNodes,
+                    verbose=verbose,nNodes=nNodes,
                     vmode=vmode,folderOut=folderOut,dimorder=dimorder)
 }
 
@@ -158,11 +152,11 @@ readPED.matrix<-function(fileIn,header,dataType,n=NULL,p=NULL,
 
     readPED.default(fileIn=fileIn,header=header,dataType=normalizeType(dataType),
                     class="matrix",n=n,p=p,na.strings=na.strings,nColSkip=nColSkip,
-                    idCol=idCol,verbose=verbose,returnData=TRUE)
+                    idCol=idCol,verbose=verbose)
 }
 
 readPED.default<-function(fileIn,header,dataType,class,n=NULL,p=NULL,na.strings='NA',
-                          nColSkip=6,idCol=2,verbose=FALSE,returnData=TRUE,nNodes=NULL,
+                          nColSkip=6,idCol=2,verbose=FALSE,nNodes=NULL,
                           vmode=NULL,folderOut=paste('BGData_',sub("\\.[[:alnum:]]+$","",basename(fileIn)),sep=''),
                           dimorder=NULL){
 
@@ -297,9 +291,7 @@ readPED.default<-function(fileIn,header,dataType,class,n=NULL,p=NULL,na.strings=
         save(BGData,file=paste(folderOut,'/BGData.RData',sep=''))
     }
 
-    if(returnData){
-        return(BGData)
-    }
+    return(BGData)
 }
 
 
