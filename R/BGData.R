@@ -251,6 +251,9 @@ readPED.default<-function(fileIn,header,dataType,class,n=NULL,p=NULL,na.strings=
             }
         }
 
+        # Generate nodes
+        nodes<-LinkedMatrix::nodes(geno)
+
         # Generate index
         index<-LinkedMatrix::index(geno)
     }
@@ -269,7 +272,7 @@ readPED.default<-function(fileIn,header,dataType,class,n=NULL,p=NULL,na.strings=
         if(class=='matrix'){
             geno[i,]<-x
         }else{
-            geno<-`[<-`(geno,i,1:ncol(geno),index=index,value=x)
+            geno<-`[<-`(geno,i,1:ncol(geno),nodes=nodes,index=index,value=x)
         }
         if(verbose){
             cat('Subject',i,' ',round(proc.time()[3]-time[3],3),'sec/subject.','\n')
