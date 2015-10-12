@@ -20,31 +20,24 @@ The `BGData` package contains a data structure `BGData` that holds genotypes in 
 - Paulino Perez (perpdgo@gmail.com)
 
 ## Classes & Methods
-- `RowLinkedMatrix`: row-distributed matrix (collection of `ff` objects)
-- `ColumnLinkedMatrix`: column-distributed matrix (collection of `ff` objects)
-- `LinkedMatrix` : distributed matrix (a class-union of `RowLinkedMatrix`  and `ColumnLinkedMatrix`)
-- `BGData`: a structure to hold genotype and phenotype data. Objects of this class contain three slots: `@geno` (`RowLinkedMatrix`, `ColumnLinkedMatrix`, `ff_matrix` or `matrix`), `@pheno` (data.frame), and `@map` (data.frame).
 
-### Methods Implemented for `RowLinkedMatrix` and `ColumnLinkedMatrix`
-- `[` and `[<-` for subsetting and replacement, respectively
-- `dim(x)`, `nrow(x)`, `ncol(x)`
-- `rownames(x)`, `colnames(x)`, `dimnames(x)`
-- `colSums(x)`, `colMeans(x)`, `rowSums(x)`, `rowMeans(x)`
-- `summary(x)`
-- `apply(x)` with the same parameters and similar behavior than the generic function apply()
-- `chunks(x)` returns information about how the `RowLinkedMatrix` or `ColumnLinkedMatrix` is split into chunks (each chunk is an `ff` object)
-- `colindexes(x, columns)` returns the global (in the `ColumnLinkedMatrix` object) and local (in each of the `ff` objects that constitute the chunks of the `ColumnLinkedMatrix`) indexes for a set of columns
-- `rowindexes(x, columns)` returns the global (in the `RowLinkedMatrix` object) and local (in each of the `ff` objects that constitute the chunks of the `RowLinkedMatrix`) indexes for a set of rows
-- `getG(x, ...)` computes a genomic relationship matrix (XX') with options for centering and scaling
-- `as.matrix(x)` converts a `LinkedMatrix` to a matrix (if small enough)
+### Class `BGData`
+An S4 class to hold genotype and phenotype data.
 
-### Methods Implemented for `BGData`
-- Both `readPED` and `readPED.matrix` create a `BGData` object from a plaintext file containing the phenotypes and genotypes (individuals in rows, phenotypes in the first few columns, markers in the remaining columns, e.g. the raw format in [PLINK](http://pngu.mgh.harvard.edu/~purcell/plink/dataman.shtml)). `readPED` stores genotype information in a `RowLinkedMatrix` or `ColumnLinkedMatrix` (dependending on the value of the `linked.by` parameter) while `readPED.matrix` uses a regular matrix.
+#### Slots
+- `@geno` (`RowLinkedMatrix`, `ColumnLinkedMatrix`, `ff_matrix` or `matrix`)
+- `@pheno` (`data.frame`)
+- `@map` (`data.frame`)
+
+#### Constructor
+- `BGData(geno = geno, [pheno = pheno, map = map])` where `geno` is a `RowLinkedMatrix`, `ColumnLinkedMatrix`, `ff_matrix` or `matrix`, and optionally, `pheno` is a `data.frame` and `map` is a `data.frame`.
+
+## Functions
+- Both `readPED` and `readPED.matrix` create a `BGData` object from a plaintext file containing the phenotypes and genotypes (individuals in rows, phenotypes in the first few columns, markers in the remaining columns, e.g. the raw format in [PLINK](http://pngu.mgh.harvard.edu/~purcell/plink/dataman.shtml)). `readPED` stores genotype information in an `ff`-backed `RowLinkedMatrix` or `ColumnLinkedMatrix` (dependending on the value of the `linked.by` parameter) while `readPED.matrix` uses a regular matrix.
 - `GWAS` uses a `BGData` object to conduct single marker association tests using regression methods such as `lm()`, `glm()` or `lmer()`
 
 
 ## Installation
-
 BGData is not available on [CRAN](http://cran.r-project.org/) yet. However, it can be installed directly from GitHub using the [devtools](https://github.com/hadley/devtools) package.
 
 1. Install `devtools` package: `install.packages('devtools')`
