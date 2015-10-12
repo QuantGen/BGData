@@ -3,16 +3,14 @@ BGData
 
 # Memory Mapped Matrices and Data-Structures for Genomic Data for R
 
-
-
 ## Description
 Genetic data can be very large and holding data in RAM is often not feasible. One approach to overcome this restriction are [memory mapped files](http://en.wikipedia.org/wiki/Memory-mapped_file) that store the actual data on the hard drive and only read in smaller chunks when they are needed.
 
 The [ff package for R](http://cran.r-project.org/web/packages/ff/index.html) implements memory mapped arrays and provides a very fast implementation of indexing operations, which allows accessing cells of the array almost at the same speed as accessing those cells in a regular matrix object that is held in RAM. However, with `ff` the array size is limited to the size of an integer; with genomic data we often exceed this.
 
-We are therefore developing new classes (`RowLinkedMatrix` and `ColumnLinkedMatrix`) which are essentially collections of `ff` objects. In these classes we distribute a matrix either by rows (`RowLinkedMatrix`) or columns (`ColumnLinkedMatrix`) into multiple `ff` objects. We have developed indexing and many other methods that allow the user to deal with these objects as if they were regular matrices. In addition we have developed methods that can take `RowLinkedMatrix` or `ColumnLinkedMatrix` as input to compute genomic relationship matrices, etc.
+We therefore developed a new package [`LinkedMatrix`](https://github.com/QuantGen/LinkedMatrix) and two new classes `RowLinkedMatrix` and `ColumnLinkedMatrix` that combine several matrix-like objects into a data structure that acts like a regular matrix. This package is used to overcome the limitations of `ff` by linking multiple `ff` objects together, either by columns (`ColumnLinkedMatrix`) or by rows (`RowLinkedMatrix`).
 
-The classes `ColumnLinkedMatrix` and `RowLinkedMatrix` were designed to hold genotype data. The class `BGData` contains three slots `@geno`, `@pheno` and `@map`, and can be used to hold GWAS data.
+The `BGData` package contains a data structure `BGData` that holds genotypes in the `@geno` slot, phenotypes in the `@pheno` slot, and additional information in the `@map` slot. In addition, we have developed several methods that operate on this data structure, for example to compute genomic relationship matrices, etc.
 
 ![Conceptual Diagram](https://docs.google.com/drawings/d/1m2bV3-woWrO9F9_RXxw30FlzUORXzcnaIPJUlxc-MMk/pub?w=739&h=559)
 
