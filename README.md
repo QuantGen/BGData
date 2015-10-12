@@ -34,7 +34,9 @@ An S4 class to hold genotype and phenotype data.
 
 ## Functions
 - Both `readPED` and `readPED.matrix` create a `BGData` object from a plaintext file containing the phenotypes and genotypes (individuals in rows, phenotypes in the first few columns, markers in the remaining columns, e.g. the raw format in [PLINK](http://pngu.mgh.harvard.edu/~purcell/plink/dataman.shtml)). `readPED` stores genotype information in an `ff`-backed `RowLinkedMatrix` or `ColumnLinkedMatrix` (dependending on the value of the `linked.by` parameter) while `readPED.matrix` uses a regular matrix.
-- `GWAS` uses a `BGData` object to conduct single marker association tests using regression methods such as `lm()`, `glm()` or `lmer()`
+- `load.BGData(path)` loads an existing `BGData` object from disk into the R workspace
+- `GWAS(formula, data, method)` uses a `BGData` object to conduct single marker association tests using regression methods such as `lm()`, `glm()` or `lmer()`
+- `getG(x)` calculates the genomic relationship matrix
 
 
 ## Installation
