@@ -29,7 +29,8 @@ Depends:
     ff
 Imports:
     methods,
-    parallel
+    parallel,
+    LinkedMatrix
 Remotes: QuantGen/LinkedMatrix
 Suggests:
     testthat,
