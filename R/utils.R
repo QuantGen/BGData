@@ -67,10 +67,15 @@ crossprods<-function(x,y=NULL,nChunks=detectCores(),mc.cores=detectCores(),use_t
    return(Xy)
 }
 
+
+#' @export
 crossprod.parallel<-function(x,y=NULL,nChunks=detectCores(),mc.cores=detectCores()){
 	ans<-crossprods(x=x,y=y,nChunks=nChunks,mc.cores=mc.cores,use_tcrossprod=FALSE)
 	return(ans)
 }
+
+
+#' @export
 tcrossprod.parallel<-function(x,y=NULL,nChunks=detectCores(),mc.cores=detectCores()){
 	ans<-crossprods(x=x,y=y,nChunks=nChunks,mc.cores=mc.cores,use_tcrossprod=TRUE)
 	return(ans)
@@ -169,6 +174,7 @@ getG<-function(x,nChunks=ceiling(ncol(x)/1e4),scaleCol=TRUE,scaleG=TRUE,verbose=
 }
 
 
+#' @export
 getGij<-function(x,i1,i2,scales,centers,scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,nChunks=ceiling(ncol(x)/1e4),returnG=TRUE,
                 j=1:ncol(x),minVar=1e-5,nChunks2=(detectCores()-1),mc.cores=(detectCores()-1),impute=TRUE,
                 saveG=FALSE,saveType='RData',saveName='Gij'){
