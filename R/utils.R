@@ -1,4 +1,3 @@
-
 crossprods.chunk<-function(chunk,x,y=NULL,nChunks,use_tcrossprod=FALSE){
   ## Performs crossprod() or tcrossprod()
   #  for a chunk (set of columns or sets of rows) of x
@@ -24,6 +23,7 @@ crossprods.chunk<-function(chunk,x,y=NULL,nChunks,use_tcrossprod=FALSE){
   return(Xy)
 }
 
+
 #' Computes crossprod (x'y or x'x) or tcrossprod (xy' or xx', used when use_tcrossprod=TRUE) in parallel.
 #' @param x matrix, ff_matrix, RowLinkedMatrix or ColumnLinkedMatrix
 #' @param y, vector, matrix, ff_matrix, RowLinkedMatrix or ColumnLinkedMatrix By default
@@ -32,8 +32,6 @@ crossprods.chunk<-function(chunk,x,y=NULL,nChunks,use_tcrossprod=FALSE){
 #' @param use_tcrossprod  if FALSE crossprods computes x'y or x'x (if y=NULL), otherwise crossprods computes xy' or xx' (if y=NULL).
 #' @return xx', x'x, x'y, or xy' depending on whether y is provided and on whether use_tcrossprod=TRUE/FALSE
 #' @export
-
-
 crossprods<-function(x,y=NULL,nChunks=detectCores(),mc.cores=detectCores(),use_tcrossprod=FALSE){
   if(!is.null(y)){
     if(use_tcrossprod){
@@ -79,90 +77,6 @@ tcrossprod.parallel<-function(x,y=NULL,nChunks=detectCores(),mc.cores=detectCore
 }
 
 
-if(FALSE){ # Tests for crossprod and tcrossprod
-      W=matrix(nrow=10,ncol=20,rnorm(200))
-      Z=matrix(nrow=10,ncol=2,rnorm(20))
-
-	# TESTING X'X;
-      TMP=crossprod(W)  
-      
-      TMP2=crossprod.parallel(W)
-      stopifnot(all.equal(TMP,TMP2))
-
-      TMP2=crossprod.parallel(W,nChunks=3,mc.cores=3)
-      stopifnot(all.equal(TMP,TMP2))
-
-      TMP2=crossprod.parallel(W,nChunks=1,mc.cores=3)
-      stopifnot(all.equal(TMP,TMP2))
-
-      TMP2=crossprod.parallel(W,nChunks=3,mc.cores=2)
-      stopifnot(all.equal(TMP,TMP2))
-
-      TMP2=crossprod.parallel(W,nChunks=1,mc.cores=1)
-      stopifnot(all.equal(TMP,TMP2))            
-      
-
-	# TESTING XX';
-      TMP=tcrossprod(W)  
-      
-      TMP2=tcrossprod.parallel(W)
-      stopifnot(all.equal(TMP,TMP2))
-
-      TMP2=tcrossprod.parallel(W,nChunks=3,mc.cores=3)
-      stopifnot(all.equal(TMP,TMP2))
-
-      TMP2=tcrossprod.parallel(W,nChunks=1,mc.cores=3)
-      stopifnot(all.equal(TMP,TMP2))
-
-      TMP2=tcrossprod.parallel(W,nChunks=3,mc.cores=2)
-      stopifnot(all.equal(TMP,TMP2))
-
-      TMP2=tcrossprod.parallel(W,nChunks=1,mc.cores=1)
-      stopifnot(all.equal(TMP,TMP2))            
-    
-     # Testing X'y
-      TMP=crossprod(W,y=Z)  
-      
-      TMP2=crossprod.parallel(W,y=Z)
-      stopifnot(all.equal(TMP,TMP2))
-
-      TMP2=crossprod.parallel(W,y=Z,nChunks=3,mc.cores=3)
-      stopifnot(all.equal(TMP,TMP2))
-
-      TMP2=crossprod.parallel(W,y=Z,nChunks=1,mc.cores=3)
-      stopifnot(all.equal(TMP,TMP2))
-
-      TMP2=crossprod.parallel(W,y=Z,nChunks=3,mc.cores=2)
-      stopifnot(all.equal(TMP,TMP2))
-
-      TMP2=crossprod.parallel(W,y=Z,nChunks=1,mc.cores=1)
-      stopifnot(all.equal(TMP,TMP2))      
-      
-  
-     # Testing XY'
-
-      W=matrix(nrow=10,ncol=20,rnorm(200))
-      Z=matrix(nrow=5,ncol=20,rnorm(100))
-
-
-      TMP=tcrossprod(W,y=Z)  
-      
-      TMP2=tcrossprod.parallel(W,y=Z)
-      stopifnot(all.equal(TMP,TMP2))
-
-      TMP2=tcrossprod.parallel(W,y=Z,nChunks=3,mc.cores=3)
-      stopifnot(all.equal(TMP,TMP2))
-
-      TMP2=tcrossprod.parallel(W,y=Z,nChunks=1,mc.cores=3)
-      stopifnot(all.equal(TMP,TMP2))
-
-      TMP2=tcrossprod.parallel(W,y=Z,nChunks=3,mc.cores=2)
-      stopifnot(all.equal(TMP,TMP2))
-      
-      TMP2=tcrossprod.parallel(W,y=Z,nChunks=1,mc.cores=1)
-      stopifnot(all.equal(TMP,TMP2))      
-      
-}# end of tests
 
 #' Computes a genomic relationship matrix G=xx'.
 #' 
@@ -254,48 +168,6 @@ getG<-function(x,nChunks=ceiling(ncol(x)/1e4),scaleCol=TRUE,scaleG=TRUE,verbose=
     return(G)
 }
 
-
-
-## Tests for getG
-if(FALSE){
- n=155
- p=1237
- X=matrix(nrow=n,ncol=p,data=rnorm(n*p))
- nChunks=c(1,2,3)
- mc.cores<-nChunks
- nChunks2=nChunks
- for(i in 1:3){
- 	for(j in 1:3){
- 		for(k in 1:3){
- 			print(paste(i,j,k))
- 	    		# all scalings
- 			G=tcrossprod(scale(X)); G=G/mean(diag(G))
- 			G2<-getG(x=X,scaleG=T,scaleCol=T,verbose=F,nChunks=i,mc.cores=j,nChunks2=k)
- 			stopifnot(all.equal(G,G2))
- 
- 	    		# without scaling to average diagonal=1
- 			G=tcrossprod(scale(X))
- 			G2<-getG(x=X,scaleG=F,scaleCol=T,verbose=F,nChunks=i,mc.cores=j,nChunks2=k)
- 			stopifnot(all.equal(G,G2))
-
-			# without scaling columns, but scaling average diagonal =1
- 			G=tcrossprod(scale(X,center=T,scale=F)); G=G/mean(diag(G))
- 			G2<-getG(x=X,scaleG=T,scaleCol=F,verbose=F,nChunks=i,mc.cores=j,nChunks2=k)
- 			stopifnot(all.equal(G,G2))
-
-			# no scaling at all
- 			G=tcrossprod(scale(X,center=T,scale=F))
- 			G2<-getG(x=X,scaleG=F,scaleCol=F,verbose=F,nChunks=i,mc.cores=j,nChunks2=k)
- 			stopifnot(all.equal(G,G2))
- 		}
- 	}
- }
- 
-  X[sample(1:100,size=20)]<-NA
-  G<-getG(X)
-  stopifnot(!any(is.na(G)))
-
-}
 
 getGij<-function(x,i1,i2,scales,centers,scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,nChunks=ceiling(ncol(x)/1e4),returnG=TRUE,
                 j=1:ncol(x),minVar=1e-5,nChunks2=(detectCores()-1),mc.cores=(detectCores()-1),impute=TRUE,
@@ -392,84 +264,6 @@ getGij<-function(x,i1,i2,scales,centers,scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,n
      }
      if(returnG){  return(G) }
 }
-
-
-# Tests for Gij
-
-if(FALSE){
-
-## Tests for getGij
- n=155
- p=1237
- X=matrix(nrow=n,ncol=p,data=rnorm(n*p))
- 
- centers=colMeans(X)
- scales=apply(X=X,MARGIN=2,FUN=sd)
- 
- nChunks=c(1,2,3)
- mc.cores<-nChunks
- nChunks2=nChunks
- 
- for(i in 1:3){
- 	for(j in 1:3){
- 		for(k in 1:3){
-  			print(paste(i,j,k))
- 	    	
- 
- 	    	# all scalings
- 			i1=sample(1:nrow(X),size=3)
- 			i2=sample(1:nrow(X),size=4)
- 			G=tcrossprod(scale(X)); G=G/mean(diag(G))
- 			G_12<-getGij(x=X,i1=i1,i2=i2,centers=colMeans(X),scales=apply(FUN=sd,X=X,MARGIN=2)*sqrt((n-1)/n),scaleG=T,verbose=F,scaleCol=TRUE)
- 			stopifnot(all.equal(G[i1,i2],G_12))
- 			
- 			i2=i1
- 			G_12<-getGij(x=X,i1=i1,i2=i2,centers=colMeans(X),scales=apply(FUN=sd,X=X,MARGIN=2)*sqrt((n-1)/n),scaleG=T,verbose=F)
- 			stopifnot(all.equal(G[i1,i2],G_12))
-
- 
- 	    	# without scaling to average diagonal=1
-			i1=sample(1:nrow(X),size=3)
- 			i2=sample(1:nrow(X),size=4)
-
- 			G=tcrossprod(scale(X)*sqrt(n/(n-1)))
- 			G_12<-getGij(x=X,i1=i1,i2=i2,centers=colMeans(X),scales=apply(FUN=sd,X=X,MARGIN=2)*sqrt((n-1)/n),scaleG=F,verbose=F)
- 			stopifnot(all.equal(G[i1,i2],G_12))
- 			
- 			i2=i1
- 			G_12<-getGij(x=X,i1=i1,i2=i2,centers=colMeans(X),scales=apply(FUN=sd,X=X,MARGIN=2)*sqrt((n-1)/n),scaleG=F,verbose=F)
- 			stopifnot(all.equal(G[i1,i2],G_12))
-
-
-
-			# without scaling columns, but scaling average diagonal =1
-			i1=sample(1:nrow(X),size=3)
- 			i2=sample(1:nrow(X),size=4)
-
- 			G=tcrossprod(scale(X,center=T,scale=F)); G=G/ncol(X)
- 			G_12<-getGij(x=X,i1=i1,i2=i2,centers=colMeans(X),scales=rep(1,ncol(X)),scaleG=T,verbose=F)
-			stopifnot(all.equal(G[i1,i2],G_12))
-
-
-			i2=i1
- 			G_12<-getGij(x=X,i1=i1,i2=i2,centers=colMeans(X),scales=rep(1,ncol(X)),scaleG=T,verbose=F)
-			stopifnot(all.equal(G[i1,i2],G_12))			
-			
-			# no scaling at all
-			i1=sample(1:nrow(X),size=3)
- 			i2=sample(1:nrow(X),size=4)
-
- 			G=tcrossprod(scale(X,center=T,scale=F))
- 			G_12<-getGij(x=X,i1=i1,i2=i2,centers=colMeans(X),scales=rep(1,ncol(X)),scaleG=F,verbose=F)
-			stopifnot(all.equal(G[i1,i2],G_12))
-
-			i2=i1 			
- 			G_12<-getGij(x=X,i1=i1,i2=i2,centers=colMeans(X),scales=rep(1,ncol(X)),scaleG=F,verbose=F)
-			stopifnot(all.equal(G[i1,i2],G_12)) 			
- 		}
- 	}
- }
-} # end of tests
 
 
 #' Performs single marker regressions using a \code{\linkS4class{BGData}} 
