@@ -243,7 +243,7 @@ getGij<-function(x,i1,i2,scales,centers,scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,n
                 X2<-scale(X2,center=centers.chunk,scale=scales.chunk)
                 TMP<-is.na(X2)
                 if(any(TMP)){    X2<-ifelse(TMP,0,X2) }
-		TMP<-tcrossprod.parallel(x=X1,y=X2,mc.core=mc.cores,nChunks=nChunks2)
+		TMP<-tcrossprod.parallel(x=X1,y=X2,mc.cores=mc.cores,nChunks=nChunks2)
               	G<-G+TMP
             }
             if(scaleG){
