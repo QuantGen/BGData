@@ -4,9 +4,7 @@
 #'
 #' @docType package
 #' @name BGData
-#' @import methods
-#' @import parallel
-#' @import ff
+#' @import methods parallel ff
 #' @importFrom bit physical physical<-
 #' @importClassesFrom LinkedMatrix LinkedMatrix
 NULL
