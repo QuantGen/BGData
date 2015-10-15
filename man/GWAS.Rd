@@ -30,6 +30,8 @@ the limits of the vertical axis of the Manhattan plot.}
 
 \item{chunkSize}{Represents the number of columns of \code{@geno} that are
 brought into RAM for processing (5000 by default).}
+
+\item{...}{Optional argument for regression method.}
 }
 \value{
 Returns a matrix with estimates, SE, p-value, etc.

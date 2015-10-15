@@ -295,6 +295,7 @@ getGij<-function(x,i1,i2,scales,centers,scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,n
 #'   the limits of the vertical axis of the Manhattan plot.
 #' @param chunkSize Represents the number of columns of \code{@@geno} that are 
 #'   brought into RAM for processing (5000 by default).
+#' @param ... Optional argument for regression method.
 #' @return Returns a matrix with estimates, SE, p-value, etc.
 #' @export
 GWAS<-function(formula,data,method,plot=FALSE,verbose=FALSE,min.pValue=1e-10,chunkSize=5000,...){
