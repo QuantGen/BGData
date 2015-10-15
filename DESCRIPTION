@@ -30,6 +30,7 @@ Depends:
 Imports:
     methods,
     parallel,
+    bit,
     LinkedMatrix
 Remotes: QuantGen/LinkedMatrix
 Suggests:
