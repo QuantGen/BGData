@@ -1,6 +1,8 @@
 BGData: Memory Mapped Matrices and Data-Structures for Genomic Data for R
 =========================================================================
 
+[![Travis-CI Build Status](https://travis-ci.org/QuantGen/BGData.svg?branch=master)](https://travis-ci.org/QuantGen/BGData)
+
 Genetic data can be very large and holding data in RAM is often not feasible. One approach to overcome this restriction are [memory mapped files](http://en.wikipedia.org/wiki/Memory-mapped_file) that store the actual data on the hard drive and only read in smaller chunks when they are needed.
 
 The [ff package for R](http://cran.r-project.org/web/packages/ff/index.html) implements memory mapped arrays and provides a very fast implementation of indexing operations, which allows accessing cells of the array almost at the same speed as accessing those cells in a regular matrix object that is held in RAM. However, with `ff` the array size is limited to the size of an integer; with genomic data we often exceed this.
