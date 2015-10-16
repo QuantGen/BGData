@@ -32,12 +32,14 @@ Imports:
     parallel,
     bit,
     LinkedMatrix
-Remotes: QuantGen/LinkedMatrix
 Suggests:
     testthat,
     lme4,
     SKAT,
     BEDMatrix
+Remotes:
+    QuantGen/LinkedMatrix,
+    QuantGen/BEDMatrix
 LazyData: true
 Collate:
     'package.R'
