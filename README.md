@@ -1,9 +1,6 @@
-BGData
-======
+BGData: Memory Mapped Matrices and Data-Structures for Genomic Data for R
+=========================================================================
 
-# Memory Mapped Matrices and Data-Structures for Genomic Data for R
-
-## Description
 Genetic data can be very large and holding data in RAM is often not feasible. One approach to overcome this restriction are [memory mapped files](http://en.wikipedia.org/wiki/Memory-mapped_file) that store the actual data on the hard drive and only read in smaller chunks when they are needed.
 
 The [ff package for R](http://cran.r-project.org/web/packages/ff/index.html) implements memory mapped arrays and provides a very fast implementation of indexing operations, which allows accessing cells of the array almost at the same speed as accessing those cells in a regular matrix object that is held in RAM. However, with `ff` the array size is limited to the size of an integer; with genomic data we often exceed this.
@@ -14,12 +11,17 @@ The `BGData` package contains a data structure `BGData` that holds genotypes in 
 
 ![Conceptual Diagram](https://docs.google.com/drawings/d/1m2bV3-woWrO9F9_RXxw30FlzUORXzcnaIPJUlxc-MMk/pub?w=739&h=559)
 
-## Developers
+
+Developers
+----------
+
 - Gustavo de los Campos (gdeloscampos@gmail.com)
 - Alexander Grüneberg (alexander.grueneberg@googlemail.com)
 - Paulino Perez (perpdgo@gmail.com)
 
-## Classes & Methods
+
+Classes & Methods
+-----------------
 
 ### Class `BGData`
 An S4 class to hold genotype and phenotype data.
@@ -32,14 +34,18 @@ An S4 class to hold genotype and phenotype data.
 #### Constructor
 - `BGData(geno = geno, [pheno = pheno, map = map])` where `geno` is a `RowLinkedMatrix`, `ColumnLinkedMatrix`, `ff_matrix` or `matrix`, and optionally, `pheno` is a `data.frame` and `map` is a `data.frame`.
 
-## Functions
+
+Functions
+---------
+
 - Both `readPED` and `readPED.matrix` create a `BGData` object from a plaintext file containing the phenotypes and genotypes (individuals in rows, phenotypes in the first few columns, markers in the remaining columns, e.g. the raw format in [PLINK](http://pngu.mgh.harvard.edu/~purcell/plink/dataman.shtml)). `readPED` stores genotype information in an `ff`-backed `RowLinkedMatrix` or `ColumnLinkedMatrix` (dependending on the value of the `linked.by` parameter) while `readPED.matrix` uses a regular matrix.
 - `load.BGData(path)` loads an existing `BGData` object from disk into the R workspace
 - `GWAS(formula, data, method)` uses a `BGData` object to conduct single marker association tests using regression methods such as `lm()`, `glm()` or `lmer()`
 - `getG(x)` calculates the genomic relationship matrix
 
 
-## Installation
+Installation
+------------
 BGData is not available on [CRAN](http://cran.r-project.org/) yet. However, it can be installed directly from GitHub using the [devtools](https://github.com/hadley/devtools) package.
 
 1. Install `devtools` package: `install.packages('devtools')`
@@ -50,7 +56,8 @@ BGData is not available on [CRAN](http://cran.r-project.org/) yet. However, it c
 Alternatively, you can download the most recent version as a bundle for [Windows](https://github.com/QuantGen/BGData/archive/master.zip) or [Mac OS / Linux](https://github.com/QuantGen/BGData/archive/master.tar.gz).
 
 
-## Introduction
+Introduction
+------------
 
 ### Prerequisites
 
