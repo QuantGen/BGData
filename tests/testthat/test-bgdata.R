@@ -1,5 +1,3 @@
-library(BGData)
-
 context("BGData")
 
 # Create temporary directory

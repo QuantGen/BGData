@@ -1,4 +1,3 @@
-library(BGData)
 library(parallel)
 
 context("utils")
