@@ -9,14 +9,21 @@ setClassUnion('geno',c('LinkedMatrix','BEDMatrix','matrix','ff_matrix'))
 
 #' An S4 class to represent GWAS data.
 #' 
-#' @slot pheno A \code{\link{data.frame}} that contains phenotypes.
-#' @slot map A \code{\link{data.frame}} that contains a genetic map.
 #' @slot geno A \code{geno} object (\code{LinkedMatrix}, \code{ff_matrix}, or
 #'   \code{\link{matrix}}) that contains genotypes.
+#' @slot pheno A \code{\link{data.frame}} that contains phenotypes.
+#' @slot map A \code{\link{data.frame}} that contains a genetic map.
 #' @export BGData
 #' @exportClass BGData
-BGData<-setClass('BGData',slots=c(pheno='data.frame',map='data.frame',geno='geno'))
+BGData<-setClass('BGData',slots=c(geno='geno',pheno='data.frame',map='data.frame'))
 
+#' Creates a new \code{BGData} instance.
+#' 
+#' @param .Object The \code{ColumnLinkedMatrix} instance to be initialized.
+#' @param geno A \code{geno} object (\code{LinkedMatrix}, \code{ff_matrix}, or
+#' @param pheno A \code{\link{data.frame}} that contains phenotypes.
+#' @param map A \code{\link{data.frame}} that contains a genetic map.
+#'   \code{\link{matrix}}) that contains genotypes.
 #' @export
 setMethod('initialize','BGData',function(.Object,geno,pheno,map){
     if(!is(geno,'geno')){
