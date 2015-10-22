@@ -14,14 +14,6 @@ The `BGData` package contains a data structure `BGData` that holds genotypes in 
 ![Conceptual Diagram](https://docs.google.com/drawings/d/1m2bV3-woWrO9F9_RXxw30FlzUORXzcnaIPJUlxc-MMk/pub?w=739&h=559)
 
 
-Developers
-----------
-
-- Gustavo de los Campos (gdeloscampos@gmail.com)
-- Alexander Grüneberg (alexander.grueneberg@googlemail.com)
-- Paulino Perez (perpdgo@gmail.com)
-
-
 Classes & Methods
 -----------------
 
