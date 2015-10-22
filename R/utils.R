@@ -24,7 +24,7 @@ crossprods.chunk<-function(chunk,x,y=NULL,nChunks,use_tcrossprod=FALSE){
 }
 
 
-crossprods<-function(x,y=NULL,nChunks=detectCores(),mc.cores=detectCores(),use_tcrossprod=FALSE){
+crossprods<-function(x,y=NULL,nChunks=detectCores(),use_tcrossprod=FALSE,mc.cores=detectCores()){
   if(!is.null(y)){
     if(use_tcrossprod){
       if(ncol(x)!=ncol(y)){
@@ -46,8 +46,7 @@ crossprods<-function(x,y=NULL,nChunks=detectCores(),mc.cores=detectCores(),use_t
       Xy=crossprod(x,y)
     }
   }else{ 
-    tmpIndex=1:nChunks
-    TMP=mclapply(X=tmpIndex,FUN=crossprods.chunk,x=x,y=y,nChunks=nChunks,mc.cores=mc.cores,use_tcrossprod=use_tcrossprod)
+    TMP=mclapply(X=1:nChunks,FUN=crossprods.chunk,x=x,y=y,nChunks=nChunks,use_tcrossprod=use_tcrossprod,mc.cores=mc.cores)
      ## We now need to add up chunks sequentially
      Xy=TMP[[1]]
      if(length(TMP)>1){
