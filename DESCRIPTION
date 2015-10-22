@@ -37,9 +37,7 @@ Suggests:
     lme4,
     SKAT,
     BEDMatrix
-Remotes:
-    QuantGen/LinkedMatrix,
-    QuantGen/BEDMatrix
+Remotes: QuantGen/BEDMatrix
 LazyData: true
 Collate:
     'package.R'
