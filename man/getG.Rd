@@ -18,11 +18,21 @@ xx'.}
 
 \item{scaleG}{TRUE/FALSE whether columns must be scaled before computing xx'.}
 
+\item{verbose}{If TRUE more messages are printed.}
+
 \item{i}{(integer, boolean or character) Indicates which rows should be used.
 By default, all rows are used.}
 
 \item{j}{(integer, boolean or character) Indicates which columns should be
 used. By default, all columns are used.}
+
+\item{minVar}{Columns with variance lower than this value will not be used
+in the computation (only if \code{scaleCol} is set).}
+
+\item{nChunks2}{The number of chunks that each chunk is split into for
+processing in parallel.}
+
+\item{mc.cores}{The number of cores (passed to \code{\link[parallel]{mclapply}}).}
 }
 \value{
 A positive semi-definite symmetric numeric matrix.

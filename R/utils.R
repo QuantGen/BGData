@@ -94,10 +94,16 @@ tcrossprod.parallel<-function(x,y=NULL,nChunks=detectCores(),mc.cores=detectCore
 #' @param scaleCol TRUE/FALSE whether columns must be scaled before computing
 #'   xx'.
 #' @param scaleG TRUE/FALSE whether columns must be scaled before computing xx'.
+#' @param verbose If TRUE more messages are printed.
 #' @param i (integer, boolean or character) Indicates which rows should be used.
 #'   By default, all rows are used.
 #' @param j (integer, boolean or character) Indicates which columns should be 
 #'   used. By default, all columns are used.
+#' @param minVar Columns with variance lower than this value will not be used 
+#'   in the computation (only if \code{scaleCol} is set).
+#' @param nChunks2 The number of chunks that each chunk is split into for 
+#'   processing in parallel.
+#' @param mc.cores The number of cores (passed to \code{\link[parallel]{mclapply}}).
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @export
 getG<-function(x,nChunks=ceiling(ncol(x)/1e4),scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,i=1:nrow(x),j=1:ncol(x),minVar=1e-5,
