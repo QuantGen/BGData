@@ -24,13 +24,6 @@ crossprods.chunk<-function(chunk,x,y=NULL,nChunks,use_tcrossprod=FALSE){
 }
 
 
-#' Computes crossprod (x'y or x'x) or tcrossprod (xy' or xx', used when use_tcrossprod=TRUE) in parallel.
-#' @param x matrix, ff_matrix, RowLinkedMatrix or ColumnLinkedMatrix
-#' @param y, vector, matrix, ff_matrix, RowLinkedMatrix or ColumnLinkedMatrix By default
-#' @param nChunks the number of 'chunks' used when X and y are partitioned.
-#' @param mc.cores  the number of cores (passed to mclapply)
-#' @param use_tcrossprod  if FALSE crossprods computes x'y or x'x (if y=NULL), otherwise crossprods computes xy' or xx' (if y=NULL).
-#' @return xx', x'x, x'y, or xy' depending on whether y is provided and on whether use_tcrossprod=TRUE/FALSE
 crossprods<-function(x,y=NULL,nChunks=detectCores(),mc.cores=detectCores(),use_tcrossprod=FALSE){
   if(!is.null(y)){
     if(use_tcrossprod){
@@ -67,6 +60,13 @@ crossprods<-function(x,y=NULL,nChunks=detectCores(),mc.cores=detectCores(),use_t
 }
 
 
+#' Computes crossprod (x'y or x'x) in parallel.
+#' 
+#' @param x matrix, ff_matrix, RowLinkedMatrix or ColumnLinkedMatrix.
+#' @param y vector, matrix, ff_matrix, RowLinkedMatrix or ColumnLinkedMatrix. NULL by default.
+#' @param nChunks The number of chunks used when X and y are partitioned.
+#' @param mc.cores The number of cores (passed to \code{\link[parallel]{mclapply}}).
+#' @return x'y' or x'x depending on whether y is provided.
 #' @export
 crossprod.parallel<-function(x,y=NULL,nChunks=detectCores(),mc.cores=detectCores()){
 	ans<-crossprods(x=x,y=y,nChunks=nChunks,mc.cores=mc.cores,use_tcrossprod=FALSE)
@@ -74,6 +74,13 @@ crossprod.parallel<-function(x,y=NULL,nChunks=detectCores(),mc.cores=detectCores
 }
 
 
+#' Computes tcrossprod (xy' or xx') in parallel.
+#' 
+#' @param x matrix, ff_matrix, RowLinkedMatrix or ColumnLinkedMatrix.
+#' @param y vector, matrix, ff_matrix, RowLinkedMatrix or ColumnLinkedMatrix. NULL by default.
+#' @param nChunks The number of chunks used when X and y are partitioned.
+#' @param mc.cores The number of cores (passed to \code{\link[parallel]{mclapply}}).
+#' @return xy' or xx' depending on whether y is provided.
 #' @export
 tcrossprod.parallel<-function(x,y=NULL,nChunks=detectCores(),mc.cores=detectCores()){
 	ans<-crossprods(x=x,y=y,nChunks=nChunks,mc.cores=mc.cores,use_tcrossprod=TRUE)
