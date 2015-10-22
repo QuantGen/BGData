@@ -31,7 +31,6 @@ crossprods.chunk<-function(chunk,x,y=NULL,nChunks,use_tcrossprod=FALSE){
 #' @param mc.cores  the number of cores (passed to mclapply)
 #' @param use_tcrossprod  if FALSE crossprods computes x'y or x'x (if y=NULL), otherwise crossprods computes xy' or xx' (if y=NULL).
 #' @return xx', x'x, x'y, or xy' depending on whether y is provided and on whether use_tcrossprod=TRUE/FALSE
-#' @export
 crossprods<-function(x,y=NULL,nChunks=detectCores(),mc.cores=detectCores(),use_tcrossprod=FALSE){
   if(!is.null(y)){
     if(use_tcrossprod){

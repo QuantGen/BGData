@@ -3,7 +3,6 @@
 export(BGData)
 export(GWAS)
 export(crossprod.parallel)
-export(crossprods)
 export(getG)
 export(getGij)
 export(load.BGData)
