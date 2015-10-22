@@ -114,7 +114,7 @@ tcrossprod.parallel<-function(x,y=NULL,nChunks=detectCores(),mc.cores=detectCore
 #' @export
 getG<-function(x,nChunks=ceiling(ncol(x)/1e4),scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,i=1:nrow(x),j=1:ncol(x),minVar=1e-5,
                nChunks2=detectCores(),mc.cores=detectCores()){
-    nX<-nrow(x); pX<-ncol(x); centerCol=TRUE # if this is made a parameter the imputation od NAs need to be modified.
+    nX<-nrow(x); pX<-ncol(x)
     
     # converting boolean to integer index (it leads to a more efficient subsetting than booleans)
     if(is.logical(i)){ i<-which(i) }
@@ -161,9 +161,7 @@ getG<-function(x,nChunks=ceiling(ncol(x)/1e4),scaleCol=TRUE,scaleG=TRUE,verbose=
         
             if(ncol(X)>0){
                 if(verbose){ cat("  =>Computing...\n") }
-                if(centerCol|scaleCol){
-                    X<-scale(X,center=centerCol,scale=scaleCol)
-                }
+                X<-scale(X,center=TRUE,scale=scaleCol)
                 TMP<-is.na(X)
                 if(any(TMP)){    X<-ifelse(TMP,0,X) }
 
