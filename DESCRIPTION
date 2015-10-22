@@ -20,10 +20,9 @@ Description: Genetic data can be very large and often holding data in RAM is not
     class BGData contains three slots @geno, @map and @pheno and can be used to hold
     GWAS data.
 Authors@R: c(
-    person("Gustavo", "de los Campos", email = "gustavoc@msu.edu", role = c("aut", "cre")),
-    person("Paulino Perez", email = "perpdgo@gmail.com", role = c("ctb")),
-    person("Alexander", "Grüneberg", email = "alexander.grueneberg@googlemail.com", role = c("ctb")))
-Encoding: UTF-8
+    person("Gustavo", "de los Campos", email = "gustavoc@msu.edu", role = c("aut")),
+    person("Alexander", "Grueneberg", email = "alexander.grueneberg@googlemail.com", role = c("aut", "cre")),
+    person("Paulino Perez", email = "perpdgo@gmail.com", role = c("ctb")))
 Depends:
     R (>= 3.0.0),
     ff
