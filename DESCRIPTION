@@ -24,6 +24,8 @@ Authors@R: c(
     person("Alexander", "Grueneberg", email = "alexander.grueneberg@googlemail.com", role = c("aut", "cre")),
     person("Paulino", "Perez", email = "perpdgo@gmail.com", role = c("ctb")),
     person("Ana", "Vazquez", email = "avazquez@epi.msu.edu", role = c("ctb")))
+URL: https://github.com/QuantGen/BGData
+BugReports: https://github.com/QuantGen/BGData/issues
 Depends:
     R (>= 3.0.0),
     ff
