@@ -105,14 +105,46 @@ tcrossprod.parallel<-function(x,y=NULL,nChunks=detectCores(),mc.cores=detectCore
 #'   By default, all rows are used.
 #' @param j (integer, boolean or character) Indicates which columns should be 
 #'   used. By default, all columns are used.
+#' @param i2 (integer, boolean or character) Indicates which rows should be used 
+#'   to divide matrix into blocks.
 #' @param minVar Columns with variance lower than this value will not be used 
 #'   in the computation (only if \code{scaleCol} is set).
 #' @param nChunks2 The number of chunks that each chunk is split into for 
 #'   processing in parallel.
+#' @param scales Precomputed scales if i2 is used.
+#' @param centers Precomputed centers if i2 is used.
+#' @param impute Whether to impute data if i2 is used.
+#' @param saveG Whether to save genomic relationship matrix into file.
+#' @param saveType File format to save genomic relationship matrix in. Either 
+#'   \code{RData} or \code{ff}.
+#' @param saveName Name without extension to save genomic relationship matrix with.
 #' @param mc.cores The number of cores (passed to \code{\link[parallel]{mclapply}}).
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @export
-getG<-function(x,nChunks=ceiling(ncol(x)/1e4),scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,i=1:nrow(x),j=1:ncol(x),minVar=1e-5,
+getG<-function(x,nChunks=ceiling(ncol(x)/1e4),scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,
+                i=1:nrow(x),j=1:ncol(x),i2=NULL,minVar=1e-5,nChunks2=detectCores(),
+                scales=NULL,centers=NULL,impute=TRUE,saveG=FALSE,saveType='RData',
+                saveName='Gij',mc.cores=detectCores()){
+    if(is.null(i2)){
+        G<-getGi(x=x,nChunks=nChunks,scaleCol=scaleCol,scaleG=scaleG,verbose=verbose,i=i,j=j,minVar=minVar,nChunks2=nChunks2,mc.cores=mc.cores)
+    }else{
+        if(is.null(scales)||is.null(centers)) stop('scales and centers need to be precomputed.')
+        G<-getGij(x=x,i1=i,i2=i2,scales=scales,centers=centers,scaleCol=scaleCol,scaleG=scaleG,verbose=verbose,nChunks=nChunks,j=j,minVar=minVar,nChunks2=nChunks2,impute=impute,mc.cores=mc.cores)
+    }
+    if(saveG){
+        if(saveType=='RData'){
+            save(G,file=paste0(saveName,'.RData'))
+        }
+        if(saveType=='ff'){
+            Gij=as.ff(G,file=paste0(saveName,'.bin'))
+            save(Gij,file=paste0(saveName,'.ff'))
+        }
+    }
+    return(G)
+}
+
+
+getGi<-function(x,nChunks=ceiling(ncol(x)/1e4),scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,i=1:nrow(x),j=1:ncol(x),minVar=1e-5,
                nChunks2=detectCores(),mc.cores=detectCores()){
     nX<-nrow(x); pX<-ncol(x)
     
@@ -183,10 +215,8 @@ getG<-function(x,nChunks=ceiling(ncol(x)/1e4),scaleCol=TRUE,scaleG=TRUE,verbose=
 }
 
 
-#' @export
 getGij<-function(x,i1,i2,scales,centers,scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,nChunks=ceiling(ncol(x)/1e4),
-                j=1:ncol(x),minVar=1e-5,nChunks2=(detectCores()-1),mc.cores=(detectCores()-1),impute=TRUE,
-                saveG=FALSE,saveType='RData',saveName='Gij'){
+                j=1:ncol(x),minVar=1e-5,nChunks2=detectCores(),impute=TRUE,mc.cores=detectCores()){
                 
     nX<-nrow(x); pX<-ncol(x)
     K=0
@@ -267,16 +297,7 @@ getGij<-function(x,i1,i2,scales,centers,scaleCol=TRUE,scaleG=TRUE,verbose=TRUE,n
     if(scaleG){
     	 G<-G/K
      }
-     
-     if(saveG){
-     	if(saveType=='RData'){
-     		save(G,file=paste0(saveName,'.RData'))
-     	}
-     	if(saveType=='ff'){
-     		Gij=as.ff(G,file=paste0(saveName,'.bin'))
-     		save(Gij,file=paste0(saveName,'.ff'))
-     	}
-     }
+    
      return(G)
 }
 

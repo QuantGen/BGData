@@ -5,8 +5,10 @@
 \title{Computes a genomic relationship matrix G=xx'.}
 \usage{
 getG(x, nChunks = ceiling(ncol(x)/10000), scaleCol = TRUE, scaleG = TRUE,
-  verbose = TRUE, i = 1:nrow(x), j = 1:ncol(x), minVar = 1e-05,
-  nChunks2 = detectCores(), mc.cores = detectCores())
+  verbose = TRUE, i = 1:nrow(x), j = 1:ncol(x), i2 = NULL,
+  minVar = 1e-05, nChunks2 = detectCores(), scales = NULL,
+  centers = NULL, impute = TRUE, saveG = FALSE, saveType = "RData",
+  saveName = "Gij", mc.cores = detectCores())
 }
 \arguments{
 \item{x}{matrix, ff_matrix, RowLinkedMatrix or ColumnLinkedMatrix}
@@ -26,11 +28,27 @@ By default, all rows are used.}
 \item{j}{(integer, boolean or character) Indicates which columns should be
 used. By default, all columns are used.}
 
+\item{i2}{(integer, boolean or character) Indicates which rows should be used
+to divide matrix into blocks.}
+
 \item{minVar}{Columns with variance lower than this value will not be used
 in the computation (only if \code{scaleCol} is set).}
 
 \item{nChunks2}{The number of chunks that each chunk is split into for
 processing in parallel.}
+
+\item{scales}{Precomputed scales if i2 is used.}
+
+\item{centers}{Precomputed centers if i2 is used.}
+
+\item{impute}{Whether to impute data if i2 is used.}
+
+\item{saveG}{Whether to save genomic relationship matrix into file.}
+
+\item{saveType}{File format to save genomic relationship matrix in. Either
+\code{RData} or \code{ff}.}
+
+\item{saveName}{Name without extension to save genomic relationship matrix with.}
 
 \item{mc.cores}{The number of cores (passed to \code{\link[parallel]{mclapply}}).}
 }

@@ -70,7 +70,7 @@ for (nCores in seq_len(4)) {
 
 for (nCores in seq_len(4)) {
 
-    test_that(paste("getG", "on", nCores, "cores"), {
+    test_that(paste("getGi", "on", nCores, "cores"), {
 
         hasCores(nCores)
 
@@ -121,60 +121,57 @@ for (nCores in seq_len(4)) {
         p <- 1237
         X <- matrix(nrow = n, ncol = p, data = rnorm(n * p))
 
-        centers <- colMeans(X)
-        scales <- apply(X = X, MARGIN = 2, FUN = sd)
-
         for (nChunks in 1:3) {
             for (nChunks2 in 1:3) {
 
                 # all scalings
-                i1 <- sample(1:nrow(X), size = 3)
+                i <- sample(1:nrow(X), size = 3)
                 i2 <- sample(1:nrow(X), size = 4)
                 G <- tcrossprod(scale(X))
                 G <- G/mean(diag(G))
-                G_12 <- getGij(x = X, i1 = i1, i2 = i2, centers = colMeans(X), scales = apply(FUN = sd, X = X, MARGIN = 2) * sqrt((n - 1)/n), scaleG = T, verbose = F, scaleCol = TRUE, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
-                expect_equal(G[i1, i2], G_12)
+                G_12 <- getG(x = X, i = i, i2 = i2, centers = colMeans(X), scales = apply(FUN = sd, X = X, MARGIN = 2) * sqrt((n - 1)/n), scaleG = T, verbose = F, scaleCol = TRUE, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
+                expect_equal(G[i, i2], G_12)
 
-                i2 <- i1
-                G_12 <- getGij(x = X, i1 = i1, i2 = i2, centers = colMeans(X), scales = apply(FUN = sd, X = X, MARGIN = 2) * sqrt((n - 1)/n), scaleG = T, verbose = F, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
-                expect_equal(G[i1, i2], G_12)
+                i2 <- i
+                G_12 <- getG(x = X, i = i, i2 = i2, centers = colMeans(X), scales = apply(FUN = sd, X = X, MARGIN = 2) * sqrt((n - 1)/n), scaleG = T, verbose = F, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
+                expect_equal(G[i, i2], G_12)
 
                 # without scaling to average diagonal=1
-                i1 <- sample(1:nrow(X), size = 3)
+                i <- sample(1:nrow(X), size = 3)
                 i2 <- sample(1:nrow(X), size = 4)
 
                 G <- tcrossprod(scale(X) * sqrt(n/(n - 1)))
-                G_12 <- getGij(x = X, i1 = i1, i2 = i2, centers = colMeans(X), scales = apply(FUN = sd, X = X, MARGIN = 2) * sqrt((n - 1)/n), scaleG = F, verbose = F, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
-                expect_equal(G[i1, i2], G_12)
+                G_12 <- getG(x = X, i = i, i2 = i2, centers = colMeans(X), scales = apply(FUN = sd, X = X, MARGIN = 2) * sqrt((n - 1)/n), scaleG = F, verbose = F, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
+                expect_equal(G[i, i2], G_12)
 
-                i2 <- i1
-                G_12 <- getGij(x = X, i1 = i1, i2 = i2, centers = colMeans(X), scales = apply(FUN = sd, X = X, MARGIN = 2) * sqrt((n - 1)/n), scaleG = F, verbose = F, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
-                expect_equal(G[i1, i2], G_12)
+                i2 <- i
+                G_12 <- getG(x = X, i = i, i2 = i2, centers = colMeans(X), scales = apply(FUN = sd, X = X, MARGIN = 2) * sqrt((n - 1)/n), scaleG = F, verbose = F, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
+                expect_equal(G[i, i2], G_12)
 
                 # without scaling columns, but scaling average diagonal =1
-                i1 <- sample(1:nrow(X), size = 3)
+                i <- sample(1:nrow(X), size = 3)
                 i2 <- sample(1:nrow(X), size = 4)
 
                 G <- tcrossprod(scale(X, center = T, scale = F))
                 G <- G/ncol(X)
-                G_12 <- getGij(x = X, i1 = i1, i2 = i2, centers = colMeans(X), scales = rep(1, ncol(X)), scaleG = T, verbose = F, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
-                expect_equal(G[i1, i2], G_12)
+                G_12 <- getG(x = X, i = i, i2 = i2, centers = colMeans(X), scales = rep(1, ncol(X)), scaleG = T, verbose = F, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
+                expect_equal(G[i, i2], G_12)
 
-                i2 <- i1
-                G_12 <- getGij(x = X, i1 = i1, i2 = i2, centers = colMeans(X), scales = rep(1, ncol(X)), scaleG = T, verbose = F, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
-                expect_equal(G[i1, i2], G_12)
+                i2 <- i
+                G_12 <- getG(x = X, i = i, i2 = i2, centers = colMeans(X), scales = rep(1, ncol(X)), scaleG = T, verbose = F, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
+                expect_equal(G[i, i2], G_12)
 
                 # no scaling at all
-                i1 <- sample(1:nrow(X), size = 3)
+                i <- sample(1:nrow(X), size = 3)
                 i2 <- sample(1:nrow(X), size = 4)
 
                 G <- tcrossprod(scale(X, center = T, scale = F))
-                G_12 <- getGij(x = X, i1 = i1, i2 = i2, centers = colMeans(X), scales = rep(1, ncol(X)), scaleG = F, verbose = F, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
-                expect_equal(G[i1, i2], G_12)
+                G_12 <- getG(x = X, i = i, i2 = i2, centers = colMeans(X), scales = rep(1, ncol(X)), scaleG = F, verbose = F, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
+                expect_equal(G[i, i2], G_12)
 
-                i2 <- i1
-                G_12 <- getGij(x = X, i1 = i1, i2 = i2, centers = colMeans(X), scales = rep(1, ncol(X)), scaleG = F, verbose = F, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
-                expect_equal(G[i1, i2], G_12)
+                i2 <- i
+                G_12 <- getG(x = X, i = i, i2 = i2, centers = colMeans(X), scales = rep(1, ncol(X)), scaleG = F, verbose = F, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
+                expect_equal(G[i, i2], G_12)
 
             }
         }
