@@ -128,11 +128,11 @@ for (nCores in seq_len(2)) {
                 i2 <- sample(1:nrow(X), size = 4)
 
                 centers <- colMeans(X)
-                scales <- apply(X, 2, sd) * sqrt((n - 1) / n)
+                scales <- apply(X, 2, sd) * sqrt((n - 1)/n)
 
                 # all scalings
                 G <- tcrossprod(scale(X))
-                G <- G / mean(diag(G))
+                G <- G/mean(diag(G))
                 G_12 <- getG(x = X, i = i, i2 = i2, centers = centers, scales = scales, scaleG = T, verbose = F, scaleCol = TRUE, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
                 expect_equal(G[i, i2], G_12)
 
@@ -140,7 +140,7 @@ for (nCores in seq_len(2)) {
                 expect_equal(G[i, i], G_12)
 
                 # without scaling to average diagonal = 1
-                G <- tcrossprod(scale(X) * sqrt(n / (n - 1)))
+                G <- tcrossprod(scale(X) * sqrt(n/(n - 1)))
                 G_12 <- getG(x = X, i = i, i2 = i2, centers = centers, scales = scales, scaleG = F, verbose = F, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
                 expect_equal(G[i, i2], G_12)
 
@@ -151,7 +151,7 @@ for (nCores in seq_len(2)) {
                 scales <- rep(1, ncol(X))
 
                 G <- tcrossprod(scale(X, center = T, scale = F))
-                G <- G / ncol(X)
+                G <- G/ncol(X)
                 G_12 <- getG(x = X, i = i, i2 = i2, centers = centers, scales = scales, scaleG = T, verbose = F, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
                 expect_equal(G[i, i2], G_12)
 
@@ -182,8 +182,8 @@ test_that("summarize", {
     for (col in seq_len(ncol(genotypes))) {
         Z <- genotypes[, col]
         NAs <- sum(is.na(Z))
-        dummy[col, 1] <- NAs / length(Z)
-        dummy[col, 2] <- sum(Z, na.rm = TRUE) / ((length(Z) - NAs) * 2)
+        dummy[col, 1] <- NAs/length(Z)
+        dummy[col, 2] <- sum(Z, na.rm = TRUE)/((length(Z) - NAs) * 2)
     }
 
     expect_equal(summarize(genotypes, chunkSize = 1), dummy)
