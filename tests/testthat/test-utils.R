@@ -8,7 +8,7 @@ hasCores <- function(numCores) {
     }
 }
 
-for (nCores in seq_len(4)) {
+for (nCores in seq_len(2)) {
 
     test_that(paste("crossprod.parallel", "on", nCores, "cores"), {
 
@@ -68,18 +68,18 @@ for (nCores in seq_len(4)) {
 }
 
 
-for (nCores in seq_len(4)) {
+for (nCores in seq_len(2)) {
 
     test_that(paste("getGi", "on", nCores, "cores"), {
 
         hasCores(nCores)
 
-        n <- 155
-        p <- 1237
+        n <- 10
+        p <- 100
         X <- matrix(nrow = n, ncol = p, data = rnorm(n * p))
 
-        for (nChunks in 1:3) {
-            for (nChunks2 in 1:3) {
+        for (nChunks in c(1, 3)) {
+            for (nChunks2 in c(1, 3)) {
 
                 # all scalings
                 G <- tcrossprod(scale(X))
@@ -117,12 +117,12 @@ for (nCores in seq_len(4)) {
 
         hasCores(nCores)
 
-        n <- 155
-        p <- 1237
+        n <- 10
+        p <- 100
         X <- matrix(nrow = n, ncol = p, data = rnorm(n * p))
 
-        for (nChunks in 1:3) {
-            for (nChunks2 in 1:3) {
+        for (nChunks in c(1, 3)) {
+            for (nChunks2 in c(1, 3)) {
 
                 # all scalings
                 i <- sample(1:nrow(X), size = 3)
