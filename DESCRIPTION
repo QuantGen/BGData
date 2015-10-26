@@ -28,12 +28,12 @@ URL: https://github.com/QuantGen/BGData
 BugReports: https://github.com/QuantGen/BGData/issues
 Depends:
     R (>= 3.0.0),
-    ff
+    ff,
+    LinkedMatrix
 Imports:
     methods,
     parallel,
-    bit,
-    LinkedMatrix
+    bit
 Suggests:
     testthat,
     lme4,
