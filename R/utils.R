@@ -505,6 +505,46 @@ GWAS.SKAT<-function(formula,data,groups,plot=FALSE,verbose=FALSE,min.pValue=1e-1
 }
 
 
+summarize.chunk<-function(X){
+    NAs<-is.na(X)
+    freqNA<-colMeans(NAs)
+    allFreq<-colMeans(X,na.rm=TRUE)/2
+    OUT<-cbind(freqNA,allFreq)
+    return(OUT)
+}
+
+
+#' Calculate frequencies of missing values and alleles.
+#' 
+#' @param x matrix, ff_matrix, RowLinkedMatrix or ColumnLinkedMatrix
+#' @param chunkSize Represents the number of columns of \code{@@geno} that are 
+#'   brought into RAM for processing (5000 by default).
+#' @param verbose If TRUE more messages are printed.
+#' @export
+summarize<-function(X,chunkSize=1000,verbose=FALSE){
+    p<-ncol(X)
+    OUT<-matrix(nrow=p,ncol=2,NA)
+    colnames(OUT)<-c('freqNA','allFreq')
+    nChunks<-ceiling(p/chunkSize)
+    end<-0
+    for(i in 1:nChunks){
+        timeIn<-proc.time()[3]
+        if(verbose){
+            cat('-----------------------------\n')
+            cat(' Working Chunk', i,'(',round(i/nChunks*100,3),'%).\n')
+        }
+        ini<-end+1
+        end<-min(ini+chunkSize-1,p)
+        if(verbose) cat('   =>Aquiring genotypes.\n')
+        Z<-X[,ini:end,drop=FALSE]
+        if(verbose) cat('   =>Computing.\n')
+        OUT[ini:end,]<-summarize.chunk(Z)
+        if(verbose) cat('   =>Time:', round(proc.time()[3]-timeIn,3),'secs.\n')
+    }
+    return(OUT)
+}
+
+
 #' Generate and store a simulated plaintext raw PED file (see \code{--recodeA}
 #' in PLINK) or PED-like file for testing purposes.
 #' 

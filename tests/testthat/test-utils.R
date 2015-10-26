@@ -173,6 +173,27 @@ for (nCores in seq_len(2)) {
 }
 
 
+test_that("summarize", {
+
+    genotypes <- matrix(nrow = 3, ncol = 6, c(0, 0, 1, 0, 2, 2, 1, 2, 0, 1, 2, 0, 0, 1, 2, 0, NA, 0))
+
+    dummy <- matrix(nrow = ncol(genotypes), ncol = 2, NA)
+    colnames(dummy) <- c("freqNA", "allFreq")
+    for (col in seq_len(ncol(genotypes))) {
+        Z <- genotypes[, col]
+        NAs <- sum(is.na(Z))
+        dummy[col, 1] <- NAs / length(Z)
+        dummy[col, 2] <- sum(Z, na.rm = TRUE) / ((length(Z) - NAs) * 2)
+    }
+
+    expect_equal(summarize(genotypes, chunkSize = 1), dummy)
+    expect_equal(summarize(genotypes, chunkSize = 2), dummy)
+    expect_equal(summarize(genotypes, chunkSize = 3), dummy)
+    expect_equal(summarize(genotypes), dummy)
+
+})
+
+
 test_that("normalizeType", {
 
     expect_equal(typeof(normalizeType("double")), "double")

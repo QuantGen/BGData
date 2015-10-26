@@ -36,6 +36,7 @@ Functions
 - `load.BGData(path)` loads an existing `BGData` object from disk into the R workspace
 - `GWAS(formula, data, method)` uses a `BGData` object to conduct single marker association tests using regression methods such as `lm()`, `glm()` or `lmer()`
 - `getG(x)` calculates the genomic relationship matrix
+- `summarize(x)` calculates frequencies of missing values and alleles
 
 
 Installation
