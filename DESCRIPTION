@@ -37,9 +37,7 @@ Imports:
 Suggests:
     testthat,
     lme4,
-    SKAT,
-    BEDMatrix
-Remotes: QuantGen/BEDMatrix
+    SKAT
 LazyData: true
 Collate:
     'package.R'
