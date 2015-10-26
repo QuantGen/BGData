@@ -570,7 +570,7 @@ summarize.chunk <- function(X) {
 
 #' Calculate frequencies of missing values and alleles.
 #' 
-#' @param x matrix, ff_matrix, RowLinkedMatrix or ColumnLinkedMatrix
+#' @param X matrix, ff_matrix, RowLinkedMatrix or ColumnLinkedMatrix
 #' @param chunkSize Represents the number of columns of \code{@@geno} that are 
 #'   brought into RAM for processing (5000 by default).
 #' @param verbose If TRUE more messages are printed.

@@ -63,7 +63,7 @@ each node is an \code{ff} instance. By default a column-linked
 user can modify this using the \code{linked.by} argument. The number of nodes
 is either specified by the user using the \code{nNodes} argument or
 determined internally so that each \code{ff} object has a number of cells
-that is smaller than \code{.Machine$integer.max/1.2}.
+that is smaller than \code{.Machine$integer.max / 1.2}.
 
 \code{readPED} creates a folder (see \code{folderOut}) that contains the
 binary flat files (named \code{geno_*.bin}) and an external representation of

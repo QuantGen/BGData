@@ -7,12 +7,12 @@
 summarize(X, chunkSize = 1000, verbose = FALSE)
 }
 \arguments{
+\item{X}{matrix, ff_matrix, RowLinkedMatrix or ColumnLinkedMatrix}
+
 \item{chunkSize}{Represents the number of columns of \code{@geno} that are
 brought into RAM for processing (5000 by default).}
 
 \item{verbose}{If TRUE more messages are printed.}
-
-\item{x}{matrix, ff_matrix, RowLinkedMatrix or ColumnLinkedMatrix}
 }
 \description{
 Calculate frequencies of missing values and alleles.
