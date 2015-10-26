@@ -106,7 +106,7 @@ for (nCores in seq_len(2)) {
             }
         }
 
-        X[sample(1:100, size = 20)] <- NA
+        X[sample(1:length(X), size = 20)] <- NA
         G <- getG(X, verbose = F)
         expect_true(!any(is.na(G)))
 
