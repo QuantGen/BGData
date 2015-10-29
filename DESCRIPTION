@@ -43,3 +43,4 @@ Collate:
     'package.R'
     'BGData.R'
     'utils.R'
+RoxygenNote: 5.0.0
