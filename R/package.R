@@ -12,5 +12,5 @@ NULL
 
 
 .onAttach <- function(libname, pkgname) {
-    packageStartupMessage("Support provided by the National Institutes of Health (Grant: R01GM101219, R01GM099992).")
+    packageStartupMessage("The BGData package was supported by the National Institutes of Health (Grant: R01GM101219, R01GM099992).")
 }
