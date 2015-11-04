@@ -319,19 +319,17 @@ load.BGData <- function(file, envir = parent.frame(), verbose = TRUE) {
     lsNEW <- ls()
     objectName <- lsNEW[(!lsNEW %in% lsOLD) & (lsNEW != "lsOLD")]
 
-    # Determine path and filename
-    path <- dirname(file)
-    fname <- basename(file)
-
-    # Store current working directory and set working directory to path
-    cwd <- getwd()
-    setwd(path)
-
     # Determine object class
     objectClass <- class(get(objectName))
     if (objectClass != "BGData") {
         stop("Object class must be BGData")
     }
+
+    # Store current working directory and set working directory to directory of file
+    cwd <- getwd()
+    path <- dirname(file)
+    fname <- basename(file)
+    setwd(path)
 
     if (verbose) {
         cat("Meta data (", fname, ") and its data were stored at folder ", path, ".\n", sep = "")
