@@ -309,9 +309,8 @@ readPED.default <- function(fileIn, header, dataType, class, n = NULL, p = NULL,
 #' 
 #' @param file The name of the .RData file to be loaded.
 #' @param envir The environment where to load the data.
-#' @param verbose TRUE/FALSE
 #' @export
-load.BGData <- function(file, envir = parent.frame(), verbose = TRUE) {
+load.BGData <- function(file, envir = parent.frame()) {
 
     # Determine object name
     lsOLD <- ls()
@@ -331,11 +330,9 @@ load.BGData <- function(file, envir = parent.frame(), verbose = TRUE) {
     fname <- basename(file)
     setwd(path)
 
-    if (verbose) {
-        cat("Meta data (", fname, ") and its data were stored at folder ", path, ".\n", sep = "")
-        cat("Object Name: ", objectName, "\n", sep = "")
-        cat("Object Class: ", objectClass, "\n", sep = "")
-    }
+    message(paste0("Meta data (", fname, ") and its data were stored at folder ", path))
+    message(paste0("Object Name: ", objectName))
+    message(paste0("Object Class: ", objectClass))
 
     # Determine number of nodes
     nNodes <- length(get(objectName)@geno)
@@ -343,9 +340,7 @@ load.BGData <- function(file, envir = parent.frame(), verbose = TRUE) {
     # Open all nodes for reading (we do not store absolute paths to ff files, so this
     # has to happen in the same working directory)
     for (i in 1:nNodes) {
-        if (verbose) {
-            cat("Opening flat file ", i, "\n")
-        }
+        message(paste0("Opening flat file ", i))
         open(get(objectName)@geno[[i]])
     }
 
@@ -354,7 +349,5 @@ load.BGData <- function(file, envir = parent.frame(), verbose = TRUE) {
 
     # Restore the working directory
     setwd(cwd)
-    if (verbose) {
-        cat("Original directory (", getwd(), ") restored \n", sep = "")
-    }
+    message(paste0("Original directory (", getwd(), ") restored"))
 }

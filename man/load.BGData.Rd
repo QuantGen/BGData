@@ -4,14 +4,12 @@
 \alias{load.BGData}
 \title{Loads BGData objects.}
 \usage{
-load.BGData(file, envir = parent.frame(), verbose = TRUE)
+load.BGData(file, envir = parent.frame())
 }
 \arguments{
 \item{file}{The name of the .RData file to be loaded.}
 
 \item{envir}{The environment where to load the data.}
-
-\item{verbose}{TRUE/FALSE}
 }
 \description{
 Loads BGData objects.

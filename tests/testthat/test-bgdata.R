@@ -158,7 +158,7 @@ test_that("it loads BGData objects", {
     path <- paste0(path, "/", "BGData.RData")
 
     # Load BGData object
-    load.BGData(path, verbose = FALSE)
+    load.BGData(path)
     expect_true("BGData" %in% ls())
     expect_equal(dim(BGData@geno), c(nRows, nCols))
 
