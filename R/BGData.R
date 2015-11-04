@@ -329,14 +329,15 @@ load.BGData <- function(file, envir = parent.frame()) {
     cwd <- getwd()
     setwd(dirname(file))
 
-    # Determine number of nodes
-    nNodes <- length(get(objectName)@geno)
-
     # Open all nodes for reading (we do not store absolute paths to ff files, so this
     # has to happen in the same working directory)
-    for (i in 1:nNodes) {
-        message(paste0("Opening flat file ", i))
-        open(get(objectName)@geno[[i]])
+    nNodes <- length(get(objectName)@geno)
+    for (i in seq_len(nNodes)) {
+        node <- get(objectName)@geno[[i]]
+        if (class(node) == "ff_matrix") {
+            message(paste0("Opening flat file ", i, "..."))
+            open(node)
+        }
     }
 
     # Send the object to envir
