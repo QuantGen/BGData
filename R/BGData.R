@@ -344,5 +344,4 @@ load.BGData <- function(file, envir = parent.frame()) {
 
     # Restore the working directory
     setwd(cwd)
-    message(paste0("Original directory (", getwd(), ") restored"))
 }
