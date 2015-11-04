@@ -6,7 +6,7 @@
 raw PED file (generated with \code{--recodeA} in PLINK) or a PED-like file.}
 \usage{
 readPED(fileIn, header, dataType, n = NULL, p = NULL, na.strings = "NA",
-  nColSkip = 6, idCol = 2, verbose = FALSE, nNodes = NULL,
+  nColSkip = 6, idCol = c(1, 2), verbose = FALSE, nNodes = NULL,
   linked.by = "rows", folderOut = paste("BGData_", sub("\\\\.[[:alnum:]]+$",
   "", basename(fileIn)), sep = ""), dimorder = if (linked.by == "rows") 2:1
   else 1:2)
@@ -31,7 +31,8 @@ missing value.}
 \item{nColSkip}{The number of columns to be skipped to reach the genotype 
 information in the file.}
 
-\item{idCol}{The index of the ID column.}
+\item{idCol}{The index of the ID column. If more than one index is given, 
+both columns will be concatenated with "_".}
 
 \item{verbose}{If TRUE, progress updates will be posted.}
 

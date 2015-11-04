@@ -5,7 +5,7 @@
 \title{Creates a \code{\linkS4class{BGData}} object from a plaintext PED-like file.}
 \usage{
 readPED.matrix(fileIn, header, dataType, n = NULL, p = NULL,
-  na.strings = "NA", nColSkip = 6, idCol = 2, verbose = FALSE)
+  na.strings = "NA", nColSkip = 6, idCol = c(1, 2), verbose = FALSE)
 }
 \arguments{
 \item{fileIn}{The path to the plaintext file.}
@@ -25,7 +25,8 @@ missing value.}
 \item{nColSkip}{The number of columns to be skipped to reach the genotype 
 information in the file.}
 
-\item{idCol}{The index of the ID column.}
+\item{idCol}{The index of the ID column. If more than one index is given, 
+both columns will be concatenated with "_".}
 
 \item{verbose}{If TRUE, progress updates will be posted.}
 }

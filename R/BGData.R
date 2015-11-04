@@ -93,7 +93,8 @@ setMethod("initialize", "BGData", function(.Object, geno, pheno, map) {
 #'   missing value.
 #' @param nColSkip The number of columns to be skipped to reach the genotype 
 #'   information in the file.
-#' @param idCol The index of the ID column.
+#' @param idCol The index of the ID column. If more than one index is given, 
+#'   both columns will be concatenated with "_".
 #' @param verbose If TRUE, progress updates will be posted.
 #' @param nNodes The number of nodes to create.
 #' @param linked.by If \code{columns} a column-linked matrix 
@@ -106,7 +107,7 @@ setMethod("initialize", "BGData", function(.Object, geno, pheno, map) {
 #'   \code{\linkS4class{ColumnLinkedMatrix}}, 
 #'   \code{\linkS4class{RowLinkedMatrix}}, \code{\link[ff]{ff}}
 #' @export
-readPED <- function(fileIn, header, dataType, n = NULL, p = NULL, na.strings = "NA", nColSkip = 6, idCol = 2, verbose = FALSE, nNodes = NULL, linked.by = "rows", folderOut = paste("BGData_", sub("\\.[[:alnum:]]+$", "", basename(fileIn)), sep = ""), dimorder = if (linked.by == "rows") 2:1 else 1:2) {
+readPED <- function(fileIn, header, dataType, n = NULL, p = NULL, na.strings = "NA", nColSkip = 6, idCol = c(1, 2), verbose = FALSE, nNodes = NULL, linked.by = "rows", folderOut = paste("BGData_", sub("\\.[[:alnum:]]+$", "", basename(fileIn)), sep = ""), dimorder = if (linked.by == "rows") 2:1 else 1:2) {
 
     if (file.exists(folderOut)) {
         stop(paste("Output folder", folderOut, "already exists. Please move it or pick a different one."))
@@ -149,18 +150,19 @@ readPED <- function(fileIn, header, dataType, n = NULL, p = NULL, na.strings = "
 #'   missing value.
 #' @param nColSkip The number of columns to be skipped to reach the genotype 
 #'   information in the file.
-#' @param idCol The index of the ID column.
+#' @param idCol The index of the ID column. If more than one index is given, 
+#'   both columns will be concatenated with "_".
 #' @param verbose If TRUE, progress updates will be posted.
 #' @return Returns a \code{\linkS4class{BGData}} object.
 #' @seealso \code{\linkS4class{BGData}}
 #' @export
-readPED.matrix <- function(fileIn, header, dataType, n = NULL, p = NULL, na.strings = "NA", nColSkip = 6, idCol = 2, verbose = FALSE) {
+readPED.matrix <- function(fileIn, header, dataType, n = NULL, p = NULL, na.strings = "NA", nColSkip = 6, idCol = c(1, 2), verbose = FALSE) {
 
     readPED.default(fileIn = fileIn, header = header, dataType = normalizeType(dataType), class = "matrix", n = n, p = p, na.strings = na.strings, nColSkip = nColSkip, idCol = idCol, verbose = verbose)
 }
 
 
-readPED.default <- function(fileIn, header, dataType, class, n = NULL, p = NULL, na.strings = "NA", nColSkip = 6, idCol = 2, verbose = FALSE, nNodes = NULL, vmode = NULL, folderOut = paste("BGData_", sub("\\.[[:alnum:]]+$", "", basename(fileIn)), sep = ""), dimorder = NULL) {
+readPED.default <- function(fileIn, header, dataType, class, n = NULL, p = NULL, na.strings = "NA", nColSkip = 6, idCol = c(1, 2), verbose = FALSE, nNodes = NULL, vmode = NULL, folderOut = paste("BGData_", sub("\\.[[:alnum:]]+$", "", basename(fileIn)), sep = ""), dimorder = NULL) {
 
     if (is.null(n)) {
         n <- getLineCount(fileIn, header)
@@ -283,8 +285,9 @@ readPED.default <- function(fileIn, header, dataType, class, n = NULL, p = NULL,
     close(pedFile)
 
     # Add rownames
-    rownames(geno) <- pheno[, idCol]
-    rownames(pheno) <- pheno[, idCol]
+    IDs <- apply(pheno[, idCol, drop = FALSE], 1, paste, collapse = "_")
+    rownames(geno) <- IDs
+    rownames(pheno) <- IDs
 
     # Convert pheno to a data.frame
     pheno <- as.data.frame(pheno, stringsAsFactors = FALSE)
