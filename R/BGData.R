@@ -312,27 +312,22 @@ readPED.default <- function(fileIn, header, dataType, class, n = NULL, p = NULL,
 #' @export
 load.BGData <- function(file, envir = parent.frame()) {
 
-    # Determine object name
+    # Determine object name and class
     lsOLD <- ls()
     load(file = file)
     lsNEW <- ls()
     objectName <- lsNEW[(!lsNEW %in% lsOLD) & (lsNEW != "lsOLD")]
-
-    # Determine object class
     objectClass <- class(get(objectName))
+
     if (objectClass != "BGData") {
         stop("Object class must be BGData")
     }
 
+    message(paste0("Loaded object ", objectName, " of class ", objectClass))
+
     # Store current working directory and set working directory to directory of file
     cwd <- getwd()
-    path <- dirname(file)
-    fname <- basename(file)
-    setwd(path)
-
-    message(paste0("Meta data (", fname, ") and its data were stored at folder ", path))
-    message(paste0("Object Name: ", objectName))
-    message(paste0("Object Class: ", objectClass))
+    setwd(dirname(file))
 
     # Determine number of nodes
     nNodes <- length(get(objectName)@geno)
