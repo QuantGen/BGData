@@ -157,9 +157,12 @@ test_that("it loads BGData objects", {
     # Append BGData.RData to path
     path <- paste0(path, "/", "BGData.RData")
 
-    # Load BGData object
+    # Load BGData object and test if all nodes have been opened
     load.BGData(path)
     expect_true("BGData" %in% ls())
+    for (node in seq_len(length(BGData@geno))) {
+        expect_true(ff::is.open(BGData@geno[[node]]))
+    }
     expect_equal(dim(BGData@geno), c(nRows, nCols))
 
 })
