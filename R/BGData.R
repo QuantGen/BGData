@@ -307,6 +307,11 @@ readPED.default <- function(fileIn, header, dataType, class, n = NULL, p = NULL,
 
 #' Loads BGData objects.
 #' 
+#' If the value in the \code{@@geno} slot is of class
+#' \code{\linkS4class{ColumnLinkedMatrix}} or
+#' \code{\linkS4class{RowLinkedMatrix}} and the nodes contain \code{ff}
+#' objects, \code{load.BGData} will attempt to open them.
+#' 
 #' @param file The name of the .RData file to be loaded.
 #' @param envir The environment where to load the data.
 #' @export
