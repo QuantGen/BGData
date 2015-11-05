@@ -317,7 +317,8 @@ load.BGData <- function(file, envir = parent.frame()) {
     load(file = file)
     lsNEW <- ls()
     objectName <- lsNEW[(!lsNEW %in% lsOLD) & (lsNEW != "lsOLD")]
-    objectClass <- class(get(objectName))
+    object <- get(objectName)
+    objectClass <- class(object)
 
     if (objectClass != "BGData") {
         stop("Object class must be BGData")
@@ -325,24 +326,28 @@ load.BGData <- function(file, envir = parent.frame()) {
 
     message(paste0("Loaded object ", objectName, " of class ", objectClass))
 
-    # Store current working directory and set working directory to directory of file
-    cwd <- getwd()
-    setwd(dirname(file))
+    if (class(object@geno) %in% c("RowLinkedMatrix", "ColumnLinkedMatrix")) {
 
-    # Open all nodes for reading (we do not store absolute paths to ff files, so this
-    # has to happen in the same working directory)
-    nNodes <- length(get(objectName)@geno)
-    for (i in seq_len(nNodes)) {
-        node <- get(objectName)@geno[[i]]
-        if (class(node) == "ff_matrix") {
-            message(paste0("Opening flat file ", i, "..."))
-            open(node)
+        # Store current working directory and set working directory to directory of file
+        cwd <- getwd()
+        setwd(dirname(file))
+
+        # Open all nodes for reading (we do not store absolute paths to ff files, so this
+        # has to happen in the same working directory)
+        nNodes <- length(object@geno)
+        for (i in seq_len(nNodes)) {
+            node <- object@geno[[i]]
+            if (class(node) == "ff_matrix") {
+                message(paste0("Opening flat file ", i, "..."))
+                open(node)
+            }
         }
+
+        # Restore the working directory
+        setwd(cwd)
+
     }
 
     # Send the object to envir
-    assign(objectName, get(objectName), envir = envir)
-
-    # Restore the working directory
-    setwd(cwd)
+    assign(objectName, object, envir = envir)
 }
