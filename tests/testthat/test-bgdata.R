@@ -147,7 +147,7 @@ test_that("it reads a PED file into a matrix object", {
 
 context("load.BGData")
 
-test_that("it loads BGData objects", {
+test_that("it loads BGData objects created by readPED", {
 
     # Create dummy BGData object without returning data
     path <- paste0(tmpPath, "BGData-", randomString())
@@ -163,6 +163,23 @@ test_that("it loads BGData objects", {
     for (node in seq_len(length(BGData@geno))) {
         expect_true(ff::is.open(BGData@geno[[node]]))
     }
+    expect_equal(dim(BGData@geno), c(nRows, nCols))
+
+})
+
+test_that("it loads BGData objects created by readPED.matrix", {
+
+    # Create dummy BGData object
+    path <- paste0(tmpPath, "BGData-", randomString(), "/", "BGData.RData")
+    dir.create(dirname(path))
+    BGData <- readPED.matrix(fileIn = pedPath, header = TRUE, dataType = integer())
+    save(BGData, file = path)
+    rm(BGData)
+    expect_true(!("BGData" %in% ls()))
+
+    # Load BGData object
+    load.BGData(path)
+    expect_true("BGData" %in% ls())
     expect_equal(dim(BGData@geno), c(nRows, nCols))
 
 })
