@@ -342,7 +342,7 @@ load.BGData <- function(file, envir = parent.frame()) {
         nNodes <- length(object@geno)
         for (i in seq_len(nNodes)) {
             node <- object@geno[[i]]
-            if (class(node) == "ff_matrix") {
+            if (inherits(node, "ff_matrix")) {
                 message(paste0("Opening flat file ", i, "..."))
                 open(node)
             }
