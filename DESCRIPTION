@@ -29,7 +29,8 @@ BugReports: https://github.com/QuantGen/BGData/issues
 Depends:
     R (>= 3.0.0),
     ff,
-    LinkedMatrix
+    LinkedMatrix,
+    BEDMatrix
 Imports:
     methods,
     parallel,
