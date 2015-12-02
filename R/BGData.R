@@ -1,13 +1,12 @@
-setOldClass("ff_matrix")  # Convert ff_matrix into an S4 class
+# Convert ff_matrix into an S4 class
+setOldClass("ff_matrix")
 
 
-setClassUnion("geno", c("LinkedMatrix", "ff_matrix", "matrix"))
+# Convert BEDMatrix into an S4 class
+setOldClass("BEDMatrix")
 
 
-if (requireNamespace("BEDMatrix", quietly = TRUE)) {
-    setOldClass("BEDMatrix")  # Convert BEDMatrix into an S4 class if available
-    setIs("BEDMatrix", "geno")  # Add BEDMatrix to geno class union
-}
+setClassUnion("geno", c("LinkedMatrix", "BEDMatrix", "ff_matrix", "matrix"))
 
 
 #' An S4 class to represent GWAS data.
