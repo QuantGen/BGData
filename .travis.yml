@@ -5,3 +5,10 @@ warnings_are_errors: true
 sudo: required
 r_github_packages:
   - QuantGen/LinkedMatrix
+r_binary_packages:
+  - bit
+  - ff
+  - lme4
+  - Rcpp
+  - SKAT
+  - testthat
