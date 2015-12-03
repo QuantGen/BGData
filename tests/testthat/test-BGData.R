@@ -160,7 +160,7 @@ test_that("it loads BGData objects created by readPED", {
     # Load BGData object and test if all nodes have been opened
     load.BGData(path)
     expect_true("BGData" %in% ls())
-    for (node in seq_len(length(BGData@geno))) {
+    for (node in seq_len(LinkedMatrix::nNodes(BGData@geno))) {
         expect_true(ff::is.open(BGData@geno[[node]]))
     }
     expect_equal(dim(BGData@geno), c(nRows, nCols))

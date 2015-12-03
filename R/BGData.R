@@ -338,7 +338,7 @@ load.BGData <- function(file, envir = parent.frame()) {
 
         # Open all nodes for reading (we do not store absolute paths to ff files, so this
         # has to happen in the same working directory)
-        nNodes <- length(object@geno)
+        nNodes <- LinkedMatrix::nNodes(object@geno)
         for (i in seq_len(nNodes)) {
             node <- object@geno[[i]]
             if (inherits(node, "ff_matrix")) {
