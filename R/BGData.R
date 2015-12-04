@@ -6,7 +6,7 @@ setOldClass("ff_matrix")
 setOldClass("BEDMatrix")
 
 
-setClassUnion("geno", c("LinkedMatrix", "BEDMatrix", "ff_matrix", "matrix"))
+setClassUnion("geno", c("LinkedMatrix", "BEDMatrix", "big.matrix", "ff_matrix", "matrix"))
 
 
 #' An S4 class to represent GWAS data.
@@ -30,7 +30,7 @@ BGData <- setClass("BGData", slots = c(geno = "geno", pheno = "data.frame", map 
 #' @export
 setMethod("initialize", "BGData", function(.Object, geno, pheno, map) {
     if (!is(geno, "geno")) {
-        stop("Only LinkedMatrix, BEDMatrix, ff_matrix, or regular matrix objects are allowed for geno.")
+        stop("Only LinkedMatrix, BEDMatrix, big.matrix, ff_matrix, or regular matrix objects are allowed for geno.")
     }
     if (is.null(colnames(geno))) {
         colnames(geno) <- paste0("mrk_", 1:ncol(geno))
@@ -161,6 +161,47 @@ readPED.matrix <- function(fileIn, header, dataType, n = NULL, p = NULL, na.stri
 }
 
 
+#' Creates a \code{\linkS4class{BGData}} object from a plaintext PED-like file.
+#' 
+#' @param fileIn The path to the plaintext file.
+#' @param header If TRUE, the file contains a header.
+#' @param dataType The coding of genotypes. Use \code{character()} for A/C/G/T 
+#'   or \code{integer()} for numeric coding.
+#' @param n The number of individuals.
+#' @param p The number of markers.
+#' @param na.strings The character string used in the plaintext file to denote 
+#'   missing value.
+#' @param nColSkip The number of columns to be skipped to reach the genotype 
+#'   information in the file.
+#' @param idCol The index of the ID column. If more than one index is given, 
+#'   both columns will be concatenated with "_".
+#' @param verbose If TRUE, progress updates will be posted.
+#' @param folderOut The path to the folder where to save the binary files.
+#' @return Returns a \code{\linkS4class{BGData}} object.
+#' @seealso \code{\linkS4class{BGData}}
+#' @export
+readPED.big.matrix <- function(fileIn, header, dataType, n = NULL, p = NULL, na.strings = "NA", nColSkip = 6, idCol = c(1, 2), verbose = FALSE, folderOut = paste("BGData_", sub("\\.[[:alnum:]]+$", "", basename(fileIn)), sep = "")) {
+
+    if (file.exists(folderOut)) {
+        stop(paste("Output folder", folderOut, "already exists. Please move it or pick a different one."))
+    }
+
+    dataType <- normalizeType(dataType)
+    if (typeof(dataType) == "double") {
+        vmode <- "double"
+    } else if (typeof(dataType) == "integer") {
+        vmode <- "char"
+    } else {
+        stop("dataType must be either integer() or double()")
+    }
+
+    options(bigmemory.typecast.warning = FALSE)
+    options(bigmemory.allow.dimnames = TRUE)
+
+    readPED.default(fileIn = fileIn, header = header, dataType = dataType, class = "big.matrix", n = n, p = p, na.strings = na.strings, nColSkip = nColSkip, idCol = idCol, verbose = verbose, vmode = vmode, folderOut = folderOut)
+}
+
+
 readPED.default <- function(fileIn, header, dataType, class, n = NULL, p = NULL, na.strings = "NA", nColSkip = 6, idCol = c(1, 2), verbose = FALSE, nNodes = NULL, vmode = NULL, folderOut = paste("BGData_", sub("\\.[[:alnum:]]+$", "", basename(fileIn)), sep = ""), dimorder = NULL) {
 
     if (is.null(n)) {
@@ -186,6 +227,19 @@ readPED.default <- function(fileIn, header, dataType, class, n = NULL, p = NULL,
     # Prepare geno and add colnames
     if (class == "matrix") {
         geno <- matrix(nrow = n, ncol = p)
+    } else if (class == "big.matrix") {
+
+        # Create output directory
+        if (is.null(folderOut)) {
+            folderOut <- paste0(tempdir(), "/BGData-", randomString())
+        }
+        if (file.exists(folderOut)) {
+            stop(paste("Output folder", folderOut, "already exists. Please move it or pick a different one."))
+        }
+        dir.create(folderOut)
+
+        geno <- bigmemory::big.matrix(nrow = n, ncol = p, type = vmode, backingpath = folderOut, backingfile = "BGData.bin", descriptorfile = "BGData.desc")
+
     } else {
 
         # Create output directory
@@ -272,7 +326,7 @@ readPED.default <- function(fileIn, header, dataType, class, n = NULL, p = NULL,
         xSkip <- scan(pedFile, n = nColSkip, what = character(), quiet = TRUE)
         x <- scan(pedFile, n = p, what = dataType, na.strings = na.strings, quiet = TRUE)
         pheno[i, ] <- xSkip
-        if (class == "matrix") {
+        if (class == "matrix" || class == "big.matrix") {
             geno[i, ] <- x
         } else {
             geno <- `[<-`(geno, i, 1:ncol(geno), nodes = nodes, index = index, value = x)
@@ -350,8 +404,11 @@ load.BGData <- function(file, envir = parent.frame()) {
         # Restore the working directory
         setwd(cwd)
 
+    } else if (class(object@geno) == "big.matrix") {
+        object@geno <- bigmemory::attach.big.matrix(paste0(dirname(file), "/", "BGData.desc"))
     }
 
     # Send the object to envir
     assign(objectName, object, envir = envir)
+
 }

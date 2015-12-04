@@ -6,6 +6,7 @@ sudo: required
 r_github_packages:
   - QuantGen/LinkedMatrix
 r_binary_packages:
+  - bigmemory
   - bit
   - ff
   - lme4

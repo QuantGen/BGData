@@ -7,6 +7,7 @@
 #' @import methods parallel ff
 #' @importFrom bit physical physical<-
 #' @importClassesFrom LinkedMatrix LinkedMatrix
+#' @importClassesFrom bigmemory big.matrix
 #' @aliases NULL
 NULL
 
