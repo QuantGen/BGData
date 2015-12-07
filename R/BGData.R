@@ -356,7 +356,7 @@ readPED.big.matrix <- function(fileIn, header, dataType, n = NULL, p = NULL, na.
     dir.create(folderOut)
 
     # Prepare geno
-    geno <- bigmemory::big.matrix(nrow = dims$n, ncol = dims$p, type = type, backingpath = folderOut, backingfile = "BGData.bin", descriptorfile = "BGData.desc")
+    geno <- bigmemory::filebacked.big.matrix(nrow = dims$n, ncol = dims$p, type = type, backingpath = folderOut, backingfile = "BGData.bin", descriptorfile = "BGData.desc")
 
     # Prepare pheno
     pheno <- as.data.frame(matrix(nrow = dims$n, ncol = nColSkip))
