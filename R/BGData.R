@@ -53,6 +53,60 @@ setMethod("initialize", "BGData", function(.Object, geno, pheno, map) {
 })
 
 
+pedDims <- function(fileIn, header, n, p, nColSkip = 6) {
+    if (is.null(n)) {
+        n <- getLineCount(fileIn, header)
+    }
+    if (header) {
+        headerLine <- getFileHeader(fileIn)
+        p <- length(headerLine) - nColSkip
+    } else {
+        if (is.null(p)) {
+            p <- getColumnCount(fileIn) - nColSkip
+        }
+    }
+    return(list(n = n, p = p))
+}
+
+
+parsePED <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1, 2), na.strings = "NA", verbose = FALSE, ...) {
+
+    p <- ncol(BGData@geno)
+    pedFile <- gzfile(fileIn, open = "r")
+
+    # Update colnames
+    if (header) {
+        headerLine <- scan(pedFile, nlines = 1, what = character(), quiet = TRUE)
+        colnames(BGData@pheno) <- headerLine[1:nColSkip]
+        colnames(BGData@geno) <- headerLine[-(1:nColSkip)]
+    }
+
+    # Parse file
+    j <- 1:p
+    for (i in 1:nrow(BGData@geno)) {
+        time <- proc.time()
+        xSkip <- scan(pedFile, n = nColSkip, what = character(), quiet = TRUE)
+        x <- scan(pedFile, n = p, what = dataType, na.strings = na.strings, quiet = TRUE)
+        BGData@pheno[i, ] <- xSkip
+        BGData@geno <- `[<-`(BGData@geno, i, j, ..., value = x)
+        if (verbose) {
+            cat("Subject", i, " ", round(proc.time()[3] - time[3], 3), "sec / subject.", "\n")
+        }
+    }
+    close(pedFile)
+
+    # Update rownames
+    IDs <- apply(BGData@pheno[, idCol, drop = FALSE], 1, paste, collapse = "_")
+    rownames(BGData@pheno) <- IDs
+    rownames(BGData@geno) <- IDs
+
+    # Convert types in pheno
+    BGData@pheno[] <- lapply(BGData@pheno, type.convert, as.is = TRUE)
+
+    return(BGData)
+}
+
+
 #' Creates a memory-mapped \code{\linkS4class{BGData}} object from a plaintext 
 #' raw PED file (generated with \code{--recodeA} in PLINK) or a PED-like file.
 #' 
@@ -124,7 +178,89 @@ readPED <- function(fileIn, header, dataType, n = NULL, p = NULL, na.strings = "
     class <- ifelse(linked.by == "columns", "ColumnLinkedMatrix", "RowLinkedMatrix")
     vmode <- ifelse(typeof(dataType) == "integer", "byte", "double")
 
-    readPED.default(fileIn = fileIn, header = header, dataType = dataType, class = class, n = n, p = p, na.strings = na.strings, nColSkip = nColSkip, idCol = idCol, verbose = verbose, nNodes = nNodes, vmode = vmode, folderOut = folderOut, dimorder = dimorder)
+    dims <- pedDims(fileIn = fileIn, header = header, n = n, p = p, nColSkip = nColSkip)
+
+    # Determine chunk size and number of nodes
+    if (is.null(nNodes)) {
+        if (class == "RowLinkedMatrix") {
+            chunkSize <- min(dims$n, floor(.Machine$integer.max / dims$p / 1.2))
+            nNodes <- ceiling(dims$n / chunkSize)
+        } else {
+            chunkSize <- min(dims$p, floor(.Machine$integer.max / dims$n / 1.2))
+            nNodes <- ceiling(dims$p / chunkSize)
+        }
+    } else {
+        if (class == "RowLinkedMatrix") {
+            chunkSize <- ceiling(dims$n / nNodes)
+            if (chunkSize * dims$p >= .Machine$integer.max / 1.2) {
+              stop("More nodes are needed")
+            }
+        } else {
+            chunkSize <- ceiling(dims$p / nNodes)
+            if (chunkSize * dims$n >= .Machine$integer.max / 1.2) {
+              stop("More nodes are needed")
+            }
+        }
+    }
+
+    # Determine dimorder for ff
+    if (is.null(dimorder)) {
+        if (class == "RowLinkedMatrix") {
+            dimorder <- 2:1
+        } else {
+            dimorder <- 1:2
+        }
+    }
+
+    # Create output directory
+    dir.create(folderOut)
+
+    # Initialize list
+    geno <- new(class)
+    end <- 0
+    if (class == "RowLinkedMatrix") {
+        for (i in 1:nNodes) {
+            ini <- end + 1
+            end <- min(dims$n, ini + chunkSize - 1)
+            filename <- paste0("geno_", i, ".bin")
+            geno[[i]] <- ff(vmode = vmode, dim = c((end - ini + 1), dims$p), dimorder = dimorder, filename = paste0(folderOut, .Platform$file.sep, filename))
+            # Change ff path to a relative one
+            physical(geno[[i]])$pattern <- "ff"
+            physical(geno[[i]])$filename <- filename
+        }
+    } else {
+        for (i in 1:nNodes) {
+            ini <- end + 1
+            end <- min(dims$p, ini + chunkSize - 1)
+            filename <- paste0("geno_", i, ".bin")
+            geno[[i]] <- ff(vmode = vmode, dim = c(dims$n, (end - ini + 1)), dimorder = dimorder, filename = paste0(folderOut, .Platform$file.sep, filename))
+            # Change ff path to a relative one
+            physical(geno[[i]])$pattern <- "ff"
+            physical(geno[[i]])$filename <- filename
+        }
+    }
+
+    # Generate nodes
+    nodes <- LinkedMatrix::nodes(geno)
+
+    # Generate index
+    index <- LinkedMatrix::index(geno)
+
+    # Prepare pheno
+    pheno <- as.data.frame(matrix(nrow = dims$n, ncol = nColSkip))
+
+    # Construct BGData object
+    BGData <- new("BGData", geno = geno, pheno = pheno)
+
+    # Parse PED file
+    BGData <- parsePED(BGData = BGData, fileIn = fileIn, header = header, dataType = dataType, nColSkip = nColSkip, na.strings = na.strings, verbose = verbose, nodes = nodes, index = index)
+
+    # Save BGData object
+    attr(BGData, "origFile") <- list(path = fileIn, dataType = typeof(dataType))
+    attr(BGData, "dateCreated") <- date()
+    save(BGData, file = paste(folderOut, "/BGData.RData", sep = ""))
+
+    return(BGData)
 }
 
 
@@ -157,7 +293,23 @@ readPED <- function(fileIn, header, dataType, n = NULL, p = NULL, na.strings = "
 #' @export
 readPED.matrix <- function(fileIn, header, dataType, n = NULL, p = NULL, na.strings = "NA", nColSkip = 6, idCol = c(1, 2), verbose = FALSE) {
 
-    readPED.default(fileIn = fileIn, header = header, dataType = normalizeType(dataType), class = "matrix", n = n, p = p, na.strings = na.strings, nColSkip = nColSkip, idCol = idCol, verbose = verbose)
+    dims <- pedDims(fileIn = fileIn, header = header, n = n, p = p, nColSkip = nColSkip)
+
+    dataType <- normalizeType(dataType)
+
+    # Prepare geno
+    geno <- matrix(nrow = dims$n, ncol = dims$p)
+
+    # Prepare pheno
+    pheno <- as.data.frame(matrix(nrow = dims$n, ncol = nColSkip))
+
+    # Construct BGData object
+    BGData <- new("BGData", geno = geno, pheno = pheno)
+
+    # Parse PED file
+    BGData <- parsePED(BGData = BGData, fileIn = fileIn, header = header, dataType = dataType, nColSkip = nColSkip, na.strings = na.strings, verbose = verbose)
+
+    return(BGData)
 }
 
 
@@ -188,171 +340,37 @@ readPED.big.matrix <- function(fileIn, header, dataType, n = NULL, p = NULL, na.
 
     dataType <- normalizeType(dataType)
     if (typeof(dataType) == "double") {
-        vmode <- "double"
+        type <- "double"
     } else if (typeof(dataType) == "integer") {
-        vmode <- "char"
+        type <- "char"
     } else {
         stop("dataType must be either integer() or double()")
     }
 
+    dims <- pedDims(fileIn = fileIn, header = header, n = n, p = p, nColSkip = nColSkip)
+
     options(bigmemory.typecast.warning = FALSE)
     options(bigmemory.allow.dimnames = TRUE)
 
-    readPED.default(fileIn = fileIn, header = header, dataType = dataType, class = "big.matrix", n = n, p = p, na.strings = na.strings, nColSkip = nColSkip, idCol = idCol, verbose = verbose, vmode = vmode, folderOut = folderOut)
-}
+    # Create output directory
+    dir.create(folderOut)
 
+    # Prepare geno
+    geno <- bigmemory::big.matrix(nrow = dims$n, ncol = dims$p, type = type, backingpath = folderOut, backingfile = "BGData.bin", descriptorfile = "BGData.desc")
 
-readPED.default <- function(fileIn, header, dataType, class, n = NULL, p = NULL, na.strings = "NA", nColSkip = 6, idCol = c(1, 2), verbose = FALSE, nNodes = NULL, vmode = NULL, folderOut = paste("BGData_", sub("\\.[[:alnum:]]+$", "", basename(fileIn)), sep = ""), dimorder = NULL) {
-
-    if (is.null(n)) {
-        n <- getLineCount(fileIn, header)
-    }
-    if (header) {
-        headerLine <- getFileHeader(fileIn)
-        p <- length(headerLine) - nColSkip
-        phtNames <- headerLine[1:nColSkip]
-        mrkNames <- headerLine[-(1:nColSkip)]
-    } else {
-        if (is.null(p)) {
-            p <- getColumnCount(fileIn) - nColSkip
-        }
-        phtNames <- paste("v_", 1:nColSkip, sep = "")
-        mrkNames <- paste("mrk_", 1:p, sep = "")
-    }
-
-    # Prepare pheno and add colnames
-    pheno <- matrix(nrow = n, ncol = nColSkip)
-    colnames(pheno) <- phtNames
-
-    # Prepare geno and add colnames
-    if (class == "matrix") {
-        geno <- matrix(nrow = n, ncol = p)
-    } else if (class == "big.matrix") {
-
-        # Create output directory
-        if (is.null(folderOut)) {
-            folderOut <- paste0(tempdir(), "/BGData-", randomString())
-        }
-        if (file.exists(folderOut)) {
-            stop(paste("Output folder", folderOut, "already exists. Please move it or pick a different one."))
-        }
-        dir.create(folderOut)
-
-        geno <- bigmemory::big.matrix(nrow = n, ncol = p, type = vmode, backingpath = folderOut, backingfile = "BGData.bin", descriptorfile = "BGData.desc")
-
-    } else {
-
-        # Create output directory
-        if (is.null(folderOut)) {
-            folderOut <- paste0(tempdir(), "/BGData-", randomString())
-        }
-        if (file.exists(folderOut)) {
-            stop(paste("Output folder", folderOut, "already exists. Please move it or pick a different one."))
-        }
-        dir.create(folderOut)
-
-        # Determine chunk size and number of nodes
-        if (is.null(nNodes)) {
-            if (class == "RowLinkedMatrix") {
-                chunkSize <- min(n, floor(.Machine$integer.max / p / 1.2))
-                nNodes <- ceiling(n / chunkSize)
-            } else {
-                chunkSize <- min(p, floor(.Machine$integer.max / n / 1.2))
-                nNodes <- ceiling(p / chunkSize)
-            }
-        } else {
-            if (class == "RowLinkedMatrix") {
-                chunkSize <- ceiling(n / nNodes)
-                if (chunkSize * p >= .Machine$integer.max / 1.2) {
-                  stop("More nodes are needed")
-                }
-            } else {
-                chunkSize <- ceiling(p / nNodes)
-                if (chunkSize * n >= .Machine$integer.max / 1.2) {
-                  stop("More nodes are needed")
-                }
-            }
-        }
-
-        # Determine dimorder for ff
-        if (is.null(dimorder)) {
-            if (class == "RowLinkedMatrix") {
-                dimorder <- 2:1
-            } else {
-                dimorder <- 1:2
-            }
-        }
-
-        # Initialize list
-        geno <- new(class)
-        end <- 0
-        if (class == "RowLinkedMatrix") {
-            for (i in 1:nNodes) {
-                ini <- end + 1
-                end <- min(n, ini + chunkSize - 1)
-                filename <- paste0("geno_", i, ".bin")
-                geno[[i]] <- ff(vmode = vmode, dim = c((end - ini + 1), p), dimorder = dimorder, filename = paste0(folderOut, .Platform$file.sep, filename))
-                # Change ff path to a relative one
-                physical(geno[[i]])$pattern <- "ff"
-                physical(geno[[i]])$filename <- filename
-            }
-        } else {
-            for (i in 1:nNodes) {
-                ini <- end + 1
-                end <- min(p, ini + chunkSize - 1)
-                filename <- paste0("geno_", i, ".bin")
-                geno[[i]] <- ff(vmode = vmode, dim = c(n, (end - ini + 1)), dimorder = dimorder, filename = paste0(folderOut, .Platform$file.sep, filename))
-                # Change ff path to a relative one
-                physical(geno[[i]])$pattern <- "ff"
-                physical(geno[[i]])$filename <- filename
-            }
-        }
-
-        # Generate nodes
-        nodes <- LinkedMatrix::nodes(geno)
-
-        # Generate index
-        index <- LinkedMatrix::index(geno)
-    }
-    colnames(geno) <- mrkNames
-
-    # Parse PED file
-    pedFile <- gzfile(fileIn, open = "r")
-    if (header) {
-        scan(pedFile, nlines = 1, what = character(), quiet = TRUE)
-    }
-    for (i in 1:n) {
-        time <- proc.time()
-        xSkip <- scan(pedFile, n = nColSkip, what = character(), quiet = TRUE)
-        x <- scan(pedFile, n = p, what = dataType, na.strings = na.strings, quiet = TRUE)
-        pheno[i, ] <- xSkip
-        if (class == "matrix" || class == "big.matrix") {
-            geno[i, ] <- x
-        } else {
-            geno <- `[<-`(geno, i, 1:ncol(geno), nodes = nodes, index = index, value = x)
-        }
-        if (verbose) {
-            cat("Subject", i, " ", round(proc.time()[3] - time[3], 3), "sec / subject.", "\n")
-        }
-    }
-    close(pedFile)
-
-    # Add rownames
-    IDs <- apply(pheno[, idCol, drop = FALSE], 1, paste, collapse = "_")
-    rownames(geno) <- IDs
-    rownames(pheno) <- IDs
-
-    # Convert pheno to a data.frame
-    pheno <- as.data.frame(pheno, stringsAsFactors = FALSE)
-    pheno[] <- lapply(pheno, type.convert, as.is = TRUE)
+    # Prepare pheno
+    pheno <- as.data.frame(matrix(nrow = dims$n, ncol = nColSkip))
 
     # Construct BGData object
     BGData <- new("BGData", geno = geno, pheno = pheno)
-    if (class != "matrix") {
-        attr(BGData, "origFile") <- list(path = fileIn, dataType = typeof(dataType))
-        attr(BGData, "dateCreated") <- date()
-        save(BGData, file = paste(folderOut, "/BGData.RData", sep = ""))
-    }
+
+    # Parse PED file
+    BGData <- parsePED(BGData = BGData, fileIn = fileIn, header = header, dataType = dataType, nColSkip = nColSkip, na.strings = na.strings, verbose = verbose)
+
+    # Save BGData object
+    attr(BGData, "origFile") <- list(path = fileIn, dataType = typeof(dataType))
+    attr(BGData, "dateCreated") <- date()
+    save(BGData, file = paste(folderOut, "/BGData.RData", sep = ""))
 
     return(BGData)
 }
