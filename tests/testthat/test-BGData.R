@@ -254,3 +254,14 @@ test_that("it loads BGData objects created by readPED.big.matrix", {
     expect_equal(dim(BGData@geno), c(nRows, nCols))
 
 })
+
+context("as.BGData")
+
+test_that("it converts a BEDMatrix object to a BGData object", {
+    bedMatrix <- BEDMatrix(system.file('extdata', 'example.bed', package = 'BEDMatrix'))
+    bgData <- as.BGData(bedMatrix)
+    expect_is(bgData, "BGData")
+    expect_equal(dim(bgData@geno), dim(bedMatrix))
+    expect_equal(nrow(bgData@pheno), nrow(bedMatrix))
+    expect_equal(nrow(bgData@map), ncol(bedMatrix))
+})
