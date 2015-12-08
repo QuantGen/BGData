@@ -12,9 +12,8 @@ load.BGData(file, envir = parent.frame())
 \item{envir}{The environment where to load the data.}
 }
 \description{
-If the value in the \code{@geno} slot is of class
-\code{\linkS4class{ColumnLinkedMatrix}} or
-\code{\linkS4class{RowLinkedMatrix}} and the nodes contain \code{ff}
-objects, \code{load.BGData} will attempt to open them.
+If the value in the \code{@geno} slot is of class 
+\code{\linkS4class{LinkedMatrix}} and the nodes contain \code{ff} objects,
+\code{load.BGData} will attempt to open them.
 }
 
