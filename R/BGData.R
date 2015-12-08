@@ -81,6 +81,12 @@ parsePED <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1
         colnames(BGData@geno) <- headerLine[-(1:nColSkip)]
     }
 
+    # Find replacement method to avoid repeated lookups
+    lookupEx <- try({
+        replace <- getMethod("[<-", class(BGData@geno))
+    }, silent = TRUE)
+    if (class(lookupEx) == "try-error") replace <- `[<-`
+
     # Parse file
     j <- 1:p
     for (i in 1:nrow(BGData@geno)) {
@@ -88,7 +94,7 @@ parsePED <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1
         xSkip <- scan(pedFile, n = nColSkip, what = character(), quiet = TRUE)
         x <- scan(pedFile, n = p, what = dataType, na.strings = na.strings, quiet = TRUE)
         BGData@pheno[i, ] <- xSkip
-        BGData@geno <- `[<-`(BGData@geno, i, j, ..., value = x)
+        BGData@geno <- replace(BGData@geno, i, j, ..., value = x)
         if (verbose) {
             cat("Subject", i, " ", round(proc.time()[3] - time[3], 3), "sec / subject.", "\n")
         }
