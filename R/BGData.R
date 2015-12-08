@@ -425,7 +425,7 @@ load.BGData <- function(file, envir = parent.frame()) {
 
     message(paste0("Loaded object ", objectName, " of class ", objectClass))
 
-    if (inherits(class(object@geno), "LinkedMatrix")) {
+    if (inherits(object@geno, "LinkedMatrix")) {
 
         # Store current working directory and set working directory to directory of file
         cwd <- getwd()
