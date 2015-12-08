@@ -330,7 +330,7 @@ readPED.matrix <- function(fileIn, header, dataType, n = NULL, p = NULL, na.stri
 #' \code{\linkS4class{BGData}} object can be reloaded using \code{load.BGData} 
 #' (the regular \code{load} function will not work unless the
 #' \code{\linkS4class{big.matrix}} instance is manually attached using
-#' \code[bigmemory]{attach.big.matrix}).
+#' \code{\link[bigmemory]{attach.big.matrix}}).
 #' 
 #' @param fileIn The path to the plaintext file.
 #' @param header If TRUE, the file contains a header.

@@ -46,7 +46,7 @@ contains the binary flat file (named \code{BGData.bin}), a descriptor file
 \code{\linkS4class{BGData}} object can be reloaded using \code{load.BGData} 
 (the regular \code{load} function will not work unless the
 \code{\linkS4class{big.matrix}} instance is manually attached using
-\code[bigmemory]{attach.big.matrix}).
+\code{\link[bigmemory]{attach.big.matrix}}).
 }
 \seealso{
 \code{\linkS4class{BGData}}
