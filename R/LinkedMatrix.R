@@ -1,3 +1,32 @@
+apply.chunk <- function(W, fn, MARGIN, chunks, chunk, ...) {
+    W <- W[, chunks == chunk, drop = FALSE]
+    ans <- apply(FUN = fn, X = W, MARGIN = MARGIN, ...)
+    return(ans)
+}
+
+
+apply.parallel <- function(X, FUN, MARGIN, nChunks = detectCores(), mc.cores = detectCores(), ...) {
+    n <- ifelse(MARGIN == 1, nrow(X), ncol(X))
+    chunks <- rep(1:nChunks, each = ceiling(n/nChunks))[1:n]
+    TMP <- mclapply(X = 1:nChunks, FUN = apply.chunk, W = X, MARGIN = MARGIN, fn = FUN, chunks = chunks, mc.cores = mc.cores, ...)
+    if (is.atomic(TMP[[1]])) {
+        if (is.vector(TMP[[1]])) {
+            ANS <- unlist(TMP)
+            return(ANS)
+        }
+        if (is.matrix(TMP[[1]])) {
+            ANS <- TMP[[1]]
+            for (i in 2:length(TMP)) {
+                ANS <- cbind(ANS, TMP[[i]])
+            }
+            return(ANS)
+        }
+    } else {
+        return(TMP)
+    }
+}
+
+
 apply.LinkedMatrix <- function(X, MARGIN, FUN, chunkSize = 1000, verbose = FALSE, ...) {
     FUN <- match.fun(FUN)
     n <- ifelse(MARGIN == 1, nrow(X), ncol(X))
