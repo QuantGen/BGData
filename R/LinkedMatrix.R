@@ -1,4 +1,4 @@
-apply.chunk <- function(W, fn, MARGIN, chunks, chunk, ...) {
+apply.chunk <- function(chunk, W, fn, MARGIN, chunks, ...) {
     W <- W[, chunks == chunk, drop = FALSE]
     ans <- apply(FUN = fn, X = W, MARGIN = MARGIN, ...)
     return(ans)
