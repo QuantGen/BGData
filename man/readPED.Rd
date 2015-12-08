@@ -58,13 +58,14 @@ fill the \code{@geno} slot. If the first row contains a header
 for \code{@pheno} and marker names for \code{@map} and \code{@geno}.
 }
 \details{
-Genotypes are stored in a \code{\linkS4class{LinkedMatrix}} object, where
+Genotypes are stored in a \code{\linkS4class{LinkedMatrix}} object, where 
 each node is an \code{ff} instance. By default a column-linked 
-(\code{\linkS4class{ColumnLinkedMatrix}}) is used for \code{@geno}, but the
+(\code{\linkS4class{ColumnLinkedMatrix}}) is used for \code{@geno}, but the 
 user can modify this using the \code{linked.by} argument. The number of nodes
-is either specified by the user using the \code{nNodes} argument or
-determined internally so that each \code{ff} object has a number of cells
-that is smaller than \code{.Machine$integer.max / 1.2}.
+is either specified by the user using the \code{nNodes} argument or 
+determined internally so that each \code{ff} object has a number of cells 
+that is smaller than \code{.Machine$integer.max / 1.2} (the array limit of 
+\code{ff}).
 
 \code{readPED} creates a folder (see \code{folderOut}) that contains the 
 binary flat files (named \code{geno_*.bin}) and an external representation of
