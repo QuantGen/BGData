@@ -17,15 +17,4 @@ If the value in the \code{@geno} slot is of class
 \code{load.BGData} will attempt to open them. If the value is of class 
 \code{\linkS4class{big.matrix}}, it will attempt to attach the matrix.
 }
-\details{
-Genotypes are stored in a filebacked \code{\linkS4class{big.matrix}} object. 
-\code{readPED.big.matrix} creates a folder (see \code{folderOut}) that
-contains the binary flat file (named \code{BGData.bin}), a descriptor file
-(named \code{BGData.desc}), and an external representation of the
-\code{\linkS4class{BGData}} object in \code{BGData.RData}. A 
-\code{\linkS4class{BGData}} object can be reloaded using \code{load.BGData} 
-(the regular \code{load} function will not work unless the
-\code{\linkS4class{big.matrix}} instance is manually attached using
-\code[bigmemory]{attach.big.matrix}).
-}
 

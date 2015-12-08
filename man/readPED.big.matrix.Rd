@@ -38,14 +38,15 @@ both columns will be concatenated with "_".}
 Returns a \code{\linkS4class{BGData}} object.
 }
 \description{
-\code{readPED.big.matrix} assumes that the plaintext file (\code{fileIn}) 
-contains records of individuals in rows, and phenotypes, covariates and 
-markers in columns. The columns included in columns \code{1:nColSkip} are 
-used to populate the slot \code{@pheno} of a \code{\linkS4class{BGData}}
-object, and the remaining columns are used to fill the slot \code{@geno}. If
-the first row contains a header (\code{header=TRUE}), data in this row is
-used to determine variables names for \code{@pheno} and marker names for
-\code{@map} and \code{@geno}.
+Genotypes are stored in a filebacked \code{\linkS4class{big.matrix}} object. 
+\code{readPED.big.matrix} creates a folder (see \code{folderOut}) that
+contains the binary flat file (named \code{BGData.bin}), a descriptor file
+(named \code{BGData.desc}), and an external representation of the
+\code{\linkS4class{BGData}} object in \code{BGData.RData}. A 
+\code{\linkS4class{BGData}} object can be reloaded using \code{load.BGData} 
+(the regular \code{load} function will not work unless the
+\code{\linkS4class{big.matrix}} instance is manually attached using
+\code[bigmemory]{attach.big.matrix}).
 }
 \seealso{
 \code{\linkS4class{BGData}}
