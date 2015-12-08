@@ -74,7 +74,7 @@ the \code{\linkS4class{BGData}} object in \code{BGData.RData}. A
 set to the path that contains the binary flat files).
 }
 \seealso{
-\code{\linkS4class{BGData}}, \code{LinkedMatrix}, 
+\code{\linkS4class{BGData}}, \code{\linkS4class{LinkedMatrix}}, 
   \code{\linkS4class{ColumnLinkedMatrix}}, 
   \code{\linkS4class{RowLinkedMatrix}}, \code{\link[ff]{ff}}
 }

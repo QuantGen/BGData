@@ -25,8 +25,8 @@ Returns a \code{matrix} of summaries.
 \description{
 This function brings chunks (of size \code{chunkSize}) of rows (if 
 \code{MARGIN} is 1) or columns (if \code{MARGIN} is 2) of the 
-\code{LinkedMatrix} instance into RAM as \code{matrix} objects and calls an
-appropriate summary function based on the type of the matrix for each chunk.
-Results from all the chunks are collected and returned.
+\code{\linkS4class{LinkedMatrix}} instance into RAM as \code{matrix} objects
+and calls an appropriate summary function based on the type of the matrix for
+each chunk. Results from all the chunks are collected and returned.
 }
 

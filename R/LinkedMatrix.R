@@ -114,9 +114,9 @@ summary.LinkedMatrix <- function(object, MARGIN = 2, chunkSize = 1000, ...) {
 #' 
 #' This function brings chunks (of size \code{chunkSize}) of rows (if 
 #' \code{MARGIN} is 1) or columns (if \code{MARGIN} is 2) of the 
-#' \code{LinkedMatrix} instance into RAM as \code{matrix} objects and calls the 
-#' \code{apply} function of the base package for each chunk. Results from all
-#' the chunks are collected and returned.
+#' \code{\linkS4class{LinkedMatrix}} instance into RAM as \code{matrix} objects
+#' and calls the \code{apply} function of the base package for each chunk.
+#' Results from all the chunks are collected and returned.
 #' 
 #' @param X Either a \code{\linkS4class{ColumnLinkedMatrix}} or a 
 #'   \code{\linkS4class{RowLinkedMatrix}} object.
@@ -173,9 +173,9 @@ setMethod("rowSums", signature("LinkedMatrix"), rowSums.LinkedMatrix)
 #' 
 #' This function brings chunks (of size \code{chunkSize}) of rows (if 
 #' \code{MARGIN} is 1) or columns (if \code{MARGIN} is 2) of the 
-#' \code{LinkedMatrix} instance into RAM as \code{matrix} objects and calls an
-#' appropriate summary function based on the type of the matrix for each chunk.
-#' Results from all the chunks are collected and returned.
+#' \code{\linkS4class{LinkedMatrix}} instance into RAM as \code{matrix} objects
+#' and calls an appropriate summary function based on the type of the matrix for
+#' each chunk. Results from all the chunks are collected and returned.
 #' 
 #' @param object Either a \code{\linkS4class{ColumnLinkedMatrix}} or a 
 #'   \code{\linkS4class{RowLinkedMatrix}} object.

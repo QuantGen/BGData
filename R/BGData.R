@@ -11,8 +11,8 @@ setClassUnion("geno", c("LinkedMatrix", "BEDMatrix", "big.matrix", "ff_matrix", 
 
 #' An S4 class to represent GWAS data.
 #' 
-#' @slot geno A \code{geno} object (\code{LinkedMatrix}, \code{ff_matrix}, or
-#'   \code{\link{matrix}}) that contains genotypes.
+#' @slot geno A \code{geno} object (\code{\linkS4class{LinkedMatrix}}, 
+#'   \code{ff_matrix}, or \code{\link{matrix}}) that contains genotypes.
 #' @slot pheno A \code{\link{data.frame}} that contains phenotypes.
 #' @slot map A \code{\link{data.frame}} that contains a genetic map.
 #' @export BGData
@@ -23,10 +23,10 @@ BGData <- setClass("BGData", slots = c(geno = "geno", pheno = "data.frame", map 
 #' Creates a new \code{BGData} instance.
 #' 
 #' @param .Object The \code{ColumnLinkedMatrix} instance to be initialized.
-#' @param geno A \code{geno} object (\code{LinkedMatrix}, \code{ff_matrix}, or
+#' @param geno A \code{geno} object (\code{\linkS4class{LinkedMatrix}}, 
+#'   \code{ff_matrix}, or \code{\link{matrix}}) that contains genotypes.
 #' @param pheno A \code{\link{data.frame}} that contains phenotypes.
 #' @param map A \code{\link{data.frame}} that contains a genetic map.
-#'   \code{\link{matrix}}) that contains genotypes.
 #' @export
 setMethod("initialize", "BGData", function(.Object, geno, pheno, map) {
     if (!is(geno, "geno")) {
@@ -162,7 +162,7 @@ parsePED <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1
 #' @param folderOut The path to the folder where to save the binary files.
 #' @param dimorder The physical layout of the underlying \code{ff} object of 
 #'   each node.
-#' @seealso \code{\linkS4class{BGData}}, \code{LinkedMatrix}, 
+#' @seealso \code{\linkS4class{BGData}}, \code{\linkS4class{LinkedMatrix}}, 
 #'   \code{\linkS4class{ColumnLinkedMatrix}}, 
 #'   \code{\linkS4class{RowLinkedMatrix}}, \code{\link[ff]{ff}}
 #' @export

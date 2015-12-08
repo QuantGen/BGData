@@ -10,12 +10,12 @@
 \arguments{
 \item{.Object}{The \code{ColumnLinkedMatrix} instance to be initialized.}
 
-\item{geno}{A \code{geno} object (\code{LinkedMatrix}, \code{ff_matrix}, or}
+\item{geno}{A \code{geno} object (\code{\linkS4class{LinkedMatrix}}, 
+\code{ff_matrix}, or \code{\link{matrix}}) that contains genotypes.}
 
 \item{pheno}{A \code{\link{data.frame}} that contains phenotypes.}
 
-\item{map}{A \code{\link{data.frame}} that contains a genetic map.
-\code{\link{matrix}}) that contains genotypes.}
+\item{map}{A \code{\link{data.frame}} that contains a genetic map.}
 }
 \description{
 Creates a new \code{BGData} instance.
