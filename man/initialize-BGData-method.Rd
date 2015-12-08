@@ -14,9 +14,13 @@
   \code{BEDMatrix}, \code{\linkS4class{big.matrix}}, \code{ff_matrix}, or
 \code{\link{matrix}}) that contains genotypes.}
 
-\item{pheno}{A \code{\link{data.frame}} that contains phenotypes.}
+\item{pheno}{A \code{\link{data.frame}} that contains phenotypes. A stub that
+only contains an \code{IID} column populated with the rownames of
+\code{@geno} will be generated if missing.}
 
-\item{map}{A \code{\link{data.frame}} that contains a genetic map.}
+\item{map}{A \code{\link{data.frame}} that contains a genetic map. A stub
+that only contains a \code{mrk} column populated with the colnames of
+\code{@geno} will be generated if missing.}
 }
 \description{
 Creates a new \code{BGData} instance.

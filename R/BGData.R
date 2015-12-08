@@ -27,8 +27,12 @@ BGData <- setClass("BGData", slots = c(geno = "geno", pheno = "data.frame", map 
 #' @param geno A \code{geno} object (\code{\linkS4class{LinkedMatrix}},
 #'   \code{BEDMatrix}, \code{\linkS4class{big.matrix}}, \code{ff_matrix}, or
 #' \code{\link{matrix}}) that contains genotypes.
-#' @param pheno A \code{\link{data.frame}} that contains phenotypes.
-#' @param map A \code{\link{data.frame}} that contains a genetic map.
+#' @param pheno A \code{\link{data.frame}} that contains phenotypes. A stub that
+#'   only contains an \code{IID} column populated with the rownames of
+#'   \code{@@geno} will be generated if missing.
+#' @param map A \code{\link{data.frame}} that contains a genetic map. A stub
+#'   that only contains a \code{mrk} column populated with the colnames of
+#'   \code{@@geno} will be generated if missing.
 #' @export
 setMethod("initialize", "BGData", function(.Object, geno, pheno, map) {
     if (!is(geno, "geno")) {
