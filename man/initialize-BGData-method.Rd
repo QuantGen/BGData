@@ -10,8 +10,9 @@
 \arguments{
 \item{.Object}{The \code{ColumnLinkedMatrix} instance to be initialized.}
 
-\item{geno}{A \code{geno} object (\code{\linkS4class{LinkedMatrix}}, 
-\code{ff_matrix}, or \code{\link{matrix}}) that contains genotypes.}
+\item{geno}{A \code{geno} object (\code{\linkS4class{LinkedMatrix}},
+  \code{BEDMatrix}, \code{\linkS4class{big.matrix}}, \code{ff_matrix}, or
+\code{\link{matrix}}) that contains genotypes.}
 
 \item{pheno}{A \code{\link{data.frame}} that contains phenotypes.}
 

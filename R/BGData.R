@@ -11,8 +11,9 @@ setClassUnion("geno", c("LinkedMatrix", "BEDMatrix", "big.matrix", "ff_matrix", 
 
 #' An S4 class to represent GWAS data.
 #' 
-#' @slot geno A \code{geno} object (\code{\linkS4class{LinkedMatrix}}, 
-#'   \code{ff_matrix}, or \code{\link{matrix}}) that contains genotypes.
+#' @slot geno A \code{geno} object (\code{\linkS4class{LinkedMatrix}},
+#'   \code{BEDMatrix}, \code{\linkS4class{big.matrix}} \code{ff_matrix}, or
+#'   \code{\link{matrix}}) that contains genotypes.
 #' @slot pheno A \code{\link{data.frame}} that contains phenotypes.
 #' @slot map A \code{\link{data.frame}} that contains a genetic map.
 #' @export BGData
@@ -23,8 +24,9 @@ BGData <- setClass("BGData", slots = c(geno = "geno", pheno = "data.frame", map 
 #' Creates a new \code{BGData} instance.
 #' 
 #' @param .Object The \code{ColumnLinkedMatrix} instance to be initialized.
-#' @param geno A \code{geno} object (\code{\linkS4class{LinkedMatrix}}, 
-#'   \code{ff_matrix}, or \code{\link{matrix}}) that contains genotypes.
+#' @param geno A \code{geno} object (\code{\linkS4class{LinkedMatrix}},
+#'   \code{BEDMatrix}, \code{\linkS4class{big.matrix}}, \code{ff_matrix}, or
+#' \code{\link{matrix}}) that contains genotypes.
 #' @param pheno A \code{\link{data.frame}} that contains phenotypes.
 #' @param map A \code{\link{data.frame}} that contains a genetic map.
 #' @export
