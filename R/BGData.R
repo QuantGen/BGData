@@ -392,8 +392,9 @@ readPED.big.matrix <- function(fileIn, header, dataType, n = NULL, p = NULL, na.
 #' Loads BGData objects.
 #' 
 #' If the value in the \code{@@geno} slot is of class 
-#' \code{\linkS4class{LinkedMatrix}} and the nodes contain \code{ff} objects,
-#' \code{load.BGData} will attempt to open them.
+#' \code{\linkS4class{LinkedMatrix}} and the nodes contain \code{ff} objects 
+#' \code{load.BGData} will attempt to open them. If the value is of class 
+#' \code{\linkS4class{big.matrix}}, it will attempt to attach the matrix.
 #' 
 #' @param file The name of the .RData file to be loaded.
 #' @param envir The environment where to load the data.
