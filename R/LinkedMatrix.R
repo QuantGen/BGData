@@ -1,6 +1,6 @@
-apply.chunk <- function(chunk, W, fn, MARGIN, chunks, ...) {
+apply.chunk <- function(chunk, W, MARGIN, fn, chunks, ...) {
     W <- W[, chunks == chunk, drop = FALSE]
-    ans <- apply(FUN = fn, X = W, MARGIN = MARGIN, ...)
+    ans <- apply(X = W, MARGIN = MARGIN, FUN = fn, ...)
     return(ans)
 }
 
