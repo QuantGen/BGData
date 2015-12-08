@@ -1,6 +1,6 @@
+# Performs crossprod() or tcrossprod() for a chunk (set of columns or sets of
+# rows) of x.
 crossprods.chunk <- function(chunk, x, y = NULL, nChunks, use_tcrossprod = FALSE) {
-    ## Performs crossprod() or tcrossprod() for a chunk (set of columns or sets of
-    ## rows) of x
     if (!is.null(y)) {
         y <- as.matrix(y)
         nY <- ifelse(use_tcrossprod, ncol(y), nrow(y))
@@ -371,8 +371,8 @@ GWAS <- function(formula, data, method, plot = FALSE, verbose = FALSE, min.pValu
     if (!method %in% c("lm", "lm.fit", "lsfit", "glm", "lmer", "SKAT")) {
         stop("Only lm, glm, lmer and SKAT have been implemented so far.")
     }
-    ## We can have 'specialized methods, for instance for OLS it is better to use
-    ## lsfit that is what GWAS.ols do
+    ## We can have specialized methods, for instance for OLS it is better to use
+    ## lsfit (that is what GWAS.ols does)
     if (method %in% c("lm", "lm.fit", "lsfit", "SKAT")) {
         if (method %in% c("lm", "lm.fit", "lsfit")) {
             OUT <- GWAS.ols(formula = formula, data = data, plot = plot, verbose = verbose, min.pValue = min.pValue, chunkSize = chunkSize, ...)
@@ -459,11 +459,12 @@ getCoefficients.lmerMod <- function(x) {
 }
 
 
-## GWAS 'Ordinary least squares' (e.g., lsfit lm.fit lm)
+# GWAS 'Ordinary Least Squares' (e.g., lsfit, lm.fit, lm)
+# formula: the formula for the GWAS model without including the marker, e.g.
+# y~1 or y~factor(sex)+age
+# all the variables in the formula must be in data@pheno data (BGData)
+# containing slots @pheno and @geno
 GWAS.ols <- function(formula, data, plot = FALSE, verbose = FALSE, min.pValue = 1e-10, chunkSize = 10, ...) {
-    ## formula: the formula for the GWAS model without including the marker, e.g., y~1
-    ## or y~factor(sex)+age all the variables in the formula must be in data@pheno
-    ## data (BGData) containing slots @pheno and @geno
 
     X <- model.matrix(formula, data@pheno)
     X <- X[match(rownames(data@pheno), rownames(X)), ]
@@ -513,11 +514,13 @@ GWAS.ols <- function(formula, data, plot = FALSE, verbose = FALSE, min.pValue = 
 }
 
 
+# formula: the formula for the GWAS model without including the markers, e.g.
+# y~1 or y~factor(sex)+age
+# all the variables in the formula must be in data@pheno data (BGData)
+# containing slots @pheno and @geno
+# groups: a vector mapping markers into groups (can be integer, character or
+# factor)
 GWAS.SKAT <- function(formula, data, groups, plot = FALSE, verbose = FALSE, min.pValue = 1e-10, ...) {
-    ## formula: the formula for the GWAS model without including the markers, e.g.,
-    ## y~1 or y~factor(sex)+age all the variables in the formula must be in data@pheno
-    ## data (BGData) containing slots @pheno and @geno groups: a vector mapping
-    ## markers into groups (can be integer, character or factor).
 
     if (!requireNamespace("SKAT", quietly = TRUE)) {
         stop("SKAT needed for this function to work. Please install it.", call. = FALSE)
