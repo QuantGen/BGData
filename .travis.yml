@@ -6,6 +6,7 @@ sudo: required
 r_github_packages:
   - hadley/devtools
   - QuantGen/LinkedMatrix
+  - QuantGen/BEDMatrix
 r_binary_packages:
   - bigmemory
   - bit
