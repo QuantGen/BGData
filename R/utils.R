@@ -698,7 +698,8 @@ summarize.chunk <- function(X) {
 summarize <- function(X, chunkSize = 1000, verbose = FALSE) {
     p <- ncol(X)
     OUT <- matrix(nrow = p, ncol = 2, NA)
-    colnames(OUT) <- c("freqNA", "allFreq")
+    colnames(OUT) <- c("freq_na", "freq_all")
+    rownames(OUT) <- colnames(X)
     nChunks <- ceiling(p / chunkSize)
     end <- 0
     for (i in 1:nChunks) {
