@@ -4,6 +4,7 @@ language: r
 warnings_are_errors: true
 sudo: required
 r_github_packages:
+  - hadley/devtools
   - QuantGen/LinkedMatrix
 r_binary_packages:
   - bigmemory
