@@ -16,5 +16,24 @@ as.BGData <- function(x, ...) {
 #' @return A BGData object.
 #' @export
 as.BGData.BEDMatrix <- function(x, ...) {
-    BGData(geno = x)
+    # Path to BED file
+    bedPath <- attr(x, "path")
+    # Path to FAM file
+    famPath <- sub(".bed", ".fam", bedPath)
+    # Read in pheno file
+    if (file.exists(famPath)) {
+        message("Extracting phenotypes from FAM file...")
+        pheno <- read.table(famPath, col.names = c(
+            "Family_ID",
+            "Individual_ID",
+            "Paternal_ID",
+            "Maternal_ID",
+            "Sex",
+            "Phenotype"
+        ))
+    } else {
+        pheno <- data.frame(IID = rownames(x))
+        rownames(pheno) <- rownames(x)
+    }
+    BGData(geno = x, pheno = pheno)
 }
