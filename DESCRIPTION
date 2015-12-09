@@ -30,7 +30,8 @@ Depends:
     R (>= 3.0.0),
     ff,
     LinkedMatrix,
-    BEDMatrix
+    BEDMatrix,
+    symDMatrix
 Imports:
     methods,
     parallel,
@@ -40,4 +41,5 @@ Suggests:
     testthat,
     lme4,
     SKAT
+Remotes: QuantGen/symDMatrix
 RoxygenNote: 5.0.0
