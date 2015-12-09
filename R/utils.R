@@ -337,6 +337,123 @@ getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, scaleG = TRUE, v
 }
 
 
+#' @export
+getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, scales = NULL,
+    centerCol = T, scaleCol = T, nChunks2 = 1, folder = randomString(5), vmode = "double",
+    verbose = TRUE, saveRData = TRUE, mc.cores = 1, scaleG = T) {
+
+    timeIn <- proc.time()[3]
+    n <- nrow(X)
+    p <- ncol(X)
+    if (is.null(chunkSize)) {
+        chunkSize <- ceiling(n/nChunks)
+    }
+
+    if ((centerCol | scaleCol) & (is.null(centers) | is.null(scales))) {
+        if (is.null(centers) & is.null(scales)) {
+            centers <- rep(NA, p)
+            scales <- rep(NA, p)
+            for (i in 1:p) {
+                xi <- X[, i]
+                scales[i] <- sd(xi, na.rm = TRUE) * sqrt((n - 1)/n)
+                centers[i] <- mean(xi, na.rm = TRUE)
+            }
+        }
+        if ((!is.null(centers)) & (is.null(scales))) {
+            scales <- rep(NA, p)
+            for (i in 1:p) {
+                xi <- X[, i]
+                scales[i] <- sd(xi, na.rm = TRUE) * sqrt((n - 1)/n)
+            }
+        }
+        if ((is.null(centers)) & (!is.null(scales))) {
+            centers <- rep(NA, p)
+            for (i in 1:p) {
+                xi <- X[, i]
+                centers[i] <- mean(xi, na.rm = TRUE)
+            }
+        }
+    }
+
+    if (!centerCol)
+        centers <- rep(0, p)
+    if (!scaleCol)
+        scales <- rep(1, p)
+
+    chunkID <- ceiling(1:n/chunkSize)
+    nChunks <- max(chunkID)
+    nFiles <- nChunks * (nChunks + 1)/2
+    DATA <- list()
+    counter <- 1
+
+    tmpDir <- getwd()
+    dir.create(folder)
+    setwd(folder)
+
+    for (i in 1:nChunks) {
+        DATA[[i]] <- list()
+        rowIndex_i <- which(chunkID == i)
+        Xi <- X[rowIndex_i, ]
+
+        # centering/scaling
+        for (k in 1:p) {
+            xik <- Xi[, k]
+            xik <- (xik - centers[k])/scales[k]
+            xik[is.na(xik)] <- 0
+            Xi[, k] <- xik
+        }
+
+        for (j in i:nChunks) {
+            rowIndex_j <- which(chunkID == j)
+            Xj <- X[rowIndex_j, ]
+
+            # centering/scaling
+            for (k in 1:p) {
+                xjk <- Xj[, k]
+                xjk <- (xjk - centers[k])/scales[k]
+                xjk[is.na(xjk)] <- 0
+                Xj[, k] <- xjk
+            }
+
+            Gij <- tcrossprod.parallel(x = Xi, y = Xj, mc.cores = mc.cores, nChunks = nChunks2)
+
+            DATA[[i]][[j - i + 1]] <- ff(dim = dim(Gij), vmode = vmode, initdata = as.vector(Gij),
+                                         filename = paste0("data_", i, "_", j, ".bin"))
+            colnames(DATA[[i]][[j - i + 1]]) <- colnames(X)[rowIndex_j]
+            rownames(DATA[[i]][[j - i + 1]]) <- rownames(X)[rowIndex_i]
+            counter <- counter + 1
+            physical(DATA[[i]][[j - i + 1]])$pattern <- "ff"
+            physical(DATA[[i]][[j - i + 1]])$filename <- paste0("data_", i, "_",
+                j, ".bin")
+
+            if (verbose) {
+                cat(" Done with pair ", i, "-", j, " (", round(100 * counter/(nChunks *
+                  (nChunks + 1)/2)), "% ", round(proc.time()[3] - timeIn, 3), " seconds).\n",
+                  sep = "")
+            }
+        }
+    }
+    if (is.null(rownames(X)))
+        rownames(X) <- 1:n
+    names(centers) <- colnames(X)
+    names(scales) <- colnames(X)
+    G <- new("symDMatrix", names = rownames(X), data = DATA, centers = centers, scales = scales)
+    if (scaleG) {
+        K <- mean(diag(G))
+        for (i in 1:length(G@data)) {
+            for (j in 1:length(G@data[[i]])) {
+                G@data[[i]][[j]][] <- G@data[[i]][[j]][]/K
+            }
+        }
+    }
+    if (saveRData) {
+        save(G, file = "G.RData")
+    }
+    setwd(tmpDir)
+    return(G)
+}
+
+
 #' Performs single marker regressions using a \code{\linkS4class{BGData}} 
 #' object.
 #' 
