@@ -265,3 +265,20 @@ test_that("it converts a BEDMatrix object to a BGData object", {
     expect_equal(nrow(bgData@pheno), nrow(bedMatrix))
     expect_equal(nrow(bgData@map), ncol(bedMatrix))
 })
+
+test_that("it throws an error if an alternate phenotype file does not exist when converting a BEDMatrix object to a BGData object", {
+    bedMatrix <- BEDMatrix(system.file('extdata', 'example.bed', package = 'BEDMatrix'))
+    expect_error(as.BGData(bedMatrix, alternatePhenotypeFile = "NOT_FOUND"))
+})
+
+test_that("it reads an alternate phenotype file when converting a BEDMatrix object to a BGData object", {
+    bedMatrix <- BEDMatrix(system.file('extdata', 'example.bed', package = 'BEDMatrix'))
+    bgData <- as.BGData(bedMatrix, alternatePhenotypeFile = system.file('extdata', 'pheno.txt', package = 'BGData'))
+    expect_is(bgData, "BGData")
+    # Test if pheno has two extra columns
+    expect_equal(ncol(bgData@pheno), 8)
+    # Test merging and NA handling
+    expect_equal(bgData@pheno[3, 8], 24.12)
+    expect_equal(nrow(bgData@pheno), nrow(bgData@geno))
+    expect_true(all(is.na(bgData@pheno[2, c(7, 8)])))
+})
