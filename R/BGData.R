@@ -169,83 +169,22 @@ parsePED <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1
 #' @export
 readPED <- function(fileIn, header, dataType, n = NULL, p = NULL, na.strings = "NA", nColSkip = 6, idCol = c(1, 2), verbose = FALSE, nNodes = NULL, linked.by = "rows", folderOut = paste("BGData_", sub("\\.[[:alnum:]]+$", "", basename(fileIn)), sep = ""), dimorder = if (linked.by == "rows") 2:1 else 1:2) {
 
-    if (file.exists(folderOut)) {
-        stop(paste("Output folder", folderOut, "already exists. Please move it or pick a different one."))
-    }
+    dims <- pedDims(fileIn = fileIn, header = header, n = n, p = p, nColSkip = nColSkip)
 
     dataType <- normalizeType(dataType)
     if (!typeof(dataType) %in% c("integer", "double")) {
         stop("dataType must be either integer() or double()")
     }
-
     if (!linked.by %in% c("columns", "rows")) {
         stop("linked.by must be either columns or rows")
     }
 
     class <- ifelse(linked.by == "columns", "ColumnLinkedMatrix", "RowLinkedMatrix")
+
     vmode <- ifelse(typeof(dataType) == "integer", "byte", "double")
 
-    dims <- pedDims(fileIn = fileIn, header = header, n = n, p = p, nColSkip = nColSkip)
-
-    # Determine chunk size and number of nodes
-    if (is.null(nNodes)) {
-        if (class == "RowLinkedMatrix") {
-            chunkSize <- min(dims$n, floor(.Machine$integer.max / dims$p / 1.2))
-            nNodes <- ceiling(dims$n / chunkSize)
-        } else {
-            chunkSize <- min(dims$p, floor(.Machine$integer.max / dims$n / 1.2))
-            nNodes <- ceiling(dims$p / chunkSize)
-        }
-    } else {
-        if (class == "RowLinkedMatrix") {
-            chunkSize <- ceiling(dims$n / nNodes)
-            if (chunkSize * dims$p >= .Machine$integer.max / 1.2) {
-              stop("More nodes are needed")
-            }
-        } else {
-            chunkSize <- ceiling(dims$p / nNodes)
-            if (chunkSize * dims$n >= .Machine$integer.max / 1.2) {
-              stop("More nodes are needed")
-            }
-        }
-    }
-
-    # Determine dimorder for ff
-    if (is.null(dimorder)) {
-        if (class == "RowLinkedMatrix") {
-            dimorder <- 2:1
-        } else {
-            dimorder <- 1:2
-        }
-    }
-
-    # Create output directory
-    dir.create(folderOut)
-
-    # Initialize list
-    geno <- new(class)
-    end <- 0
-    if (class == "RowLinkedMatrix") {
-        for (i in 1:nNodes) {
-            ini <- end + 1
-            end <- min(dims$n, ini + chunkSize - 1)
-            filename <- paste0("geno_", i, ".bin")
-            geno[[i]] <- ff(vmode = vmode, dim = c((end - ini + 1), dims$p), dimorder = dimorder, filename = paste0(folderOut, .Platform$file.sep, filename))
-            # Change ff path to a relative one
-            physical(geno[[i]])$pattern <- "ff"
-            physical(geno[[i]])$filename <- filename
-        }
-    } else {
-        for (i in 1:nNodes) {
-            ini <- end + 1
-            end <- min(dims$p, ini + chunkSize - 1)
-            filename <- paste0("geno_", i, ".bin")
-            geno[[i]] <- ff(vmode = vmode, dim = c(dims$n, (end - ini + 1)), dimorder = dimorder, filename = paste0(folderOut, .Platform$file.sep, filename))
-            # Change ff path to a relative one
-            physical(geno[[i]])$pattern <- "ff"
-            physical(geno[[i]])$filename <- filename
-        }
-    }
+    # Prepare geno
+    geno <- ffLinkedMatrix(class = class, n = dims$n, p = dims$p, vmode = vmode, nNodes = nNodes, folderOut = folderOut, dimorder = dimorder)
 
     # Generate nodes
     nodes <- LinkedMatrix::nodes(geno)
