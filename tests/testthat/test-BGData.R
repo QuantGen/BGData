@@ -258,7 +258,7 @@ test_that("it loads BGData objects created by readPED.big.matrix", {
 context("as.BGData")
 
 test_that("it converts a BEDMatrix object to a BGData object", {
-    bedMatrix <- BEDMatrix(system.file('extdata', 'example.bed', package = 'BEDMatrix'))
+    bedMatrix <- BEDMatrix(system.file("extdata", "example.bed", package = "BEDMatrix"))
     bgData <- as.BGData(bedMatrix)
     expect_is(bgData, "BGData")
     expect_equal(dim(bgData@geno), dim(bedMatrix))
@@ -267,13 +267,13 @@ test_that("it converts a BEDMatrix object to a BGData object", {
 })
 
 test_that("it throws an error if an alternate phenotype file does not exist when converting a BEDMatrix object to a BGData object", {
-    bedMatrix <- BEDMatrix(system.file('extdata', 'example.bed', package = 'BEDMatrix'))
+    bedMatrix <- BEDMatrix(system.file("extdata", "example.bed", package = "BEDMatrix"))
     expect_error(as.BGData(bedMatrix, alternatePhenotypeFile = "NOT_FOUND"))
 })
 
 test_that("it reads an alternate phenotype file when converting a BEDMatrix object to a BGData object", {
-    bedMatrix <- BEDMatrix(system.file('extdata', 'example.bed', package = 'BEDMatrix'))
-    bgData <- as.BGData(bedMatrix, alternatePhenotypeFile = system.file('extdata', 'pheno.txt', package = 'BGData'))
+    bedMatrix <- BEDMatrix(system.file("extdata", "example.bed", package = "BEDMatrix"))
+    bgData <- as.BGData(bedMatrix, alternatePhenotypeFile = system.file("extdata", "pheno.txt", package = "BGData"))
     expect_is(bgData, "BGData")
     # Test if pheno has two extra columns
     expect_equal(ncol(bgData@pheno), 8)
