@@ -30,7 +30,7 @@ as.BGData.BEDMatrix <- function(x, ...) {
             "Maternal_ID",
             "Sex",
             "Phenotype"
-        ))
+        ), stringsAsFactors = FALSE)
     } else {
         pheno <- data.frame(IID = rownames(x))
         rownames(pheno) <- rownames(x)
