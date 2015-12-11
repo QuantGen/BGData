@@ -65,11 +65,6 @@ for (nCores in seq_len(2)) {
 
     })
 
-}
-
-
-for (nCores in seq_len(2)) {
-
     test_that(paste("getGi", "on", nCores, "cores"), {
 
         hasCores(nCores)
@@ -170,28 +165,34 @@ for (nCores in seq_len(2)) {
         }
     })
 
+
+    test_that(paste("summarize", "on", nCores, "cores"), {
+
+        hasCores(nCores)
+
+        genotypes <- matrix(nrow = 3, ncol = 6, c(0, 0, 1, 0, 2, 2, 1, 2, 0, 1, 2, 0, 0, 1, 2, 0, NA, 0))
+
+        dummy <- matrix(nrow = ncol(genotypes), ncol = 2, NA)
+        colnames(dummy) <- c("freq_na", "freq_all")
+        for (col in seq_len(ncol(genotypes))) {
+            Z <- genotypes[, col]
+            NAs <- sum(is.na(Z))
+            dummy[col, 1] <- NAs / length(Z)
+            dummy[col, 2] <- sum(Z, na.rm = TRUE) / ((length(Z) - NAs) * 2)
+        }
+
+        for (bufferSize in c(3, 6)) {
+            for (nTasks in c(1, 3)) {
+                expect_equal(summarize(genotypes, bufferSize = bufferSize, nTasks = nTasks, mc.cores = nCores), dummy)
+                expect_equal(summarize(genotypes, bufferSize = bufferSize, nTasks = nTasks, mc.cores = nCores), dummy)
+                expect_equal(summarize(genotypes, bufferSize = bufferSize, nTasks = nTasks, mc.cores = nCores), dummy)
+                expect_equal(summarize(genotypes, mc.cores = nCores), dummy)
+            }
+        }
+
+    })
+
 }
-
-
-test_that("summarize", {
-
-    genotypes <- matrix(nrow = 3, ncol = 6, c(0, 0, 1, 0, 2, 2, 1, 2, 0, 1, 2, 0, 0, 1, 2, 0, NA, 0))
-
-    dummy <- matrix(nrow = ncol(genotypes), ncol = 2, NA)
-    colnames(dummy) <- c("freq_na", "freq_all")
-    for (col in seq_len(ncol(genotypes))) {
-        Z <- genotypes[, col]
-        NAs <- sum(is.na(Z))
-        dummy[col, 1] <- NAs / length(Z)
-        dummy[col, 2] <- sum(Z, na.rm = TRUE) / ((length(Z) - NAs) * 2)
-    }
-
-    expect_equal(summarize(genotypes, chunkSize = 1), dummy)
-    expect_equal(summarize(genotypes, chunkSize = 2), dummy)
-    expect_equal(summarize(genotypes, chunkSize = 3), dummy)
-    expect_equal(summarize(genotypes), dummy)
-
-})
 
 
 test_that("normalizeType", {

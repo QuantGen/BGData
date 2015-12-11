@@ -679,42 +679,53 @@ GWAS.SKAT <- function(formula, data, groups, plot = FALSE, verbose = FALSE, min.
 }
 
 
-summarize.chunk <- function(X) {
-    NAs <- is.na(X)
+summarize.chunk <- function(chunk, IN, nChunks) {
+    range <- chunkRanges(ncol(IN), nChunks, chunk)
+    Z <- IN[, seq(range[1], range[2]), drop = FALSE]
+    NAs <- is.na(Z)
     freqNA <- colMeans(NAs)
-    allFreq <- colMeans(X, na.rm = TRUE) / 2
-    OUT <- cbind(freqNA, allFreq)
-    return(OUT)
+    allFreq <- colMeans(Z, na.rm = TRUE) / 2
+    rbind(freqNA, allFreq)
 }
 
 
 #' Calculate frequencies of missing values and alleles.
 #' 
 #' @param X matrix, ff_matrix, RowLinkedMatrix or ColumnLinkedMatrix
-#' @param chunkSize Represents the number of columns of \code{@@geno} that are 
-#'   brought into RAM for processing (5000 by default).
 #' @param verbose If TRUE more messages are printed.
+#' @param bufferSize Represents the number of columns of \code{@@geno} that are 
+#'   brought into RAM for processing (5000 by default).
+#' @param nTasks Represents the number of parallel tasks each buffer is split
+#'   into.
+#' @param mc.cores The number of cores (passed to
+#'   \code{\link[parallel]{mclapply}}).
 #' @export
-summarize <- function(X, chunkSize = 1000, verbose = FALSE) {
+summarize <- function(X, verbose = FALSE, bufferSize = 5000, nTasks = detectCores(), mc.cores = detectCores()) {
     p <- ncol(X)
-    OUT <- matrix(nrow = p, ncol = 2, NA)
+    OUT <- matrix(NA, nrow = p, ncol = 2)
     colnames(OUT) <- c("freq_na", "freq_all")
     rownames(OUT) <- colnames(X)
-    nChunks <- ceiling(p / chunkSize)
-    end <- 0
-    for (i in 1:nChunks) {
+    nChunks <- ceiling(p / bufferSize)
+    for (i in seq_len(nChunks)) {
         timeIn <- proc.time()[3]
         if (verbose) {
             cat("-----------------------------\n")
             cat(" Working Chunk", i, "(", round(i / nChunks * 100, 3), "%).\n")
         }
-        ini <- end + 1
-        end <- min(ini + chunkSize - 1, p)
-        if (verbose) cat("   =>Aquiring genotypes.\n")
-        Z <- X[, ini:end, drop = FALSE]
-        if (verbose) cat("   =>Computing.\n")
-        OUT[ini:end, ] <- summarize.chunk(Z)
-        if (verbose) cat("   =>Time:", round(proc.time()[3] - timeIn, 3), "secs.\n")
+        range <- chunkRanges(p, nChunks, i)
+        if (verbose) {
+            cat("   =>Aquiring genotypes.\n")
+        }
+        Z <- X[, seq(range[1], range[2]), drop = FALSE]
+        if (verbose) {
+            cat("   =>Computing.\n")
+        }
+        # Do not create more tasks than data
+        nTasks <- min(nTasks, range[2] - range[1])
+        OUT[seq(range[1], range[2]), ] <- matrix(unlist(mclapply(X = seq_len(nTasks), FUN = summarize.chunk, IN = Z, nChunks = nTasks, mc.cores = mc.cores), use.names = FALSE), ncol = 2, byrow = TRUE)
+        if (verbose) {
+            cat("   =>Time:", round(proc.time()[3] - timeIn, 3), "secs.\n")
+        }
     }
     return(OUT)
 }

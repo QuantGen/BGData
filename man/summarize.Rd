@@ -4,15 +4,22 @@
 \alias{summarize}
 \title{Calculate frequencies of missing values and alleles.}
 \usage{
-summarize(X, chunkSize = 1000, verbose = FALSE)
+summarize(X, verbose = FALSE, bufferSize = 5000, nTasks = detectCores(),
+  mc.cores = detectCores())
 }
 \arguments{
 \item{X}{matrix, ff_matrix, RowLinkedMatrix or ColumnLinkedMatrix}
 
-\item{chunkSize}{Represents the number of columns of \code{@geno} that are 
+\item{verbose}{If TRUE more messages are printed.}
+
+\item{bufferSize}{Represents the number of columns of \code{@geno} that are 
 brought into RAM for processing (5000 by default).}
 
-\item{verbose}{If TRUE more messages are printed.}
+\item{nTasks}{Represents the number of parallel tasks each buffer is split
+into.}
+
+\item{mc.cores}{The number of cores (passed to
+\code{\link[parallel]{mclapply}}).}
 }
 \description{
 Calculate frequencies of missing values and alleles.
