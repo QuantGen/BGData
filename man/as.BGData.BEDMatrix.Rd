@@ -4,10 +4,12 @@
 \alias{as.BGData.BEDMatrix}
 \title{Convert a BEDMatrix object into a BGData object.}
 \usage{
-\method{as.BGData}{BEDMatrix}(x, ...)
+\method{as.BGData}{BEDMatrix}(x, alternatePhenotypeFile = NULL, ...)
 }
 \arguments{
 \item{x}{A BEDMatrix object.}
+
+\item{alternatePhenotypeFile}{Path to an alternate phenotype file (see PLINK documentation).}
 
 \item{...}{Additional arguments to the BEDMatrix constructor (currently unused).}
 }
