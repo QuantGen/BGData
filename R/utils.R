@@ -19,7 +19,6 @@ simplifyList <- function(x) {
     } else if (is.matrix(sample)) {
         x <- matrix(unlist(x), nrow = nrow(sample), byrow = FALSE)
         rownames(x) <- rownames(sample)
-        colnames(x) <- colnames(sample)
     }
     return(x)
 }
