@@ -10,6 +10,25 @@ hasCores <- function(numCores) {
 
 for (nCores in seq_len(2)) {
 
+    test_that(paste("chunkedApply", "on", nCores, "cores"), {
+
+        hasCores(nCores)
+
+        X <- matrix(rnorm(5 * 10), 5, 10)
+
+        for (bufferSize in c(5, 10)) {
+            for (nTasks in c(1, 3)) {
+                expect_equal(chunkedApply(X, MARGIN = 1, bufferSize = bufferSize, FUN = sum, nTasks = nTasks), rowSums(X))
+                expect_equal(chunkedApply(X, MARGIN = 2, bufferSize = bufferSize, FUN = sum, nTasks = nTasks), colSums(X))
+                expect_equal(chunkedApply(X, MARGIN = 1, bufferSize = bufferSize, FUN = sum, nTasks = nTasks), apply(X, 1, sum))
+                expect_equal(chunkedApply(X, MARGIN = 2, bufferSize = bufferSize, FUN = sum, nTasks = nTasks), apply(X, 2, sum))
+                expect_equal(chunkedApply(X, MARGIN = 1, bufferSize = bufferSize, FUN = summary, nTasks = nTasks), apply(X, 1, summary))
+                expect_equal(chunkedApply(X, MARGIN = 2, bufferSize = bufferSize, FUN = summary, nTasks = nTasks), apply(X, 2, summary))
+            }
+        }
+
+    })
+
     test_that(paste("crossprod.parallel", "on", nCores, "cores"), {
 
         hasCores(nCores)

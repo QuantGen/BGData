@@ -1,3 +1,101 @@
+chunkRanges <- function(a, n, i = NULL) {
+    k <- as.integer(a / n)
+    r <- as.integer(a %% n)
+    range <- function(i, k, r) {
+        c((i - 1) * k + min(i - 1, r) + 1, i * k + min(i, r))
+    }
+    if (!is.null(i)) {
+        range(i, k, r)
+    } else {
+        sapply(seq_len(n), range, k, r)
+    }
+}
+
+
+simplifyList <- function(x) {
+    sample <- x[[1]]
+    if (is.vector(sample)) {
+        x <- unlist(x)
+    } else if (is.matrix(sample)) {
+        x <- matrix(unlist(x), nrow = nrow(sample), byrow = FALSE)
+        rownames(x) <- rownames(sample)
+        colnames(x) <- colnames(sample)
+    }
+    return(x)
+}
+
+
+#' Applies a function on each row or column of a matrix in parallel.
+#' 
+#' The input matrix \code{X} is broken into \code{nTasks} chunks and passed to
+#' \code{\link[parallel]{mclapply}}. The number of cores can be configured
+#' using \code{mc.cores}. Uses \code{apply} from base internally.
+#' 
+#' @param X A matrix.
+#' @param MARGIN The subscripts which the function will be applied over. 1
+#'   indicates rows, 2 indicates columns.
+#' @param FUN The function to be applied.
+#' @param nTasks The number of submatrices of \code{X} to be processed in
+#'   parallel.
+#' @param mc.cores The number of cores (passed to
+#'   \code{\link[parallel]{mclapply}}).
+#' @param ... Additional arguments to be passed to \code{apply}.
+#' @export
+parallelApply <- function(X, MARGIN, FUN, nTasks = detectCores(), mc.cores = detectCores(), ...) {
+    d <- dim(X)
+    if (!length(d)) {
+        stop("dim(X) must have a positive length")
+    }
+    res <- parallel::mclapply(X = seq_len(nTasks), FUN = function(i, ...) {
+        range <- chunkRanges(ifelse(MARGIN == 2, ncol(X), nrow(X)), nTasks, i)
+        if (MARGIN == 2) {
+            subset <- X[, seq(range[1], range[2]), drop = FALSE]
+        } else {
+            subset <- X[seq(range[1], range[2]), , drop = FALSE]
+        }
+        base::apply(subset, MARGIN, FUN, ...)
+    }, ..., mc.cores = mc.cores)
+    simplifyList(res)
+}
+
+
+#' Reads chunks of data into memory and applies a function on each row or
+#' column of a matrix.
+#' 
+#' \code{chunkedApply} uses \code{parallelApply} internally, so \code{nTasks}
+#' and \code{mc.cores} can be passed as \code{...}.
+#' 
+#' @param X A matrix.
+#' @param MARGIN The subscripts which the function will be applied over. 1
+#'   indicates rows, 2 indicates columns.
+#' @param FUN The function to be applied.
+#' @param bufferSize The number of rows or columns of \code{X} that are brought
+#'   into memory for processing.
+#' @param verbose Whether to print additional information.
+#' @param ... Additional arguments to be passed to \code{parallelApply}.
+#' @export
+chunkedApply <- function(X, MARGIN, FUN, bufferSize, verbose = FALSE, ...) {
+    d <- dim(X)
+    if (!length(d)) {
+        stop("dim(X) must have a positive length")
+    }
+    nChunks <- ceiling(d[MARGIN] / bufferSize)
+    ranges <- chunkRanges(d[MARGIN], nChunks)
+    res <- lapply(seq_len(nChunks), function(i) {
+        if (verbose) {
+            cat("Processing chunk ", i, " of ", nChunks, " (", round(i / nChunks * 100, 3), "%) ...", "\n", sep = "")
+        }
+        if (MARGIN == 2) {
+            subset <- X[, seq(ranges[1, i], ranges[2, i]), drop = FALSE]
+        } else {
+            subset <- X[seq(ranges[1, i], ranges[2, i]), , drop = FALSE]
+        }
+        parallelApply(X = subset, MARGIN = MARGIN, FUN = FUN, ...)
+    })
+    simplifyList(res)
+}
+
+
 # Performs crossprod() or tcrossprod() for a chunk (set of columns or sets of
 # rows) of x.
 crossprods.chunk <- function(chunk, x, y = NULL, nChunks, use_tcrossprod = FALSE) {
