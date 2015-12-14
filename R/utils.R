@@ -777,16 +777,6 @@ GWAS.SKAT <- function(formula, data, groups, plot = FALSE, verbose = FALSE, min.
 }
 
 
-summarize.chunk <- function(chunk, IN, nChunks) {
-    range <- chunkRanges(ncol(IN), nChunks, chunk)
-    Z <- IN[, seq(range[1], range[2]), drop = FALSE]
-    NAs <- is.na(Z)
-    freqNA <- colMeans(NAs)
-    allFreq <- colMeans(Z, na.rm = TRUE) / 2
-    rbind(freqNA, allFreq)
-}
-
-
 #' Calculate frequencies of missing values and alleles.
 #' 
 #' @param X matrix, ff_matrix, RowLinkedMatrix or ColumnLinkedMatrix
@@ -799,33 +789,14 @@ summarize.chunk <- function(chunk, IN, nChunks) {
 #'   \code{\link[parallel]{mclapply}}).
 #' @export
 summarize <- function(X, verbose = FALSE, bufferSize = 5000, nTasks = detectCores(), mc.cores = detectCores()) {
-    p <- ncol(X)
-    OUT <- matrix(NA, nrow = p, ncol = 2)
-    colnames(OUT) <- c("freq_na", "freq_all")
-    rownames(OUT) <- colnames(X)
-    nChunks <- ceiling(p / bufferSize)
-    for (i in seq_len(nChunks)) {
-        timeIn <- proc.time()[3]
-        if (verbose) {
-            cat("-----------------------------\n")
-            cat(" Working Chunk", i, "(", round(i / nChunks * 100, 3), "%).\n")
-        }
-        range <- chunkRanges(p, nChunks, i)
-        if (verbose) {
-            cat("   =>Aquiring genotypes.\n")
-        }
-        Z <- X[, seq(range[1], range[2]), drop = FALSE]
-        if (verbose) {
-            cat("   =>Computing.\n")
-        }
-        # Do not create more tasks than data
-        nTasks <- min(nTasks, range[2] - range[1])
-        OUT[seq(range[1], range[2]), ] <- matrix(unlist(mclapply(X = seq_len(nTasks), FUN = summarize.chunk, IN = Z, nChunks = nTasks, mc.cores = mc.cores), use.names = FALSE), ncol = 2, byrow = TRUE)
-        if (verbose) {
-            cat("   =>Time:", round(proc.time()[3] - timeIn, 3), "secs.\n")
-        }
-    }
-    return(OUT)
+    res <- chunkedApply(X, 2, function(col) {
+        freqNA <- mean(is.na(col))
+        allFreq <- mean(col, na.rm = TRUE) / 2
+        cbind(freqNA, allFreq)
+    }, bufferSize = bufferSize, verbose = verbose, nTasks = nTasks, mc.cores = mc.cores)
+    rownames(res) <- c("freq_na", "freq_all")
+    colnames(res) <- colnames(X)
+    t(res)
 }
 
 
