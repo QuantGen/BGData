@@ -863,20 +863,6 @@ getColumnCount <- function(path) {
 }
 
 
-chunkRanges <- function(a, n, i) {
-    k <- as.integer(a / n)
-    r <- as.integer(a %% n)
-    range <- function(i, k, r) {
-        c((i - 1) * k + min(i - 1, r) + 1, i * k + min(i, r))
-    }
-    if (missing(i)) {
-        sapply(seq_len(n), range, k, r)
-    } else {
-        range(i, k, r)
-    }
-}
-
-
 randomString <- function() {
     paste(sample(c(0:9, letters, LETTERS), size = 5, replace = TRUE), collapse = "")
 }
