@@ -488,6 +488,12 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
     setwd(folder)
 
     for (i in 1:nChunks) {
+    
+    if (verbose) {
+                cat(" Working pair ", i, "-", j, " (", round(100 * counter/(nChunks *
+                  (nChunks + 1)/2)), "% ", round(proc.time()[3] - timeIn, 3), " seconds).\n",
+                  sep = "")
+    }
         DATA[[i]] <- list()
         rowIndex_i <- which(chunkID == i)
         Xi <- X[rowIndex_i, ]
@@ -524,9 +530,7 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
                 j, ".bin")
 
             if (verbose) {
-                cat(" Done with pair ", i, "-", j, " (", round(100 * counter/(nChunks *
-                  (nChunks + 1)/2)), "% ", round(proc.time()[3] - timeIn, 3), " seconds).\n",
-                  sep = "")
+                cat("  =>Done ")
             }
         }
     }
