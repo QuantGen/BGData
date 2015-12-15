@@ -576,7 +576,7 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
 #'   the limits of the vertical axis of the Manhattan plot.
 #' @param chunkSize Represents the number of columns of \code{@@geno} that are 
 #'   brought into RAM for processing (5000 by default).
-#' @param ... Optional argument for regression method.
+#' @param ... Optional arguments for chunkedApply and regression method.
 #' @return Returns a matrix with estimates, SE, p-value, etc.
 #' @export
 GWAS <- function(formula, data, method, plot = FALSE, verbose = FALSE, min.pValue = 1e-10, chunkSize = 5000, ...) {
@@ -684,49 +684,33 @@ GWAS.ols <- function(formula, data, plot = FALSE, verbose = FALSE, min.pValue = 
 
     X <- model.matrix(formula, data@pheno)
     X <- X[match(rownames(data@pheno), rownames(X)), ]
+    X <- cbind(0, X) # Reserve space for marker column
+
     y <- data@pheno[, as.character(terms(formula)[[2]])]
-    p <- ncol(data@geno)
-    tmp <- ls.print(lsfit(x = X, y = y, intercept = FALSE), print.it = FALSE)$coef.table[[1]]
-    OUT <- matrix(nrow = p, ncol = ncol(tmp), NA)
-    colnames(OUT) <- colnames(tmp)
-    rownames(OUT) <- colnames(data@geno)
-    X <- cbind(0, X)
+
+    res <- chunkedApply(data@geno, 2, function(col) {
+        X[, 1] <- col
+        fm <- lsfit(x = X, y = y, intercept = FALSE)
+        ls.print(fm, print.it = FALSE)$coef.table[[1]][1, ]
+    }, bufferSize = chunkSize, verbose = verbose, ...)
+    colnames(res) <- colnames(data@geno)
+    res <- t(res)
 
     if (plot) {
-        tmp <- paste(as.character(formula[2]), as.character(formula[3]), sep = "~")
-        plot(numeric() ~ numeric(), xlim = c(0, p), ylim = c(0, -log(min.pValue, base = 10)), ylab = "-log(p-value)", xlab = "Marker", main = tmp)
-    }
-    nChunks <- ceiling(p / chunkSize)
-    end <- 0
-    tmpRow <- 0
-
-    for (i in 1:nChunks) {
-        time.in <- proc.time()[3]
-        ini <- end + 1
-        end <- min(ini + chunkSize - 1, p)
-        Z <- data@geno[, ini:end, drop = FALSE]
-
-        for (j in 1:(end - ini + 1)) {
-            X[, 1] <- Z[, j]
-            tmpRow <- tmpRow + 1
-            fm <- lsfit(x = X, y = y, intercept = FALSE)
-            tmp <- ls.print(fm, print.it = FALSE)$coef.table[[1]][1, ]
-            OUT[tmpRow, ] <- tmp
-
-            if (plot) {
-                tmp.x <- c(tmpRow - 1, tmpRow)
-                tmp.y <- -log(OUT[c(tmpRow - 1, tmpRow), 4], base = 10)
-                if (tmpRow > 1) {
-                  lines(x = tmp.x, y = tmp.y, col = 8, lwd = 0.5)
-                }
-                points(y = -log(tmp[4], base = 10), col = 2, cex = 0.5, x = tmpRow)
+        title <- paste(as.character(formula[2]), as.character(formula[3]), sep = "~")
+        plot(numeric() ~ numeric(), xlim = c(0, ncol(data@geno)), ylim = c(0, -log(min.pValue, base = 10)), ylab = "-log(p-value)", xlab = "Marker", main = title)
+        for (i in seq_len(nrow(res))) {
+            row <- res[i, ]
+            x <- c(i - 1, i)
+            y <- -log(res[c(i - 1, i), 4], base = 10)
+            if (i > 1) {
+                lines(x = x, y = y, col = 8, lwd = 0.5)
             }
-        }
-        if (verbose) {
-            cat(sep = "", "Chunk ", i, " of ", nChunks, " (", round(proc.time()[3] - time.in, 2), " seconds / chunk, ", round(i / nChunks * 100, 3), "% done )\n")
+            points(y = -log(row[4], base = 10), col = 2, cex = 0.5, x = i)
         }
     }
-    return(OUT)
+
+    return(res)
 }
 
 
