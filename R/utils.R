@@ -1,4 +1,7 @@
 chunkRanges <- function(a, n, i = NULL) {
+    if (n > a) {
+        stop(paste("Cannot split", a, "into", n, "chunks. Reduce the number of chunks."))
+    }
     k <- as.integer(a / n)
     r <- as.integer(a %% n)
     range <- function(i, k, r) {
