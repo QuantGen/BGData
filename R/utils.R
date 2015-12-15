@@ -472,10 +472,8 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
         }
     }
 
-    if (!centerCol)
-        centers <- rep(0, p)
-    if (!scaleCol)
-        scales <- rep(1, p)
+    if (!centerCol){ centers <- rep(0, p) }
+    if (!scaleCol){ scales <- rep(1, p) }
 
     chunkID <- ceiling(1:n/chunkSize)
     nChunks <- max(chunkID)
