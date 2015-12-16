@@ -593,14 +593,12 @@ GWAS <- function(formula, data, method, plot = FALSE, verbose = FALSE, min.pValu
     if (!method %in% c("lm", "lm.fit", "lsfit", "glm", "lmer", "SKAT")) {
         stop("Only lm, glm, lmer and SKAT have been implemented so far.")
     }
-    ## We can have specialized methods, for instance for OLS it is better to use
-    ## lsfit (that is what GWAS.ols does)
-    if (method %in% c("lm", "lm.fit", "lsfit", "SKAT")) {
-        if (method %in% c("lm", "lm.fit", "lsfit")) {
-            OUT <- GWAS.ols(formula = formula, data = data, plot = plot, verbose = verbose, min.pValue = min.pValue, chunkSize = chunkSize, nTasks = nTasks, mc.cores = mc.cores, ...)
-        } else if (method == "SKAT") {
-            OUT <- GWAS.SKAT(formula = formula, data = data, plot = plot, verbose = verbose, min.pValue = min.pValue, ...)
-        }
+    # We can have specialized methods, for instance for OLS it is better to use
+    # lsfit (that is what GWAS.ols does)
+    if (method %in% c("lm", "lm.fit", "lsfit")) {
+        OUT <- GWAS.ols(formula = formula, data = data, plot = plot, verbose = verbose, min.pValue = min.pValue, chunkSize = chunkSize, nTasks = nTasks, mc.cores = mc.cores, ...)
+    } else if (method == "SKAT") {
+        OUT <- GWAS.SKAT(formula = formula, data = data, plot = plot, verbose = verbose, min.pValue = min.pValue, ...)
     } else {
         if (method == "lmer" && !requireNamespace("lme4", quietly = TRUE)) {
             stop("lme4 needed for this function to work. Please install it.", call. = FALSE)
