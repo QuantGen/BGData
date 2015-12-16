@@ -600,10 +600,10 @@ GWAS <- function(formula, data, method, plot = FALSE, verbose = FALSE, min.pValu
     } else if (method == "SKAT") {
         OUT <- GWAS.SKAT(formula = formula, data = data, plot = plot, verbose = verbose, min.pValue = min.pValue, ...)
     } else {
-        if (method == "lmer" && !requireNamespace("lme4", quietly = TRUE)) {
-            stop("lme4 needed for this function to work. Please install it.", call. = FALSE)
-        }
         if (method == "lmer") {
+            if (!requireNamespace("lme4", quietly = TRUE)) {
+                stop("lme4 needed for this function to work. Please install it.", call. = FALSE)
+            }
             FUN <- lme4::lmer
         } else {
             FUN <- match.fun(method)
