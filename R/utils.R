@@ -610,49 +610,32 @@ GWAS <- function(formula, data, method, plot = FALSE, verbose = FALSE, min.pValu
         } else {
             FUN <- match.fun(method)
         }
-        # could subset based on NAs so that subsetting does not take place in each
-        # iteration of the GWAS loop
+
         pheno <- data@pheno
-        fm <- FUN(formula, data = pheno, ...)
-        tmp <- getCoefficients(fm)
-        p <- ncol(data@geno)
-        OUT <- matrix(nrow = p, ncol = length(tmp), NA)
-        rownames(OUT) <- colnames(data@geno)
-        colnames(OUT) <- colnames(tmp)
         GWAS.model <- update(as.formula(formula), ".~z+.")
+
+        OUT <- chunkedApply(data@geno, 2, function(col, ...) {
+            pheno$z <- col
+            fm <- FUN(GWAS.model, data = pheno, ...)
+            getCoefficients(fm)
+        }, bufferSize = chunkSize, verbose = verbose, nTasks = nTasks, mc.cores = mc.cores, ...)
+        colnames(OUT) <- colnames(data@geno)
+        OUT <- t(OUT)
+
         if (plot) {
-            tmp <- paste(as.character(GWAS.model[2]), as.character(GWAS.model[3]), sep = "~")
-            plot(numeric() ~ numeric(), xlim = c(0, p), ylim = c(0, -log(min.pValue, base = 10)), ylab = "-log(p-value)", xlab = "Marker", main = tmp)
-        }
-        nChunks <- ceiling(p / chunkSize)
-        end <- 0
-        tmpRow <- 0
-
-        for (i in 1:nChunks) {
-            time.in <- proc.time()[3]
-            ini <- end + 1
-            end <- min(ini + chunkSize - 1, p)
-            Z <- data@geno[, ini:end, drop = FALSE]
-
-            for (j in 1:(end - ini + 1)) {
-                pheno$z <- Z[, j]
-                fm <- FUN(GWAS.model, data = pheno, ...)
-                tmp <- getCoefficients(fm)
-                tmpRow <- tmpRow + 1
-                OUT[tmpRow, ] <- tmp
-                if (plot) {
-                  x <- c(tmpRow - 1, tmpRow)
-                  y <- -log(OUT[c(tmpRow - 1, tmpRow), 4], base = 10)
-                  if (tmpRow > 1) {
+            title <- paste(as.character(GWAS.model[2]), as.character(GWAS.model[3]), sep = "~")
+            plot(numeric() ~ numeric(), xlim = c(0, ncol(data@geno)), ylim = c(0, -log(min.pValue, base = 10)), ylab = "-log(p-value)", xlab = "Marker", main = title)
+            for (i in seq_len(nrow(OUT))) {
+                row <- OUT[i, ]
+                x <- c(i - 1, i)
+                y <- -log(OUT[c(i - 1, i), 4], base = 10)
+                if (i > 1) {
                     lines(x = x, y = y, col = 8, lwd = 0.5)
-                  }
-                  points(y = -log(tmp[4], base = 10), col = 2, cex = 0.5, x = tmpRow)
                 }
-            }
-            if (verbose) {
-                cat(sep = "", "Chunk ", i, " of ", nChunks, " (", round(proc.time()[3] - time.in, 2), " seconds / chunk, ", round(i / nChunks * 100, 3), "% done )\n")
+                points(y = -log(row[4], base = 10), col = 2, cex = 0.5, x = i)
             }
         }
+
     }
     return(OUT)
 }
