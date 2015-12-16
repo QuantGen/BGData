@@ -587,12 +587,15 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
 #' @return Returns a matrix with estimates, SE, p-value, etc.
 #' @export
 GWAS <- function(formula, data, method, plot = FALSE, verbose = FALSE, min.pValue = 1e-10, chunkSize = 5000, nTasks = detectCores(), mc.cores = detectCores(), ...) {
+
     if (class(data) != "BGData") {
         stop("data must BGData")
     }
+
     if (!method %in% c("lm", "lm.fit", "lsfit", "glm", "lmer", "SKAT")) {
         stop("Only lm, glm, lmer and SKAT have been implemented so far.")
     }
+
     # We can have specialized methods, for instance for OLS it is better to use
     # lsfit (that is what GWAS.ols does)
     if (method %in% c("lm", "lm.fit", "lsfit")) {
@@ -608,10 +611,8 @@ GWAS <- function(formula, data, method, plot = FALSE, verbose = FALSE, min.pValu
         } else {
             FUN <- match.fun(method)
         }
-
         pheno <- data@pheno
         GWAS.model <- update(as.formula(formula), ".~z+.")
-
         OUT <- chunkedApply(data@geno, 2, function(col, ...) {
             pheno$z <- col
             fm <- FUN(GWAS.model, data = pheno, ...)
@@ -619,22 +620,23 @@ GWAS <- function(formula, data, method, plot = FALSE, verbose = FALSE, min.pValu
         }, bufferSize = chunkSize, verbose = verbose, nTasks = nTasks, mc.cores = mc.cores, ...)
         colnames(OUT) <- colnames(data@geno)
         OUT <- t(OUT)
-
-        if (plot) {
-            title <- paste(as.character(GWAS.model[2]), as.character(GWAS.model[3]), sep = "~")
-            plot(numeric() ~ numeric(), xlim = c(0, ncol(data@geno)), ylim = c(0, -log(min.pValue, base = 10)), ylab = "-log(p-value)", xlab = "Marker", main = title)
-            for (i in seq_len(nrow(OUT))) {
-                row <- OUT[i, ]
-                x <- c(i - 1, i)
-                y <- -log(OUT[c(i - 1, i), 4], base = 10)
-                if (i > 1) {
-                    lines(x = x, y = y, col = 8, lwd = 0.5)
-                }
-                points(y = -log(row[4], base = 10), col = 2, cex = 0.5, x = i)
-            }
-        }
-
     }
+
+    if (plot) {
+        # This code assumes that the p-values that are plotted on the y-axis
+        # are in the last column of the output.
+        title <- paste(as.character(formula[2]), as.character(formula[3]), sep = "~")
+        plot(numeric() ~ numeric(), xlim = c(0, nrow(OUT)), ylim = c(0, -log(min.pValue, base = 10)), ylab = "-log(p-value)", xlab = "Marker", main = title)
+        for (i in seq_len(nrow(OUT))) {
+            x <- c(i - 1, i)
+            y <- -log(OUT[x, ncol(OUT)], base = 10)
+            if (i > 1) {
+                lines(x = x, y = y, col = 8, lwd = 0.5)
+            }
+            points(x = i, y = y[2], col = 2, cex = 0.5)
+        }
+    }
+
     return(OUT)
 }
 
@@ -659,20 +661,6 @@ GWAS.ols <- function(formula, data, plot = FALSE, verbose = FALSE, min.pValue = 
     }, bufferSize = chunkSize, verbose = verbose, nTasks = nTasks, mc.cores = mc.cores, ...)
     colnames(res) <- colnames(data@geno)
     res <- t(res)
-
-    if (plot) {
-        title <- paste(as.character(formula[2]), as.character(formula[3]), sep = "~")
-        plot(numeric() ~ numeric(), xlim = c(0, ncol(data@geno)), ylim = c(0, -log(min.pValue, base = 10)), ylab = "-log(p-value)", xlab = "Marker", main = title)
-        for (i in seq_len(nrow(res))) {
-            row <- res[i, ]
-            x <- c(i - 1, i)
-            y <- -log(res[c(i - 1, i), 4], base = 10)
-            if (i > 1) {
-                lines(x = x, y = y, col = 8, lwd = 0.5)
-            }
-            points(y = -log(row[4], base = 10), col = 2, cex = 0.5, x = i)
-        }
-    }
 
     return(res)
 }
@@ -699,29 +687,16 @@ GWAS.SKAT <- function(formula, data, groups, plot = FALSE, verbose = FALSE, min.
 
     H0 <- SKAT::SKAT_Null_Model(formula, data = data@pheno, ...)
 
-    if (plot) {
-        tmp <- paste(as.character(formula[2]), as.character(formula[3]), sep = "~")
-        plot(numeric() ~ numeric(), xlim = c(0, p), ylim = c(0, -log(min.pValue, base = 10)), ylab = "-log(p-value)", xlab = "Marker", main = tmp)
-    }
-
     for (i in 1:p) {
         time.in <- proc.time()[3]
         Z <- data@geno[, groups == levels[i], drop = FALSE]
         fm <- SKAT::SKAT(Z = Z, obj = H0, ...)
         OUT[i, ] <- c(ncol(Z), fm$p.value)
-
-        if (plot) {
-            tmp.x <- c(i - 1, i)
-            tmp.y <- -log(OUT[tmp.x, 2], base = 10)
-            if (i > 1) {
-                lines(x = tmp.x, y = tmp.y, col = 8, lwd = 0.5)
-            }
-            points(y = tmp.y[2], col = 2, cex = 0.5, x = i)
-        }
         if (verbose) {
             cat(sep = "", "Group ", i, " of ", p, " (", round(proc.time()[3] - time.in, 2), " seconds / chunk, ", round(i / p * 100, 3), "% done )\n")
         }
     }
+
     return(OUT)
 }
 
