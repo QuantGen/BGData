@@ -639,28 +639,6 @@ GWAS <- function(formula, data, method, plot = FALSE, verbose = FALSE, min.pValu
 }
 
 
-getCoefficients <- function(x) {
-    UseMethod("getCoefficients")
-}
-
-
-getCoefficients.lm <- function(x) {
-    summary(x)$coef[2, ]
-}
-
-
-getCoefficients.glm <- function(x) {
-    summary(x)$coef[2, ]
-}
-
-
-getCoefficients.lmerMod <- function(x) {
-    ans <- summary(x)$coef[2, ]
-    ans <- c(ans, c(1 - pnorm(ans[3])))
-    return(ans)
-}
-
-
 # GWAS 'Ordinary Least Squares' (e.g., lsfit, lm.fit, lm)
 # formula: the formula for the GWAS model without including the marker, e.g.
 # y~1 or y~factor(sex)+age
@@ -745,6 +723,28 @@ GWAS.SKAT <- function(formula, data, groups, plot = FALSE, verbose = FALSE, min.
         }
     }
     return(OUT)
+}
+
+
+getCoefficients <- function(x) {
+    UseMethod("getCoefficients")
+}
+
+
+getCoefficients.lm <- function(x) {
+    summary(x)$coef[2, ]
+}
+
+
+getCoefficients.glm <- function(x) {
+    summary(x)$coef[2, ]
+}
+
+
+getCoefficients.lmerMod <- function(x) {
+    ans <- summary(x)$coef[2, ]
+    ans <- c(ans, c(1 - pnorm(ans[3])))
+    return(ans)
 }
 
 
