@@ -579,14 +579,17 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
 #'   the limits of the vertical axis of the Manhattan plot.
 #' @param chunkSize Represents the number of columns of \code{@@geno} that are 
 #'   brought into RAM for processing (5000 by default).
+#' @param nTasks The number of submatrices of \code{X} to be processed in
+#'   parallel.
+#' @param mc.cores The number of cores (passed to
+#'   \code{\link[parallel]{mclapply}}).
 #' @param ... Optional arguments for chunkedApply and regression method.
 #' @return Returns a matrix with estimates, SE, p-value, etc.
 #' @export
-GWAS <- function(formula, data, method, plot = FALSE, verbose = FALSE, min.pValue = 1e-10, chunkSize = 5000, ...) {
+GWAS <- function(formula, data, method, plot = FALSE, verbose = FALSE, min.pValue = 1e-10, chunkSize = 5000, nTasks = detectCores(), mc.cores = detectCores(), ...) {
     if (class(data) != "BGData") {
         stop("data must BGData")
     }
-
     if (!method %in% c("lm", "lm.fit", "lsfit", "glm", "lmer", "SKAT")) {
         stop("Only lm, glm, lmer and SKAT have been implemented so far.")
     }
@@ -594,9 +597,8 @@ GWAS <- function(formula, data, method, plot = FALSE, verbose = FALSE, min.pValu
     ## lsfit (that is what GWAS.ols does)
     if (method %in% c("lm", "lm.fit", "lsfit", "SKAT")) {
         if (method %in% c("lm", "lm.fit", "lsfit")) {
-            OUT <- GWAS.ols(formula = formula, data = data, plot = plot, verbose = verbose, min.pValue = min.pValue, chunkSize = chunkSize, ...)
-        }
-        if (method == "SKAT") {
+            OUT <- GWAS.ols(formula = formula, data = data, plot = plot, verbose = verbose, min.pValue = min.pValue, chunkSize = chunkSize, nTasks = nTasks, mc.cores = mc.cores, ...)
+        } else if (method == "SKAT") {
             OUT <- GWAS.SKAT(formula = formula, data = data, plot = plot, verbose = verbose, min.pValue = min.pValue, ...)
         }
     } else {

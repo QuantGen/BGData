@@ -6,7 +6,8 @@
 object.}
 \usage{
 GWAS(formula, data, method, plot = FALSE, verbose = FALSE,
-  min.pValue = 1e-10, chunkSize = 5000, ...)
+  min.pValue = 1e-10, chunkSize = 5000, nTasks = detectCores(),
+  mc.cores = detectCores(), ...)
 }
 \arguments{
 \item{formula}{A formula (e.g. weight~sex+age) with the response on the 
@@ -30,6 +31,12 @@ the limits of the vertical axis of the Manhattan plot.}
 
 \item{chunkSize}{Represents the number of columns of \code{@geno} that are 
 brought into RAM for processing (5000 by default).}
+
+\item{nTasks}{The number of submatrices of \code{X} to be processed in
+parallel.}
+
+\item{mc.cores}{The number of cores (passed to
+\code{\link[parallel]{mclapply}}).}
 
 \item{...}{Optional arguments for chunkedApply and regression method.}
 }
