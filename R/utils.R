@@ -1,32 +1,3 @@
-chunkRanges <- function(a, n, i = NULL) {
-    if (n > a) {
-        stop(paste("Cannot split", a, "into", n, "chunks. Reduce the number of chunks."))
-    }
-    k <- as.integer(a / n)
-    r <- as.integer(a %% n)
-    range <- function(i, k, r) {
-        c((i - 1) * k + min(i - 1, r) + 1, i * k + min(i, r))
-    }
-    if (!is.null(i)) {
-        range(i, k, r)
-    } else {
-        sapply(seq_len(n), range, k, r)
-    }
-}
-
-
-simplifyList <- function(x) {
-    sample <- x[[1]]
-    if (is.vector(sample)) {
-        x <- unlist(x)
-    } else if (is.matrix(sample)) {
-        x <- matrix(unlist(x), nrow = nrow(sample), byrow = FALSE)
-        rownames(x) <- rownames(sample)
-    }
-    return(x)
-}
-
-
 #' Applies a function on each row or column of a matrix in parallel.
 #' 
 #' The input matrix \code{X} is broken into \code{nTasks} chunks and passed to
@@ -49,7 +20,7 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = detectCores(), mc.cores = det
         stop("dim(X) must have a positive length")
     }
     res <- parallel::mclapply(X = seq_len(nTasks), FUN = function(i, ...) {
-        range <- chunkRanges(ifelse(MARGIN == 2, ncol(X), nrow(X)), nTasks, i)
+        range <- LinkedMatrix:::chunkRanges(ifelse(MARGIN == 2, ncol(X), nrow(X)), nTasks, i)
         if (MARGIN == 2) {
             subset <- X[, seq(range[1], range[2]), drop = FALSE]
         } else {
@@ -82,7 +53,7 @@ chunkedApply <- function(X, MARGIN, FUN, bufferSize, verbose = FALSE, ...) {
         stop("dim(X) must have a positive length")
     }
     nChunks <- ceiling(d[MARGIN] / bufferSize)
-    ranges <- chunkRanges(d[MARGIN], nChunks)
+    ranges <- LinkedMatrix:::chunkRanges(d[MARGIN], nChunks)
     res <- lapply(seq_len(nChunks), function(i) {
         if (verbose) {
             cat("Processing chunk ", i, " of ", nChunks, " (", round(i / nChunks * 100, 3), "%) ...", "\n", sep = "")
@@ -104,7 +75,7 @@ crossprods.chunk <- function(chunk, x, y = NULL, nChunks, use_tcrossprod = FALSE
     if (!is.null(y)) {
         y <- as.matrix(y)
         nY <- ifelse(use_tcrossprod, ncol(y), nrow(y))
-        ranges <- chunkRanges(nY, nChunks, chunk)
+        ranges <- LinkedMatrix:::chunkRanges(nY, nChunks, chunk)
         if (use_tcrossprod) {
             y <- y[, seq(ranges[1], ranges[2]), drop = FALSE]
         } else {
@@ -112,7 +83,7 @@ crossprods.chunk <- function(chunk, x, y = NULL, nChunks, use_tcrossprod = FALSE
         }
     }
     nX <- ifelse(use_tcrossprod, ncol(x), nrow(x))
-    ranges <- chunkRanges(nX, nChunks, chunk)
+    ranges <- LinkedMatrix:::chunkRanges(nX, nChunks, chunk)
     if (use_tcrossprod) {
         X <- x[, seq(ranges[1], ranges[2]), drop = FALSE]
         Xy <- tcrossprod(X, y)
@@ -847,4 +818,16 @@ normalizeType <- function(val) {
     } else {
         val
     }
+}
+
+
+simplifyList <- function(x) {
+    sample <- x[[1]]
+    if (is.vector(sample)) {
+        x <- unlist(x)
+    } else if (is.matrix(sample)) {
+        x <- matrix(unlist(x), nrow = nrow(sample), byrow = FALSE)
+        rownames(x) <- rownames(sample)
+    }
+    return(x)
 }
