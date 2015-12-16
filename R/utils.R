@@ -676,7 +676,7 @@ GWAS.ols <- function(formula, data, plot = FALSE, verbose = FALSE, min.pValue = 
 
     y <- data@pheno[, as.character(terms(formula)[[2]])]
 
-    res <- chunkedApply(data@geno, 2, function(col) {
+    res <- chunkedApply(data@geno, 2, function(col, ...) {
         X[, 1] <- col
         fm <- lsfit(x = X, y = y, intercept = FALSE)
         ls.print(fm, print.it = FALSE)$coef.table[[1]][1, ]
