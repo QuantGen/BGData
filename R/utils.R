@@ -666,7 +666,7 @@ getCoefficients.lmerMod <- function(x) {
 # y~1 or y~factor(sex)+age
 # all the variables in the formula must be in data@pheno data (BGData)
 # containing slots @pheno and @geno
-GWAS.ols <- function(formula, data, plot = FALSE, verbose = FALSE, min.pValue = 1e-10, chunkSize = 10, ...) {
+GWAS.ols <- function(formula, data, plot = FALSE, verbose = FALSE, min.pValue = 1e-10, chunkSize = 10, nTasks = detectCores(), mc.cores = detectCores(), ...) {
 
     X <- model.matrix(formula, data@pheno)
     X <- X[match(rownames(data@pheno), rownames(X)), ]
@@ -678,7 +678,7 @@ GWAS.ols <- function(formula, data, plot = FALSE, verbose = FALSE, min.pValue = 
         X[, 1] <- col
         fm <- lsfit(x = X, y = y, intercept = FALSE)
         ls.print(fm, print.it = FALSE)$coef.table[[1]][1, ]
-    }, bufferSize = chunkSize, verbose = verbose, ...)
+    }, bufferSize = chunkSize, verbose = verbose, nTasks = nTasks, mc.cores = mc.cores, ...)
     colnames(res) <- colnames(data@geno)
     res <- t(res)
 
