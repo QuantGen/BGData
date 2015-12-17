@@ -446,8 +446,13 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
         }
     }
 
-    if (!centerCol){ centers <- rep(0, p) }
-    if (!scaleCol){ scales <- rep(1, p) }
+    if (!centerCol) {
+        centers <- rep(0, p)
+    }
+
+    if (!scaleCol) {
+        scales <- rep(1, p)
+    }
 
     chunkID <- ceiling(1:n/chunkSize)
     nChunks <- max(chunkID)
@@ -461,11 +466,6 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
 
     for (i in 1:nChunks) {
     
-    if (verbose) {
-                cat(" Working pair ", i, "-", j, " (", round(100 * counter/(nChunks *
-                  (nChunks + 1)/2)), "% ", round(proc.time()[3] - timeIn, 3), " seconds).\n",
-                  sep = "")
-    }
         DATA[[i]] <- list()
         rowIndex_i <- which(chunkID == i)
         Xi <- X[rowIndex_i, ]
@@ -479,6 +479,11 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
         }
 
         for (j in i:nChunks) {
+
+            if (verbose) {
+                cat(" Working pair ", i, "-", j, " (", round(100 * counter/(nChunks * (nChunks + 1)/2)), "% ", round(proc.time()[3] - timeIn, 3), " seconds).\n", sep = "")
+            }
+
             rowIndex_j <- which(chunkID == j)
             Xj <- X[rowIndex_j, ]
 
