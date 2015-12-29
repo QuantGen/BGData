@@ -5,7 +5,6 @@
 #' @docType package
 #' @name BGData
 #' @import methods
-#' @importFrom bit physical physical<-
 #' @importClassesFrom LinkedMatrix LinkedMatrix
 #' @importClassesFrom symDMatrix symDMatrix
 #' @importClassesFrom bigmemory big.matrix

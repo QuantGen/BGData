@@ -500,8 +500,8 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
             colnames(DATA[[i]][[j - i + 1]]) <- colnames(X)[rowIndex_j]
             rownames(DATA[[i]][[j - i + 1]]) <- rownames(X)[rowIndex_i]
             counter <- counter + 1
-            physical(DATA[[i]][[j - i + 1]])$pattern <- "ff"
-            physical(DATA[[i]][[j - i + 1]])$filename <- paste0("data_", i, "_",
+            bit::physical(DATA[[i]][[j - i + 1]])$pattern <- "ff"
+            bit::physical(DATA[[i]][[j - i + 1]])$filename <- paste0("data_", i, "_",
                 j, ".bin")
 
             if (verbose) {

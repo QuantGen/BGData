@@ -418,7 +418,7 @@ ffNodeInitializer <- function(nodeIndex, nrow, ncol, vmode, folderOut, ...) {
     filename <- paste0("geno_", nodeIndex, ".bin")
     node <- ff::ff(dim = c(nrow, ncol), vmode = vmode, filename = paste0(folderOut, .Platform$file.sep, filename), ...)
     # Change ff path to a relative one
-    physical(node)$pattern <- "ff"
-    physical(node)$filename <- filename
+    bit::physical(node)$pattern <- "ff"
+    bit::physical(node)$filename <- filename
     return(node)
 }
