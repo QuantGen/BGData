@@ -3,7 +3,7 @@ library(parallel)
 context("utils")
 
 hasCores <- function(numCores) {
-    if (Sys.getenv("_R_CHECK_LIMIT_CORES_") == TRUE || numCores > detectCores()) {
+    if (Sys.getenv("_R_CHECK_LIMIT_CORES_") == TRUE || numCores > parallel::detectCores()) {
         skip("Not enough cores or number of cores capped for CRAN submission checks.")
     }
 }

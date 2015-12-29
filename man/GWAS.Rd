@@ -6,8 +6,8 @@
 object.}
 \usage{
 GWAS(formula, data, method, plot = FALSE, verbose = FALSE,
-  min.pValue = 1e-10, chunkSize = 5000, nTasks = detectCores(),
-  mc.cores = detectCores(), ...)
+  min.pValue = 1e-10, chunkSize = 5000, nTasks = parallel::detectCores(),
+  mc.cores = parallel::detectCores(), ...)
 }
 \arguments{
 \item{formula}{A formula (e.g. weight~sex+age) with the response on the 

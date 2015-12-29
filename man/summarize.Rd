@@ -4,8 +4,8 @@
 \alias{summarize}
 \title{Calculate frequencies of missing values and alleles.}
 \usage{
-summarize(X, verbose = FALSE, bufferSize = 5000, nTasks = detectCores(),
-  mc.cores = detectCores())
+summarize(X, verbose = FALSE, bufferSize = 5000,
+  nTasks = parallel::detectCores(), mc.cores = parallel::detectCores())
 }
 \arguments{
 \item{X}{matrix, ff_matrix, RowLinkedMatrix or ColumnLinkedMatrix}

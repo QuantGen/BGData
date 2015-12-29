@@ -4,8 +4,8 @@
 \alias{tcrossprod.parallel}
 \title{Computes tcrossprod (xy' or xx') in parallel.}
 \usage{
-tcrossprod.parallel(x, y = NULL, nChunks = detectCores(),
-  mc.cores = detectCores())
+tcrossprod.parallel(x, y = NULL, nChunks = parallel::detectCores(),
+  mc.cores = parallel::detectCores())
 }
 \arguments{
 \item{x}{matrix, ff_matrix, RowLinkedMatrix or ColumnLinkedMatrix.}

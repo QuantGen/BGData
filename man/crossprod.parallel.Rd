@@ -4,8 +4,8 @@
 \alias{crossprod.parallel}
 \title{Computes crossprod (x'y or x'x) in parallel.}
 \usage{
-crossprod.parallel(x, y = NULL, nChunks = detectCores(),
-  mc.cores = detectCores())
+crossprod.parallel(x, y = NULL, nChunks = parallel::detectCores(),
+  mc.cores = parallel::detectCores())
 }
 \arguments{
 \item{x}{matrix, ff_matrix, RowLinkedMatrix or ColumnLinkedMatrix.}
