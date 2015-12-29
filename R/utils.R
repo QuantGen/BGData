@@ -409,7 +409,7 @@ getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, scaleG = TRUE, v
 
 
 #' @export
-getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, scales = NULL, centerCol = T, scaleCol = T, nChunks2 = 1, folder = randomString(5), vmode = "double", verbose = TRUE, saveRData = TRUE, mc.cores = parallel::detectCores(), scaleG = T) {
+getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, scales = NULL, centerCol = T, scaleCol = T, nChunks2 = 1, folder = randomString(), vmode = "double", verbose = TRUE, saveRData = TRUE, mc.cores = parallel::detectCores(), scaleG = T) {
 
     timeIn <- proc.time()[3]
     n <- nrow(X)
