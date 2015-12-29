@@ -4,7 +4,7 @@
 #' 
 #' @docType package
 #' @name BGData
-#' @import methods ff
+#' @import methods
 #' @importFrom bit physical physical<-
 #' @importClassesFrom LinkedMatrix LinkedMatrix
 #' @importClassesFrom symDMatrix symDMatrix

@@ -203,7 +203,7 @@ getG <- function(x, nChunks = ceiling(ncol(x) / 10000), scaleCol = TRUE, scaleG 
             save(G, file = paste0(saveName, ".RData"))
         }
         if (saveType == "ff") {
-            Gij <- as.ff(G, file = paste0(saveName, ".bin"))
+            Gij <- ff::as.ff(G, file = paste0(saveName, ".bin"))
             save(Gij, file = paste0(saveName, ".ff"))
         }
     }
@@ -495,7 +495,7 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
 
             Gij <- tcrossprod.parallel(x = Xi, y = Xj, mc.cores = mc.cores, nChunks = nChunks2)
 
-            DATA[[i]][[j - i + 1]] <- ff(dim = dim(Gij), vmode = vmode, initdata = as.vector(Gij),
+            DATA[[i]][[j - i + 1]] <- ff::ff(dim = dim(Gij), vmode = vmode, initdata = as.vector(Gij),
                                          filename = paste0("data_", i, "_", j, ".bin"))
             colnames(DATA[[i]][[j - i + 1]]) <- colnames(X)[rowIndex_j]
             rownames(DATA[[i]][[j - i + 1]]) <- rownames(X)[rowIndex_i]
