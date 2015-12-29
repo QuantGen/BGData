@@ -169,7 +169,36 @@ parsePED <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1
 #' @export
 readPED <- function(fileIn, header, dataType, n = NULL, p = NULL, na.strings = "NA", nColSkip = 6, idCol = c(1, 2), verbose = FALSE, nNodes = NULL, linked.by = "rows", folderOut = paste("BGData_", sub("\\.[[:alnum:]]+$", "", basename(fileIn)), sep = ""), dimorder = if (linked.by == "rows") 2:1 else 1:2) {
 
+    # Create output directory
+    if (file.exists(folderOut)) {
+        stop(paste("Output folder", folderOut, "already exists. Please move it or pick a different one."))
+    }
+    dir.create(folderOut)
+
     dims <- pedDims(fileIn = fileIn, header = header, n = n, p = p, nColSkip = nColSkip)
+
+    # Determine number of nodes
+    if (is.null(nNodes)) {
+        if (linked.by == "columns") {
+            chunkSize <- min(dims$p, floor(.Machine$integer.max / dims$n / 1.2))
+            nNodes <- ceiling(dims$p / chunkSize)
+        } else {
+            chunkSize <- min(dims$n, floor(.Machine$integer.max / dims$p / 1.2))
+            nNodes <- ceiling(dims$n / chunkSize)
+        }
+    } else {
+        if (linked.by == "columns") {
+            chunkSize <- ceiling(dims$p / nNodes)
+            if (chunkSize * dims$n >= .Machine$integer.max / 1.2) {
+              stop("More nodes are needed")
+            }
+        } else {
+            chunkSize <- ceiling(dims$n / nNodes)
+            if (chunkSize * dims$p >= .Machine$integer.max / 1.2) {
+              stop("More nodes are needed")
+            }
+        }
+    }
 
     dataType <- normalizeType(dataType)
     if (!typeof(dataType) %in% c("integer", "double")) {
@@ -179,12 +208,10 @@ readPED <- function(fileIn, header, dataType, n = NULL, p = NULL, na.strings = "
         stop("linked.by must be either columns or rows")
     }
 
-    class <- ifelse(linked.by == "columns", "ColumnLinkedMatrix", "RowLinkedMatrix")
-
     vmode <- ifelse(typeof(dataType) == "integer", "byte", "double")
 
     # Prepare geno
-    geno <- ffLinkedMatrix(class = class, n = dims$n, p = dims$p, vmode = vmode, nNodes = nNodes, folderOut = folderOut, dimorder = dimorder)
+    geno <- LinkedMatrix::LinkedMatrix(nrow = dims$n, ncol = dims$p, nNodes = nNodes, linkedBy = linked.by, nodeInitializer = ffNodeInitializer, vmode = vmode, folderOut = folderOut, dimorder = dimorder)
 
     # Generate nodes
     nodes <- LinkedMatrix::nodes(geno)
@@ -384,4 +411,14 @@ load.BGData <- function(file, envir = parent.frame()) {
 
     # Send the object to envir
     assign(objectName, object, envir = envir)
+}
+
+
+ffNodeInitializer <- function(nodeIndex, nrow, ncol, vmode, folderOut, ...) {
+    filename <- paste0("geno_", nodeIndex, ".bin")
+    node <- ff::ff(dim = c(nrow, ncol), vmode = vmode, filename = paste0(folderOut, .Platform$file.sep, filename), ...)
+    # Change ff path to a relative one
+    physical(node)$pattern <- "ff"
+    physical(node)$filename <- filename
+    return(node)
 }
