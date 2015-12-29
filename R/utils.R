@@ -408,6 +408,32 @@ getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, scaleG = TRUE, v
 }
 
 
+#' Computes a genomic relationship matrix G=xx' as a
+#' \code{\linkS4class{symDMatrix}}.
+#' 
+#' Offers options for centering and scaling the columns of x before computing 
+#' xx'.
+#' 
+#' @param X matrix, ff_matrix, RowLinkedMatrix or ColumnLinkedMatrix
+#' @param nChunks The number of columns that are processed at a time.
+#' @param chunkSize The number of columns that are processed at a time.
+#' @param centers Precomputed centers.
+#' @param scales Precomputed scales.
+#' @param centerCol TRUE/FALSE whether columns must be centered before computing
+#'   xx'.
+#' @param scaleCol TRUE/FALSE whether columns must be scaled before computing 
+#'   xx'.
+#' @param nChunks2 The number of chunks that each chunk is split into for 
+#'   processing in parallel.
+#' @param folder Folder in which to save the \code{\linkS4class{symDMatrix}}.
+#' @param vmode vmode of \code{ff} objects.
+#' @param verbose If TRUE more messages are printed.
+#' @param saveRData Whether to save an RData file to easily reload 
+#'   \code{\linkS4class{symDMatrix}}
+#' @param mc.cores The number of cores (passed to
+#'   \code{\link[parallel]{mclapply}}).
+#' @param scaleG TRUE/FALSE whether columns must be scaled before computing xx'.
+#' @return A positive semi-definite symmetric numeric matrix.
 #' @export
 getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, scales = NULL, centerCol = T, scaleCol = T, nChunks2 = 1, folder = randomString(), vmode = "double", verbose = TRUE, saveRData = TRUE, mc.cores = parallel::detectCores(), scaleG = T) {
 
