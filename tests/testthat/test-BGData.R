@@ -255,6 +255,31 @@ test_that("it loads BGData objects created by readPED.big.matrix", {
 
 })
 
+test_that("it loads BGData objects containing a BEDMatrix object", {
+
+    # Create dummy objects
+    bedMatrix <- BEDMatrix::BEDMatrix(system.file("extdata", "example.bed", package = "BEDMatrix"))
+    bedDims <- dim(bedMatrix)
+    bedDNames <- dimnames(bedMatrix)
+    bedRow <- bedMatrix[1, ]
+    BGData <- BGData(geno = bedMatrix)
+
+    # Save BGData object
+    path <- paste0(tmpPath, "test-", randomString(), "/", "BGData.RData")
+    dir.create(dirname(path))
+    save(BGData, file = path)
+    rm(BGData)
+    expect_true(!("BGData" %in% ls()))
+
+    # Load BGData object
+    load.BGData(path)
+    expect_true("BGData" %in% ls())
+    expect_equal(dim(BGData@geno), bedDims)
+    expect_equal(dimnames(BGData@geno), bedDNames)
+    expect_equal(BGData@geno[1, ], bedRow)
+
+})
+
 context("as.BGData")
 
 test_that("it converts a BEDMatrix object to a BGData object", {

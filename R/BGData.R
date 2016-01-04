@@ -407,6 +407,12 @@ load.BGData <- function(file, envir = parent.frame()) {
 
     } else if (class(object@geno) == "big.matrix") {
         object@geno <- bigmemory::attach.big.matrix(paste0(dirname(file), "/", "BGData.desc"))
+    } else if (class(object@geno) == "BEDMatrix") {
+        dnames <- attr(object@geno, "dnames")
+        dims <- attr(object@geno, "dims")
+        path <- attr(object@geno, "path")
+        object@geno <- BEDMatrix::BEDMatrix(path = path, n = dims[1], p = dims[2])
+        dimnames(object@geno) <- dnames
     }
 
     # Send the object to envir
