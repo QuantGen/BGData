@@ -385,38 +385,58 @@ load.BGData <- function(file, envir = parent.frame()) {
 
     message(paste0("Loaded object ", objectName, " of class ", objectClass))
 
-    if (inherits(object@geno, "LinkedMatrix")) {
-
-        # Store current working directory and set working directory to directory of file
-        cwd <- getwd()
-        setwd(dirname(file))
-
-        # Open all nodes for reading (we do not store absolute paths to ff files, so this
-        # has to happen in the same working directory)
-        nNodes <- LinkedMatrix::nNodes(object@geno)
-        for (i in seq_len(nNodes)) {
-            node <- object@geno[[i]]
-            if (inherits(node, "ff_matrix")) {
-                message(paste0("Opening flat file ", i, "..."))
-                open(node)
-            }
-        }
-
-        # Restore the working directory
-        setwd(cwd)
-
-    } else if (class(object@geno) == "big.matrix") {
-        object@geno <- bigmemory::attach.big.matrix(paste0(dirname(file), "/", "BGData.desc"))
-    } else if (class(object@geno) == "BEDMatrix") {
-        dnames <- attr(object@geno, "dnames")
-        dims <- attr(object@geno, "dims")
-        path <- attr(object@geno, "path")
-        object@geno <- BEDMatrix::BEDMatrix(path = path, n = dims[1], p = dims[2])
-        dimnames(object@geno) <- dnames
-    }
+    # Load node
+    object@geno <- loadGeno(object@geno, path = dirname(file))
 
     # Send the object to envir
     assign(objectName, object, envir = envir)
+}
+
+
+loadGeno <- function(x, ...) {
+    UseMethod("loadGeno")
+}
+
+
+loadGeno.LinkedMatrix <- function(x, path, ...) {
+    for (i in seq_len(LinkedMatrix::nNodes(x))) {
+        x[[i]] <- loadGeno(x[[i]], path = path)
+    }
+    return(x)
+}
+
+
+# Absolute paths to ff files are not stored, so the ff objects have to be
+# loaded from the same directory as the RData file.
+loadGeno.ff_matrix <- function(x, path, ...) {
+    # Store current working directory and set working directory to path
+    cwd <- getwd()
+    setwd(path)
+    # Open ff object
+    ff::open.ff(x)
+    # Restore the working directory
+    setwd(cwd)
+    return(x)
+}
+
+
+loadGeno.big.matrix <- function(x, path, ...) {
+    return(bigmemory::attach.big.matrix(paste0(path, .Platform$file.sep, "BGData.desc")))
+}
+
+
+loadGeno.BEDMatrix <- function(x, ...) {
+    dnames <- attr(x, "dnames")
+    dims <- attr(x, "dims")
+    path <- attr(x, "path")
+    x <- BEDMatrix::BEDMatrix(path = path, n = dims[1], p = dims[2])
+    dimnames(x) <- dnames
+    return(x)
+}
+
+
+loadGeno.default <- function(x, ...) {
+    return(x)
 }
 
 
