@@ -370,26 +370,20 @@ readPED.big.matrix <- function(fileIn, header, dataType, n = NULL, p = NULL, na.
 #' @param envir The environment where to load the data.
 #' @export
 load.BGData <- function(file, envir = parent.frame()) {
-
-    # Determine object name and class
-    lsOLD <- ls()
-    load(file = file)
-    lsNEW <- ls()
-    objectName <- lsNEW[(!lsNEW %in% lsOLD) & (lsNEW != "lsOLD")]
-    object <- get(objectName)
-    objectClass <- class(object)
-
-    if (objectClass != "BGData") {
-        stop("Object class must be BGData")
+    # Load data into new environment
+    loadingEnv <- new.env()
+    load(file = file, envir = loadingEnv)
+    names <- ls(envir = loadingEnv)
+    for (name in names) {
+        object <- get(name, envir = loadingEnv)
+        # Load genotypes of BGData objects
+        if (class(object) == "BGData") {
+            object@geno <- loadGeno(object@geno, path = dirname(file))
+        }
+        # Assign object to envir
+        assign(name, object, envir = envir)
     }
-
-    message(paste0("Loaded object ", objectName, " of class ", objectClass))
-
-    # Load node
-    object@geno <- loadGeno(object@geno, path = dirname(file))
-
-    # Send the object to envir
-    assign(objectName, object, envir = envir)
+    message("Loaded objects: ", paste0(names, collapse = ", "))
 }
 
 
