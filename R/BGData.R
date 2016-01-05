@@ -21,7 +21,7 @@ setClassUnion("geno", c("LinkedMatrix", "BEDMatrix", "big.matrix", "ff_matrix", 
 BGData <- setClass("BGData", slots = c(geno = "geno", pheno = "data.frame", map = "data.frame"))
 
 
-#' Creates a new \code{BGData} instance.
+#' Creates a new \code{\linkS4class{BGData}} instance.
 #' 
 #' @param .Object The \code{ColumnLinkedMatrix} instance to be initialized.
 #' @param geno A \code{geno} object (\code{\linkS4class{LinkedMatrix}},

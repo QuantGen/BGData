@@ -3,7 +3,7 @@
 \docType{methods}
 \name{initialize,BGData-method}
 \alias{initialize,BGData-method}
-\title{Creates a new \code{BGData} instance.}
+\title{Creates a new \code{\linkS4class{BGData}} instance.}
 \usage{
 \S4method{initialize}{BGData}(.Object, geno, pheno, map)
 }
@@ -23,6 +23,6 @@ that only contains a \code{mrk} column populated with the colnames of
 \code{@geno} will be generated if missing.}
 }
 \description{
-Creates a new \code{BGData} instance.
+Creates a new \code{\linkS4class{BGData}} instance.
 }
 
