@@ -423,10 +423,9 @@ as.BGData.BEDMatrix <- function(x, alternatePhenotypeFile = NULL, ...) {
 #' This function is similar to \code{load}, but also initializes the different
 #' types of objects that the \code{@@geno} slot of a
 #' \code{\linkS4class{BGData}} object can take.  Currently supported are
-#' \code{ff_matrix}, \code{\linkS4class{big.matrix}}, and
-#' \code{\linkS4class{BEDMatrix}} objects. If the object is of type
-#' \code{\linkS4class{LinkedMatrix}}, all nodes will be initialized with their
-#' appropriate method.
+#' \code{ff_matrix}, \code{\linkS4class{big.matrix}}, and \code{BEDMatrix}
+#' objects. If the object is of type \code{\linkS4class{LinkedMatrix}}, all
+#' nodes will be initialized with their appropriate method.
 #' 
 #' @param file The name of the .RData file to be loaded.
 #' @param envir The environment where to load the data.
