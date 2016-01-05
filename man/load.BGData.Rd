@@ -2,7 +2,7 @@
 % Please edit documentation in R/BGData.R
 \name{load.BGData}
 \alias{load.BGData}
-\title{Loads BGData objects.}
+\title{Loads \code{\linkS4class{BGData}} (and other) objects from .RData files.}
 \usage{
 load.BGData(file, envir = parent.frame())
 }
@@ -12,9 +12,12 @@ load.BGData(file, envir = parent.frame())
 \item{envir}{The environment where to load the data.}
 }
 \description{
-If the value in the \code{@geno} slot is of class 
-\code{\linkS4class{LinkedMatrix}} and the nodes contain \code{ff} objects 
-\code{load.BGData} will attempt to open them. If the value is of class 
-\code{\linkS4class{big.matrix}}, it will attempt to attach the matrix.
+This function is similar to \code{load}, but also initializes the different
+types of objects that the \code{@geno} slot of a
+\code{\linkS4class{BGData}} object can take.  Currently supported are
+\code{ff_matrix}, \code{\linkS4class{big.matrix}}, and
+\code{\linkS4class{BEDMatrix}} objects. If the object is of type
+\code{\linkS4class{LinkedMatrix}}, all nodes will be initialized with their
+appropriate method.
 }
 
