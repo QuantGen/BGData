@@ -15,7 +15,7 @@ install:
   - ./travis-tool.sh install_deps
 script: ./travis-tool.sh run_tests
 after_success:
-  - curl -OL https://gist.githubusercontent.com/agrueneberg/5c59faee22855ea3f78f/raw/b70e9df428e58152f797e836528b0acc0aa3aad8/push-docs.sh
+  - curl -OL https://gist.githubusercontent.com/agrueneberg/5c59faee22855ea3f78f/raw/868a08fde5e7ffa94d4d75d6f44764d3efd98b1d/push-docs.sh
   - chmod 755 ./push-docs.sh
   - ./travis-tool.sh install_github hadley/staticdocs
   - ./push-docs.sh
