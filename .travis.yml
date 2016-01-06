@@ -4,10 +4,7 @@ before_install:
   - curl -OL http://raw.github.com/craigcitro/r-travis/master/scripts/travis-tool.sh
   - chmod 755 ./travis-tool.sh
   - ./travis-tool.sh bootstrap
-  - curl -OL https://gist.githubusercontent.com/agrueneberg/5c59faee22855ea3f78f/raw/13b6705644e542ade5b296076f8c1b164b358e9c/push-docs.sh
-  - chmod 755 ./push-docs.sh
 install:
-  - ./travis-tool.sh install_github hadley/staticdocs
   - ./travis-tool.sh install_github hadley/devtools
   - ./travis-tool.sh install_github QuantGen/LinkedMatrix
   - ./travis-tool.sh install_github QuantGen/BEDMatrix
@@ -17,7 +14,11 @@ install:
   - ./travis-tool.sh r_binary_install SKAT
   - ./travis-tool.sh install_deps
 script: ./travis-tool.sh run_tests
-after_success: ./push-docs
+after_success:
+  - curl -OL https://gist.githubusercontent.com/agrueneberg/5c59faee22855ea3f78f/raw/13b6705644e542ade5b296076f8c1b164b358e9c/push-docs.sh
+  - chmod 755 ./push-docs.sh
+  - ./travis-tool.sh install_github hadley/staticdocs
+  - ./push-docs.sh
 after_failure: ./travis-tool.sh dump_logs
 env:
   global:
