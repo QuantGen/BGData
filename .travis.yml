@@ -11,7 +11,6 @@ install:
   - ./travis-tool.sh r_binary_install bigmemory
   - ./travis-tool.sh r_binary_install ff
   - ./travis-tool.sh r_binary_install lme4
-  - ./travis-tool.sh r_binary_install Rcpp
   - ./travis-tool.sh r_binary_install SKAT
   - ./travis-tool.sh install_deps
 script: ./travis-tool.sh run_tests
