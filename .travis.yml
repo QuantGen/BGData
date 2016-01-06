@@ -4,7 +4,10 @@ before_install:
   - curl -OL http://raw.github.com/craigcitro/r-travis/master/scripts/travis-tool.sh
   - chmod 755 ./travis-tool.sh
   - ./travis-tool.sh bootstrap
+  - curl -OL https://gist.githubusercontent.com/agrueneberg/5c59faee22855ea3f78f/raw/13b6705644e542ade5b296076f8c1b164b358e9c/push-docs.sh
+  - chmod 755 ./push-docs.sh
 install:
+  - ./travis-tool.sh install_github hadley/staticdocs
   - ./travis-tool.sh install_github hadley/devtools
   - ./travis-tool.sh install_github QuantGen/LinkedMatrix
   - ./travis-tool.sh install_github QuantGen/BEDMatrix
@@ -14,7 +17,9 @@ install:
   - ./travis-tool.sh r_binary_install SKAT
   - ./travis-tool.sh install_deps
 script: ./travis-tool.sh run_tests
+after_success: ./push-docs
 after_failure: ./travis-tool.sh dump_logs
 env:
-  - global:
+  global:
+    - secure: "G6NSOXvsiRQTFyW3JGdezz5d7v+yINF6L3dfL3k6MwmnlrDc5xkDOmLkncVyd7YIAc+2gN6gCYnzgqc5g3BxmkVL0EREkAwUZH7DiAmV4kM3sBD5Xjput4G8jYWgmp550/XAbg2YdUusLzUbcsd+vtxfgfVOw+vBIpIPhCB25eaDZRbq0ezAj5wViRYrBGtoonsIk9L72q1cd3lMJGxfQIP/akLa5yIA6vBBZp/MBEctxjX7RPReFjuFvpEK/2zRWTvGqVPv1UvARIfKAQs9Ecgx5mj2GylAeTsiRjcKPhysaoLQyQhZmIvfm9xJA0YahZAd1xk99NPEBumHY9REN+nFW8paH1pKMd9crIXZtJABN8NmJeShQ9JFMTwvgSQwe5gwjIShqSUp/huM9RLnAnySIXJuRbAJKK7kKUfmZt58WCdPg9IrBGlc/S2pB+A1+QgVYygD2waZS88TaNGBCCw7yckXeKeDkNcQScoJIf3AAn+ZoE60Sw64OkNxtcjxmnI4eEYAYhvnQzvdGEJz3UyADBfPPMLwufyne6sPKuD9OEROgfxukSe1pNdkUAAtDOwbA7HAAK140G9hUPJ8dCv0LQYu0ziywS6Db/tgFtGwk4863X+OZvm+5z8pZRauyV/0wAWHmOHjMMQG166C9qZf/EVvKUbaLGakv8EeQb4="
     - WARNINGS_ARE_ERRORS=1
