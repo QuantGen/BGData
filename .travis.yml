@@ -9,7 +9,6 @@ install:
   - ./travis-tool.sh install_github QuantGen/LinkedMatrix
   - ./travis-tool.sh install_github QuantGen/BEDMatrix
   - ./travis-tool.sh r_binary_install bigmemory
-  - ./travis-tool.sh r_binary_install bit
   - ./travis-tool.sh r_binary_install ff
   - ./travis-tool.sh r_binary_install lme4
   - ./travis-tool.sh r_binary_install Rcpp
