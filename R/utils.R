@@ -1,16 +1,16 @@
 #' Applies a function on each row or column of a matrix in parallel.
 #' 
-#' The input matrix \code{X} is broken into \code{nTasks} chunks and passed to
-#' \code{\link[parallel]{mclapply}}. The number of cores can be configured
-#' using \code{mc.cores}. Uses \code{apply} from base internally.
+#' The input matrix \code{X} is broken into \code{nTasks} chunks and passed to 
+#' \code{\link[parallel]{mclapply}}. The number of cores can be configured using
+#' \code{mc.cores}. Uses \code{apply} from base internally.
 #' 
 #' @param X A matrix.
-#' @param MARGIN The subscripts which the function will be applied over. 1
+#' @param MARGIN The subscripts which the function will be applied over. 1 
 #'   indicates rows, 2 indicates columns.
 #' @param FUN The function to be applied.
-#' @param nTasks The number of submatrices of \code{X} to be processed in
+#' @param nTasks The number of submatrices of \code{X} to be processed in 
 #'   parallel.
-#' @param mc.cores The number of cores (passed to
+#' @param mc.cores The number of cores (passed to 
 #'   \code{\link[parallel]{mclapply}}).
 #' @param ... Additional arguments to be passed to \code{apply}.
 #' @export
@@ -35,14 +35,15 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = parallel::detectCores(), mc.c
 #' Reads chunks of data into memory and applies a function on each row or
 #' column of a matrix.
 #' 
-#' \code{chunkedApply} uses \code{parallelApply} internally, so \code{nTasks}
+#' \code{chunkedApply} uses \code{parallelApply} internally, so \code{nTasks} 
 #' and \code{mc.cores} can be passed as \code{...}.
 #' 
-#' @param X A matrix.
-#' @param MARGIN The subscripts which the function will be applied over. 1
+#' @param X A matrix-like object, typically \code{@@geno} of a 
+#'   \code{\link[=BGData-class]{BGData}} object.
+#' @param MARGIN The subscripts which the function will be applied over. 1 
 #'   indicates rows, 2 indicates columns.
 #' @param FUN The function to be applied.
-#' @param bufferSize The number of rows or columns of \code{X} that are brought
+#' @param bufferSize The number of rows or columns of \code{X} that are brought 
 #'   into memory for processing.
 #' @param verbose Whether to print additional information.
 #' @param ... Additional arguments to be passed to \code{parallelApply}.
@@ -131,10 +132,12 @@ crossprods <- function(x, y = NULL, nChunks = parallel::detectCores(), use_tcros
 
 #' Computes crossprod (x'y or x'x) in parallel.
 #' 
-#' @param x matrix, ff_matrix, RowLinkedMatrix or ColumnLinkedMatrix.
-#' @param y vector, matrix, ff_matrix, RowLinkedMatrix or ColumnLinkedMatrix. NULL by default.
+#' @param x A matrix-like object, typically \code{@@geno} of a
+#'   \code{\link[=BGData-class]{BGData}} object.
+#' @param y vector or matrix-like object. NULL by default.
 #' @param nChunks The number of chunks used when X and y are partitioned.
-#' @param mc.cores The number of cores (passed to \code{\link[parallel]{mclapply}}).
+#' @param mc.cores The number of cores (passed to
+#'   \code{\link[parallel]{mclapply}}).
 #' @return x'y' or x'x depending on whether y is provided.
 #' @export
 crossprod.parallel <- function(x, y = NULL, nChunks = parallel::detectCores(), mc.cores = parallel::detectCores()) {
@@ -145,10 +148,12 @@ crossprod.parallel <- function(x, y = NULL, nChunks = parallel::detectCores(), m
 
 #' Computes tcrossprod (xy' or xx') in parallel.
 #' 
-#' @param x matrix, ff_matrix, RowLinkedMatrix or ColumnLinkedMatrix.
-#' @param y vector, matrix, ff_matrix, RowLinkedMatrix or ColumnLinkedMatrix. NULL by default.
+#' @param x A matrix-like object, typically \code{@@geno} of a
+#'   \code{\link[=BGData-class]{BGData}} object.
+#' @param y vector or matrix-like object. NULL by default.
 #' @param nChunks The number of chunks used when X and y are partitioned.
-#' @param mc.cores The number of cores (passed to \code{\link[parallel]{mclapply}}).
+#' @param mc.cores The number of cores (passed to
+#'   \code{\link[parallel]{mclapply}}).
 #' @return xy' or xx' depending on whether y is provided.
 #' @export
 tcrossprod.parallel <- function(x, y = NULL, nChunks = parallel::detectCores(), mc.cores = parallel::detectCores()) {
@@ -160,14 +165,14 @@ tcrossprod.parallel <- function(x, y = NULL, nChunks = parallel::detectCores(), 
 
 #' Computes a genomic relationship matrix G=xx'.
 #' 
-#' Offers options for centering and scaling the columns of x before computing
-#' xx'. If \code{centerCol=FALSE}, \code{scaleCol=FALSE} and
-#' \code{scaleG=FALSE}, \code{getG} produces the same outcome than
+#' Offers options for centering and scaling the columns of x before computing 
+#' xx'. If \code{centerCol=FALSE}, \code{scaleCol=FALSE} and 
+#' \code{scaleG=FALSE}, \code{getG} produces the same outcome than 
 #' \code{tcrossprod}.
 #' 
-#' @param x matrix, ff_matrix, RowLinkedMatrix or ColumnLinkedMatrix
+#' @param x A matrix-like object, typically \code{@@geno} of a \code{\link[=BGData-class]{BGData}} object.
 #' @param nChunks The number of columns that are processed at a time.
-#' @param scaleCol TRUE/FALSE whether columns must be scaled before computing
+#' @param scaleCol TRUE/FALSE whether columns must be scaled before computing 
 #'   xx'.
 #' @param scaleG TRUE/FALSE whether columns must be scaled before computing xx'.
 #' @param verbose If TRUE more messages are printed.
@@ -175,10 +180,10 @@ tcrossprod.parallel <- function(x, y = NULL, nChunks = parallel::detectCores(), 
 #'   By default, all rows are used.
 #' @param j (integer, boolean or character) Indicates which columns should be 
 #'   used. By default, all columns are used.
-#' @param i2 (integer, boolean or character) Indicates which rows should be used 
+#' @param i2 (integer, boolean or character) Indicates which rows should be used
 #'   to divide matrix into blocks.
-#' @param minVar Columns with variance lower than this value will not be used 
-#'   in the computation (only if \code{scaleCol} is set).
+#' @param minVar Columns with variance lower than this value will not be used in
+#'   the computation (only if \code{scaleCol} is set).
 #' @param nChunks2 The number of chunks that each chunk is split into for 
 #'   processing in parallel.
 #' @param scales Precomputed scales if i2 is used.
@@ -187,8 +192,10 @@ tcrossprod.parallel <- function(x, y = NULL, nChunks = parallel::detectCores(), 
 #' @param saveG Whether to save genomic relationship matrix into file.
 #' @param saveType File format to save genomic relationship matrix in. Either 
 #'   \code{RData} or \code{ff}.
-#' @param saveName Name without extension to save genomic relationship matrix with.
-#' @param mc.cores The number of cores (passed to \code{\link[parallel]{mclapply}}).
+#' @param saveName Name without extension to save genomic relationship matrix
+#'   with.
+#' @param mc.cores The number of cores (passed to
+#'   \code{\link[parallel]{mclapply}}).
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @export
 getG <- function(x, nChunks = ceiling(ncol(x) / 10000), scaleCol = TRUE, scaleG = TRUE, verbose = TRUE, i = 1:nrow(x), j = 1:ncol(x), i2 = NULL, minVar = 1e-05, nChunks2 = parallel::detectCores(), scales = NULL, centers = NULL, impute = TRUE, saveG = FALSE, saveType = "RData", saveName = "Gij", mc.cores = parallel::detectCores()) {
@@ -408,13 +415,14 @@ getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, scaleG = TRUE, v
 }
 
 
-#' Computes a genomic relationship matrix G=xx' as a
-#' \code{\linkS4class{symDMatrix}}.
+#' Computes a genomic relationship matrix G=xx' as a 
+#' \code{\link[=symDMatrix-class]{symDMatrix}}.
 #' 
 #' Offers options for centering and scaling the columns of x before computing 
 #' xx'.
 #' 
-#' @param X matrix, ff_matrix, RowLinkedMatrix or ColumnLinkedMatrix
+#' @param X A matrix-like object, typically \code{@@geno} of a
+#'   \code{\link[=BGData-class]{BGData}} object.
 #' @param nChunks The number of columns that are processed at a time.
 #' @param chunkSize The number of columns that are processed at a time.
 #' @param centers Precomputed centers.
@@ -425,12 +433,13 @@ getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, scaleG = TRUE, v
 #'   xx'.
 #' @param nChunks2 The number of chunks that each chunk is split into for 
 #'   processing in parallel.
-#' @param folder Folder in which to save the \code{\linkS4class{symDMatrix}}.
+#' @param folder Folder in which to save the
+#'   \code{\link[=symDMatrix-class]{symDMatrix}}.
 #' @param vmode vmode of \code{ff} objects.
 #' @param verbose If TRUE more messages are printed.
 #' @param saveRData Whether to save an RData file to easily reload 
-#'   \code{\linkS4class{symDMatrix}}
-#' @param mc.cores The number of cores (passed to
+#'   \code{\link[=symDMatrix-class]{symDMatrix}}
+#' @param mc.cores The number of cores (passed to 
 #'   \code{\link[parallel]{mclapply}}).
 #' @param scaleG TRUE/FALSE whether columns must be scaled before computing xx'.
 #' @return A positive semi-definite symmetric numeric matrix.
@@ -556,19 +565,19 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
 }
 
 
-#' Performs single marker regressions using a \code{\linkS4class{BGData}} 
-#' object.
+#' Performs single marker regressions using a
+#' \code{\link[=BGData-class]{BGData}} object.
 #' 
-#' Implements single marker regressions. The regression model includes all the
-#' covariates specified in the right-hand-side of the \code{formula} plus one
-#' column of \code{@@geno}, one column at a time. The data from the association
-#' tests is obtained from a \code{\linkS4class{BGData}} object.
+#' Implements single marker regressions. The regression model includes all the 
+#' covariates specified in the right-hand-side of the \code{formula} plus one 
+#' column of \code{@@geno}, one column at a time. The data from the association 
+#' tests is obtained from a \code{\link[=BGData-class]{BGData}} object.
 #' 
 #' @param formula A formula (e.g. weight~sex+age) with the response on the 
 #'   left-hand side and predictors (all the covariates except the markers) on 
 #'   the right-hand side. The variables included in the formula must be in the 
-#'   \code{@@pheno} object of the \code{\linkS4class{BGData}}.
-#' @param data A \code{\linkS4class{BGData}} object.
+#'   \code{@@pheno} object of the \code{\link[=BGData-class]{BGData}}.
+#' @param data A \code{\link[=BGData-class]{BGData}} object.
 #' @param method The regression method to be used. Currently, the following 
 #'   methods are implemented: \code{\link{lm}}, \code{\link{lm.fit}}, 
 #'   \code{\link{lsfit}}, \code{\link{glm}} and \code{\link[lme4]{lmer}}.
@@ -579,9 +588,9 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
 #'   the limits of the vertical axis of the Manhattan plot.
 #' @param chunkSize Represents the number of columns of \code{@@geno} that are 
 #'   brought into RAM for processing (5000 by default).
-#' @param nTasks The number of submatrices of \code{X} to be processed in
+#' @param nTasks The number of submatrices of \code{X} to be processed in 
 #'   parallel.
-#' @param mc.cores The number of cores (passed to
+#' @param mc.cores The number of cores (passed to 
 #'   \code{\link[parallel]{mclapply}}).
 #' @param ... Optional arguments for chunkedApply and regression method.
 #' @return Returns a matrix with estimates, SE, p-value, etc.
@@ -725,13 +734,14 @@ getCoefficients.lmerMod <- function(x) {
 
 #' Calculate frequencies of missing values and alleles.
 #' 
-#' @param X matrix, ff_matrix, RowLinkedMatrix or ColumnLinkedMatrix
+#' @param X A matrix-like object, typically \code{@@geno} of a
+#'   \code{\link[=BGData-class]{BGData}} object.
 #' @param verbose If TRUE more messages are printed.
 #' @param bufferSize Represents the number of columns of \code{@@geno} that are 
 #'   brought into RAM for processing (5000 by default).
-#' @param nTasks Represents the number of parallel tasks each buffer is split
+#' @param nTasks Represents the number of parallel tasks each buffer is split 
 #'   into.
-#' @param mc.cores The number of cores (passed to
+#' @param mc.cores The number of cores (passed to 
 #'   \code{\link[parallel]{mclapply}}).
 #' @export
 summarize <- function(X, verbose = FALSE, bufferSize = 5000, nTasks = parallel::detectCores(), mc.cores = parallel::detectCores()) {
@@ -746,7 +756,7 @@ summarize <- function(X, verbose = FALSE, bufferSize = 5000, nTasks = parallel::
 }
 
 
-#' Generate and store a simulated plaintext raw PED file (see \code{--recodeA}
+#' Generate and store a simulated plaintext raw PED file (see \code{--recodeA} 
 #' in PLINK) or PED-like file for testing purposes.
 #' 
 #' @param filename The path where to save the generated file.

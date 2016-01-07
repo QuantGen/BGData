@@ -2,7 +2,8 @@
 % Please edit documentation in R/BGData.R
 \name{readPED.big.matrix}
 \alias{readPED.big.matrix}
-\title{Creates a \code{\linkS4class{BGData}} object from a plaintext PED-like file.}
+\title{Creates a \code{\link[=BGData-class]{BGData}} object from a plaintext
+PED-like file.}
 \usage{
 readPED.big.matrix(fileIn, header, dataType, n = NULL, p = NULL,
   na.strings = "NA", nColSkip = 6, idCol = c(1, 2), verbose = FALSE,
@@ -35,20 +36,20 @@ both columns will be concatenated with "_".}
 \item{folderOut}{The path to the folder where to save the binary files.}
 }
 \value{
-Returns a \code{\linkS4class{BGData}} object.
+Returns a \code{\link[=BGData-class]{BGData}} object.
 }
 \description{
-Genotypes are stored in a filebacked \code{\linkS4class{big.matrix}} object. 
-\code{readPED.big.matrix} creates a folder (see \code{folderOut}) that
-contains the binary flat file (named \code{BGData.bin}), a descriptor file
-(named \code{BGData.desc}), and an external representation of the
-\code{\linkS4class{BGData}} object in \code{BGData.RData}. A 
-\code{\linkS4class{BGData}} object can be reloaded using \code{load.BGData} 
-(the regular \code{load} function will not work unless the
-\code{\linkS4class{big.matrix}} instance is manually attached using
-\code{\link[bigmemory]{attach.big.matrix}}).
+Genotypes are stored in a filebacked
+\code{\link[=big.matrix-class]{big.matrix}} object. \code{readPED.big.matrix}
+creates a folder (see \code{folderOut}) that contains the binary flat file
+(named \code{BGData.bin}), a descriptor file (named \code{BGData.desc}), and
+an external representation of the \code{\link[=BGData-class]{BGData}} object
+in \code{BGData.RData}. A \code{\link[=BGData-class]{BGData}} object can be
+reloaded using \code{load.BGData} (the regular \code{load} function will not
+work unless the \code{\link[=big.matrix-class]{big.matrix}} instance is
+manually attached using \code{\link[bigmemory]{attach.big.matrix}}).
 }
 \seealso{
-\code{\linkS4class{BGData}}
+\code{\link[=BGData-class]{BGData}}
 }
 

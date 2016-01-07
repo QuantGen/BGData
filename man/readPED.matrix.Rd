@@ -2,7 +2,8 @@
 % Please edit documentation in R/BGData.R
 \name{readPED.matrix}
 \alias{readPED.matrix}
-\title{Creates a \code{\linkS4class{BGData}} object from a plaintext PED-like file.}
+\title{Creates a \code{\link[=BGData-class]{BGData}} object from a plaintext
+PED-like file.}
 \usage{
 readPED.matrix(fileIn, header, dataType, n = NULL, p = NULL,
   na.strings = "NA", nColSkip = 6, idCol = c(1, 2), verbose = FALSE)
@@ -31,19 +32,19 @@ both columns will be concatenated with "_".}
 \item{verbose}{If TRUE, progress updates will be posted.}
 }
 \value{
-Returns a \code{\linkS4class{BGData}} object.
+Returns a \code{\link[=BGData-class]{BGData}} object.
 }
 \description{
 \code{readPED.matrix} assumes that the plaintext file (\code{fileIn}) 
 contains records of individuals in rows, and phenotypes, covariates and 
 markers in columns. The columns included in columns \code{1:nColSkip} are 
-used to populate the slot \code{@pheno} of a \code{\linkS4class{BGData}}
-object, and the remaining columns are used to fill the slot \code{@geno}. If
-the first row contains a header (\code{header=TRUE}), data in this row is
-used to determine variables names for \code{@pheno} and marker names for
-\code{@map} and \code{@geno}.
+used to populate the slot \code{@pheno} of a
+\code{\link[=BGData-class]{BGData}} object, and the remaining columns are
+used to fill the slot \code{@geno}. If the first row contains a header
+(\code{header=TRUE}), data in this row is used to determine variables names
+for \code{@pheno} and marker names for \code{@map} and \code{@geno}.
 }
 \seealso{
-\code{\linkS4class{BGData}}
+\code{\link[=BGData-class]{BGData}}
 }
 

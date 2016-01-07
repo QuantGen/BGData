@@ -8,13 +8,15 @@ tcrossprod.parallel(x, y = NULL, nChunks = parallel::detectCores(),
   mc.cores = parallel::detectCores())
 }
 \arguments{
-\item{x}{matrix, ff_matrix, RowLinkedMatrix or ColumnLinkedMatrix.}
+\item{x}{A matrix-like object, typically \code{@geno} of a
+\code{\link[=BGData-class]{BGData}} object.}
 
-\item{y}{vector, matrix, ff_matrix, RowLinkedMatrix or ColumnLinkedMatrix. NULL by default.}
+\item{y}{vector or matrix-like object. NULL by default.}
 
 \item{nChunks}{The number of chunks used when X and y are partitioned.}
 
-\item{mc.cores}{The number of cores (passed to \code{\link[parallel]{mclapply}}).}
+\item{mc.cores}{The number of cores (passed to
+\code{\link[parallel]{mclapply}}).}
 }
 \value{
 xy' or xx' depending on whether y is provided.

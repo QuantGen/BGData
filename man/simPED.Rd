@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{simPED}
 \alias{simPED}
-\title{Generate and store a simulated plaintext raw PED file (see \code{--recodeA}
+\title{Generate and store a simulated plaintext raw PED file (see \code{--recodeA} 
 in PLINK) or PED-like file for testing purposes.}
 \usage{
 simPED(filename, n, p, genoChars = 0:2, na.string = NA, propNA = 0.02,
@@ -24,7 +24,7 @@ simPED(filename, n, p, genoChars = 0:2, na.string = NA, propNA = 0.02,
 \item{returnGenos}{Whether to return the genotypes from the function.}
 }
 \description{
-Generate and store a simulated plaintext raw PED file (see \code{--recodeA}
+Generate and store a simulated plaintext raw PED file (see \code{--recodeA} 
 in PLINK) or PED-like file for testing purposes.
 }
 

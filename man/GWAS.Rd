@@ -2,8 +2,8 @@
 % Please edit documentation in R/utils.R
 \name{GWAS}
 \alias{GWAS}
-\title{Performs single marker regressions using a \code{\linkS4class{BGData}} 
-object.}
+\title{Performs single marker regressions using a
+\code{\link[=BGData-class]{BGData}} object.}
 \usage{
 GWAS(formula, data, method, plot = FALSE, verbose = FALSE,
   min.pValue = 1e-10, chunkSize = 5000, nTasks = parallel::detectCores(),
@@ -13,9 +13,9 @@ GWAS(formula, data, method, plot = FALSE, verbose = FALSE,
 \item{formula}{A formula (e.g. weight~sex+age) with the response on the 
 left-hand side and predictors (all the covariates except the markers) on 
 the right-hand side. The variables included in the formula must be in the 
-\code{@pheno} object of the \code{\linkS4class{BGData}}.}
+\code{@pheno} object of the \code{\link[=BGData-class]{BGData}}.}
 
-\item{data}{A \code{\linkS4class{BGData}} object.}
+\item{data}{A \code{\link[=BGData-class]{BGData}} object.}
 
 \item{method}{The regression method to be used. Currently, the following 
 methods are implemented: \code{\link{lm}}, \code{\link{lm.fit}}, 
@@ -32,10 +32,10 @@ the limits of the vertical axis of the Manhattan plot.}
 \item{chunkSize}{Represents the number of columns of \code{@geno} that are 
 brought into RAM for processing (5000 by default).}
 
-\item{nTasks}{The number of submatrices of \code{X} to be processed in
+\item{nTasks}{The number of submatrices of \code{X} to be processed in 
 parallel.}
 
-\item{mc.cores}{The number of cores (passed to
+\item{mc.cores}{The number of cores (passed to 
 \code{\link[parallel]{mclapply}}).}
 
 \item{...}{Optional arguments for chunkedApply and regression method.}
@@ -44,9 +44,9 @@ parallel.}
 Returns a matrix with estimates, SE, p-value, etc.
 }
 \description{
-Implements single marker regressions. The regression model includes all the
-covariates specified in the right-hand-side of the \code{formula} plus one
-column of \code{@geno}, one column at a time. The data from the association
-tests is obtained from a \code{\linkS4class{BGData}} object.
+Implements single marker regressions. The regression model includes all the 
+covariates specified in the right-hand-side of the \code{formula} plus one 
+column of \code{@geno}, one column at a time. The data from the association 
+tests is obtained from a \code{\link[=BGData-class]{BGData}} object.
 }
 

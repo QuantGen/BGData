@@ -11,11 +11,11 @@ getG(x, nChunks = ceiling(ncol(x)/10000), scaleCol = TRUE, scaleG = TRUE,
   saveName = "Gij", mc.cores = parallel::detectCores())
 }
 \arguments{
-\item{x}{matrix, ff_matrix, RowLinkedMatrix or ColumnLinkedMatrix}
+\item{x}{A matrix-like object, typically \code{@geno} of a \code{\link[=BGData-class]{BGData}} object.}
 
 \item{nChunks}{The number of columns that are processed at a time.}
 
-\item{scaleCol}{TRUE/FALSE whether columns must be scaled before computing
+\item{scaleCol}{TRUE/FALSE whether columns must be scaled before computing 
 xx'.}
 
 \item{scaleG}{TRUE/FALSE whether columns must be scaled before computing xx'.}
@@ -28,11 +28,11 @@ By default, all rows are used.}
 \item{j}{(integer, boolean or character) Indicates which columns should be 
 used. By default, all columns are used.}
 
-\item{i2}{(integer, boolean or character) Indicates which rows should be used 
+\item{i2}{(integer, boolean or character) Indicates which rows should be used
 to divide matrix into blocks.}
 
-\item{minVar}{Columns with variance lower than this value will not be used 
-in the computation (only if \code{scaleCol} is set).}
+\item{minVar}{Columns with variance lower than this value will not be used in
+the computation (only if \code{scaleCol} is set).}
 
 \item{nChunks2}{The number of chunks that each chunk is split into for 
 processing in parallel.}
@@ -48,17 +48,19 @@ processing in parallel.}
 \item{saveType}{File format to save genomic relationship matrix in. Either 
 \code{RData} or \code{ff}.}
 
-\item{saveName}{Name without extension to save genomic relationship matrix with.}
+\item{saveName}{Name without extension to save genomic relationship matrix
+with.}
 
-\item{mc.cores}{The number of cores (passed to \code{\link[parallel]{mclapply}}).}
+\item{mc.cores}{The number of cores (passed to
+\code{\link[parallel]{mclapply}}).}
 }
 \value{
 A positive semi-definite symmetric numeric matrix.
 }
 \description{
-Offers options for centering and scaling the columns of x before computing
-xx'. If \code{centerCol=FALSE}, \code{scaleCol=FALSE} and
-\code{scaleG=FALSE}, \code{getG} produces the same outcome than
+Offers options for centering and scaling the columns of x before computing 
+xx'. If \code{centerCol=FALSE}, \code{scaleCol=FALSE} and 
+\code{scaleG=FALSE}, \code{getG} produces the same outcome than 
 \code{tcrossprod}.
 }
 

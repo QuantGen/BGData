@@ -2,21 +2,25 @@
 % Please edit documentation in R/BGData.R
 \name{as.BGData.BEDMatrix}
 \alias{as.BGData.BEDMatrix}
-\title{Convert a BEDMatrix object into a BGData object.}
+\title{Convert a \code{BEDMatrix} object into a \code{\link[=BGData-class]{BGData}}
+object.}
 \usage{
 \method{as.BGData}{BEDMatrix}(x, alternatePhenotypeFile = NULL, ...)
 }
 \arguments{
-\item{x}{A BEDMatrix object.}
+\item{x}{A \code{BEDMatrix} object.}
 
-\item{alternatePhenotypeFile}{Path to an alternate phenotype file (see PLINK documentation).}
+\item{alternatePhenotypeFile}{Path to an alternate phenotype file (see PLINK 
+documentation).}
 
-\item{...}{Additional arguments to the BEDMatrix constructor (currently unused).}
+\item{...}{Additional arguments to the \code{BEDMatrix} constructor
+(currently unused).}
 }
 \value{
-A BGData object.
+A \code{\link[=BGData-class]{BGData}} object.
 }
 \description{
-Convert a BEDMatrix object into a BGData object.
+Convert a \code{BEDMatrix} object into a \code{\link[=BGData-class]{BGData}}
+object.
 }
 

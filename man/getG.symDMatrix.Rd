@@ -2,8 +2,8 @@
 % Please edit documentation in R/utils.R
 \name{getG.symDMatrix}
 \alias{getG.symDMatrix}
-\title{Computes a genomic relationship matrix G=xx' as a
-\code{\linkS4class{symDMatrix}}.}
+\title{Computes a genomic relationship matrix G=xx' as a 
+\code{\link[=symDMatrix-class]{symDMatrix}}.}
 \usage{
 getG.symDMatrix(X, nChunks = 5, chunkSize = NULL, centers = NULL,
   scales = NULL, centerCol = T, scaleCol = T, nChunks2 = 1,
@@ -11,7 +11,8 @@ getG.symDMatrix(X, nChunks = 5, chunkSize = NULL, centers = NULL,
   saveRData = TRUE, mc.cores = parallel::detectCores(), scaleG = T)
 }
 \arguments{
-\item{X}{matrix, ff_matrix, RowLinkedMatrix or ColumnLinkedMatrix}
+\item{X}{A matrix-like object, typically \code{@geno} of a
+\code{\link[=BGData-class]{BGData}} object.}
 
 \item{nChunks}{The number of columns that are processed at a time.}
 
@@ -30,16 +31,17 @@ xx'.}
 \item{nChunks2}{The number of chunks that each chunk is split into for 
 processing in parallel.}
 
-\item{folder}{Folder in which to save the \code{\linkS4class{symDMatrix}}.}
+\item{folder}{Folder in which to save the
+\code{\link[=symDMatrix-class]{symDMatrix}}.}
 
 \item{vmode}{vmode of \code{ff} objects.}
 
 \item{verbose}{If TRUE more messages are printed.}
 
 \item{saveRData}{Whether to save an RData file to easily reload 
-\code{\linkS4class{symDMatrix}}}
+\code{\link[=symDMatrix-class]{symDMatrix}}}
 
-\item{mc.cores}{The number of cores (passed to
+\item{mc.cores}{The number of cores (passed to 
 \code{\link[parallel]{mclapply}}).}
 
 \item{scaleG}{TRUE/FALSE whether columns must be scaled before computing xx'.}

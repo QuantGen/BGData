@@ -10,22 +10,22 @@ parallelApply(X, MARGIN, FUN, nTasks = parallel::detectCores(),
 \arguments{
 \item{X}{A matrix.}
 
-\item{MARGIN}{The subscripts which the function will be applied over. 1
+\item{MARGIN}{The subscripts which the function will be applied over. 1 
 indicates rows, 2 indicates columns.}
 
 \item{FUN}{The function to be applied.}
 
-\item{nTasks}{The number of submatrices of \code{X} to be processed in
+\item{nTasks}{The number of submatrices of \code{X} to be processed in 
 parallel.}
 
-\item{mc.cores}{The number of cores (passed to
+\item{mc.cores}{The number of cores (passed to 
 \code{\link[parallel]{mclapply}}).}
 
 \item{...}{Additional arguments to be passed to \code{apply}.}
 }
 \description{
-The input matrix \code{X} is broken into \code{nTasks} chunks and passed to
-\code{\link[parallel]{mclapply}}. The number of cores can be configured
-using \code{mc.cores}. Uses \code{apply} from base internally.
+The input matrix \code{X} is broken into \code{nTasks} chunks and passed to 
+\code{\link[parallel]{mclapply}}. The number of cores can be configured using
+\code{mc.cores}. Uses \code{apply} from base internally.
 }
 
