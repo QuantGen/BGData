@@ -17,7 +17,7 @@ script: ./travis-tool.sh run_tests
 after_success:
   - curl -OL https://gist.githubusercontent.com/agrueneberg/5c59faee22855ea3f78f/raw/868a08fde5e7ffa94d4d75d6f44764d3efd98b1d/push-docs.sh
   - chmod 755 ./push-docs.sh
-  - ./travis-tool.sh install_github hadley/staticdocs
+  - ./travis-tool.sh install_github agrueneberg/staticdocs
   - ./push-docs.sh
 after_failure: ./travis-tool.sh dump_logs
 env:
