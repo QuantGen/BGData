@@ -3,7 +3,7 @@
 #' More info in the wiki: \url{https://github.com/QuantGen/BGData/wiki}
 #' 
 #' @docType package
-#' @name BGData
+#' @name BGData-package
 #' @import methods
 #' @importClassesFrom LinkedMatrix LinkedMatrix
 #' @importClassesFrom symDMatrix symDMatrix
