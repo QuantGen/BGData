@@ -16,12 +16,12 @@ The `BGData` package contains a data structure `BGData` that holds genotypes in 
 
 Installation
 ------------
-BGData is not available on [CRAN](http://cran.r-project.org/) yet. However, it can be installed directly from GitHub using the [devtools](https://github.com/hadley/devtools) package.
+The BGData package is not available on [CRAN](http://cran.r-project.org/) yet, but it can be installed directly from GitHub using the [devtools](https://github.com/hadley/devtools) package:
 
-1. Install `devtools` package: `install.packages('devtools')`
-2. Load `devtools` package: `library(devtools)`
-3. Install `BGData` package from GitHub: `install_github('QuantGen/BGData')`
-4. Load `BGData` package: `library(BGData)`
+```R
+# install.packages("devtools")
+install_github("QuantGen/BGData")
+```
 
 Alternatively, you can download the most recent version as a bundle for [Windows](https://github.com/QuantGen/BGData/archive/master.zip) or [Mac OS / Linux](https://github.com/QuantGen/BGData/archive/master.tar.gz).
 
