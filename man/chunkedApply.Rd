@@ -8,15 +8,15 @@ column of a matrix.}
 chunkedApply(X, MARGIN, FUN, bufferSize, verbose = FALSE, ...)
 }
 \arguments{
-\item{X}{A matrix-like object, typically \code{@geno} of a 
+\item{X}{A matrix-like object, typically \code{@geno} of a
 \code{\link[=BGData-class]{BGData}} object.}
 
-\item{MARGIN}{The subscripts which the function will be applied over. 1 
+\item{MARGIN}{The subscripts which the function will be applied over. 1
 indicates rows, 2 indicates columns.}
 
 \item{FUN}{The function to be applied.}
 
-\item{bufferSize}{The number of rows or columns of \code{X} that are brought 
+\item{bufferSize}{The number of rows or columns of \code{X} that are brought
 into memory for processing.}
 
 \item{verbose}{Whether to print additional information.}
@@ -24,7 +24,7 @@ into memory for processing.}
 \item{...}{Additional arguments to be passed to \code{parallelApply}.}
 }
 \description{
-\code{chunkedApply} uses \code{parallelApply} internally, so \code{nTasks} 
+\code{chunkedApply} uses \code{parallelApply} internally, so \code{nTasks}
 and \code{mc.cores} can be passed as \code{...}.
 }
 

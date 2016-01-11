@@ -10,32 +10,32 @@ GWAS(formula, data, method, plot = FALSE, verbose = FALSE,
   mc.cores = parallel::detectCores(), ...)
 }
 \arguments{
-\item{formula}{A formula (e.g. weight~sex+age) with the response on the 
-left-hand side and predictors (all the covariates except the markers) on 
-the right-hand side. The variables included in the formula must be in the 
+\item{formula}{A formula (e.g. weight~sex+age) with the response on the
+left-hand side and predictors (all the covariates except the markers) on
+the right-hand side. The variables included in the formula must be in the
 \code{@pheno} object of the \code{\link[=BGData-class]{BGData}}.}
 
 \item{data}{A \code{\link[=BGData-class]{BGData}} object.}
 
-\item{method}{The regression method to be used. Currently, the following 
-methods are implemented: \code{\link{lm}}, \code{\link{lm.fit}}, 
+\item{method}{The regression method to be used. Currently, the following
+methods are implemented: \code{\link{lm}}, \code{\link{lm.fit}},
 \code{\link{lsfit}}, \code{\link{glm}} and \code{\link[lme4]{lmer}}.}
 
-\item{plot}{If TRUE a Manhattan plot is produced and filled with points as 
+\item{plot}{If TRUE a Manhattan plot is produced and filled with points as
 the association tests are run.}
 
 \item{verbose}{If TRUE more messages are printed.}
 
-\item{min.pValue}{Numeric, the minimum p-value expected, used to determine 
+\item{min.pValue}{Numeric, the minimum p-value expected, used to determine
 the limits of the vertical axis of the Manhattan plot.}
 
-\item{chunkSize}{Represents the number of columns of \code{@geno} that are 
+\item{chunkSize}{Represents the number of columns of \code{@geno} that are
 brought into RAM for processing (5000 by default).}
 
-\item{nTasks}{The number of submatrices of \code{X} to be processed in 
+\item{nTasks}{The number of submatrices of \code{X} to be processed in
 parallel.}
 
-\item{mc.cores}{The number of cores (passed to 
+\item{mc.cores}{The number of cores (passed to
 \code{\link[parallel]{mclapply}}).}
 
 \item{...}{Optional arguments for chunkedApply and regression method.}
@@ -44,9 +44,9 @@ parallel.}
 Returns a matrix with estimates, SE, p-value, etc.
 }
 \description{
-Implements single marker regressions. The regression model includes all the 
-covariates specified in the right-hand-side of the \code{formula} plus one 
-column of \code{@geno}, one column at a time. The data from the association 
+Implements single marker regressions. The regression model includes all the
+covariates specified in the right-hand-side of the \code{formula} plus one
+column of \code{@geno}, one column at a time. The data from the association
 tests is obtained from a \code{\link[=BGData-class]{BGData}} object.
 }
 

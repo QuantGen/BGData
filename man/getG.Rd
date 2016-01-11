@@ -15,7 +15,7 @@ getG(x, nChunks = ceiling(ncol(x)/10000), scaleCol = TRUE, scaleG = TRUE,
 
 \item{nChunks}{The number of columns that are processed at a time.}
 
-\item{scaleCol}{TRUE/FALSE whether columns must be scaled before computing 
+\item{scaleCol}{TRUE/FALSE whether columns must be scaled before computing
 xx'.}
 
 \item{scaleG}{TRUE/FALSE whether columns must be scaled before computing xx'.}
@@ -25,7 +25,7 @@ xx'.}
 \item{i}{(integer, boolean or character) Indicates which rows should be used.
 By default, all rows are used.}
 
-\item{j}{(integer, boolean or character) Indicates which columns should be 
+\item{j}{(integer, boolean or character) Indicates which columns should be
 used. By default, all columns are used.}
 
 \item{i2}{(integer, boolean or character) Indicates which rows should be used
@@ -34,7 +34,7 @@ to divide matrix into blocks.}
 \item{minVar}{Columns with variance lower than this value will not be used in
 the computation (only if \code{scaleCol} is set).}
 
-\item{nChunks2}{The number of chunks that each chunk is split into for 
+\item{nChunks2}{The number of chunks that each chunk is split into for
 processing in parallel.}
 
 \item{scales}{Precomputed scales if i2 is used.}
@@ -45,7 +45,7 @@ processing in parallel.}
 
 \item{saveG}{Whether to save genomic relationship matrix into file.}
 
-\item{saveType}{File format to save genomic relationship matrix in. Either 
+\item{saveType}{File format to save genomic relationship matrix in. Either
 \code{RData} or \code{ff}.}
 
 \item{saveName}{Name without extension to save genomic relationship matrix
@@ -58,9 +58,9 @@ with.}
 A positive semi-definite symmetric numeric matrix.
 }
 \description{
-Offers options for centering and scaling the columns of x before computing 
-xx'. If \code{centerCol=FALSE}, \code{scaleCol=FALSE} and 
-\code{scaleG=FALSE}, \code{getG} produces the same outcome than 
+Offers options for centering and scaling the columns of x before computing
+xx'. If \code{centerCol=FALSE}, \code{scaleCol=FALSE} and
+\code{scaleG=FALSE}, \code{getG} produces the same outcome than
 \code{tcrossprod}.
 }
 

@@ -2,8 +2,9 @@
 % Please edit documentation in R/BGData.R
 \name{readPED.big.matrix}
 \alias{readPED.big.matrix}
-\title{Creates a \code{\link[=BGData-class]{BGData}} object from a plaintext
-PED-like file.}
+\title{Creates a \code{\link[=BGData-class]{BGData}} object from a raw PED file
+(generated with \code{--recodeA} in PLINK) or a PED-like file and stores the
+genotypes in a \code{\link[=big.matrix-class]{big.matrix}}.}
 \usage{
 readPED.big.matrix(fileIn, header, dataType, n = NULL, p = NULL,
   na.strings = "NA", nColSkip = 6, idCol = c(1, 2), verbose = FALSE,
@@ -15,20 +16,20 @@ readPED.big.matrix(fileIn, header, dataType, n = NULL, p = NULL,
 
 \item{header}{If TRUE, the file contains a header.}
 
-\item{dataType}{The coding of genotypes. Use \code{character()} for A/C/G/T 
+\item{dataType}{The coding of genotypes. Use \code{character()} for A/C/G/T
 or \code{integer()} for numeric coding.}
 
 \item{n}{The number of individuals.}
 
 \item{p}{The number of markers.}
 
-\item{na.strings}{The character string used in the plaintext file to denote 
+\item{na.strings}{The character string used in the plaintext file to denote
 missing value.}
 
-\item{nColSkip}{The number of columns to be skipped to reach the genotype 
+\item{nColSkip}{The number of columns to be skipped to reach the genotype
 information in the file.}
 
-\item{idCol}{The index of the ID column. If more than one index is given, 
+\item{idCol}{The index of the ID column. If more than one index is given,
 both columns will be concatenated with "_".}
 
 \item{verbose}{If TRUE, progress updates will be posted.}
@@ -39,6 +40,16 @@ both columns will be concatenated with "_".}
 Returns a \code{\link[=BGData-class]{BGData}} object.
 }
 \description{
+\code{readPED.matrix} assumes that the plaintext file (\code{fileIn})
+contains records of individuals in rows, and phenotypes, covariates and
+markers in columns. The columns included in columns \code{1:nColSkip} are
+used to populate the slot \code{@pheno} of a
+\code{\link[=BGData-class]{BGData}} object, and the remaining columns are
+used to fill the slot \code{@geno}. If the first row contains a header
+(\code{header=TRUE}), data in this row is used to determine variables names
+for \code{@pheno} and marker names for \code{@map} and \code{@geno}.
+}
+\details{
 Genotypes are stored in a filebacked
 \code{\link[=big.matrix-class]{big.matrix}} object. \code{readPED.big.matrix}
 creates a folder (see \code{folderOut}) that contains the binary flat file

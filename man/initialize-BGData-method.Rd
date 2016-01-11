@@ -9,19 +9,26 @@
 }
 \arguments{
 \item{.Object}{The \code{\link[=BGData-class]{BGData}} instance to be
-initialized.}
+initialized. This argument is passed in by R and can be ignored, but still
+needs to be documented.}
 
-\item{geno}{A \code{geno} object that contains genotypes.}
+\item{geno}{A \code{geno} object that contains genotypes. \code{geno} is a
+class union of several matrix-like objects, many of them suitable for very
+large datasets. Currently supported are
+\code{\link[=LinkedMatrix-class]{LinkedMatrix}}, \code{BEDMatrix},
+\code{\link[=big.matrix-class]{big.matrix}}, \code{ff_matrix}, and
+\code{matrix}.}
 
 \item{pheno}{A \code{\link{data.frame}} that contains phenotypes. A stub that
-only contains an \code{IID} column populated with the rownames of 
+only contains an \code{IID} column populated with the rownames of
 \code{@geno} will be generated if missing.}
 
-\item{map}{A \code{\link{data.frame}} that contains a genetic map. A stub 
-that only contains a \code{mrk} column populated with the colnames of 
+\item{map}{A \code{\link{data.frame}} that contains a genetic map. A stub
+that only contains a \code{mrk} column populated with the colnames of
 \code{@geno} will be generated if missing.}
 }
 \description{
-Creates a new \code{\link[=BGData-class]{BGData}} instance.
+This method is run when a \code{\link[=BGData-class]{BGData}} object is
+created using \code{BGData(...)} or \code{new("BGData",...)}.
 }
 

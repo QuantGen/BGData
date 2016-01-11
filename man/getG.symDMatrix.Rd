@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{getG.symDMatrix}
 \alias{getG.symDMatrix}
-\title{Computes a genomic relationship matrix G=xx' as a 
+\title{Computes a genomic relationship matrix G=xx' as a
 \code{\link[=symDMatrix-class]{symDMatrix}}.}
 \usage{
 getG.symDMatrix(X, nChunks = 5, chunkSize = NULL, centers = NULL,
@@ -25,10 +25,10 @@ getG.symDMatrix(X, nChunks = 5, chunkSize = NULL, centers = NULL,
 \item{centerCol}{TRUE/FALSE whether columns must be centered before computing
 xx'.}
 
-\item{scaleCol}{TRUE/FALSE whether columns must be scaled before computing 
+\item{scaleCol}{TRUE/FALSE whether columns must be scaled before computing
 xx'.}
 
-\item{nChunks2}{The number of chunks that each chunk is split into for 
+\item{nChunks2}{The number of chunks that each chunk is split into for
 processing in parallel.}
 
 \item{folder}{Folder in which to save the
@@ -38,10 +38,10 @@ processing in parallel.}
 
 \item{verbose}{If TRUE more messages are printed.}
 
-\item{saveRData}{Whether to save an RData file to easily reload 
+\item{saveRData}{Whether to save an RData file to easily reload
 \code{\link[=symDMatrix-class]{symDMatrix}}}
 
-\item{mc.cores}{The number of cores (passed to 
+\item{mc.cores}{The number of cores (passed to
 \code{\link[parallel]{mclapply}}).}
 
 \item{scaleG}{TRUE/FALSE whether columns must be scaled before computing xx'.}
@@ -50,7 +50,7 @@ processing in parallel.}
 A positive semi-definite symmetric numeric matrix.
 }
 \description{
-Offers options for centering and scaling the columns of x before computing 
+Offers options for centering and scaling the columns of x before computing
 xx'.
 }
 

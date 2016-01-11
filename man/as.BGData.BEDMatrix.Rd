@@ -2,7 +2,7 @@
 % Please edit documentation in R/BGData.R
 \name{as.BGData.BEDMatrix}
 \alias{as.BGData.BEDMatrix}
-\title{Convert a \code{BEDMatrix} object into a \code{\link[=BGData-class]{BGData}}
+\title{Converts a \code{BEDMatrix} object to a \code{\link[=BGData-class]{BGData}}
 object.}
 \usage{
 \method{as.BGData}{BEDMatrix}(x, alternatePhenotypeFile = NULL, ...)
@@ -10,8 +10,9 @@ object.}
 \arguments{
 \item{x}{A \code{BEDMatrix} object.}
 
-\item{alternatePhenotypeFile}{Path to an alternate phenotype file (see PLINK 
-documentation).}
+\item{alternatePhenotypeFile}{Path to an
+\href{http://pngu.mgh.harvard.edu/~purcell/plink/data.shtml#pheno}{alternate
+ phenotype file}.}
 
 \item{...}{Additional arguments to the \code{BEDMatrix} constructor
 (currently unused).}
@@ -20,7 +21,18 @@ documentation).}
 A \code{\link[=BGData-class]{BGData}} object.
 }
 \description{
-Convert a \code{BEDMatrix} object into a \code{\link[=BGData-class]{BGData}}
-object.
+If a FAM file (which corresponds to the first six columns of a PED file) of
+the same name and in the same directory as the BED file exists, the
+\code{@pheno} slot will be populated with the data stored in that file.
+Otherwise a stub that only contains an \code{IID} column populated with the
+rownames of \code{@geno} will be generated.
+}
+\details{
+PED only allows for a single phenotype. If more phenotypes are required it is
+possible to store them in an
+\href{http://pngu.mgh.harvard.edu/~purcell/plink/data.shtml#pheno}{alternate
+phenotype file}. The path to such a file can be provided with
+\code{alternatePhenotypeFile} and will be merged with the data in the
+\code{@pheno} slot.
 }
 

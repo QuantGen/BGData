@@ -9,9 +9,38 @@ setOldClass("BEDMatrix")
 setClassUnion("geno", c("LinkedMatrix", "BEDMatrix", "big.matrix", "ff_matrix", "matrix"))
 
 
-#' An S4 class to represent GWAS data.
-#' 
-#' @slot geno A \code{geno} object that contains genotypes.
+#' An S4 class to represent phenotype and genotype data.
+#'
+#' This class is inspired by the phenotype/genotype file format PED and its
+#' binary companion (also known as BED) of
+#' \href{http://pngu.mgh.harvard.edu/~purcell/plink/}{PLINK}. It is used by
+#' several functions of this package such as \code{\link{GWAS}} for performing a
+#' Genome Wide Association Study or \code{\link{getG}} for calculating a genomic
+#' relationship matrix.
+#'
+#' There are several ways to create an instance of this class:  \enumerate{
+#' \item from a raw PED file (or a PED-like file) using \code{\link{readPED}},
+#' \code{\link{readPED.matrix}}, or \code{\link{readPED.big.matrix}}. \item from
+#' a BED file using \code{\link[=as.BGData.BEDMatrix]{as.BGData}}. \item from
+#' arbitrary phenotype/genotype data using one of the constructors
+#' \code{BGData(...)} or \code{new("BGData",...)}. \item from a previously saved
+#' \code{BGData} object using \code{\link{load.BGData}}. \item from multiple
+#' files (even a mixture of different file types) using
+#' \code{\link[=LinkedMatrix-class]{LinkedMatrix}} }
+#'
+#' A PED file can be recoded to a raw PED in
+#' \href{http://pngu.mgh.harvard.edu/~purcell/plink/}{PLINK} using \code{plink
+#' --file myfile --recodeA}, or converted to a BED file using \code{plink --file
+#' myfile --make-bed}. Conversely, a BED file can be transformed back to a PED
+#' file using \code{plink --bfile myfile --recode} or to a raw PED file using
+#' \code{plink --bfile myfile --recodeA} without losing information.
+#'
+#' @slot geno A \code{geno} object that contains genotypes. \code{geno} is a
+#'   class union of several matrix-like objects, many of them suitable for very
+#'   large datasets. Currently supported are
+#'   \code{\link[=LinkedMatrix-class]{LinkedMatrix}}, \code{BEDMatrix},
+#'   \code{\link[=big.matrix-class]{big.matrix}}, \code{ff_matrix}, and
+#'   \code{matrix}.
 #' @slot pheno A \code{\link{data.frame}} that contains phenotypes.
 #' @slot map A \code{\link{data.frame}} that contains a genetic map.
 #' @export BGData
@@ -20,15 +49,24 @@ BGData <- setClass("BGData", slots = c(geno = "geno", pheno = "data.frame", map 
 
 
 #' Creates a new \code{\link[=BGData-class]{BGData}} instance.
-#' 
+#'
+#' This method is run when a \code{\link[=BGData-class]{BGData}} object is
+#' created using \code{BGData(...)} or \code{new("BGData",...)}.
+#'
 #' @param .Object The \code{\link[=BGData-class]{BGData}} instance to be
-#'   initialized.
-#' @param geno A \code{geno} object that contains genotypes.
+#'   initialized. This argument is passed in by R and can be ignored, but still
+#'   needs to be documented.
+#' @param geno A \code{geno} object that contains genotypes. \code{geno} is a
+#'   class union of several matrix-like objects, many of them suitable for very
+#'   large datasets. Currently supported are
+#'   \code{\link[=LinkedMatrix-class]{LinkedMatrix}}, \code{BEDMatrix},
+#'   \code{\link[=big.matrix-class]{big.matrix}}, \code{ff_matrix}, and
+#'   \code{matrix}.
 #' @param pheno A \code{\link{data.frame}} that contains phenotypes. A stub that
-#'   only contains an \code{IID} column populated with the rownames of 
+#'   only contains an \code{IID} column populated with the rownames of
 #'   \code{@@geno} will be generated if missing.
-#' @param map A \code{\link{data.frame}} that contains a genetic map. A stub 
-#'   that only contains a \code{mrk} column populated with the colnames of 
+#' @param map A \code{\link{data.frame}} that contains a genetic map. A stub
+#'   that only contains a \code{mrk} column populated with the colnames of
 #'   \code{@@geno} will be generated if missing.
 #' @export
 setMethod("initialize", "BGData", function(.Object, geno, pheno, map) {
@@ -110,61 +148,68 @@ parsePED <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1
 }
 
 
-#' Creates a memory-mapped \code{\link[=BGData-class]{BGData}} object from a
-#' plaintext raw PED file (generated with \code{--recodeA} in PLINK) or a
-#' PED-like file.
-#' 
-#' \code{readPED} assumes that the plaintext file (\code{fileIn}) contains 
-#' records of individuals in rows, and phenotypes, covariates and markers in 
-#' columns. The columns included in the first couple of columns 
-#' (\code{1:nColSkip}) are used to populate the \code{@@pheno} slot of a 
+#' Creates a \code{\link[=BGData-class]{BGData}} object from a raw PED file
+#' (generated with \code{--recodeA} in PLINK) or a PED-like file and stores the
+#' genotypes in a \code{\link[=LinkedMatrix-class]{LinkedMatrix}} that contains
+#' memory-mapped \code{ff} nodes.
+#'
+#' \code{readPED} assumes that the plaintext file (\code{fileIn}) contains
+#' records of individuals in rows, and phenotypes, covariates and markers in
+#' columns. The columns included in the first couple of columns
+#' (\code{1:nColSkip}) are used to populate the \code{@@pheno} slot of a
 #' \code{\link[=BGData-class]{BGData}} object, and the remaining columns are
-#' used to fill the \code{@@geno} slot. If the first row contains a header 
-#' (\code{header=TRUE}), data in this row is used to determine variables names 
+#' used to fill the \code{@@geno} slot. If the first row contains a header
+#' (\code{header=TRUE}), data in this row is used to determine variables names
 #' for \code{@@pheno} and marker names for \code{@@map} and \code{@@geno}.
-#' 
+#'
 #' Genotypes are stored in a \code{\link[=LinkedMatrix-class]{LinkedMatrix}}
-#' object, where each node is an \code{ff} instance. By default a column-linked 
-#' (\code{\link[=ColumnLinkedMatrix-class]{ColumnLinkedMatrix}}) is used for
-#' \code{@@geno}, but the user can modify this using the \code{linked.by}
-#' argument. The number of nodes is either specified by the user using the
-#' \code{nNodes} argument or determined internally so that each \code{ff} object
-#' has a number of cells that is smaller than \code{.Machine$integer.max / 1.2}
-#' (the array limit of \code{ff}).
-#' 
-#' \code{readPED} creates a folder (see \code{folderOut}) that contains the 
+#' object where each node is an \code{ff} instance rather than a single
+#' \code{ff} object. This is because the array size in \code{ff} is limited to
+#' the largest integer which can be represented on the system
+#' (\code{.Machine$integer.max}) and for genetic data this limitation is often
+#' exceeded. The \code{\link[=LinkedMatrix-class]{LinkedMatrix}} package makes
+#' it possible to link several \code{ff} files together by columns or by rows
+#' and treat them similarly to a single matrix. By default a
+#' \link[=ColumnLinkedMatrix-class]{column-linked \code{LinkedMatrix}} is used
+#' for \code{@@geno}, but the user can modify this using the \code{linked.by}
+#' argument. The number of nodes to generate is either specified by the user
+#' using the \code{nNodes} argument or determined internally so that each
+#' \code{ff} object has a number of cells that is smaller than
+#' \code{.Machine$integer.max / 1.2}.
+#'
+#' \code{readPED} creates a folder (see \code{folderOut}) that contains the
 #' binary flat files (named \code{geno_*.bin}) and an external representation of
-#' the \code{\link[=BGData-class]{BGData}} object in \code{BGData.RData}. A 
+#' the \code{\link[=BGData-class]{BGData}} object in \code{BGData.RData}. A
 #' \code{\link[=BGData-class]{BGData}} object can be reloaded using
 #' \code{load.BGData} (the regular \code{load} function will only work if the
 #' working directory is set to the path that contains the binary flat files).
-#' 
+#'
 #' @param fileIn The path to the plaintext file.
 #' @param header If TRUE, the file contains a header.
-#' @param dataType The coding of genotypes. Use \code{integer()} or 
-#'   \code{double()} for numeric coding. Character coding is currently not 
+#' @param dataType The coding of genotypes. Use \code{integer()} or
+#'   \code{double()} for numeric coding. Character coding is currently not
 #'   supported: use the \code{--recodeA} option of PLINK to convert the PED file
 #'   into a raw file.
 #' @param n The number of individuals.
 #' @param p The number of markers.
-#' @param na.strings The character string used in the plaintext file to denote 
+#' @param na.strings The character string used in the plaintext file to denote
 #'   missing value.
-#' @param nColSkip The number of columns to be skipped to reach the genotype 
+#' @param nColSkip The number of columns to be skipped to reach the genotype
 #'   information in the file.
-#' @param idCol The index of the ID column. If more than one index is given, 
+#' @param idCol The index of the ID column. If more than one index is given,
 #'   both columns will be concatenated with "_".
 #' @param verbose If TRUE, progress updates will be posted.
 #' @param nNodes The number of nodes to create.
-#' @param linked.by If \code{columns} a column-linked matrix 
+#' @param linked.by If \code{columns} a column-linked matrix
 #'   (\code{\link[=ColumnLinkedMatrix-class]{ColumnLinkedMatrix}}) is created,
 #'   if \code{rows} a row-linked matrix
 #'   (\code{\link[=RowLinkedMatrix-class]{RowLinkedMatrix}}).
 #' @param folderOut The path to the folder where to save the binary files.
-#' @param dimorder The physical layout of the underlying \code{ff} object of 
+#' @param dimorder The physical layout of the underlying \code{ff} object of
 #'   each node.
 #' @seealso \code{\link[=BGData-class]{BGData}},
-#'   \code{\link[=LinkedMatrix-class]{LinkedMatrix}}, 
-#'   \code{\link[=ColumnLinkedMatrix-class]{ColumnLinkedMatrix}}, 
+#'   \code{\link[=LinkedMatrix-class]{LinkedMatrix}},
+#'   \code{\link[=ColumnLinkedMatrix-class]{ColumnLinkedMatrix}},
 #'   \code{\link[=RowLinkedMatrix-class]{RowLinkedMatrix}}, \code{\link[ff]{ff}}
 #' @export
 readPED <- function(fileIn, header, dataType, n = NULL, p = NULL, na.strings = "NA", nColSkip = 6, idCol = c(1, 2), verbose = FALSE, nNodes = NULL, linked.by = "rows", folderOut = paste("BGData_", sub("\\.[[:alnum:]]+$", "", basename(fileIn)), sep = ""), dimorder = if (linked.by == "rows") 2:1 else 1:2) {
@@ -237,29 +282,34 @@ readPED <- function(fileIn, header, dataType, n = NULL, p = NULL, na.strings = "
 }
 
 
-#' Creates a \code{\link[=BGData-class]{BGData}} object from a plaintext
-#' PED-like file.
-#' 
-#' \code{readPED.matrix} assumes that the plaintext file (\code{fileIn}) 
-#' contains records of individuals in rows, and phenotypes, covariates and 
-#' markers in columns. The columns included in columns \code{1:nColSkip} are 
+#' Creates an \code{\link[=BGData-class]{BGData}} object from a raw PED file
+#' (generated with \code{--recodeA} in PLINK) or a PED-like file and stores the
+#' genotypes in an in-memory \code{matrix}.
+#'
+#' \code{readPED.matrix} assumes that the plaintext file (\code{fileIn})
+#' contains records of individuals in rows, and phenotypes, covariates and
+#' markers in columns. The columns included in columns \code{1:nColSkip} are
 #' used to populate the slot \code{@@pheno} of a
 #' \code{\link[=BGData-class]{BGData}} object, and the remaining columns are
 #' used to fill the slot \code{@@geno}. If the first row contains a header
 #' (\code{header=TRUE}), data in this row is used to determine variables names
 #' for \code{@@pheno} and marker names for \code{@@map} and \code{@@geno}.
-#' 
+#'
+#' Genotypes are stored in a regular \code{matrix} object. Therefore, this
+#' function will only work if the raw PED file is small enough to fit into
+#' memory.
+#'
 #' @param fileIn The path to the plaintext file.
 #' @param header If TRUE, the file contains a header.
-#' @param dataType The coding of genotypes. Use \code{character()} for A/C/G/T 
+#' @param dataType The coding of genotypes. Use \code{character()} for A/C/G/T
 #'   or \code{integer()} for numeric coding.
 #' @param n The number of individuals.
 #' @param p The number of markers.
-#' @param na.strings The character string used in the plaintext file to denote 
+#' @param na.strings The character string used in the plaintext file to denote
 #'   missing value.
-#' @param nColSkip The number of columns to be skipped to reach the genotype 
+#' @param nColSkip The number of columns to be skipped to reach the genotype
 #'   information in the file.
-#' @param idCol The index of the ID column. If more than one index is given, 
+#' @param idCol The index of the ID column. If more than one index is given,
 #'   both columns will be concatenated with "_".
 #' @param verbose If TRUE, progress updates will be posted.
 #' @return Returns a \code{\link[=BGData-class]{BGData}} object.
@@ -287,9 +337,19 @@ readPED.matrix <- function(fileIn, header, dataType, n = NULL, p = NULL, na.stri
 }
 
 
-#' Creates a \code{\link[=BGData-class]{BGData}} object from a plaintext
-#' PED-like file.
-#' 
+#' Creates a \code{\link[=BGData-class]{BGData}} object from a raw PED file
+#' (generated with \code{--recodeA} in PLINK) or a PED-like file and stores the
+#' genotypes in a \code{\link[=big.matrix-class]{big.matrix}}.
+#'
+#' \code{readPED.matrix} assumes that the plaintext file (\code{fileIn})
+#' contains records of individuals in rows, and phenotypes, covariates and
+#' markers in columns. The columns included in columns \code{1:nColSkip} are
+#' used to populate the slot \code{@@pheno} of a
+#' \code{\link[=BGData-class]{BGData}} object, and the remaining columns are
+#' used to fill the slot \code{@@geno}. If the first row contains a header
+#' (\code{header=TRUE}), data in this row is used to determine variables names
+#' for \code{@@pheno} and marker names for \code{@@map} and \code{@@geno}.
+#'
 #' Genotypes are stored in a filebacked
 #' \code{\link[=big.matrix-class]{big.matrix}} object. \code{readPED.big.matrix}
 #' creates a folder (see \code{folderOut}) that contains the binary flat file
@@ -299,18 +359,18 @@ readPED.matrix <- function(fileIn, header, dataType, n = NULL, p = NULL, na.stri
 #' reloaded using \code{load.BGData} (the regular \code{load} function will not
 #' work unless the \code{\link[=big.matrix-class]{big.matrix}} instance is
 #' manually attached using \code{\link[bigmemory]{attach.big.matrix}}).
-#' 
+#'
 #' @param fileIn The path to the plaintext file.
 #' @param header If TRUE, the file contains a header.
-#' @param dataType The coding of genotypes. Use \code{character()} for A/C/G/T 
+#' @param dataType The coding of genotypes. Use \code{character()} for A/C/G/T
 #'   or \code{integer()} for numeric coding.
 #' @param n The number of individuals.
 #' @param p The number of markers.
-#' @param na.strings The character string used in the plaintext file to denote 
+#' @param na.strings The character string used in the plaintext file to denote
 #'   missing value.
-#' @param nColSkip The number of columns to be skipped to reach the genotype 
+#' @param nColSkip The number of columns to be skipped to reach the genotype
 #'   information in the file.
-#' @param idCol The index of the ID column. If more than one index is given, 
+#' @param idCol The index of the ID column. If more than one index is given,
 #'   both columns will be concatenated with "_".
 #' @param verbose If TRUE, progress updates will be posted.
 #' @param folderOut The path to the folder where to save the binary files.
@@ -363,7 +423,7 @@ readPED.big.matrix <- function(fileIn, header, dataType, n = NULL, p = NULL, na.
 
 #' S3 generic to convert other objects into \code{\link[=BGData-class]{BGData}}
 #' objects.
-#' 
+#'
 #' @param x An object.
 #' @param ... Additional arguments (see method).
 #' @return A BGData object.
@@ -373,12 +433,26 @@ as.BGData <- function(x, ...) {
 }
 
 
-#' Convert a \code{BEDMatrix} object into a \code{\link[=BGData-class]{BGData}}
+#' Converts a \code{BEDMatrix} object to a \code{\link[=BGData-class]{BGData}}
 #' object.
-#' 
+#'
+#' If a FAM file (which corresponds to the first six columns of a PED file) of
+#' the same name and in the same directory as the BED file exists, the
+#' \code{@@pheno} slot will be populated with the data stored in that file.
+#' Otherwise a stub that only contains an \code{IID} column populated with the
+#' rownames of \code{@@geno} will be generated.
+#'
+#' PED only allows for a single phenotype. If more phenotypes are required it is
+#' possible to store them in an
+#' \href{http://pngu.mgh.harvard.edu/~purcell/plink/data.shtml#pheno}{alternate
+#' phenotype file}. The path to such a file can be provided with
+#' \code{alternatePhenotypeFile} and will be merged with the data in the
+#' \code{@@pheno} slot.
+#'
 #' @param x A \code{BEDMatrix} object.
-#' @param alternatePhenotypeFile Path to an alternate phenotype file (see PLINK 
-#'   documentation).
+#' @param alternatePhenotypeFile Path to an
+#'   \href{http://pngu.mgh.harvard.edu/~purcell/plink/data.shtml#pheno}{alternate
+#'    phenotype file}.
 #' @param ... Additional arguments to the \code{BEDMatrix} constructor
 #'   (currently unused).
 #' @return A \code{\link[=BGData-class]{BGData}} object.
@@ -426,15 +500,15 @@ as.BGData.BEDMatrix <- function(x, alternatePhenotypeFile = NULL, ...) {
 
 #' Loads \code{\link[=BGData-class]{BGData}} (and other) objects from .RData
 #' files.
-#' 
-#' This function is similar to \code{load}, but also initializes the different 
-#' types of objects that the \code{@@geno} slot of a 
-#' \code{\link[=BGData-class]{BGData}} object can take.  Currently supported are
+#'
+#' This function is similar to \code{load}, but also initializes the different
+#' types of objects that the \code{@@geno} slot of a
+#' \code{\link[=BGData-class]{BGData}} object can take. Currently supported are
 #' \code{ff_matrix}, \code{\link[=big.matrix-class]{big.matrix}}, and
 #' \code{BEDMatrix} objects. If the object is of type
 #' \code{\link[=LinkedMatrix-class]{LinkedMatrix}}, all nodes will be
 #' initialized with their appropriate method.
-#' 
+#'
 #' @param file The name of the .RData file to be loaded.
 #' @param envir The environment where to load the data.
 #' @export

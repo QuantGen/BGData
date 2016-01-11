@@ -4,14 +4,42 @@
 \name{BGData-class}
 \alias{BGData}
 \alias{BGData-class}
-\title{An S4 class to represent GWAS data.}
+\title{An S4 class to represent phenotype and genotype data.}
 \description{
-An S4 class to represent GWAS data.
+This class is inspired by the phenotype/genotype file format PED and its
+binary companion (also known as BED) of
+\href{http://pngu.mgh.harvard.edu/~purcell/plink/}{PLINK}. It is used by
+several functions of this package such as \code{\link{GWAS}} for performing a
+Genome Wide Association Study or \code{\link{getG}} for calculating a genomic
+relationship matrix.
+}
+\details{
+There are several ways to create an instance of this class:  \enumerate{
+\item from a raw PED file (or a PED-like file) using \code{\link{readPED}},
+\code{\link{readPED.matrix}}, or \code{\link{readPED.big.matrix}}. \item from
+a BED file using \code{\link[=as.BGData.BEDMatrix]{as.BGData}}. \item from
+arbitrary phenotype/genotype data using one of the constructors
+\code{BGData(...)} or \code{new("BGData",...)}. \item from a previously saved
+\code{BGData} object using \code{\link{load.BGData}}. \item from multiple
+files (even a mixture of different file types) using
+\code{\link[=LinkedMatrix-class]{LinkedMatrix}} }
+
+A PED file can be recoded to a raw PED in
+\href{http://pngu.mgh.harvard.edu/~purcell/plink/}{PLINK} using \code{plink
+--file myfile --recodeA}, or converted to a BED file using \code{plink --file
+myfile --make-bed}. Conversely, a BED file can be transformed back to a PED
+file using \code{plink --bfile myfile --recode} or to a raw PED file using
+\code{plink --bfile myfile --recodeA} without losing information.
 }
 \section{Slots}{
 
 \describe{
-\item{\code{geno}}{A \code{geno} object that contains genotypes.}
+\item{\code{geno}}{A \code{geno} object that contains genotypes. \code{geno} is a
+class union of several matrix-like objects, many of them suitable for very
+large datasets. Currently supported are
+\code{\link[=LinkedMatrix-class]{LinkedMatrix}}, \code{BEDMatrix},
+\code{\link[=big.matrix-class]{big.matrix}}, \code{ff_matrix}, and
+\code{matrix}.}
 
 \item{\code{pheno}}{A \code{\link{data.frame}} that contains phenotypes.}
 

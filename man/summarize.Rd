@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{summarize}
 \alias{summarize}
-\title{Calculate frequencies of missing values and alleles.}
+\title{Calculates frequencies of missing values and alleles.}
 \usage{
 summarize(X, verbose = FALSE, bufferSize = 5000,
   nTasks = parallel::detectCores(), mc.cores = parallel::detectCores())
@@ -13,16 +13,16 @@ summarize(X, verbose = FALSE, bufferSize = 5000,
 
 \item{verbose}{If TRUE more messages are printed.}
 
-\item{bufferSize}{Represents the number of columns of \code{@geno} that are 
+\item{bufferSize}{Represents the number of columns of \code{@geno} that are
 brought into RAM for processing (5000 by default).}
 
-\item{nTasks}{Represents the number of parallel tasks each buffer is split 
+\item{nTasks}{Represents the number of parallel tasks each buffer is split
 into.}
 
-\item{mc.cores}{The number of cores (passed to 
+\item{mc.cores}{The number of cores (passed to
 \code{\link[parallel]{mclapply}}).}
 }
 \description{
-Calculate frequencies of missing values and alleles.
+Calculates frequencies of missing values and alleles.
 }
 
