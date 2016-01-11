@@ -14,31 +14,6 @@ The `BGData` package contains a data structure `BGData` that holds genotypes in 
 ![Conceptual Diagram](https://docs.google.com/drawings/d/1m2bV3-woWrO9F9_RXxw30FlzUORXzcnaIPJUlxc-MMk/pub?w=739&h=559)
 
 
-Classes & Methods
------------------
-
-### Class `BGData`
-An S4 class to hold genotype and phenotype data.
-
-#### Slots
-- `@geno` (`RowLinkedMatrix`, `ColumnLinkedMatrix`, `ff_matrix` or `matrix`)
-- `@pheno` (`data.frame`)
-- `@map` (`data.frame`)
-
-#### Constructor
-- `BGData(geno = geno, [pheno = pheno, map = map])` where `geno` is a `RowLinkedMatrix`, `ColumnLinkedMatrix`, `ff_matrix` or `matrix`, and optionally, `pheno` is a `data.frame` and `map` is a `data.frame`.
-
-
-Functions
----------
-
-- Both `readPED` and `readPED.matrix` create a `BGData` object from a plaintext file containing the phenotypes and genotypes (individuals in rows, phenotypes in the first few columns, markers in the remaining columns, e.g. the raw format in [PLINK](http://pngu.mgh.harvard.edu/~purcell/plink/dataman.shtml)). `readPED` stores genotype information in an `ff`-backed `RowLinkedMatrix` or `ColumnLinkedMatrix` (dependending on the value of the `linked.by` parameter) while `readPED.matrix` uses a regular matrix.
-- `load.BGData(path)` loads an existing `BGData` object from disk into the R workspace
-- `GWAS(formula, data, method)` uses a `BGData` object to conduct single marker association tests using regression methods such as `lm()`, `glm()` or `lmer()`
-- `getG(x)` calculates the genomic relationship matrix
-- `summarize(x)` calculates frequencies of missing values and alleles
-
-
 Installation
 ------------
 BGData is not available on [CRAN](http://cran.r-project.org/) yet. However, it can be installed directly from GitHub using the [devtools](https://github.com/hadley/devtools) package.
