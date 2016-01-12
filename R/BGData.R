@@ -170,8 +170,8 @@ parsePED <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1
 #' exceeded. The \code{\link[=LinkedMatrix-class]{LinkedMatrix}} package makes
 #' it possible to link several \code{ff} files together by columns or by rows
 #' and treat them similarly to a single matrix. By default a
-#' \link[=ColumnLinkedMatrix-class]{column-linked \code{LinkedMatrix}} is used
-#' for \code{@@geno}, but the user can modify this using the \code{linked.by}
+#' \code{\link[=ColumnLinkedMatrix-class]{ColumnLinkedMatrix}} is used for
+#' \code{@@geno}, but the user can modify this using the \code{linked.by}
 #' argument. The number of nodes to generate is either specified by the user
 #' using the \code{nNodes} argument or determined internally so that each
 #' \code{ff} object has a number of cells that is smaller than
