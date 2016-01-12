@@ -487,8 +487,8 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
         scales <- rep(1, p)
     }
 
-    chunkID <- ceiling(1:n/chunkSize)
-    nChunks <- max(chunkID)
+    nChunks <- ceiling(n/chunkSize)
+    chunkRanges <- LinkedMatrix:::chunkRanges(n, nChunks)
     nFiles <- nChunks * (nChunks + 1)/2
     DATA <- list()
     counter <- 1
@@ -503,8 +503,7 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
     for (i in 1:nChunks) {
 
         DATA[[i]] <- list()
-        rowIndex_i <- which(chunkID == i)
-        Xi <- X[rowIndex_i, ]
+        Xi <- X[seq(chunkRanges[1, i], chunkRanges[2, i]), ]
 
         # centering/scaling
         for (k in 1:p) {
@@ -520,8 +519,7 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
                 cat(" Working pair ", i, "-", j, " (", round(100 * counter/(nChunks * (nChunks + 1)/2)), "% ", round(proc.time()[3] - timeIn, 3), " seconds).\n", sep = "")
             }
 
-            rowIndex_j <- which(chunkID == j)
-            Xj <- X[rowIndex_j, ]
+            Xj <- X[seq(chunkRanges[1, j], chunkRanges[2, j]), ]
 
             # centering/scaling
             for (k in 1:p) {
@@ -535,8 +533,8 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
 
             DATA[[i]][[j - i + 1]] <- ff::ff(dim = dim(Gij), vmode = vmode, initdata = as.vector(Gij),
                                          filename = paste0("data_", i, "_", j, ".bin"))
-            colnames(DATA[[i]][[j - i + 1]]) <- colnames(X)[rowIndex_j]
-            rownames(DATA[[i]][[j - i + 1]]) <- rownames(X)[rowIndex_i]
+            colnames(DATA[[i]][[j - i + 1]]) <- colnames(X)[seq(chunkRanges[1, j], chunkRanges[2, j])]
+            rownames(DATA[[i]][[j - i + 1]]) <- rownames(X)[seq(chunkRanges[1, i], chunkRanges[2, i])]
             counter <- counter + 1
             bit::physical(DATA[[i]][[j - i + 1]])$pattern <- "ff"
             bit::physical(DATA[[i]][[j - i + 1]])$filename <- paste0("data_", i, "_",
