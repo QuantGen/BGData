@@ -493,6 +493,9 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
     DATA <- list()
     counter <- 1
 
+    if (dir.exists(folder)) {
+        stop(folder, " already exists")
+    }
     tmpDir <- getwd()
     dir.create(folder)
     setwd(folder)
