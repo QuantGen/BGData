@@ -543,7 +543,7 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
                 j, ".bin")
 
             if (verbose) {
-                cat("  =>Done ")
+                cat("  =>Done\n")
             }
         }
     }
