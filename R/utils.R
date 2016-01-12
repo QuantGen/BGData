@@ -416,8 +416,8 @@ getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, scaleG = TRUE, v
 }
 
 
-#' Computes a genomic relationship matrix G=xx' as a
-#' \code{\link[=symDMatrix-class]{symDMatrix}}.
+#' Computes a genomic relationship matrix G=xx' without ever loading G in RAM by
+#' creating a \code{\link[=symDMatrix-class]{symDMatrix}}.
 #'
 #' Offers options for centering and scaling the columns of x before computing
 #' xx'.
