@@ -451,7 +451,7 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
     n <- nrow(X)
     p <- ncol(X)
     if (is.null(chunkSize)) {
-        chunkSize <- ceiling(n/nChunks)
+        chunkSize <- ceiling(n / nChunks)
     }
 
     if ((centerCol | scaleCol) & (is.null(centers) | is.null(scales))) {
@@ -460,7 +460,7 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
             scales <- rep(NA, p)
             for (i in 1:p) {
                 xi <- X[, i]
-                scales[i] <- sd(xi, na.rm = TRUE) * sqrt((n - 1)/n)
+                scales[i] <- sd(xi, na.rm = TRUE) * sqrt((n - 1) / n)
                 centers[i] <- mean(xi, na.rm = TRUE)
             }
         }
@@ -468,7 +468,7 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
             scales <- rep(NA, p)
             for (i in 1:p) {
                 xi <- X[, i]
-                scales[i] <- sd(xi, na.rm = TRUE) * sqrt((n - 1)/n)
+                scales[i] <- sd(xi, na.rm = TRUE) * sqrt((n - 1) / n)
             }
         }
         if ((is.null(centers)) & (!is.null(scales))) {
@@ -488,9 +488,9 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
         scales <- rep(1, p)
     }
 
-    nChunks <- ceiling(n/chunkSize)
+    nChunks <- ceiling(n / chunkSize)
     chunkRanges <- LinkedMatrix:::chunkRanges(n, nChunks)
-    nFiles <- nChunks * (nChunks + 1)/2
+    nFiles <- nChunks * (nChunks + 1) / 2
     DATA <- list()
     counter <- 1
 
@@ -509,7 +509,7 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
         # centering/scaling
         for (k in 1:p) {
             xik <- Xi[, k]
-            xik <- (xik - centers[k])/scales[k]
+            xik <- (xik - centers[k]) / scales[k]
             xik[is.na(xik)] <- 0
             Xi[, k] <- xik
         }
@@ -517,7 +517,7 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
         for (j in i:nChunks) {
 
             if (verbose) {
-                cat(" Working pair ", i, "-", j, " (", round(100 * counter/(nChunks * (nChunks + 1)/2)), "% ", round(proc.time()[3] - timeIn, 3), " seconds).\n", sep = "")
+                cat(" Working pair ", i, "-", j, " (", round(100 * counter / (nChunks * (nChunks + 1) / 2)), "% ", round(proc.time()[3] - timeIn, 3), " seconds).\n", sep = "")
             }
 
             Xj <- X[seq(chunkRanges[1, j], chunkRanges[2, j]), ]
@@ -525,7 +525,7 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
             # centering/scaling
             for (k in 1:p) {
                 xjk <- Xj[, k]
-                xjk <- (xjk - centers[k])/scales[k]
+                xjk <- (xjk - centers[k]) / scales[k]
                 xjk[is.na(xjk)] <- 0
                 Xj[, k] <- xjk
             }
@@ -546,8 +546,9 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
             }
         }
     }
-    if (is.null(rownames(X)))
+    if (is.null(rownames(X))) {
         rownames(X) <- 1:n
+    }
     names(centers) <- colnames(X)
     names(scales) <- colnames(X)
     G <- new("symDMatrix", names = rownames(X), data = DATA, centers = centers, scales = scales)
@@ -555,7 +556,7 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
         K <- mean(diag(G))
         for (i in 1:length(G@data)) {
             for (j in 1:length(G@data[[i]])) {
-                G@data[[i]][[j]][] <- G@data[[i]][[j]][]/K
+                G@data[[i]][[j]][] <- G@data[[i]][[j]][] / K
             }
         }
     }
