@@ -170,11 +170,12 @@ tcrossprod.parallel <- function(x, y = NULL, nChunks = parallel::detectCores(), 
 #' \code{scaleG=FALSE}, \code{getG} produces the same outcome than
 #' \code{tcrossprod}.
 #'
-#' @param x A matrix-like object, typically \code{@@geno} of a \code{\link[=BGData-class]{BGData}} object.
+#' @param x A matrix-like object, typically \code{@@geno} of a
+#'   \code{\link[=BGData-class]{BGData}} object.
 #' @param nChunks The number of columns that are processed at a time.
 #' @param scaleCol TRUE/FALSE whether columns must be scaled before computing
 #'   xx'.
-#' @param scaleG TRUE/FALSE whether columns must be scaled before computing xx'.
+#' @param scaleG TRUE/FALSE whether xx' must be scaled.
 #' @param verbose If TRUE more messages are printed.
 #' @param i (integer, boolean or character) Indicates which rows should be used.
 #'   By default, all rows are used.
@@ -441,7 +442,7 @@ getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, scaleG = TRUE, v
 #'   \code{\link[=symDMatrix-class]{symDMatrix}}
 #' @param mc.cores The number of cores (passed to
 #'   \code{\link[parallel]{mclapply}}).
-#' @param scaleG TRUE/FALSE whether columns must be scaled before computing xx'.
+#' @param scaleG TRUE/FALSE whether xx' must be scaled.
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @export
 getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, scales = NULL, centerCol = T, scaleCol = T, nChunks2 = 1, folder = randomString(), vmode = "double", verbose = TRUE, saveRData = TRUE, mc.cores = parallel::detectCores(), scaleG = T) {

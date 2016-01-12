@@ -11,14 +11,15 @@ getG(x, nChunks = ceiling(ncol(x)/10000), scaleCol = TRUE, scaleG = TRUE,
   saveName = "Gij", mc.cores = parallel::detectCores())
 }
 \arguments{
-\item{x}{A matrix-like object, typically \code{@geno} of a \code{\link[=BGData-class]{BGData}} object.}
+\item{x}{A matrix-like object, typically \code{@geno} of a
+\code{\link[=BGData-class]{BGData}} object.}
 
 \item{nChunks}{The number of columns that are processed at a time.}
 
 \item{scaleCol}{TRUE/FALSE whether columns must be scaled before computing
 xx'.}
 
-\item{scaleG}{TRUE/FALSE whether columns must be scaled before computing xx'.}
+\item{scaleG}{TRUE/FALSE whether xx' must be scaled.}
 
 \item{verbose}{If TRUE more messages are printed.}
 

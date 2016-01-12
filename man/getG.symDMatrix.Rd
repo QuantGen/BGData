@@ -44,7 +44,7 @@ processing in parallel.}
 \item{mc.cores}{The number of cores (passed to
 \code{\link[parallel]{mclapply}}).}
 
-\item{scaleG}{TRUE/FALSE whether columns must be scaled before computing xx'.}
+\item{scaleG}{TRUE/FALSE whether xx' must be scaled.}
 }
 \value{
 A positive semi-definite symmetric numeric matrix.
