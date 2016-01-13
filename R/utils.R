@@ -22,6 +22,9 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = parallel::detectCores(), mc.c
     if (!length(d)) {
         stop("dim(X) must have a positive length")
     }
+    if (nTasks <= 0) {
+        stop("nTasks has to be greater than 0")
+    }
     if (nTasks == 1) {
         base::apply(X, MARGIN, FUN, ...)
     } else {

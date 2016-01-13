@@ -8,6 +8,13 @@ hasCores <- function(numCores) {
     }
 }
 
+test_that("parallelApply fails if nTasks is illegal", {
+    X <- matrix(1, nrow = 1, ncol = 1)
+    for (nTasks in c(0, -1)) {
+        expect_error(parallelApply(X, MARGIN = 1, bufferSize = 1, FUN = sum, nTasks = nTasks))
+    }
+})
+
 for (nCores in seq_len(2)) {
 
     test_that(paste("chunkedApply", "on", nCores, "cores"), {
