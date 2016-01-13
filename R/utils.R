@@ -264,7 +264,7 @@ getGi <- function(x, nChunks = ceiling(ncol(x) / 10000), scaleCol = TRUE, scaleG
     tmp <- x[i, 1:2]
     n <- nrow(tmp)
 
-    G <- matrix(0, nrow = n, ncol = n)
+    G <- matrix(data = 0, nrow = n, ncol = n)
     rownames(G) <- rownames(tmp)
     colnames(G) <- rownames(G)
 
@@ -353,7 +353,7 @@ getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, scaleG = TRUE, v
         stop("Index out of bounds")
     }
 
-    G <- matrix(nrow = n1, ncol = n2, 0)
+    G <- matrix(data = 0, nrow = n1, ncol = n2)
     tmp <- rownames(x)
     rownames(G) <- tmp[i1]
     colnames(G) <- tmp[i2]
@@ -703,7 +703,7 @@ GWAS.SKAT <- function(formula, data, groups, plot = FALSE, verbose = FALSE, min.
 
     p <- length(unique(groups))
 
-    OUT <- matrix(nrow = p, ncol = 2, NA)
+    OUT <- matrix(data = NA, nrow = p, ncol = 2)
     colnames(OUT) <- c("nMrk", "p-value")
     levels <- unique(groups)
     rownames(OUT) <- levels
@@ -788,7 +788,7 @@ simPED <- function(filename, n, p, genoChars = 0:2, na.string = NA, propNA = 0.0
     markerNames <- paste0("mrk_", 1:p)
     subjectNames <- paste0("id_", 1:n)
     if (returnGenos) {
-        OUT <- matrix(nrow = n, ncol = p, NA)
+        OUT <- matrix(data = NA, nrow = n, ncol = p)
         colnames(OUT) <- markerNames
         rownames(OUT) <- subjectNames
     }
@@ -879,7 +879,7 @@ simplifyList <- function(x) {
     if (is.vector(sample)) {
         x <- unlist(x)
     } else if (is.matrix(sample)) {
-        x <- matrix(unlist(x), nrow = nrow(sample), byrow = FALSE)
+        x <- matrix(data = unlist(x), nrow = nrow(sample), byrow = FALSE)
         rownames(x) <- rownames(sample)
     }
     return(x)

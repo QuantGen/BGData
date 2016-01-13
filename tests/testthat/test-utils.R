@@ -9,7 +9,7 @@ hasCores <- function(numCores) {
 }
 
 test_that("parallelApply fails if nTasks is illegal", {
-    X <- matrix(1, nrow = 1, ncol = 1)
+    X <- matrix(data = 1, nrow = 1, ncol = 1)
     for (nTasks in c(0, -1)) {
         expect_error(parallelApply(X, MARGIN = 1, bufferSize = 1, FUN = sum, nTasks = nTasks))
     }
@@ -21,7 +21,7 @@ for (nCores in seq_len(2)) {
 
         hasCores(nCores)
 
-        X <- matrix(rnorm(5 * 10), 5, 10)
+        X <- matrix(data = rnorm(50), nrow = 5, ncol = 10)
 
         for (bufferSize in c(5, 10)) {
             for (nTasks in c(1, 3)) {
@@ -40,8 +40,8 @@ for (nCores in seq_len(2)) {
 
         hasCores(nCores)
 
-        W <- matrix(nrow = 10, ncol = 20, rnorm(200))
-        Z <- matrix(nrow = 10, ncol = 2, rnorm(20))
+        W <- matrix(data = rnorm(200), nrow = 10, ncol = 20)
+        Z <- matrix(data = rnorm(20), nrow = 10, ncol = 2)
 
         # Testing X'X
         TMP <- crossprod(W)
@@ -68,8 +68,8 @@ for (nCores in seq_len(2)) {
 
         hasCores(nCores)
 
-        W <- matrix(nrow = 10, ncol = 20, rnorm(200))
-        Z <- matrix(nrow = 5, ncol = 20, rnorm(100))
+        W <- matrix(data = rnorm(200), nrow = 10, ncol = 20)
+        Z <- matrix(data = rnorm(100), nrow = 5, ncol = 20)
 
         # Testing XX'
         TMP <- tcrossprod(W)
@@ -97,7 +97,7 @@ for (nCores in seq_len(2)) {
 
         n <- 10
         p <- 100
-        X <- matrix(nrow = n, ncol = p, data = rnorm(n * p))
+        X <- matrix(data = rnorm(n * p), nrow = n, ncol = p)
 
         for (nChunks in c(1, 3)) {
             for (nChunks2 in c(1, 3)) {
@@ -140,7 +140,7 @@ for (nCores in seq_len(2)) {
 
         n <- 10
         p <- 100
-        X <- matrix(nrow = n, ncol = p, data = rnorm(n * p))
+        X <- matrix(data = rnorm(n * p), nrow = n, ncol = p)
 
         for (nChunks in c(1, 3)) {
             for (nChunks2 in c(1, 3)) {
@@ -196,9 +196,9 @@ for (nCores in seq_len(2)) {
 
         hasCores(nCores)
 
-        genotypes <- matrix(nrow = 3, ncol = 6, c(0, 0, 1, 0, 2, 2, 1, 2, 0, 1, 2, 0, 0, 1, 2, 0, NA, 0))
+        genotypes <- matrix(data = c(0, 0, 1, 0, 2, 2, 1, 2, 0, 1, 2, 0, 0, 1, 2, 0, NA, 0), nrow = 3, ncol = 6)
 
-        dummy <- matrix(nrow = ncol(genotypes), ncol = 2, NA)
+        dummy <- matrix(data = NA, nrow = ncol(genotypes), ncol = 2)
         colnames(dummy) <- c("freq_na", "freq_all")
         for (col in seq_len(ncol(genotypes))) {
             Z <- genotypes[, col]
