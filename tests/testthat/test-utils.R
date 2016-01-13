@@ -95,30 +95,30 @@ for (nCores in seq_len(2)) {
                 # all scalings
                 G <- tcrossprod(scale(X))
                 G <- G/mean(diag(G))
-                G2 <- getG(x = X, scaleG = T, scaleCol = T, verbose = F, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
+                G2 <- getG(x = X, scaleG = TRUE, scaleCol = TRUE, verbose = FALSE, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
                 expect_equal(G, G2)
 
                 # without scaling to average diagonal=1
                 G <- tcrossprod(scale(X))
-                G2 <- getG(x = X, scaleG = F, scaleCol = T, verbose = F, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
+                G2 <- getG(x = X, scaleG = FALSE, scaleCol = TRUE, verbose = FALSE, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
                 expect_equal(G, G2)
 
                 # without scaling columns, but scaling average diagonal =1
-                G <- tcrossprod(scale(X, center = T, scale = F))
+                G <- tcrossprod(scale(X, center = TRUE, scale = FALSE))
                 G <- G/mean(diag(G))
-                G2 <- getG(x = X, scaleG = T, scaleCol = F, verbose = F, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
+                G2 <- getG(x = X, scaleG = TRUE, scaleCol = FALSE, verbose = FALSE, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
                 expect_equal(G, G2)
 
                 # no scaling at all
-                G <- tcrossprod(scale(X, center = T, scale = F))
-                G2 <- getG(x = X, scaleG = F, scaleCol = F, verbose = F, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
+                G <- tcrossprod(scale(X, center = TRUE, scale = FALSE))
+                G2 <- getG(x = X, scaleG = FALSE, scaleCol = FALSE, verbose = FALSE, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
                 expect_equal(G, G2)
 
             }
         }
 
         X[sample(1:length(X), size = 20)] <- NA
-        G <- getG(X, verbose = F)
+        G <- getG(X, verbose = FALSE)
         expect_true(!any(is.na(G)))
 
     })
@@ -144,37 +144,37 @@ for (nCores in seq_len(2)) {
                 # all scalings
                 G <- tcrossprod(scale(X))
                 G <- G/mean(diag(G))
-                G_12 <- getG(x = X, i = i, i2 = i2, centers = centers, scales = scales, scaleG = T, verbose = F, scaleCol = TRUE, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
+                G_12 <- getG(x = X, i = i, i2 = i2, centers = centers, scales = scales, scaleG = TRUE, verbose = FALSE, scaleCol = TRUE, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
                 expect_equal(G[i, i2], G_12)
 
-                G_12 <- getG(x = X, i = i, i2 = i, centers = centers, scales = scales, scaleG = T, verbose = F, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
+                G_12 <- getG(x = X, i = i, i2 = i, centers = centers, scales = scales, scaleG = TRUE, verbose = FALSE, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
                 expect_equal(G[i, i], G_12)
 
                 # without scaling to average diagonal = 1
                 G <- tcrossprod(scale(X) * sqrt(n/(n - 1)))
-                G_12 <- getG(x = X, i = i, i2 = i2, centers = centers, scales = scales, scaleG = F, verbose = F, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
+                G_12 <- getG(x = X, i = i, i2 = i2, centers = centers, scales = scales, scaleG = FALSE, verbose = FALSE, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
                 expect_equal(G[i, i2], G_12)
 
-                G_12 <- getG(x = X, i = i, i2 = i, centers = centers, scales = scales, scaleG = F, verbose = F, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
+                G_12 <- getG(x = X, i = i, i2 = i, centers = centers, scales = scales, scaleG = FALSE, verbose = FALSE, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
                 expect_equal(G[i, i], G_12)
 
                 # without scaling columns, but scaling average diagonal = 1
                 scales <- rep(1, ncol(X))
 
-                G <- tcrossprod(scale(X, center = T, scale = F))
+                G <- tcrossprod(scale(X, center = TRUE, scale = FALSE))
                 G <- G/ncol(X)
-                G_12 <- getG(x = X, i = i, i2 = i2, centers = centers, scales = scales, scaleG = T, verbose = F, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
+                G_12 <- getG(x = X, i = i, i2 = i2, centers = centers, scales = scales, scaleG = TRUE, verbose = FALSE, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
                 expect_equal(G[i, i2], G_12)
 
-                G_12 <- getG(x = X, i = i, i2 = i, centers = centers, scales = scales, scaleG = T, verbose = F, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
+                G_12 <- getG(x = X, i = i, i2 = i, centers = centers, scales = scales, scaleG = TRUE, verbose = FALSE, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
                 expect_equal(G[i, i], G_12)
 
                 # no scaling at all
-                G <- tcrossprod(scale(X, center = T, scale = F))
-                G_12 <- getG(x = X, i = i, i2 = i2, centers = centers, scales = scales, scaleG = F, verbose = F, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
+                G <- tcrossprod(scale(X, center = TRUE, scale = FALSE))
+                G_12 <- getG(x = X, i = i, i2 = i2, centers = centers, scales = scales, scaleG = FALSE, verbose = FALSE, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
                 expect_equal(G[i, i2], G_12)
 
-                G_12 <- getG(x = X, i = i, i2 = i, centers = centers, scales = scales, scaleG = F, verbose = F, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
+                G_12 <- getG(x = X, i = i, i2 = i, centers = centers, scales = scales, scaleG = FALSE, verbose = FALSE, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
                 expect_equal(G[i, i], G_12)
 
             }
