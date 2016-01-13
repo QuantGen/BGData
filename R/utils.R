@@ -72,7 +72,7 @@ chunkedApply <- function(X, MARGIN, FUN, bufferSize, verbose = FALSE, ...) {
 
 # Performs crossprod() or tcrossprod() for a chunk (set of columns or sets of
 # rows) of x.
-crossprods.chunk <- function(chunk, x, y = NULL, nChunks, use_tcrossprod = FALSE) {
+crossprods.chunk <- function(chunk, x, y = NULL, nChunks = parallel::detectCores(), use_tcrossprod = FALSE) {
     if (!is.null(y)) {
         y <- as.matrix(y)
         nY <- ifelse(use_tcrossprod, ncol(y), nrow(y))
