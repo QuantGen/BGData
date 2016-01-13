@@ -28,4 +28,8 @@ The input matrix \code{X} is broken into \code{nTasks} chunks and passed to
 \code{\link[parallel]{mclapply}}. The number of cores can be configured using
 \code{mc.cores}. Uses \code{apply} from base internally.
 }
+\details{
+If \code{nTasks} equals 1, the regular \code{apply} function will be called
+to preserve memory.
+}
 

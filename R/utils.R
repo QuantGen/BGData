@@ -4,6 +4,9 @@
 #' \code{\link[parallel]{mclapply}}. The number of cores can be configured using
 #' \code{mc.cores}. Uses \code{apply} from base internally.
 #'
+#' If \code{nTasks} equals 1, the regular \code{apply} function will be called
+#' to preserve memory.
+#'
 #' @param X A matrix.
 #' @param MARGIN The subscripts which the function will be applied over. 1
 #'   indicates rows, 2 indicates columns.
@@ -19,16 +22,20 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = parallel::detectCores(), mc.c
     if (!length(d)) {
         stop("dim(X) must have a positive length")
     }
-    res <- parallel::mclapply(X = seq_len(nTasks), FUN = function(i, ...) {
-        range <- LinkedMatrix:::chunkRanges(ifelse(MARGIN == 2, ncol(X), nrow(X)), nTasks, i)
-        if (MARGIN == 2) {
-            subset <- X[, seq(range[1], range[2]), drop = FALSE]
-        } else {
-            subset <- X[seq(range[1], range[2]), , drop = FALSE]
-        }
-        base::apply(subset, MARGIN, FUN, ...)
-    }, ..., mc.cores = mc.cores)
-    simplifyList(res)
+    if (nTasks == 1) {
+        base::apply(X, MARGIN, FUN, ...)
+    } else {
+        res <- parallel::mclapply(X = seq_len(nTasks), FUN = function(i, ...) {
+            range <- LinkedMatrix:::chunkRanges(ifelse(MARGIN == 2, ncol(X), nrow(X)), nTasks, i)
+            if (MARGIN == 2) {
+                subset <- X[, seq(range[1], range[2]), drop = FALSE]
+            } else {
+                subset <- X[seq(range[1], range[2]), , drop = FALSE]
+            }
+            base::apply(subset, MARGIN, FUN, ...)
+        }, ..., mc.cores = mc.cores)
+        simplifyList(res)
+    }
 }
 
 
