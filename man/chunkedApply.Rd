@@ -2,10 +2,11 @@
 % Please edit documentation in R/utils.R
 \name{chunkedApply}
 \alias{chunkedApply}
-\title{Reads chunks of data into memory and applies a function on each row or
-column of a matrix.}
+\title{Reads chunks of data into memory and applies a function on each row or column
+of a matrix in parallel.}
 \usage{
-chunkedApply(X, MARGIN, FUN, bufferSize, verbose = FALSE, ...)
+chunkedApply(X, MARGIN, FUN, bufferSize, nTasks = parallel::detectCores(),
+  mc.cores = parallel::detectCores(), verbose = FALSE, ...)
 }
 \arguments{
 \item{X}{A matrix-like object, typically \code{@geno} of a
@@ -19,12 +20,18 @@ indicates rows, 2 indicates columns.}
 \item{bufferSize}{The number of rows or columns of \code{X} that are brought
 into memory for processing.}
 
+\item{nTasks}{The number of submatrices of each buffered subset of \code{X}
+to be processed in parallel.}
+
+\item{mc.cores}{The number of cores (passed to
+\code{\link[parallel]{mclapply}}).}
+
 \item{verbose}{Whether to print additional information.}
 
 \item{...}{Additional arguments to be passed to \code{parallelApply}.}
 }
 \description{
-\code{chunkedApply} uses \code{parallelApply} internally, so \code{nTasks}
-and \code{mc.cores} can be passed as \code{...}.
+Reads chunks of data into memory and applies a function on each row or column
+of a matrix in parallel.
 }
 

@@ -32,11 +32,8 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = parallel::detectCores(), mc.c
 }
 
 
-#' Reads chunks of data into memory and applies a function on each row or
-#' column of a matrix.
-#'
-#' \code{chunkedApply} uses \code{parallelApply} internally, so \code{nTasks}
-#' and \code{mc.cores} can be passed as \code{...}.
+#' Reads chunks of data into memory and applies a function on each row or column
+#' of a matrix in parallel.
 #'
 #' @param X A matrix-like object, typically \code{@@geno} of a
 #'   \code{\link[=BGData-class]{BGData}} object.
@@ -45,10 +42,14 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = parallel::detectCores(), mc.c
 #' @param FUN The function to be applied.
 #' @param bufferSize The number of rows or columns of \code{X} that are brought
 #'   into memory for processing.
+#' @param nTasks The number of submatrices of each buffered subset of \code{X}
+#'   to be processed in parallel.
+#' @param mc.cores The number of cores (passed to
+#'   \code{\link[parallel]{mclapply}}).
 #' @param verbose Whether to print additional information.
 #' @param ... Additional arguments to be passed to \code{parallelApply}.
 #' @export
-chunkedApply <- function(X, MARGIN, FUN, bufferSize, verbose = FALSE, ...) {
+chunkedApply <- function(X, MARGIN, FUN, bufferSize, nTasks = parallel::detectCores(), mc.cores = parallel::detectCores(), verbose = FALSE, ...) {
     d <- dim(X)
     if (!length(d)) {
         stop("dim(X) must have a positive length")
@@ -64,7 +65,7 @@ chunkedApply <- function(X, MARGIN, FUN, bufferSize, verbose = FALSE, ...) {
         } else {
             subset <- X[seq(ranges[1, i], ranges[2, i]), , drop = FALSE]
         }
-        parallelApply(X = subset, MARGIN = MARGIN, FUN = FUN, ...)
+        parallelApply(X = subset, MARGIN = MARGIN, FUN = FUN, nTasks = nTasks, mc.cores = mc.cores, ...)
     })
     simplifyList(res)
 }
