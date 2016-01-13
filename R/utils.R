@@ -432,6 +432,7 @@ getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, scaleG = TRUE, v
 #'   xx'.
 #' @param scaleCol TRUE/FALSE whether columns must be scaled before computing
 #'   xx'.
+#' @param scaleG TRUE/FALSE whether xx' must be scaled.
 #' @param nChunks2 The number of chunks that each chunk is split into for
 #'   processing in parallel.
 #' @param folder Folder in which to save the
@@ -442,10 +443,9 @@ getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, scaleG = TRUE, v
 #'   \code{\link[=symDMatrix-class]{symDMatrix}}
 #' @param mc.cores The number of cores (passed to
 #'   \code{\link[parallel]{mclapply}}).
-#' @param scaleG TRUE/FALSE whether xx' must be scaled.
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @export
-getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, scales = NULL, centerCol = T, scaleCol = T, nChunks2 = 1, folder = randomString(), vmode = "double", verbose = TRUE, saveRData = TRUE, mc.cores = parallel::detectCores(), scaleG = T) {
+getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, scales = NULL, centerCol = T, scaleCol = T, scaleG = T, nChunks2 = 1, folder = randomString(), vmode = "double", verbose = TRUE, saveRData = TRUE, mc.cores = parallel::detectCores()) {
 
     timeIn <- proc.time()[3]
     n <- nrow(X)

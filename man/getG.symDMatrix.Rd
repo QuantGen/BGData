@@ -6,9 +6,9 @@
 creating a \code{\link[=symDMatrix-class]{symDMatrix}}.}
 \usage{
 getG.symDMatrix(X, nChunks = 5, chunkSize = NULL, centers = NULL,
-  scales = NULL, centerCol = T, scaleCol = T, nChunks2 = 1,
-  folder = randomString(), vmode = "double", verbose = TRUE,
-  saveRData = TRUE, mc.cores = parallel::detectCores(), scaleG = T)
+  scales = NULL, centerCol = T, scaleCol = T, scaleG = T,
+  nChunks2 = 1, folder = randomString(), vmode = "double",
+  verbose = TRUE, saveRData = TRUE, mc.cores = parallel::detectCores())
 }
 \arguments{
 \item{X}{A matrix-like object, typically \code{@geno} of a
@@ -28,6 +28,8 @@ xx'.}
 \item{scaleCol}{TRUE/FALSE whether columns must be scaled before computing
 xx'.}
 
+\item{scaleG}{TRUE/FALSE whether xx' must be scaled.}
+
 \item{nChunks2}{The number of chunks that each chunk is split into for
 processing in parallel.}
 
@@ -43,8 +45,6 @@ processing in parallel.}
 
 \item{mc.cores}{The number of cores (passed to
 \code{\link[parallel]{mclapply}}).}
-
-\item{scaleG}{TRUE/FALSE whether xx' must be scaled.}
 }
 \value{
 A positive semi-definite symmetric numeric matrix.
