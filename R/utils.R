@@ -128,8 +128,8 @@ crossprods <- function(x, y = NULL, nChunks = parallel::detectCores(), use_tcros
             Xy <- crossprod(x, y)
         }
     } else {
-        TMP <- parallel::mclapply(X = 1:nChunks, FUN = crossprods.chunk, x = x, y = y, nChunks = nChunks, use_tcrossprod = use_tcrossprod, mc.cores = mc.cores)
-        ## We now need to add up chunks sequentially
+        TMP <- parallel::mclapply(X = seq_len(nChunks), FUN = crossprods.chunk, x = x, y = y, nChunks = nChunks, use_tcrossprod = use_tcrossprod, mc.cores = mc.cores)
+        # We now need to add up chunks sequentially
         Xy <- TMP[[1]]
         if (length(TMP) > 1) {
             for (i in 2:length(TMP)) {
@@ -210,7 +210,7 @@ tcrossprod.parallel <- function(x, y = NULL, nChunks = parallel::detectCores(), 
 #'   \code{\link[parallel]{mclapply}}).
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @export
-getG <- function(x, nChunks = ceiling(ncol(x) / 10000), scaleCol = TRUE, scaleG = TRUE, verbose = TRUE, i = 1:nrow(x), j = 1:ncol(x), i2 = NULL, minVar = 1e-05, nChunks2 = parallel::detectCores(), scales = NULL, centers = NULL, impute = TRUE, saveG = FALSE, saveType = "RData", saveName = "Gij", mc.cores = parallel::detectCores()) {
+getG <- function(x, nChunks = ceiling(ncol(x) / 10000), scaleCol = TRUE, scaleG = TRUE, verbose = TRUE, i = seq_len(nrow(x)), j = seq_len(ncol(x)), i2 = NULL, minVar = 1e-05, nChunks2 = parallel::detectCores(), scales = NULL, centers = NULL, impute = TRUE, saveG = FALSE, saveType = "RData", saveName = "Gij", mc.cores = parallel::detectCores()) {
     if (is.null(i2)) {
         G <- getGi(x = x, nChunks = nChunks, scaleCol = scaleCol, scaleG = scaleG, verbose = verbose, i = i, j = j, minVar = minVar, nChunks2 = nChunks2, mc.cores = mc.cores)
     } else {
@@ -230,7 +230,7 @@ getG <- function(x, nChunks = ceiling(ncol(x) / 10000), scaleCol = TRUE, scaleG 
 }
 
 
-getGi <- function(x, nChunks = ceiling(ncol(x) / 10000), scaleCol = TRUE, scaleG = TRUE, verbose = TRUE, i = 1:nrow(x), j = 1:ncol(x), minVar = 1e-05, nChunks2 = parallel::detectCores(), mc.cores = parallel::detectCores()) {
+getGi <- function(x, nChunks = ceiling(ncol(x) / 10000), scaleCol = TRUE, scaleG = TRUE, verbose = TRUE, i = seq_len(nrow(x)), j = seq_len(ncol(x)), minVar = 1e-05, nChunks2 = parallel::detectCores(), mc.cores = parallel::detectCores()) {
     nX <- nrow(x)
     pX <- ncol(x)
 
@@ -261,7 +261,7 @@ getGi <- function(x, nChunks = ceiling(ncol(x) / 10000), scaleCol = TRUE, scaleG
         }
     }
 
-    tmp <- x[i, 1:2]
+    tmp <- x[i, seq_len(2)]
     n <- nrow(tmp)
 
     G <- matrix(data = 0, nrow = n, ncol = n)
@@ -271,7 +271,7 @@ getGi <- function(x, nChunks = ceiling(ncol(x) / 10000), scaleCol = TRUE, scaleG
     end <- 0
     delta <- ceiling(p / nChunks)
 
-    for (k in 1:nChunks) {
+    for (k in seq_len(nChunks)) {
         ini <- end + 1
         if (ini <= p) {
             end <- min(p, ini + delta - 1)
@@ -321,7 +321,7 @@ getGi <- function(x, nChunks = ceiling(ncol(x) / 10000), scaleCol = TRUE, scaleG
 }
 
 
-getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, scaleG = TRUE, verbose = TRUE, nChunks = ceiling(ncol(x) / 10000), j = 1:ncol(x), minVar = 1e-05, nChunks2 = parallel::detectCores(), impute = TRUE, mc.cores = parallel::detectCores()) {
+getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, scaleG = TRUE, verbose = TRUE, nChunks = ceiling(ncol(x) / 10000), j = seq_len(ncol(x)), minVar = 1e-05, nChunks2 = parallel::detectCores(), impute = TRUE, mc.cores = parallel::detectCores()) {
 
     nX <- nrow(x)
     pX <- ncol(x)
@@ -361,7 +361,7 @@ getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, scaleG = TRUE, v
     end <- 0
     delta <- ceiling(p / nChunks)
 
-    for (k in 1:nChunks) {
+    for (k in seq_len(nChunks)) {
         ini <- end + 1
         if (ini <= p) {
             end <- min(p, ini + delta - 1)
@@ -469,7 +469,7 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
         if (is.null(centers) & is.null(scales)) {
             centers <- rep(NA, p)
             scales <- rep(NA, p)
-            for (i in 1:p) {
+            for (i in seq_len(p)) {
                 xi <- X[, i]
                 scales[i] <- sd(xi, na.rm = TRUE) * sqrt((n - 1) / n)
                 centers[i] <- mean(xi, na.rm = TRUE)
@@ -477,14 +477,14 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
         }
         if ((!is.null(centers)) & (is.null(scales))) {
             scales <- rep(NA, p)
-            for (i in 1:p) {
+            for (i in seq_len(p)) {
                 xi <- X[, i]
                 scales[i] <- sd(xi, na.rm = TRUE) * sqrt((n - 1) / n)
             }
         }
         if ((is.null(centers)) & (!is.null(scales))) {
             centers <- rep(NA, p)
-            for (i in 1:p) {
+            for (i in seq_len(p)) {
                 xi <- X[, i]
                 centers[i] <- mean(xi, na.rm = TRUE)
             }
@@ -512,13 +512,13 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
     dir.create(folder)
     setwd(folder)
 
-    for (i in 1:nChunks) {
+    for (i in seq_len(nChunks)) {
 
         DATA[[i]] <- list()
         Xi <- X[seq(chunkRanges[1, i], chunkRanges[2, i]), ]
 
         # centering/scaling
-        for (k in 1:p) {
+        for (k in seq_len(p)) {
             xik <- Xi[, k]
             xik <- (xik - centers[k]) / scales[k]
             xik[is.na(xik)] <- 0
@@ -534,7 +534,7 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
             Xj <- X[seq(chunkRanges[1, j], chunkRanges[2, j]), ]
 
             # centering/scaling
-            for (k in 1:p) {
+            for (k in seq_len(p)) {
                 xjk <- Xj[, k]
                 xjk <- (xjk - centers[k]) / scales[k]
                 xjk[is.na(xjk)] <- 0
@@ -558,15 +558,15 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
         }
     }
     if (is.null(rownames(X))) {
-        rownames(X) <- 1:n
+        rownames(X) <- seq_len(n)
     }
     names(centers) <- colnames(X)
     names(scales) <- colnames(X)
     G <- new("symDMatrix", names = rownames(X), data = DATA, centers = centers, scales = scales)
     if (scaleG) {
         K <- mean(diag(G))
-        for (i in 1:length(G@data)) {
-            for (j in 1:length(G@data[[i]])) {
+        for (i in seq_len(length(G@data))) {
+            for (j in seq_len(length(G@data[[i]]))) {
                 G@data[[i]][[j]][] <- G@data[[i]][[j]][] / K
             }
         }
@@ -710,7 +710,7 @@ GWAS.SKAT <- function(formula, data, groups, plot = FALSE, verbose = FALSE, min.
 
     H0 <- SKAT::SKAT_Null_Model(formula, data = data@pheno, ...)
 
-    for (i in 1:p) {
+    for (i in seq_len(p)) {
         time.in <- proc.time()[3]
         Z <- data@geno[, groups == levels[i], drop = FALSE]
         fm <- SKAT::SKAT(Z = Z, obj = H0, ...)
@@ -785,8 +785,8 @@ simPED <- function(filename, n, p, genoChars = 0:2, na.string = NA, propNA = 0.0
     if (file.exists(filename)) {
         stop(paste("File", filename, "already exists. Please move it or pick a different name."))
     }
-    markerNames <- paste0("mrk_", 1:p)
-    subjectNames <- paste0("id_", 1:n)
+    markerNames <- paste0("mrk_", seq_len(p))
+    subjectNames <- paste0("id_", seq_len(n))
     if (returnGenos) {
         OUT <- matrix(data = NA, nrow = n, ncol = p)
         colnames(OUT) <- markerNames
@@ -796,7 +796,7 @@ simPED <- function(filename, n, p, genoChars = 0:2, na.string = NA, propNA = 0.0
     pedP <- 6 + p
     header <- c(c("FID", "IID", "PAT", "MAT", "SEX", "PHENOTYPE"), markerNames)
     write(header, ncolumns = pedP, append = TRUE, file = fileOut)
-    for (i in 1:n) {
+    for (i in seq_len(n)) {
         geno <- sample(genoChars, size = p, replace = TRUE)
         geno[runif(p) < propNA] <- na.string
         pheno <- c(0, subjectNames[i], rep(NA, 4))

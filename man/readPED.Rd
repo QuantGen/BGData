@@ -54,7 +54,7 @@ each node.}
 \code{readPED} assumes that the plaintext file (\code{fileIn}) contains
 records of individuals in rows, and phenotypes, covariates and markers in
 columns. The columns included in the first couple of columns
-(\code{1:nColSkip}) are used to populate the \code{@pheno} slot of a
+(\code{seq_len(nColSkip)}) are used to populate the \code{@pheno} slot of a
 \code{\link[=BGData-class]{BGData}} object, and the remaining columns are
 used to fill the \code{@geno} slot. If the first row contains a header
 (\code{header=TRUE}), data in this row is used to determine variables names

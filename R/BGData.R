@@ -74,10 +74,10 @@ setMethod("initialize", "BGData", function(.Object, geno, pheno, map) {
         stop("Only LinkedMatrix, BEDMatrix, big.matrix, ff_matrix, or regular matrix objects are allowed for geno.")
     }
     if (is.null(colnames(geno))) {
-        colnames(geno) <- paste0("mrk_", 1:ncol(geno))
+        colnames(geno) <- paste0("mrk_", seq_len(ncol(geno)))
     }
     if (is.null(rownames(geno))) {
-        rownames(geno) <- paste0("id_", 1:nrow(geno))
+        rownames(geno) <- paste0("id_", seq_len(nrow(geno)))
     }
     if (missing(pheno)) {
         pheno <- data.frame(IID = rownames(geno))
@@ -118,13 +118,13 @@ parsePED <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1
     # Update colnames
     if (header) {
         headerLine <- scan(pedFile, nlines = 1, what = character(), quiet = TRUE)
-        colnames(BGData@pheno) <- headerLine[1:nColSkip]
-        colnames(BGData@geno) <- headerLine[-(1:nColSkip)]
+        colnames(BGData@pheno) <- headerLine[seq_len(nColSkip)]
+        colnames(BGData@geno) <- headerLine[-(seq_len(nColSkip))]
     }
 
     # Parse file
-    j <- 1:p
-    for (i in 1:nrow(BGData@geno)) {
+    j <- seq_len(p)
+    for (i in seq_len(nrow(BGData@geno))) {
         time <- proc.time()
         xSkip <- scan(pedFile, n = nColSkip, what = character(), quiet = TRUE)
         x <- scan(pedFile, n = p, what = dataType, na.strings = na.strings, quiet = TRUE)
@@ -156,7 +156,7 @@ parsePED <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1
 #' \code{readPED} assumes that the plaintext file (\code{fileIn}) contains
 #' records of individuals in rows, and phenotypes, covariates and markers in
 #' columns. The columns included in the first couple of columns
-#' (\code{1:nColSkip}) are used to populate the \code{@@pheno} slot of a
+#' (\code{seq_len(nColSkip)}) are used to populate the \code{@@pheno} slot of a
 #' \code{\link[=BGData-class]{BGData}} object, and the remaining columns are
 #' used to fill the \code{@@geno} slot. If the first row contains a header
 #' (\code{header=TRUE}), data in this row is used to determine variables names
@@ -288,8 +288,8 @@ readPED <- function(fileIn, header, dataType, n = NULL, p = NULL, na.strings = "
 #'
 #' \code{readPED.matrix} assumes that the plaintext file (\code{fileIn})
 #' contains records of individuals in rows, and phenotypes, covariates and
-#' markers in columns. The columns included in columns \code{1:nColSkip} are
-#' used to populate the slot \code{@@pheno} of a
+#' markers in columns. The columns included in columns \code{seq_len(nColSkip)}
+#' are used to populate the slot \code{@@pheno} of a
 #' \code{\link[=BGData-class]{BGData}} object, and the remaining columns are
 #' used to fill the slot \code{@@geno}. If the first row contains a header
 #' (\code{header=TRUE}), data in this row is used to determine variables names
@@ -343,7 +343,7 @@ readPED.matrix <- function(fileIn, header, dataType, n = NULL, p = NULL, na.stri
 #'
 #' \code{readPED.matrix} assumes that the plaintext file (\code{fileIn})
 #' contains records of individuals in rows, and phenotypes, covariates and
-#' markers in columns. The columns included in columns \code{1:nColSkip} are
+#' markers in columns. The columns included in columns \code{seq_len(nColSkip)} are
 #' used to populate the slot \code{@@pheno} of a
 #' \code{\link[=BGData-class]{BGData}} object, and the remaining columns are
 #' used to fill the slot \code{@@geno}. If the first row contains a header

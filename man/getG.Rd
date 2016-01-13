@@ -5,7 +5,7 @@
 \title{Computes a genomic relationship matrix G=xx'.}
 \usage{
 getG(x, nChunks = ceiling(ncol(x)/10000), scaleCol = TRUE, scaleG = TRUE,
-  verbose = TRUE, i = 1:nrow(x), j = 1:ncol(x), i2 = NULL,
+  verbose = TRUE, i = seq_len(nrow(x)), j = seq_len(ncol(x)), i2 = NULL,
   minVar = 1e-05, nChunks2 = parallel::detectCores(), scales = NULL,
   centers = NULL, impute = TRUE, saveG = FALSE, saveType = "RData",
   saveName = "Gij", mc.cores = parallel::detectCores())
