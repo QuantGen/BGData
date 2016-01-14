@@ -557,9 +557,6 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
             }
         }
     }
-    if (is.null(rownames(X))) {
-        rownames(X) <- seq_len(n)
-    }
     names(centers) <- colnames(X)
     names(scales) <- colnames(X)
     G <- new("symDMatrix", names = rownames(X), data = DATA, centers = centers, scales = scales)
