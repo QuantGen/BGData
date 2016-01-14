@@ -2,7 +2,7 @@ library(testthat)
 library(BGData)
 
 # Create temporary directory
-testPath <- paste0("/tmp/BGData-", randomString(), "/")
+testPath <- paste0("/tmp/BGData-", BGData:::randomString(), "/")
 dir.create(testPath)
 options("testPath") <- testPath
 
