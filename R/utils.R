@@ -516,7 +516,7 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
 
         DATA[[i]] <- list()
         rowIndex_i <- which(chunkID == i)
-        Xi <- X[rowIndex_i, ]
+        Xi <- X[rowIndex_i, , drop = FALSE]
 
         # centering/scaling
         for (k in seq_len(p)) {
@@ -533,7 +533,7 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
             }
 
             rowIndex_j <- which(chunkID == j)
-            Xj <- X[rowIndex_j, ]
+            Xj <- X[rowIndex_j, , drop = FALSE]
 
             # centering/scaling
             for (k in seq_len(p)) {
