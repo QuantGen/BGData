@@ -543,14 +543,12 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
 
             Gij <- tcrossprod.parallel(x = Xi, y = Xj, mc.cores = mc.cores, nChunks = nChunks2)
 
-            DATA[[i]][[j - i + 1]] <- ff::ff(dim = dim(Gij), vmode = vmode, initdata = as.vector(Gij),
-                                         filename = paste0("data_", i, "_", j, ".bin"))
-            colnames(DATA[[i]][[j - i + 1]]) <- colnames(X)[seq(chunkRanges[1, j], chunkRanges[2, j])]
+            DATA[[i]][[j - i + 1]] <- ff::ff(dim = dim(Gij), vmode = vmode, initdata = as.vector(Gij), filename = paste0("data_", i, "_", j, ".bin"))
+            colnames(DATA[[i]][[j - i + 1]]) <- rownames(X)[seq(chunkRanges[1, j], chunkRanges[2, j])]
             rownames(DATA[[i]][[j - i + 1]]) <- rownames(X)[seq(chunkRanges[1, i], chunkRanges[2, i])]
             counter <- counter + 1
             bit::physical(DATA[[i]][[j - i + 1]])$pattern <- "ff"
-            bit::physical(DATA[[i]][[j - i + 1]])$filename <- paste0("data_", i, "_",
-                j, ".bin")
+            bit::physical(DATA[[i]][[j - i + 1]])$filename <- paste0("data_", i, "_", j, ".bin")
 
             if (verbose) {
                 cat("  =>Done\n")
