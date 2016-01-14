@@ -1,6 +1,8 @@
 context("BGData")
 
-testPath <- getOption("testPath")
+# Create dummy path
+testPath <- paste0("/tmp/BGData-", BGData:::randomString(), "/")
+dir.create(testPath)
 
 restoreGenotypes <- function() {
     genotypes <- matrix(c(4, 4, 4, 3, 2, 3, 1, 2, 1), nrow = nRows, ncol = nCols)
