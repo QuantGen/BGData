@@ -4,6 +4,14 @@
 #' \code{\link[parallel]{mclapply}}. The number of cores can be configured using
 #' \code{mc.cores}. Uses \code{apply} from base internally.
 #'
+#' \code{nTasks} has to be chosen carefully to avoid running out of memory. As a
+#' rule of thumb, at least around \code{object_size(X) + (mc.cores *
+#' (object_size(X) / nTasks)) + object_size(result)} MB of total memory will be
+#' needed, not including potential copies of your data that might be created
+#' (for example \code{lsfit} runs \code{cbind(1, X)}). Therefore, for 20 nodes
+#' and 20 tasks you will need at least \code{2 * object_size(X)} MB, for 20
+#' nodes and 40 tasks \code{1.5 * object_size(X)} MB, etc.
+#'
 #' If \code{nTasks} equals 1, the regular \code{apply} function will be called
 #' to preserve memory.
 #'
@@ -44,6 +52,15 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = parallel::detectCores(), mc.c
 
 #' Reads chunks of data from a memory-mapped file into memory and applies a
 #' function on each row or column of a matrix in parallel.
+#'
+#' \code{bufferSize} and \code{nTasks} have to be chosen carefully to avoid
+#' running out of memory. As a rule of thumb, at least around
+#' \code{object_size(buffer) + (mc.cores * (object_size(buffer) / nTasks)) +
+#' object_size(result)} MB of total memory will be needed, not including
+#' potential copies of your data that might be created (for example \code{lsfit}
+#' runs \code{cbind(1, X)}). Therefore, for 20 nodes and 20 tasks you will need
+#' at least \code{2 * object_size(buffer)} MB, for 20 nodes and 40 tasks
+#' \code{1.5 * object_size(buffer)} MB, etc.
 #'
 #' This function is only useful for memory-mapped files. For data that is
 #' already in memory, use \code{\link{parallelApply}} directly.

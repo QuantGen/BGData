@@ -29,6 +29,14 @@ The input matrix \code{X} is broken into \code{nTasks} chunks and passed to
 \code{mc.cores}. Uses \code{apply} from base internally.
 }
 \details{
+\code{nTasks} has to be chosen carefully to avoid running out of memory. As a
+rule of thumb, at least around \code{object_size(X) + (mc.cores *
+(object_size(X) / nTasks)) + object_size(result)} MB of total memory will be
+needed, not including potential copies of your data that might be created
+(for example \code{lsfit} runs \code{cbind(1, X)}). Therefore, for 20 nodes
+and 20 tasks you will need at least \code{2 * object_size(X)} MB, for 20
+nodes and 40 tasks \code{1.5 * object_size(X)} MB, etc.
+
 If \code{nTasks} equals 1, the regular \code{apply} function will be called
 to preserve memory.
 }

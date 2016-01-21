@@ -31,6 +31,16 @@ to be processed in parallel.}
 \item{...}{Additional arguments to be passed to \code{parallelApply}.}
 }
 \description{
+\code{bufferSize} and \code{nTasks} have to be chosen carefully to avoid
+running out of memory. As a rule of thumb, at least around
+\code{object_size(buffer) + (mc.cores * (object_size(buffer) / nTasks)) +
+object_size(result)} MB of total memory will be needed, not including
+potential copies of your data that might be created (for example \code{lsfit}
+runs \code{cbind(1, X)}). Therefore, for 20 nodes and 20 tasks you will need
+at least \code{2 * object_size(buffer)} MB, for 20 nodes and 40 tasks
+\code{1.5 * object_size(buffer)} MB, etc.
+}
+\details{
 This function is only useful for memory-mapped files. For data that is
 already in memory, use \code{\link{parallelApply}} directly.
 }
