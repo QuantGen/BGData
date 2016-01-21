@@ -2,8 +2,8 @@
 % Please edit documentation in R/utils.R
 \name{chunkedApply}
 \alias{chunkedApply}
-\title{Reads chunks of data into memory and applies a function on each row or column
-of a matrix in parallel.}
+\title{Reads chunks of data from a memory-mapped file into memory and applies a
+function on each row or column of a matrix in parallel.}
 \usage{
 chunkedApply(X, MARGIN, FUN, bufferSize, nTasks = parallel::detectCores(),
   mc.cores = parallel::detectCores(), verbose = FALSE, ...)
@@ -31,7 +31,7 @@ to be processed in parallel.}
 \item{...}{Additional arguments to be passed to \code{parallelApply}.}
 }
 \description{
-Reads chunks of data into memory and applies a function on each row or column
-of a matrix in parallel.
+This function is only useful for memory-mapped files. For data that is
+already in memory, use \code{\link{parallelApply}} directly.
 }
 

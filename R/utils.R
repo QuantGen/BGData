@@ -42,8 +42,11 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = parallel::detectCores(), mc.c
 }
 
 
-#' Reads chunks of data into memory and applies a function on each row or column
-#' of a matrix in parallel.
+#' Reads chunks of data from a memory-mapped file into memory and applies a
+#' function on each row or column of a matrix in parallel.
+#'
+#' This function is only useful for memory-mapped files. For data that is
+#' already in memory, use \code{\link{parallelApply}} directly.
 #'
 #' @param X A matrix-like object, typically \code{@@geno} of a
 #'   \code{\link[=BGData-class]{BGData}} object.
