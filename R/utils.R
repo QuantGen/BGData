@@ -353,7 +353,7 @@ getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, scaleG = TRUE, v
         i1 <- which(i1)
     }
     if (is.logical(i2)) {
-        i1 <- which(i2)
+        i2 <- which(i2)
     }
     if (is.logical(j)) {
         j <- which(j)
