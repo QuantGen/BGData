@@ -7,8 +7,9 @@ creating a \code{\link[=symDMatrix-class]{symDMatrix}}.}
 \usage{
 getG.symDMatrix(X, nChunks = 5, chunkSize = NULL, centers = NULL,
   scales = NULL, centerCol = TRUE, scaleCol = TRUE, scaleG = TRUE,
-  nChunks2 = 1, folder = randomString(), vmode = "double",
-  verbose = TRUE, saveRData = TRUE, mc.cores = parallel::detectCores())
+  nChunks2 = parallel::detectCores(), folder = randomString(),
+  vmode = "double", verbose = TRUE, saveRData = TRUE,
+  mc.cores = parallel::detectCores())
 }
 \arguments{
 \item{X}{A matrix-like object, typically \code{@geno} of a
