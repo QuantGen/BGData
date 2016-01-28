@@ -14,7 +14,7 @@ hasCores <- function(numCores) {
 
 test_that("parallelApply fails if nTasks is illegal", {
     X <- matrix(data = 1, nrow = 1, ncol = 1)
-    for (nTasks in c(0, -1)) {
+    for (nTasks in c(0, -1, "a")) {
         expect_error(parallelApply(X, MARGIN = 1, bufferSize = 1, FUN = sum, nTasks = nTasks))
     }
 })

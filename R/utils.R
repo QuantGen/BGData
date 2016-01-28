@@ -30,10 +30,11 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = parallel::detectCores(), mc.c
     if (!length(d)) {
         stop("dim(X) must have a positive length")
     }
-    if (nTasks <= 0) {
+    nTasks <- as.integer(nTasks)
+    if (is.na(nTasks) || nTasks < 1L) {
         stop("nTasks has to be greater than 0")
     }
-    if (nTasks == 1) {
+    if (nTasks == 1L) {
         base::apply(X, MARGIN, FUN, ...)
     } else {
         res <- parallel::mclapply(X = seq_len(nTasks), FUN = function(i, ...) {
