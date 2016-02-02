@@ -89,7 +89,7 @@ chunkedApply <- function(X, MARGIN, FUN, bufferSize, nTasks = parallel::detectCo
     ranges <- LinkedMatrix:::chunkRanges(d[MARGIN], nChunks)
     res <- lapply(seq_len(nChunks), function(i) {
         if (verbose) {
-            cat("Processing chunk ", i, " of ", nChunks, " (", round(i / nChunks * 100, 3), "%) ...", "\n", sep = "")
+            message("Processing chunk ", i, " of ", nChunks, " (", round(i / nChunks * 100, 3), "%) ...")
         }
         if (MARGIN == 2) {
             subset <- X[, seq(ranges[1, i], ranges[2, i]), drop = FALSE]
@@ -297,8 +297,8 @@ getGi <- function(x, nChunks = ceiling(ncol(x) / 10000), scaleCol = TRUE, scaleG
         if (ini <= p) {
             end <- min(p, ini + delta - 1)
             if (verbose) {
-                cat("Chunk: ", k, " (markers ", ini, ":", end, " ~", round(100 * end / p, 1), "% done)\n", sep = "")
-                cat("  =>Acquiring genotypes...\n")
+                message("Chunk: ", k, " (markers ", ini, ":", end, " ~", round(100 * end / p, 1), "% done)")
+                message("  =>Acquiring genotypes...")
             }
 
             # subset
@@ -316,7 +316,7 @@ getGi <- function(x, nChunks = ceiling(ncol(x) / 10000), scaleCol = TRUE, scaleG
 
             if (ncol(X) > 0) {
                 if (verbose) {
-                  cat("  =>Computing...\n")
+                  message("  =>Computing...")
                 }
                 X <- scale(X, center = TRUE, scale = scaleCol)
                 TMP <- is.na(X)
@@ -387,8 +387,8 @@ getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, scaleG = TRUE, v
         if (ini <= p) {
             end <- min(p, ini + delta - 1)
             if (verbose) {
-                cat("Working with chunk: ", k, " (markers ", ini, ":", end, " ~", round(100 * ini / p, 1), "% done)\n", sep = "")
-                cat("  =>Acquiring genotypes...\n")
+                message("Working with chunk: ", k, " (markers ", ini, ":", end, " ~", round(100 * ini / p, 1), "% done)")
+                message("  =>Acquiring genotypes...")
             }
 
             # subset
@@ -416,7 +416,7 @@ getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, scaleG = TRUE, v
                   scales.chunk <- FALSE
                 }
                 if (verbose) {
-                  cat("  =>Computing...\n")
+                  message("  =>Computing...")
                 }
                 X1 <- scale(X1, center = centers.chunk, scale = scales.chunk)
                 TMP <- is.na(X1)
@@ -550,7 +550,7 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
         for (j in i:nChunks) {
 
             if (verbose) {
-                cat(" Working pair ", i, "-", j, " (", round(100 * counter / (nChunks * (nChunks + 1) / 2)), "% ", round(proc.time()[3] - timeIn, 3), " seconds).\n", sep = "")
+                message(" Working pair ", i, "-", j, " (", round(100 * counter / (nChunks * (nChunks + 1) / 2)), "% ", round(proc.time()[3] - timeIn, 3), " seconds).")
             }
 
             rowIndex_j <- which(chunkID == j)
@@ -574,7 +574,7 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
             bit::physical(DATA[[i]][[j - i + 1]])$filename <- paste0("data_", i, "_", j, ".bin")
 
             if (verbose) {
-                cat("  =>Done\n")
+                message("  =>Done")
             }
         }
     }
@@ -734,7 +734,7 @@ GWAS.SKAT <- function(formula, data, groups, plot = FALSE, verbose = FALSE, min.
         fm <- SKAT::SKAT(Z = Z, obj = H0, ...)
         OUT[i, ] <- c(ncol(Z), fm$p.value)
         if (verbose) {
-            cat(sep = "", "Group ", i, " of ", p, " (", round(proc.time()[3] - time.in, 2), " seconds / chunk, ", round(i / p * 100, 3), "% done )\n")
+            message("Group ", i, " of ", p, " (", round(proc.time()[3] - time.in, 2), " seconds / chunk, ", round(i / p * 100, 3), "% done)")
         }
     }
 

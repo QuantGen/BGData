@@ -131,7 +131,7 @@ parsePED <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1
         BGData@pheno[i, ] <- xSkip
         BGData@geno <- `[<-`(BGData@geno, i, j, ..., value = x)
         if (verbose) {
-            cat("Subject", i, " ", round(proc.time()[3] - time[3], 3), "sec / subject.", "\n")
+            message("Subject ", i, " (", round(proc.time()[3] - time[3], 3), " sec / subject)")
         }
     }
     close(pedFile)
