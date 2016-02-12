@@ -14,8 +14,8 @@ object.}
 \href{http://pngu.mgh.harvard.edu/~purcell/plink/data.shtml#pheno}{alternate
  phenotype file}.}
 
-\item{...}{Additional arguments to the \code{BEDMatrix} constructor
-(currently unused).}
+\item{...}{Additional arguments to the \code{read.table} call to parse the
+alternate pheno file.}
 }
 \value{
 A \code{\link[=BGData-class]{BGData}} object.

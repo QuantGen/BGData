@@ -453,8 +453,8 @@ as.BGData <- function(x, ...) {
 #' @param alternatePhenotypeFile Path to an
 #'   \href{http://pngu.mgh.harvard.edu/~purcell/plink/data.shtml#pheno}{alternate
 #'    phenotype file}.
-#' @param ... Additional arguments to the \code{BEDMatrix} constructor
-#'   (currently unused).
+#' @param ... Additional arguments to the \code{read.table} call to parse the
+#'   alternate pheno file.
 #' @return A \code{\link[=BGData-class]{BGData}} object.
 #' @export
 as.BGData.BEDMatrix <- function(x, alternatePhenotypeFile = NULL, ...) {
@@ -489,7 +489,7 @@ as.BGData.BEDMatrix <- function(x, alternatePhenotypeFile = NULL, ...) {
             if (grepl("FID\\s+IID", readLines(alternatePhenotypeFile, n = 1))) {
                 hasHeader = TRUE
             }
-            alternatePhenotypes <- read.table(alternatePhenotypeFile, header = hasHeader, stringsAsFactors = FALSE)
+            alternatePhenotypes <- read.table(alternatePhenotypeFile, header = hasHeader, stringsAsFactors = FALSE, ...)
             # Merge phenotypes and alternate phenotypes
             pheno <- merge(pheno, alternatePhenotypes, by.x = c("Family_ID", "Individual_ID"), by.y = c("FID", "IID"), all.x = TRUE)
         }
