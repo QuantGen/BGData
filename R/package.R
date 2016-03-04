@@ -2,7 +2,7 @@
 #'
 #' @docType package
 #' @name BGData-package
-#' @importFrom methods setClass setClassUnion setMethod
+#' @import methods
 #' @importClassesFrom LinkedMatrix LinkedMatrix
 #' @importClassesFrom symDMatrix symDMatrix
 #' @importClassesFrom bigmemory big.matrix
