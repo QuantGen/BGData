@@ -624,7 +624,7 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
 #'   parallel.
 #' @param mc.cores The number of cores (passed to
 #'   \code{\link[parallel]{mclapply}}).
-#' @param ... Optional arguments for chunkedApply and regression method.
+#' @param ... Additional arguments for chunkedApply and regression method.
 #' @return Returns a matrix with estimates, SE, p-value, etc.
 #' @export
 GWAS <- function(formula, data, method, plot = FALSE, verbose = FALSE, min.pValue = 1e-10, chunkSize = 5000, nTasks = parallel::detectCores(), mc.cores = parallel::detectCores(), ...) {

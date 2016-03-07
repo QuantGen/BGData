@@ -38,7 +38,7 @@ parallel.}
 \item{mc.cores}{The number of cores (passed to
 \code{\link[parallel]{mclapply}}).}
 
-\item{...}{Optional arguments for chunkedApply and regression method.}
+\item{...}{Additional arguments for chunkedApply and regression method.}
 }
 \value{
 Returns a matrix with estimates, SE, p-value, etc.
