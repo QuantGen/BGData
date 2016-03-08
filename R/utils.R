@@ -233,7 +233,7 @@ tcrossprod.parallel <- function(x, y = NULL, nChunks = parallel::detectCores(), 
 #' @export
 getG <- function(x, nChunks = ceiling(ncol(x) / 10000), scaleCol = TRUE, scaleG = TRUE, verbose = TRUE, i = seq_len(nrow(x)), j = seq_len(ncol(x)), i2 = NULL, minVar = 1e-05, nChunks2 = parallel::detectCores(), scales = NULL, centers = NULL, impute = TRUE, saveG = FALSE, saveType = "RData", saveName = "Gij", mc.cores = parallel::detectCores()) {
     if (is.null(i2)) {
-        G <- getGi(x = x, nChunks = nChunks, scaleCol = scaleCol, scaleG = scaleG, verbose = verbose, i = i, j = j, minVar = minVar, nChunks2 = nChunks2, mc.cores = mc.cores)
+        G <- getGi(x = x, nChunks = nChunks, scales = scales, centers = centers, scaleCol = scaleCol, scaleG = scaleG, verbose = verbose, i = i, j = j, minVar = minVar, nChunks2 = nChunks2, mc.cores = mc.cores)
     } else {
         if (is.null(scales) || is.null(centers)) stop("scales and centers need to be precomputed.")
         G <- getGij(x = x, i1 = i, i2 = i2, scales = scales, centers = centers, scaleCol = scaleCol, scaleG = scaleG, verbose = verbose, nChunks = nChunks, j = j, minVar = minVar, nChunks2 = nChunks2, impute = impute, mc.cores = mc.cores)
@@ -251,7 +251,7 @@ getG <- function(x, nChunks = ceiling(ncol(x) / 10000), scaleCol = TRUE, scaleG 
 }
 
 
-getGi <- function(x, nChunks = ceiling(ncol(x) / 10000), scaleCol = TRUE, scaleG = TRUE, verbose = TRUE, i = seq_len(nrow(x)), j = seq_len(ncol(x)), minVar = 1e-05, nChunks2 = parallel::detectCores(), mc.cores = parallel::detectCores()) {
+getGi <- function(x, nChunks = ceiling(ncol(x) / 10000), scales = NULL, centers = NULL, scaleCol = TRUE, scaleG = TRUE, verbose = TRUE, i = seq_len(nrow(x)), j = seq_len(ncol(x)), minVar = 1e-05, nChunks2 = parallel::detectCores(), mc.cores = parallel::detectCores()) {
     nX <- nrow(x)
     pX <- ncol(x)
 
@@ -305,20 +305,35 @@ getGi <- function(x, nChunks = ceiling(ncol(x) / 10000), scaleCol = TRUE, scaleG
             tmp <- j[ini:end]
             X <- x[i, tmp, drop = FALSE]
 
+            # compute centers
+            if (is.null(centers)) {
+                centers.chunk <- colMeans(X, na.rm = TRUE)
+            } else {
+                centers.chunk <- centers[tmp]
+            }
+
+            # compute scales
             if (scaleCol) {
-                VAR <- apply(X = X, FUN = var, MARGIN = 2, na.rm = TRUE)
-                tmp <- which(VAR < minVar)
+                if (is.null(scales)) {
+                    scales.chunk <- apply(X = X, MARGIN = 2, FUN = sd, na.rm = TRUE)
+                } else {
+                    scales.chunk <- scales[tmp]
+                }
+                tmp <- which(scales.chunk < minVar)
                 if (length(tmp) > 0) {
                   X <- X[, -tmp]
-                  VAR <- VAR[-tmp]
+                  scales.chunk <- scales.chunk[-tmp]
+                  centers.chunk <- centers.chunk[-tmp]
                 }
+            } else {
+                scales.chunk <- FALSE
             }
 
             if (ncol(X) > 0) {
                 if (verbose) {
                   message("  =>Computing...")
                 }
-                X <- scale(X, center = TRUE, scale = scaleCol)
+                X <- scale(X, center = centers.chunk, scale = scales.chunk)
                 TMP <- is.na(X)
                 if (any(TMP)) {
                   X <- ifelse(TMP, 0, X)
