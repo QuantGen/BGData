@@ -205,13 +205,14 @@ for (nCores in seq_len(2)) {
 
         genotypes <- matrix(data = c(0, 0, 1, 0, 2, 2, 1, 2, 0, 1, 2, 0, 0, 1, 2, 0, NA, 0), nrow = 3, ncol = 6)
 
-        dummy <- matrix(data = NA, nrow = ncol(genotypes), ncol = 2)
-        colnames(dummy) <- c("freq_na", "allele_freq")
+        dummy <- matrix(data = NA, nrow = ncol(genotypes), ncol = 3)
+        colnames(dummy) <- c("freq_na", "allele_freq", "sd")
         for (col in seq_len(ncol(genotypes))) {
             Z <- genotypes[, col]
             NAs <- sum(is.na(Z))
             dummy[col, 1] <- NAs / length(Z)
             dummy[col, 2] <- sum(Z, na.rm = TRUE) / ((length(Z) - NAs) * 2)
+            dummy[col, 3] <- sd(Z, na.rm = TRUE)
         }
 
         for (bufferSize in c(3, 6)) {

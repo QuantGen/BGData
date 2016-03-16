@@ -795,9 +795,10 @@ summarize <- function(X, verbose = FALSE, bufferSize = 5000, nTasks = parallel::
     res <- chunkedApply(X, 2, function(col) {
         freqNA <- mean(is.na(col))
         alleleFreq <- mean(col, na.rm = TRUE) / 2
-        cbind(freqNA, alleleFreq)
+        sd <- sd(col, na.rm = TRUE)
+        cbind(freqNA, alleleFreq, sd)
     }, bufferSize = bufferSize, verbose = verbose, nTasks = nTasks, mc.cores = mc.cores)
-    rownames(res) <- c("freq_na", "allele_freq")
+    rownames(res) <- c("freq_na", "allele_freq", "sd")
     colnames(res) <- colnames(X)
     t(res)
 }
