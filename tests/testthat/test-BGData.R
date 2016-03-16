@@ -30,6 +30,13 @@ close(outFile)
 close(outGzFile)
 
 
+context("initialize")
+
+test_that("it requires at least geno", {
+    expect_error(BGData())
+})
+
+
 context("readPED")
 
 test_that("it complains if folderOut already exists", {
