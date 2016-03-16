@@ -81,11 +81,9 @@ setMethod("initialize", "BGData", function(.Object, geno, pheno, map) {
     }
     if (missing(pheno)) {
         pheno <- data.frame(IID = rownames(geno))
-        rownames(pheno) <- rownames(geno)
     }
     if (missing(map)) {
         map <- data.frame(mrk = colnames(geno))
-        rownames(map) <- colnames(geno)
     }
     .Object@geno <- geno
     .Object@pheno <- pheno
