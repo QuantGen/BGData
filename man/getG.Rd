@@ -7,8 +7,8 @@
 getG(x, nChunks = ceiling(ncol(x)/10000), scaleCol = TRUE, scaleG = TRUE,
   verbose = TRUE, i = seq_len(nrow(x)), j = seq_len(ncol(x)), i2 = NULL,
   minVar = 1e-05, nChunks2 = parallel::detectCores(), scales = NULL,
-  centers = NULL, impute = TRUE, saveG = FALSE, saveType = "RData",
-  saveName = "Gij", mc.cores = parallel::detectCores())
+  centers = NULL, saveG = FALSE, saveType = "RData", saveName = "Gij",
+  mc.cores = parallel::detectCores())
 }
 \arguments{
 \item{x}{A matrix-like object, typically \code{@geno} of a
@@ -41,8 +41,6 @@ processing in parallel.}
 \item{scales}{Precomputed scales if i2 is used.}
 
 \item{centers}{Precomputed centers if i2 is used.}
-
-\item{impute}{Whether to impute data if i2 is used.}
 
 \item{saveG}{Whether to save genomic relationship matrix into file.}
 
