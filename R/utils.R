@@ -794,10 +794,10 @@ getCoefficients.lmerMod <- function(x) {
 summarize <- function(X, verbose = FALSE, bufferSize = 5000, nTasks = parallel::detectCores(), mc.cores = parallel::detectCores()) {
     res <- chunkedApply(X, 2, function(col) {
         freqNA <- mean(is.na(col))
-        allFreq <- mean(col, na.rm = TRUE) / 2
-        cbind(freqNA, allFreq)
+        alleleFreq <- mean(col, na.rm = TRUE) / 2
+        cbind(freqNA, alleleFreq)
     }, bufferSize = bufferSize, verbose = verbose, nTasks = nTasks, mc.cores = mc.cores)
-    rownames(res) <- c("freq_na", "freq_all")
+    rownames(res) <- c("freq_na", "allele_freq")
     colnames(res) <- colnames(X)
     t(res)
 }

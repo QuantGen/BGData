@@ -206,7 +206,7 @@ for (nCores in seq_len(2)) {
         genotypes <- matrix(data = c(0, 0, 1, 0, 2, 2, 1, 2, 0, 1, 2, 0, 0, 1, 2, 0, NA, 0), nrow = 3, ncol = 6)
 
         dummy <- matrix(data = NA, nrow = ncol(genotypes), ncol = 2)
-        colnames(dummy) <- c("freq_na", "freq_all")
+        colnames(dummy) <- c("freq_na", "allele_freq")
         for (col in seq_len(ncol(genotypes))) {
             Z <- genotypes[, col]
             NAs <- sum(is.na(Z))
