@@ -489,69 +489,99 @@ getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, scaleG = TRUE, v
 #'   \code{\link[=symDMatrix-class]{symDMatrix}}
 #' @param mc.cores The number of cores (passed to
 #'   \code{\link[parallel]{mclapply}}).
+#' @param i (integer, boolean or character) Indicates which rows should be used.
+#'   By default, all rows are used.
+#' @param j (integer, boolean or character) Indicates which columns should be
+#'   used. By default, all columns are used.
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @export
-getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, scales = NULL, centerCol = TRUE, scaleCol = TRUE, scaleG = TRUE, nChunks2 = parallel::detectCores(), folder = randomString(), vmode = "double", verbose = TRUE, saveRData = TRUE, mc.cores = parallel::detectCores()) {
+getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, scales = NULL, centerCol = TRUE, scaleCol = TRUE, scaleG = TRUE, nChunks2 = parallel::detectCores(), folder = randomString(), vmode = "double", verbose = TRUE, saveRData = TRUE, mc.cores = parallel::detectCores(), i = seq_len(nrow(X)), j = seq_len(ncol(X))) {
 
     timeIn <- proc.time()[3]
-    n <- nrow(X)
-    p <- ncol(X)
-    if (is.null(chunkSize)) {
-        chunkSize <- ceiling(n / nChunks)
+
+    nX <- nrow(X)
+    pX <- ncol(X)
+
+    # Convert boolean to integer index (it leads to a more efficient subsetting
+    # than booleans)
+    if (is.logical(i)) {
+        i <- which(i)
+    }
+    if (is.logical(j)) {
+        j <- which(j)
+    }
+
+    n <- length(i)
+    p <- length(j)
+
+    if (n > nX | p > pX) {
+        stop("Index out of bounds")
+    }
+    if (is.numeric(i)) {
+        if ((min(i) < 1) | (max(i) > nX)) {
+            stop("Index out of bounds")
+        }
+    }
+    if (is.numeric(j)) {
+        if ((min(j) < 1) | (max(j) > pX)) {
+            stop("Index out of bounds")
+        }
     }
 
     if ((centerCol | scaleCol) & (is.null(centers) | is.null(scales))) {
         if (is.null(centers) & is.null(scales)) {
             centers <- rep(double(), p)
             scales <- rep(double(), p)
-            for (i in seq_len(p)) {
-                xi <- X[, i]
-                scales[i] <- sd(xi, na.rm = TRUE) * sqrt((n - 1) / n)
-                centers[i] <- mean(xi, na.rm = TRUE)
+            for (k in seq_len(p)) {
+                xi <- X[i, j[k]]
+                scales[k] <- sd(xi, na.rm = TRUE) * sqrt((nX - 1) / nX)
+                centers[k] <- mean(xi, na.rm = TRUE)
             }
         }
         if ((!is.null(centers)) & (is.null(scales))) {
             scales <- rep(double(), p)
-            for (i in seq_len(p)) {
-                xi <- X[, i]
-                scales[i] <- sd(xi, na.rm = TRUE) * sqrt((n - 1) / n)
+            for (k in seq_len(p)) {
+                xi <- X[i, j[k]]
+                scales[k] <- sd(xi, na.rm = TRUE) * sqrt((nX - 1) / nX)
             }
         }
         if ((is.null(centers)) & (!is.null(scales))) {
             centers <- rep(double(), p)
-            for (i in seq_len(p)) {
-                xi <- X[, i]
-                centers[i] <- mean(xi, na.rm = TRUE)
+            for (k in seq_len(p)) {
+                xi <- X[i, j[k]]
+                centers[k] <- mean(xi, na.rm = TRUE)
             }
         }
     }
-
     if (!centerCol) {
         centers <- rep(0, p)
     }
-
     if (!scaleCol) {
         scales <- rep(1, p)
     }
 
-    chunkID <- ceiling(1:n/chunkSize)
-    nChunks <- max(chunkID)
-    nFiles <- nChunks * (nChunks + 1)/2
+    if (is.null(chunkSize)) {
+        chunkSize <- ceiling(n / nChunks)
+    }
+    chunkIndex <- cbind(i, ceiling(seq_len(n) / chunkSize))
+
+    nFiles <- nChunks * (nChunks + 1) / 2
     DATA <- list()
-    counter <- 1
 
     if (file.exists(folder)) {
         stop(folder, " already exists")
     }
-    tmpDir <- getwd()
+    curDir <- getwd()
     dir.create(folder)
     setwd(folder)
 
-    for (i in seq_len(nChunks)) {
+    counter <- 1
+    for (r in seq_len(nChunks)) {
 
-        DATA[[i]] <- list()
-        rowIndex_i <- which(chunkID == i)
-        Xi <- X[rowIndex_i, , drop = FALSE]
+        DATA[[r]] <- list()
+
+        rowIndex_r <- chunkIndex[which(chunkIndex[, 2] == r), 1]
+        Xi <- X[rowIndex_r, j, drop = FALSE]
 
         # centering/scaling
         for (k in seq_len(p)) {
@@ -561,14 +591,14 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
             Xi[, k] <- xik
         }
 
-        for (j in i:nChunks) {
+        for (s in r:nChunks) {
 
             if (verbose) {
-                message(" Working pair ", i, "-", j, " (", round(100 * counter / (nChunks * (nChunks + 1) / 2)), "% ", round(proc.time()[3] - timeIn, 3), " seconds).")
+                message(" Working pair ", r, "-", s, " (", round(100 * counter / (nChunks * (nChunks + 1) / 2)), "% ", round(proc.time()[3] - timeIn, 3), " seconds).")
             }
 
-            rowIndex_j <- which(chunkID == j)
-            Xj <- X[rowIndex_j, , drop = FALSE]
+            rowIndex_s <- chunkIndex[which(chunkIndex[, 2] == s), 1]
+            Xj <- X[rowIndex_s, j, drop = FALSE]
 
             # centering/scaling
             for (k in seq_len(p)) {
@@ -580,33 +610,38 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
 
             Gij <- tcrossprod.parallel(x = Xi, y = Xj, mc.cores = mc.cores, nChunks = nChunks2)
 
-            DATA[[i]][[j - i + 1]] <- ff::ff(dim = dim(Gij), vmode = vmode, initdata = as.vector(Gij), filename = paste0("data_", i, "_", j, ".bin"))
-            colnames(DATA[[i]][[j - i + 1]]) <- rownames(X)[rowIndex_j]
-            rownames(DATA[[i]][[j - i + 1]]) <- rownames(X)[rowIndex_i]
+            DATA[[r]][[s - r + 1]] <- ff::ff(dim = dim(Gij), vmode = vmode, initdata = as.vector(Gij), filename = paste0("data_", r, "_", s, ".bin"), dimnames = list(rownames(X)[rowIndex_r], rownames(X)[rowIndex_s]))
+            bit::physical(DATA[[r]][[s - r + 1]])$pattern <- "ff"
+            bit::physical(DATA[[r]][[s - r + 1]])$filename <- paste0("data_", r, "_", s, ".bin")
+
             counter <- counter + 1
-            bit::physical(DATA[[i]][[j - i + 1]])$pattern <- "ff"
-            bit::physical(DATA[[i]][[j - i + 1]])$filename <- paste0("data_", i, "_", j, ".bin")
 
             if (verbose) {
                 message("  =>Done")
             }
         }
     }
-    names(centers) <- colnames(X)
-    names(scales) <- colnames(X)
-    G <- new("symDMatrix", names = rownames(X), data = DATA, centers = centers, scales = scales)
+
+    names(centers) <- colnames(X)[j]
+    names(scales) <- colnames(X)[j]
+
+    G <- new("symDMatrix", names = rownames(X)[i], data = DATA, centers = centers, scales = scales)
+
     if (scaleG) {
         K <- mean(diag(G))
-        for (i in seq_len(length(G@data))) {
-            for (j in seq_len(length(G@data[[i]]))) {
-                G@data[[i]][[j]][] <- G@data[[i]][[j]][] / K
+        for (r in seq_len(length(G@data))) {
+            for (s in seq_len(length(G@data[[r]]))) {
+                G@data[[r]][[s]][] <- G@data[[r]][[s]][] / K
             }
         }
     }
+
     if (saveRData) {
         save(G, file = "G.RData")
     }
-    setwd(tmpDir)
+
+    setwd(curDir)
+
     return(G)
 }
 

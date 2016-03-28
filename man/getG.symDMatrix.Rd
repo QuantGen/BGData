@@ -9,7 +9,8 @@ getG.symDMatrix(X, nChunks = 5, chunkSize = NULL, centers = NULL,
   scales = NULL, centerCol = TRUE, scaleCol = TRUE, scaleG = TRUE,
   nChunks2 = parallel::detectCores(), folder = randomString(),
   vmode = "double", verbose = TRUE, saveRData = TRUE,
-  mc.cores = parallel::detectCores())
+  mc.cores = parallel::detectCores(), i = seq_len(nrow(X)),
+  j = seq_len(ncol(X)))
 }
 \arguments{
 \item{X}{A matrix-like object, typically \code{@geno} of a
@@ -46,6 +47,12 @@ processing in parallel.}
 
 \item{mc.cores}{The number of cores (passed to
 \code{\link[parallel]{mclapply}}).}
+
+\item{i}{(integer, boolean or character) Indicates which rows should be used.
+By default, all rows are used.}
+
+\item{j}{(integer, boolean or character) Indicates which columns should be
+used. By default, all columns are used.}
 }
 \value{
 A positive semi-definite symmetric numeric matrix.
