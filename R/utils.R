@@ -334,12 +334,13 @@ getGi <- function(x, nChunks = ceiling(ncol(x) / 10000), scales = NULL, centers 
                 } else {
                   G_chunk <- tcrossprod(X)
                 }
-                G <- G + G_chunk
+                G[] <- G + G_chunk
             }
         }
     }
     if (scaleG) {
-        G <- G / mean(diag(G))
+        # Use seq instead of diag to avoid copy as it does not increase ref count
+        G[] <- G / mean(G[seq(from = 1, to = n * n, by = n + 1)])
     }
 
     return(G)
@@ -422,8 +423,8 @@ getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, scaleG = TRUE, v
                 X1[is.na(X1)] <- 0
                 X2 <- scale(X2, center = centers.chunk, scale = scales.chunk)
                 X2[is.na(X2)] <- 0
-                TMP <- tcrossprod.parallel(x = X1, y = X2, mc.cores = mc.cores, nChunks = nChunks2)
-                G <- G + TMP
+                G_chunk <- tcrossprod.parallel(x = X1, y = X2, mc.cores = mc.cores, nChunks = nChunks2)
+                G[] <- G + G_chunk
             }
             if (scaleG) {
                 if (scaleCol) {
@@ -435,7 +436,7 @@ getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, scaleG = TRUE, v
         }
     }
     if (scaleG) {
-        G <- G / K
+        G[] <- G / K
     }
 
     return(G)
