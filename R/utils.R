@@ -254,7 +254,7 @@ getGi <- function(x, nChunks = ceiling(ncol(x) / 10000), scales = NULL, centers 
     nX <- nrow(x)
     pX <- ncol(x)
 
-    # converting boolean to integer index (it leads to a more efficient subsetting
+    # Convert boolean to integer index (it leads to a more efficient subsetting
     # than booleans)
     if (is.logical(i)) {
         i <- which(i)
@@ -269,7 +269,6 @@ getGi <- function(x, nChunks = ceiling(ncol(x) / 10000), scales = NULL, centers 
     if (n > nX | p > pX) {
         stop("Index out of bounds")
     }
-
     if (is.numeric(i)) {
         if ((min(i) < 1) | (max(i) > nX)) {
             stop("Index out of bounds")
@@ -281,34 +280,29 @@ getGi <- function(x, nChunks = ceiling(ncol(x) / 10000), scales = NULL, centers 
         }
     }
 
-    tmp <- x[i, seq_len(2)]
-    n <- nrow(tmp)
+    G <- matrix(data = 0, nrow = n, ncol = n, dimnames = list(rownames(x)[i], rownames(x)[i]))
 
-    G <- matrix(data = 0, nrow = n, ncol = n)
-    rownames(G) <- rownames(tmp)
-    colnames(G) <- rownames(G)
+    chunkSize <- ceiling(p / nChunks)
 
     end <- 0
-    delta <- ceiling(p / nChunks)
-
     for (k in seq_len(nChunks)) {
         ini <- end + 1
         if (ini <= p) {
-            end <- min(p, ini + delta - 1)
+            end <- min(p, ini + chunkSize - 1)
             if (verbose) {
                 message("Chunk: ", k, " (markers ", ini, ":", end, " ~", round(100 * end / p, 1), "% done)")
                 message("  =>Acquiring genotypes...")
             }
 
             # subset
-            tmp <- j[ini:end]
-            X <- x[i, tmp, drop = FALSE]
+            localColIndex <- j[ini:end]
+            X <- x[i, localColIndex, drop = FALSE]
 
             # compute centers
             if (is.null(centers)) {
                 centers.chunk <- colMeans(X, na.rm = TRUE)
             } else {
-                centers.chunk <- centers[tmp]
+                centers.chunk <- centers[localColIndex]
             }
 
             # compute scales
@@ -316,13 +310,13 @@ getGi <- function(x, nChunks = ceiling(ncol(x) / 10000), scales = NULL, centers 
                 if (is.null(scales)) {
                     scales.chunk <- apply(X = X, MARGIN = 2, FUN = sd, na.rm = TRUE)
                 } else {
-                    scales.chunk <- scales[tmp]
+                    scales.chunk <- scales[localColIndex]
                 }
-                tmp <- which(scales.chunk < minVar)
-                if (length(tmp) > 0) {
-                  X <- X[, -tmp]
-                  scales.chunk <- scales.chunk[-tmp]
-                  centers.chunk <- centers.chunk[-tmp]
+                removeCols <- which(scales.chunk < minVar)
+                if (length(removeCols) > 0) {
+                  X <- X[, -removeCols]
+                  scales.chunk <- scales.chunk[-removeCols]
+                  centers.chunk <- centers.chunk[-removeCols]
                 }
             } else {
                 scales.chunk <- FALSE
@@ -336,17 +330,16 @@ getGi <- function(x, nChunks = ceiling(ncol(x) / 10000), scales = NULL, centers 
                 X[is.na(X)] <- 0
 
                 if (nChunks2 > 1) {
-                  TMP <- crossprods(x = X, use_tcrossprod = TRUE, nChunks = nChunks2, mc.cores = mc.cores)
+                  G_chunk <- crossprods(x = X, use_tcrossprod = TRUE, nChunks = nChunks2, mc.cores = mc.cores)
                 } else {
-                  TMP <- tcrossprod(X)
+                  G_chunk <- tcrossprod(X)
                 }
-                G <- G + TMP
+                G <- G + G_chunk
             }
         }
     }
     if (scaleG) {
-        tmp <- mean(diag(G))
-        G <- G / tmp
+        G <- G / mean(diag(G))
     }
 
     return(G)
@@ -357,10 +350,9 @@ getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, scaleG = TRUE, v
 
     nX <- nrow(x)
     pX <- ncol(x)
-    K <- 0
 
-    # need to make this more general, convert character to boolean, booleand to
-    # integer
+    # Convert boolean to integer index (it leads to a more efficient subsetting
+    # than booleans)
     if (is.logical(i1)) {
         i1 <- which(i1)
     }
@@ -385,40 +377,37 @@ getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, scaleG = TRUE, v
         stop("Index out of bounds")
     }
 
-    G <- matrix(data = 0, nrow = n1, ncol = n2)
-    tmp <- rownames(x)
-    rownames(G) <- tmp[i1]
-    colnames(G) <- tmp[i2]
+    K <- 0
+
+    G <- matrix(data = 0, nrow = n1, ncol = n2, dimnames = list(rownames(x)[i1], rownames(x)[i2]))
+
+    chunkSize <- ceiling(p / nChunks)
 
     end <- 0
-    delta <- ceiling(p / nChunks)
-
     for (k in seq_len(nChunks)) {
         ini <- end + 1
         if (ini <= p) {
-            end <- min(p, ini + delta - 1)
+            end <- min(p, ini + chunkSize - 1)
             if (verbose) {
                 message("Working with chunk: ", k, " (markers ", ini, ":", end, " ~", round(100 * ini / p, 1), "% done)")
                 message("  =>Acquiring genotypes...")
             }
 
             # subset
-            tmpCol <- j[ini:end]
-            # K<-K+length(tmpCol)
-            X1 <- x[i1, tmpCol, drop = FALSE]
-            X2 <- x[i2, tmpCol, drop = FALSE]
-            centers.chunk <- centers[tmpCol]
-            scales.chunk <- scales[tmpCol]
+            localColIndex <- j[ini:end]
+            X1 <- x[i1, localColIndex, drop = FALSE]
+            X2 <- x[i2, localColIndex, drop = FALSE]
+            centers.chunk <- centers[localColIndex]
+            scales.chunk <- scales[localColIndex]
 
             if (scaleCol) {
-                tmp <- which(scales.chunk < sqrt(minVar))
+                removeCols <- which(scales.chunk < sqrt(minVar))
 
-                if (length(tmp) > 0) {
-                  # K<-K-length(tmp)
-                  X1 <- X1[, -tmp]
-                  X2 <- X2[, -tmp]
-                  scales.chunk <- scales.chunk[-tmp]
-                  centers.chunk <- centers.chunk[-tmp]
+                if (length(removeCols) > 0) {
+                  X1 <- X1[, -removeCols]
+                  X2 <- X2[, -removeCols]
+                  scales.chunk <- scales.chunk[-removeCols]
+                  centers.chunk <- centers.chunk[-removeCols]
                 }
             }
 
