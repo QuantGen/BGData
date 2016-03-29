@@ -333,10 +333,7 @@ getGi <- function(x, nChunks = ceiling(ncol(x) / 10000), scales = NULL, centers 
                   message("  =>Computing...")
                 }
                 X <- scale(X, center = centers.chunk, scale = scales.chunk)
-                TMP <- is.na(X)
-                if (any(TMP)) {
-                  X <- ifelse(TMP, 0, X)
-                }
+                X[is.na(X)] <- 0
 
                 if (nChunks2 > 1) {
                   TMP <- crossprods(x = X, use_tcrossprod = TRUE, nChunks = nChunks2, mc.cores = mc.cores)
@@ -433,15 +430,9 @@ getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, scaleG = TRUE, v
                   message("  =>Computing...")
                 }
                 X1 <- scale(X1, center = centers.chunk, scale = scales.chunk)
-                TMP <- is.na(X1)
-                if (any(TMP)) {
-                  X1 <- ifelse(TMP, 0, X1)
-                }
+                X1[is.na(X1)] <- 0
                 X2 <- scale(X2, center = centers.chunk, scale = scales.chunk)
-                TMP <- is.na(X2)
-                if (any(TMP)) {
-                  X2 <- ifelse(TMP, 0, X2)
-                }
+                X2[is.na(X2)] <- 0
                 TMP <- tcrossprod.parallel(x = X1, y = X2, mc.cores = mc.cores, nChunks = nChunks2)
                 G <- G + TMP
             }
