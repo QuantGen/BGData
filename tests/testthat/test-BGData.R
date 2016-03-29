@@ -55,37 +55,37 @@ test_that("it reads PED files into BGData objects", {
         # With minimum number of parameters (with exception of folderOut)
         BGData <- readPED(fileIn = adjPedPath, header = TRUE, dataType = integer(), folderOut = paste0(testPath, "test-", randomString()))
         expect_equal(BGData@pheno, phenotypes)
-        expect_equal(BGData@geno[], genotypes)
+        expect_equal(BGData@geno[], genotypes, check.attributes = FALSE)
 
         # With n
         BGData <- readPED(fileIn = adjPedPath, header = TRUE, dataType = integer(), n = nRows, folderOut = paste0(testPath, "test-", randomString()))
         expect_equal(BGData@pheno, phenotypes)
-        expect_equal(BGData@geno[], genotypes)
+        expect_equal(BGData@geno[], genotypes, check.attributes = FALSE)
 
         # With p
         BGData <- readPED(fileIn = adjPedPath, header = TRUE, dataType = integer(), p = nCols, folderOut = paste0(testPath, "test-", randomString()))
         expect_equal(BGData@pheno, phenotypes)
-        expect_equal(BGData@geno[], genotypes)
+        expect_equal(BGData@geno[], genotypes, check.attributes = FALSE)
 
         # With both n and p
         BGData <- readPED(fileIn = adjPedPath, header = TRUE, dataType = integer(), n = nRows, p = nCols, folderOut = paste0(testPath, "test-", randomString()))
         expect_equal(BGData@pheno, phenotypes)
-        expect_equal(BGData@geno[], genotypes)
+        expect_equal(BGData@geno[], genotypes, check.attributes = FALSE)
 
         # As integer
         class(genotypes) <- "integer"
         BGData <- readPED(fileIn = adjPedPath, header = TRUE, dataType = integer(), folderOut = paste0(testPath, "test-", randomString()))
-        expect_equal(BGData@geno[], genotypes)
+        expect_equal(BGData@geno[], genotypes, check.attributes = FALSE)
         BGData <- readPED(fileIn = adjPedPath, header = TRUE, dataType = "integer", folderOut = paste0(testPath, "test-", randomString()))
-        expect_equal(BGData@geno[], genotypes)
+        expect_equal(BGData@geno[], genotypes, check.attributes = FALSE)
         genotypes <- restoreGenotypes()
 
         # As double
         class(genotypes) <- "double"
         BGData <- readPED(fileIn = adjPedPath, header = TRUE, dataType = double(), folderOut = paste0(testPath, "test-", randomString()))
-        expect_equal(BGData@geno[], genotypes)
+        expect_equal(BGData@geno[], genotypes, check.attributes = FALSE)
         BGData <- readPED(fileIn = adjPedPath, header = TRUE, dataType = "double", folderOut = paste0(testPath, "test-", randomString()))
-        expect_equal(BGData@geno[], genotypes)
+        expect_equal(BGData@geno[], genotypes, check.attributes = FALSE)
         genotypes <- restoreGenotypes()
 
         # As character
