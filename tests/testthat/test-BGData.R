@@ -12,7 +12,7 @@ restoreGenotypes <- function() {
 }
 
 # Create example PED files
-pedPath <- paste0(testPath, "ped-", randomString(), ".txt")
+pedPath <- paste0(testPath, "ped-", BGData:::randomString(), ".txt")
 nRows <- 3
 nCols <- 3
 phenotypes <- data.frame(FID = c("1", "1", "1"), IID = c("1", "2", "3"), 
