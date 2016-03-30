@@ -218,8 +218,6 @@ for (nCores in seq_len(2)) {
         for (bufferSize in c(3, 6)) {
             for (nTasks in c(1, 3)) {
                 expect_equal(summarize(genotypes, bufferSize = bufferSize, nTasks = nTasks, mc.cores = nCores), dummy)
-                expect_equal(summarize(genotypes, bufferSize = bufferSize, nTasks = nTasks, mc.cores = nCores), dummy)
-                expect_equal(summarize(genotypes, bufferSize = bufferSize, nTasks = nTasks, mc.cores = nCores), dummy)
                 expect_equal(summarize(genotypes, mc.cores = nCores), dummy)
             }
         }
