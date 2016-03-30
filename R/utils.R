@@ -73,6 +73,10 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = parallel::detectCores(), mc.c
 #' @param FUN The function to be applied.
 #' @param bufferSize The number of rows or columns of \code{X} that are brought
 #'   into memory for processing.
+#' @param i (integer, boolean or character) Indicates which rows should be used.
+#'   By default, all rows are used.
+#' @param j (integer, boolean or character) Indicates which columns should be
+#'   used. By default, all columns are used.
 #' @param nTasks The number of submatrices of each buffered subset of \code{X}
 #'   to be processed in parallel.
 #' @param mc.cores The number of cores (passed to
@@ -80,21 +84,21 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = parallel::detectCores(), mc.c
 #' @param verbose Whether to print additional information.
 #' @param ... Additional arguments to be passed to \code{parallelApply}.
 #' @export
-chunkedApply <- function(X, MARGIN, FUN, bufferSize, nTasks = parallel::detectCores(), mc.cores = parallel::detectCores(), verbose = FALSE, ...) {
-    d <- dim(X)
-    if (!length(d)) {
+chunkedApply <- function(X, MARGIN, FUN, bufferSize, i = seq_len(nrow(X)), j = seq_len(ncol(X)), nTasks = parallel::detectCores(), mc.cores = parallel::detectCores(), verbose = FALSE, ...) {
+    if (!length(dim(X))) {
         stop("dim(X) must have a positive length")
     }
+    d <- c(length(i), length(j))
     nChunks <- ceiling(d[MARGIN] / bufferSize)
     ranges <- LinkedMatrix:::chunkRanges(d[MARGIN], nChunks)
-    res <- lapply(seq_len(nChunks), function(i) {
+    res <- lapply(seq_len(nChunks), function(k) {
         if (verbose) {
-            message("Processing chunk ", i, " of ", nChunks, " (", round(i / nChunks * 100, 3), "%) ...")
+            message("Processing chunk ", k, " of ", nChunks, " (", round(k / nChunks * 100, 3), "%) ...")
         }
         if (MARGIN == 2) {
-            subset <- X[, seq(ranges[1, i], ranges[2, i]), drop = FALSE]
+            subset <- X[i, j[seq(ranges[1, k], ranges[2, k])], drop = FALSE]
         } else {
-            subset <- X[seq(ranges[1, i], ranges[2, i]), , drop = FALSE]
+            subset <- X[i[seq(ranges[1, k], ranges[2, k])], j, drop = FALSE]
         }
         parallelApply(X = subset, MARGIN = MARGIN, FUN = FUN, nTasks = nTasks, mc.cores = mc.cores, ...)
     })

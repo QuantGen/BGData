@@ -5,7 +5,8 @@
 \title{Reads chunks of data from a memory-mapped file into memory and applies a
 function on each row or column of a matrix in parallel.}
 \usage{
-chunkedApply(X, MARGIN, FUN, bufferSize, nTasks = parallel::detectCores(),
+chunkedApply(X, MARGIN, FUN, bufferSize, i = seq_len(nrow(X)),
+  j = seq_len(ncol(X)), nTasks = parallel::detectCores(),
   mc.cores = parallel::detectCores(), verbose = FALSE, ...)
 }
 \arguments{
@@ -19,6 +20,12 @@ indicates rows, 2 indicates columns.}
 
 \item{bufferSize}{The number of rows or columns of \code{X} that are brought
 into memory for processing.}
+
+\item{i}{(integer, boolean or character) Indicates which rows should be used.
+By default, all rows are used.}
+
+\item{j}{(integer, boolean or character) Indicates which columns should be
+used. By default, all columns are used.}
 
 \item{nTasks}{The number of submatrices of each buffered subset of \code{X}
 to be processed in parallel.}
