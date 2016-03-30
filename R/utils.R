@@ -805,18 +805,22 @@ getCoefficients.lmerMod <- function(x) {
 #' @param verbose If TRUE more messages are printed.
 #' @param bufferSize Represents the number of columns of \code{@@geno} that are
 #'   brought into RAM for processing (5000 by default).
+#' @param i (integer, boolean or character) Indicates which rows should be used.
+#'   By default, all rows are used.
+#' @param j (integer, boolean or character) Indicates which columns should be
+#'   used. By default, all columns are used.
 #' @param nTasks Represents the number of parallel tasks each buffer is split
 #'   into.
 #' @param mc.cores The number of cores (passed to
 #'   \code{\link[parallel]{mclapply}}).
 #' @export
-summarize <- function(X, verbose = FALSE, bufferSize = 5000, nTasks = parallel::detectCores(), mc.cores = parallel::detectCores()) {
+summarize <- function(X, verbose = FALSE, bufferSize = 5000, i = seq_len(nrow(X)), j = seq_len(ncol(X)), nTasks = parallel::detectCores(), mc.cores = parallel::detectCores()) {
     res <- chunkedApply(X, 2, function(col) {
         freqNA <- mean(is.na(col))
         alleleFreq <- mean(col, na.rm = TRUE) / 2
         sd <- sd(col, na.rm = TRUE)
         cbind(freqNA, alleleFreq, sd)
-    }, bufferSize = bufferSize, verbose = verbose, nTasks = nTasks, mc.cores = mc.cores)
+    }, bufferSize = bufferSize, verbose = verbose, i = i, j = j, nTasks = nTasks, mc.cores = mc.cores)
     rownames(res) <- c("freq_na", "allele_freq", "sd")
     colnames(res) <- colnames(X)
     t(res)

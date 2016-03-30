@@ -4,8 +4,9 @@
 \alias{summarize}
 \title{Calculates frequencies of missing values and alleles.}
 \usage{
-summarize(X, verbose = FALSE, bufferSize = 5000,
-  nTasks = parallel::detectCores(), mc.cores = parallel::detectCores())
+summarize(X, verbose = FALSE, bufferSize = 5000, i = seq_len(nrow(X)),
+  j = seq_len(ncol(X)), nTasks = parallel::detectCores(),
+  mc.cores = parallel::detectCores())
 }
 \arguments{
 \item{X}{A matrix-like object, typically \code{@geno} of a
@@ -15,6 +16,12 @@ summarize(X, verbose = FALSE, bufferSize = 5000,
 
 \item{bufferSize}{Represents the number of columns of \code{@geno} that are
 brought into RAM for processing (5000 by default).}
+
+\item{i}{(integer, boolean or character) Indicates which rows should be used.
+By default, all rows are used.}
+
+\item{j}{(integer, boolean or character) Indicates which columns should be
+used. By default, all columns are used.}
 
 \item{nTasks}{Represents the number of parallel tasks each buffer is split
 into.}

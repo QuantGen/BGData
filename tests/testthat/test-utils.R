@@ -205,20 +205,25 @@ for (nCores in seq_len(2)) {
 
         genotypes <- matrix(data = c(0, 0, 1, 0, 2, 2, 1, 2, 0, 1, 2, 0, 0, 1, 2, 0, NA, 0), nrow = 3, ncol = 6)
 
-        dummy <- matrix(data = NA, nrow = ncol(genotypes), ncol = 3)
-        colnames(dummy) <- c("freq_na", "allele_freq", "sd")
-        for (col in seq_len(ncol(genotypes))) {
-            Z <- genotypes[, col]
-            NAs <- sum(is.na(Z))
-            dummy[col, 1] <- NAs / length(Z)
-            dummy[col, 2] <- sum(Z, na.rm = TRUE) / ((length(Z) - NAs) * 2)
-            dummy[col, 3] <- sd(Z, na.rm = TRUE)
+        computeDummy <- function(i = seq_len(nrow(genotypes)), j = seq_len(ncol(genotypes))) {
+            dummy <- matrix(data = double(), nrow = length(j), ncol = 3, dimnames = list(NULL, c("freq_na", "allele_freq", "sd")))
+            for (col in seq_len(length(j))) {
+                Z <- genotypes[i, j[col]]
+                NAs <- sum(is.na(Z))
+                dummy[col, 1] <- NAs / length(Z)
+                dummy[col, 2] <- sum(Z, na.rm = TRUE) / ((length(Z) - NAs) * 2)
+                dummy[col, 3] <- sd(Z, na.rm = TRUE)
+            }
+            return(dummy)
         }
 
         for (bufferSize in c(3, 6)) {
             for (nTasks in c(1, 3)) {
-                expect_equal(summarize(genotypes, bufferSize = bufferSize, nTasks = nTasks, mc.cores = nCores), dummy)
-                expect_equal(summarize(genotypes, mc.cores = nCores), dummy)
+                expect_equal(summarize(genotypes, bufferSize = bufferSize, nTasks = nTasks, mc.cores = nCores), computeDummy())
+                expect_equal(summarize(genotypes, bufferSize = bufferSize, i = c(1, 3), nTasks = nTasks, mc.cores = nCores), computeDummy(i = c(1, 3)))
+                expect_equal(summarize(genotypes, bufferSize = bufferSize, j = c(1, 3, 5), nTasks = nTasks, mc.cores = nCores), computeDummy(j =  c(1, 3, 5)))
+                expect_equal(summarize(genotypes, bufferSize = bufferSize, i = c(1, 3), j = c(1, 3, 5), nTasks = nTasks, mc.cores = nCores), computeDummy(i = c(1, 3), j = c(1, 3, 5)))
+                expect_equal(summarize(genotypes, mc.cores = nCores), computeDummy())
             }
         }
 
