@@ -38,7 +38,7 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = parallel::detectCores(), mc.c
         base::apply(X, MARGIN, FUN, ...)
     } else {
         res <- parallel::mclapply(X = seq_len(nTasks), FUN = function(i, ...) {
-            range <- LinkedMatrix:::chunkRanges(ifelse(MARGIN == 2, ncol(X), nrow(X)), nTasks, i)
+            range <- LinkedMatrix:::chunkRanges(d[MARGIN], nTasks, i)
             if (MARGIN == 2) {
                 subset <- X[, seq(range[1], range[2]), drop = FALSE]
             } else {
