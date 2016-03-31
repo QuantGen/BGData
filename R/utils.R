@@ -222,8 +222,7 @@ crossprods <- function(x, y = NULL, nChunks = parallel::detectCores(), use_tcros
 #' @return x'y' or x'x depending on whether y is provided.
 #' @export
 crossprod.parallel <- function(x, y = NULL, nChunks = parallel::detectCores(), mc.cores = parallel::detectCores()) {
-    ans <- crossprods(x = x, y = y, nChunks = nChunks, mc.cores = mc.cores, use_tcrossprod = FALSE)
-    return(ans)
+    crossprods(x = x, y = y, nChunks = nChunks, mc.cores = mc.cores, use_tcrossprod = FALSE)
 }
 
 
@@ -238,8 +237,7 @@ crossprod.parallel <- function(x, y = NULL, nChunks = parallel::detectCores(), m
 #' @return xy' or xx' depending on whether y is provided.
 #' @export
 tcrossprod.parallel <- function(x, y = NULL, nChunks = parallel::detectCores(), mc.cores = parallel::detectCores()) {
-    ans <- crossprods(x = x, y = y, nChunks = nChunks, mc.cores = mc.cores, use_tcrossprod = TRUE)
-    return(ans)
+    crossprods(x = x, y = y, nChunks = nChunks, mc.cores = mc.cores, use_tcrossprod = TRUE)
 }
 
 
