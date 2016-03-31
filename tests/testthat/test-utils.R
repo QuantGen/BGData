@@ -33,8 +33,6 @@ for (nCores in seq_len(2)) {
                 expect_equal(chunkedApply(X, MARGIN = 2, bufferSize = bufferSize, FUN = sum, nTasks = nTasks), colSums(X))
                 expect_equal(chunkedApply(X, MARGIN = 1, bufferSize = bufferSize, FUN = sum, nTasks = nTasks), apply(X, 1, sum))
                 expect_equal(chunkedApply(X, MARGIN = 2, bufferSize = bufferSize, FUN = sum, nTasks = nTasks), apply(X, 2, sum))
-                expect_equal(chunkedApply(X, MARGIN = 1, bufferSize = bufferSize, FUN = summary, nTasks = nTasks), apply(X, 1, summary))
-                expect_equal(chunkedApply(X, MARGIN = 2, bufferSize = bufferSize, FUN = summary, nTasks = nTasks), apply(X, 2, summary))
             }
         }
 

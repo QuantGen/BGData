@@ -26,7 +26,7 @@ parallel.}
 \description{
 The input matrix \code{X} is broken into \code{nTasks} chunks and passed to
 \code{\link[parallel]{mclapply}}. The number of cores can be configured using
-\code{mc.cores}. Uses \code{apply} from base internally.
+\code{mc.cores}.
 }
 \details{
 \code{nTasks} has to be chosen carefully to avoid running out of memory. As a

@@ -1,8 +1,53 @@
+# A more memory-efficient version of apply.
+#
+# apply always makes a copy of the data.
+apply2 <- function(X, MARGIN, FUN, ...) {
+    d <- dim(X)
+    if (MARGIN == 1) {
+        subset <- X[1, ]
+    } else {
+        subset <- X[, 1]
+    }
+    sample <- FUN(subset, ...)
+    if (is.table(sample)) {
+        stop("tables are not supported.")
+    } else if (is.matrix(sample)) {
+        OUT <- matrix(data = normalizeType(typeof(sample)), nrow = length(sample), ncol = d[MARGIN])
+        OUT[, 1] <- sample
+        if (d[MARGIN] > 1) {
+            for (i in seq(2, d[MARGIN])) {
+                if (MARGIN == 1) {
+                    subset <- X[i, ]
+                } else {
+                    subset <- X[, i]
+                }
+                OUT[, i] <- FUN(subset, ...)
+            }
+        }
+    } else {
+        OUT <- vector(mode = typeof(sample), length = d[MARGIN])
+        names(OUT) <- dimnames(X)[[MARGIN]]
+        OUT[1] <- sample
+        if (d[MARGIN] > 1) {
+            for (i in seq(2, d[MARGIN])) {
+                if (MARGIN == 1) {
+                    subset <- X[i, ]
+                } else {
+                    subset <- X[, i]
+                }
+                OUT[i] <- FUN(subset, ...)
+            }
+        }
+    }
+    return(OUT)
+}
+
+
 #' Applies a function on each row or column of a matrix in parallel.
 #'
 #' The input matrix \code{X} is broken into \code{nTasks} chunks and passed to
 #' \code{\link[parallel]{mclapply}}. The number of cores can be configured using
-#' \code{mc.cores}. Uses \code{apply} from base internally.
+#' \code{mc.cores}.
 #'
 #' \code{nTasks} has to be chosen carefully to avoid running out of memory. As a
 #' rule of thumb, at least around \code{object_size(X) + (mc.cores *
@@ -35,7 +80,7 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = parallel::detectCores(), mc.c
         stop("nTasks has to be greater than 0")
     }
     if (nTasks == 1L) {
-        base::apply(X, MARGIN, FUN, ...)
+        apply2(X, MARGIN, FUN, ...)
     } else {
         res <- parallel::mclapply(X = seq_len(nTasks), FUN = function(i, ...) {
             range <- LinkedMatrix:::chunkRanges(d[MARGIN], nTasks, i)
@@ -44,7 +89,7 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = parallel::detectCores(), mc.c
             } else {
                 subset <- X[seq(range[1], range[2]), , drop = FALSE]
             }
-            base::apply(subset, MARGIN, FUN, ...)
+            apply2(subset, MARGIN, FUN, ...)
         }, ..., mc.cores = mc.cores)
         simplifyList(res)
     }
