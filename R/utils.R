@@ -159,21 +159,23 @@ crossprods.chunk <- function(chunk, x, y = NULL, nChunks = parallel::detectCores
         nY <- ifelse(use_tcrossprod, ncol(y), nrow(y))
         ranges <- LinkedMatrix:::chunkRanges(nY, nChunks, chunk)
         if (use_tcrossprod) {
-            y <- y[, seq(ranges[1], ranges[2]), drop = FALSE]
+            Y <- y[, seq(ranges[1], ranges[2]), drop = FALSE]
         } else {
-            y <- y[seq(ranges[1], ranges[2]), , drop = FALSE]
+            Y <- y[seq(ranges[1], ranges[2]), , drop = FALSE]
         }
+    } else {
+        Y <- NULL
     }
     nX <- ifelse(use_tcrossprod, ncol(x), nrow(x))
     ranges <- LinkedMatrix:::chunkRanges(nX, nChunks, chunk)
     if (use_tcrossprod) {
         X <- x[, seq(ranges[1], ranges[2]), drop = FALSE]
-        Xy <- tcrossprod(X, y)
+        XY <- tcrossprod(X, Y)
     } else {
         X <- x[seq(ranges[1], ranges[2]), , drop = FALSE]
-        Xy <- crossprod(X, y)
+        XY <- crossprod(X, Y)
     }
-    return(Xy)
+    return(XY)
 }
 
 
