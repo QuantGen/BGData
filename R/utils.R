@@ -151,48 +151,22 @@ chunkedApply <- function(X, MARGIN, FUN, bufferSize, i = seq_len(nrow(X)), j = s
 }
 
 
-# Performs crossprod() or tcrossprod() for a chunk (set of columns or sets of
-# rows) of x.
-crossprods.chunk <- function(chunk, x, y = NULL, nChunks = parallel::detectCores(), use_tcrossprod = FALSE) {
+# Computes crossprod(x,y) or tcrossprod(x,y)
+crossprods <- function(x, y = NULL, nChunks = parallel::detectCores(), use_tcrossprod = FALSE, mc.cores = parallel::detectCores()) {
+    dx <- dim(x)
     if (!is.null(y)) {
         y <- as.matrix(y)
-        nY <- ifelse(use_tcrossprod, ncol(y), nrow(y))
-        ranges <- LinkedMatrix:::chunkRanges(nY, nChunks, chunk)
+        dy <- dim(y)
         if (use_tcrossprod) {
-            Y <- y[, seq(ranges[1], ranges[2]), drop = FALSE]
-        } else {
-            Y <- y[seq(ranges[1], ranges[2]), , drop = FALSE]
-        }
-    } else {
-        Y <- NULL
-    }
-    nX <- ifelse(use_tcrossprod, ncol(x), nrow(x))
-    ranges <- LinkedMatrix:::chunkRanges(nX, nChunks, chunk)
-    if (use_tcrossprod) {
-        X <- x[, seq(ranges[1], ranges[2]), drop = FALSE]
-        XY <- tcrossprod(X, Y)
-    } else {
-        X <- x[seq(ranges[1], ranges[2]), , drop = FALSE]
-        XY <- crossprod(X, Y)
-    }
-    return(XY)
-}
-
-
-crossprods <- function(x, y = NULL, nChunks = parallel::detectCores(), use_tcrossprod = FALSE, mc.cores = parallel::detectCores()) {
-    if (!is.null(y)) {
-        if (use_tcrossprod) {
-            if (ncol(x) != ncol(y)) {
+            if (dx[2] != ncol(y)) {
                 stop("Error in tcrossprod.parallel: non-conformable arguments.")
             }
         } else {
-            if (nrow(x) != nrow(y)) {
+            if (dx[1] != dy[1]) {
                 stop("Error in crossprod.parallel: non-conformable arguments.")
             }
         }
     }
-
-    # Computes crossprod(x,y) or tcrossprod(x,y)
     if (nChunks == 1) {
         if (use_tcrossprod) {
             Xy <- tcrossprod(x, y)
@@ -200,12 +174,36 @@ crossprods <- function(x, y = NULL, nChunks = parallel::detectCores(), use_tcros
             Xy <- crossprod(x, y)
         }
     } else {
-        TMP <- parallel::mclapply(X = seq_len(nChunks), FUN = crossprods.chunk, x = x, y = y, nChunks = nChunks, use_tcrossprod = use_tcrossprod, mc.cores = mc.cores)
+        nX <- ifelse(use_tcrossprod, dx[2], dx[1])
+        if (!is.null(y)) {
+            nY <- ifelse(use_tcrossprod, dy[2], dy[1])
+        }
+        chunks <- parallel::mclapply(X = seq_len(nChunks), FUN = function(chunk) {
+            if (!is.null(y)) {
+                ranges <- LinkedMatrix:::chunkRanges(nY, nChunks, chunk)
+                if (use_tcrossprod) {
+                    Y <- y[, seq(ranges[1], ranges[2]), drop = FALSE]
+                } else {
+                    Y <- y[seq(ranges[1], ranges[2]), , drop = FALSE]
+                }
+            } else {
+                Y <- NULL
+            }
+            ranges <- LinkedMatrix:::chunkRanges(nX, nChunks, chunk)
+            if (use_tcrossprod) {
+                X <- x[, seq(ranges[1], ranges[2]), drop = FALSE]
+                Xy <- tcrossprod(X, Y)
+            } else {
+                X <- x[seq(ranges[1], ranges[2]), , drop = FALSE]
+                Xy <- crossprod(X, Y)
+            }
+            return(Xy)
+        })
         # We now need to add up chunks sequentially
-        Xy <- TMP[[1]]
-        if (length(TMP) > 1) {
-            for (i in 2:length(TMP)) {
-                Xy <- Xy + TMP[[i]]
+        Xy <- chunks[[1]]
+        if (length(chunks) > 1) {
+            for (i in 2:length(chunks)) {
+                Xy <- Xy + chunks[[i]]
             }
         }
     }
