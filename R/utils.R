@@ -978,11 +978,11 @@ normalizeType <- function(val) {
 
 simplifyList <- function(x) {
     sample <- x[[1]]
-    if (is.vector(sample)) {
-        x <- unlist(x)
-    } else if (is.matrix(sample)) {
+    if (is.matrix(sample)) {
         x <- matrix(data = unlist(x), nrow = nrow(sample), byrow = FALSE)
         rownames(x) <- rownames(sample)
+    } else {
+        x <- unlist(x)
     }
     return(x)
 }
