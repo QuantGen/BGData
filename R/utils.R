@@ -24,6 +24,20 @@ apply2 <- function(X, MARGIN, FUN, ...) {
                 OUT[, i] <- FUN(subset, ...)
             }
         }
+    } else if (is.list(sample)) {
+        OUT <- vector(mode = "list", length = d[MARGIN])
+        names(OUT) <- dimnames(X)[[MARGIN]]
+        OUT[[1]] <- sample
+        if (d[MARGIN] > 1) {
+            for (i in seq(2, d[MARGIN])) {
+                if (MARGIN == 1) {
+                    subset <- X[i, ]
+                } else {
+                    subset <- X[, i]
+                }
+                OUT[[i]] <- FUN(subset, ...)
+            }
+        }
     } else {
         OUT <- vector(mode = typeof(sample), length = d[MARGIN])
         names(OUT) <- dimnames(X)[[MARGIN]]
