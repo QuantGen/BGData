@@ -11,20 +11,8 @@ apply2 <- function(X, MARGIN, FUN, ...) {
     sample <- FUN(subset, ...)
     if (is.table(sample)) {
         stop("tables are not supported.")
-    } else if (is.matrix(sample)) {
-        OUT <- matrix(data = normalizeType(typeof(sample)), nrow = length(sample), ncol = d[MARGIN])
-        OUT[, 1] <- sample
-        if (d[MARGIN] > 1) {
-            for (i in seq(2, d[MARGIN])) {
-                if (MARGIN == 1) {
-                    subset <- X[i, ]
-                } else {
-                    subset <- X[, i]
-                }
-                OUT[, i] <- FUN(subset, ...)
-            }
-        }
     } else if (is.list(sample)) {
+        # List
         OUT <- vector(mode = "list", length = d[MARGIN])
         names(OUT) <- dimnames(X)[[MARGIN]]
         OUT[[1]] <- sample
@@ -39,17 +27,41 @@ apply2 <- function(X, MARGIN, FUN, ...) {
             }
         }
     } else {
-        OUT <- vector(mode = typeof(sample), length = d[MARGIN])
-        names(OUT) <- dimnames(X)[[MARGIN]]
-        OUT[1] <- sample
-        if (d[MARGIN] > 1) {
-            for (i in seq(2, d[MARGIN])) {
+        if (length(sample) > 1) {
+            # Matrix or atomic vector of length > 1
+            OUT <- matrix(data = normalizeType(typeof(sample)), nrow = length(sample), ncol = d[MARGIN])
+            if (!is.matrix(sample) && !is.null(names(sample))) {
                 if (MARGIN == 1) {
-                    subset <- X[i, ]
+                    dimnames(OUT) <- list(NULL, names(sample))
                 } else {
-                    subset <- X[, i]
+                    dimnames(OUT) <- list(names(sample), NULL)
                 }
-                OUT[i] <- FUN(subset, ...)
+            }
+            OUT[, 1] <- sample
+            if (d[MARGIN] > 1) {
+                for (i in seq(2, d[MARGIN])) {
+                    if (MARGIN == 1) {
+                        subset <- X[i, ]
+                    } else {
+                        subset <- X[, i]
+                    }
+                    OUT[, i] <- FUN(subset, ...)
+                }
+            }
+        } else {
+            # Atomic vector of length 1
+            OUT <- vector(mode = typeof(sample), length = d[MARGIN])
+            names(OUT) <- dimnames(X)[[MARGIN]]
+            OUT[1] <- sample
+            if (d[MARGIN] > 1) {
+                for (i in seq(2, d[MARGIN])) {
+                    if (MARGIN == 1) {
+                        subset <- X[i, ]
+                    } else {
+                        subset <- X[, i]
+                    }
+                    OUT[i] <- FUN(subset, ...)
+                }
             }
         }
     }
