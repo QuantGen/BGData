@@ -227,6 +227,31 @@ for (nCores in seq_len(2)) {
 
     })
 
+
+    test_that(paste("GWAS", "on", nCores, "cores"), {
+
+        hasCores(nCores)
+
+        X <- matrix(data = rnorm(50), nrow = 5, ncol = 10)
+        y <- data.frame(y = rnorm(5))
+
+        DATA <- BGData(geno = X, pheno = y)
+
+        comp <- t(apply(X, 2, function(z) {
+            fm <- lsfit(x = cbind(z, 1), y = y, intercept = FALSE)
+            ls.print(fm, print.it = FALSE)$coef.table[[1]][1, ]
+        }))
+        rownames(comp) <- colnames(DATA@geno)
+
+        for (bufferSize in c(3, 6)) {
+            for (nTasks in c(1, 2)) {
+                fm <- GWAS(formula = y ~ 1, data = DATA, method = "lsfit", chunkSize = bufferSize, nTasks = nTasks, mc.cores = nCores)
+                expect_equal(comp, fm)
+            }
+        }
+
+    })
+
 }
 
 
