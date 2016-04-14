@@ -667,7 +667,7 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
     names(centers) <- colnames(X)[j]
     names(scales) <- colnames(X)[j]
 
-    G <- new("symDMatrix", names = rownames(X)[i], data = DATA, centers = centers, scales = scales)
+    G <- new("symDMatrix", data = DATA, centers = centers, scales = scales)
 
     if (scaleG) {
         K <- mean(diag(G))
