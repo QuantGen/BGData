@@ -116,7 +116,7 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = parallel::detectCores(), mc.c
                 subset <- X[seq(range[1], range[2]), , drop = FALSE]
             }
             apply2(subset, MARGIN, FUN, ...)
-        }, ..., mc.cores = mc.cores)
+        }, ..., mc.preschedule = FALSE, mc.cores = mc.cores)
         simplifyList(res)
     }
 }
@@ -224,7 +224,7 @@ crossprods <- function(x, y = NULL, nChunks = parallel::detectCores(), use_tcros
                 Xy <- crossprod(X, Y)
             }
             return(Xy)
-        }, mc.cores = mc.cores)
+        }, mc.preschedule = FALSE, mc.cores = mc.cores)
         # We now need to add up chunks sequentially
         Xy <- chunks[[1]]
         if (length(chunks) > 1) {
