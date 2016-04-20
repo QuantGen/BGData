@@ -224,7 +224,7 @@ crossprods <- function(x, y = NULL, nChunks = parallel::detectCores(), use_tcros
                 Xy <- crossprod(X, Y)
             }
             return(Xy)
-        })
+        }, mc.cores = mc.cores)
         # We now need to add up chunks sequentially
         Xy <- chunks[[1]]
         if (length(chunks) > 1) {
