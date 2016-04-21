@@ -80,10 +80,10 @@ setMethod("initialize", "BGData", function(.Object, geno, pheno, map) {
         rownames(geno) <- paste0("id_", seq_len(nrow(geno)))
     }
     if (missing(pheno)) {
-        pheno <- data.frame(IID = rownames(geno))
+        pheno <- data.frame(IID = rownames(geno), stringsAsFactors = FALSE)
     }
     if (missing(map)) {
-        map <- data.frame(mrk = colnames(geno))
+        map <- data.frame(mrk = colnames(geno), stringsAsFactors = FALSE)
     }
     .Object@geno <- geno
     .Object@pheno <- pheno
@@ -263,7 +263,7 @@ readPED <- function(fileIn, header, dataType, n = NULL, p = NULL, na.strings = "
     index <- LinkedMatrix::index(geno)
 
     # Prepare pheno
-    pheno <- as.data.frame(matrix(nrow = dims$n, ncol = nColSkip))
+    pheno <- as.data.frame(matrix(nrow = dims$n, ncol = nColSkip), stringsAsFactors = FALSE)
 
     # Construct BGData object
     BGData <- new("BGData", geno = geno, pheno = pheno)
@@ -323,7 +323,7 @@ readPED.matrix <- function(fileIn, header, dataType, n = NULL, p = NULL, na.stri
     geno <- matrix(nrow = dims$n, ncol = dims$p)
 
     # Prepare pheno
-    pheno <- as.data.frame(matrix(nrow = dims$n, ncol = nColSkip))
+    pheno <- as.data.frame(matrix(nrow = dims$n, ncol = nColSkip), stringsAsFactors = FALSE)
 
     # Construct BGData object
     BGData <- new("BGData", geno = geno, pheno = pheno)
@@ -402,7 +402,7 @@ readPED.big.matrix <- function(fileIn, header, dataType, n = NULL, p = NULL, na.
     geno <- bigmemory::filebacked.big.matrix(nrow = dims$n, ncol = dims$p, type = type, backingpath = folderOut, backingfile = "BGData.bin", descriptorfile = "BGData.desc")
 
     # Prepare pheno
-    pheno <- as.data.frame(matrix(nrow = dims$n, ncol = nColSkip))
+    pheno <- as.data.frame(matrix(nrow = dims$n, ncol = nColSkip), stringsAsFactors = FALSE)
 
     # Construct BGData object
     BGData <- new("BGData", geno = geno, pheno = pheno)
@@ -472,7 +472,7 @@ as.BGData.BEDMatrix <- function(x, alternatePhenotypeFile = NULL, ...) {
             "Phenotype"
         ), stringsAsFactors = FALSE)
     } else {
-        pheno <- data.frame(IID = rownames(x))
+        pheno <- data.frame(IID = rownames(x), stringsAsFactors = FALSE)
         rownames(pheno) <- rownames(x)
     }
     if (!is.null(alternatePhenotypeFile)) {
