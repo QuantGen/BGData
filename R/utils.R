@@ -280,6 +280,8 @@ tcrossprod.parallel <- function(x, y = NULL, nChunks = parallel::detectCores(), 
 #' @param nChunks The number of columns that are processed at a time.
 #' @param scaleCol TRUE/FALSE whether columns must be scaled before computing
 #'   xx'.
+#' @param centerCol TRUE/FALSE whether columns must be centered before computing
+#'   xx'.
 #' @param scaleG TRUE/FALSE whether xx' must be scaled.
 #' @param verbose If TRUE more messages are printed.
 #' @param i (integer, boolean or character) Indicates which rows should be used.
@@ -303,12 +305,12 @@ tcrossprod.parallel <- function(x, y = NULL, nChunks = parallel::detectCores(), 
 #'   \code{\link[parallel]{mclapply}}).
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @export
-getG <- function(x, nChunks = ceiling(ncol(x) / 10000), scaleCol = TRUE, scaleG = TRUE, verbose = TRUE, i = seq_len(nrow(x)), j = seq_len(ncol(x)), i2 = NULL, minVar = 1e-05, nChunks2 = parallel::detectCores(), scales = NULL, centers = NULL, saveG = FALSE, saveType = "RData", saveName = "Gij", mc.cores = parallel::detectCores()) {
+getG <- function(x, nChunks = ceiling(ncol(x) / 10000), scaleCol = TRUE, centerCol = TRUE, scaleG = TRUE, verbose = TRUE, i = seq_len(nrow(x)), j = seq_len(ncol(x)), i2 = NULL, minVar = 1e-05, nChunks2 = parallel::detectCores(), scales = NULL, centers = NULL, saveG = FALSE, saveType = "RData", saveName = "Gij", mc.cores = parallel::detectCores()) {
     if (is.null(i2)) {
-        G <- getGi(x = x, nChunks = nChunks, scales = scales, centers = centers, scaleCol = scaleCol, scaleG = scaleG, verbose = verbose, i = i, j = j, minVar = minVar, nChunks2 = nChunks2, mc.cores = mc.cores)
+        G <- getGi(x = x, nChunks = nChunks, scales = scales, centers = centers, scaleCol = scaleCol, centerCol = centerCol, scaleG = scaleG, verbose = verbose, i = i, j = j, minVar = minVar, nChunks2 = nChunks2, mc.cores = mc.cores)
     } else {
         if (is.null(scales) || is.null(centers)) stop("scales and centers need to be precomputed.")
-        G <- getGij(x = x, i1 = i, i2 = i2, scales = scales, centers = centers, scaleCol = scaleCol, scaleG = scaleG, verbose = verbose, nChunks = nChunks, j = j, minVar = minVar, nChunks2 = nChunks2, mc.cores = mc.cores)
+        G <- getGij(x = x, i1 = i, i2 = i2, scales = scales, centers = centers, scaleCol = scaleCol, centerCol = centerCol, scaleG = scaleG, verbose = verbose, nChunks = nChunks, j = j, minVar = minVar, nChunks2 = nChunks2, mc.cores = mc.cores)
     }
     if (saveG) {
         if (saveType == "RData") {
@@ -323,7 +325,7 @@ getG <- function(x, nChunks = ceiling(ncol(x) / 10000), scaleCol = TRUE, scaleG 
 }
 
 
-getGi <- function(x, nChunks = ceiling(ncol(x) / 10000), scales = NULL, centers = NULL, scaleCol = TRUE, scaleG = TRUE, verbose = TRUE, i = seq_len(nrow(x)), j = seq_len(ncol(x)), minVar = 1e-05, nChunks2 = parallel::detectCores(), mc.cores = parallel::detectCores()) {
+getGi <- function(x, nChunks = ceiling(ncol(x) / 10000), scales = NULL, centers = NULL, scaleCol = TRUE, centerCol = FALSE, scaleG = TRUE, verbose = TRUE, i = seq_len(nrow(x)), j = seq_len(ncol(x)), minVar = 1e-05, nChunks2 = parallel::detectCores(), mc.cores = parallel::detectCores()) {
     nX <- nrow(x)
     pX <- ncol(x)
 
@@ -372,10 +374,14 @@ getGi <- function(x, nChunks = ceiling(ncol(x) / 10000), scales = NULL, centers 
             X <- x[i, localColIndex, drop = FALSE]
 
             # compute centers
-            if (is.null(centers)) {
-                centers.chunk <- colMeans(X, na.rm = TRUE)
+            if (centerCol) {
+                if (is.null(centers)) {
+                    centers.chunk <- colMeans(X, na.rm = TRUE)
+                } else {
+                    centers.chunk <- centers[localColIndex]
+                }
             } else {
-                centers.chunk <- centers[localColIndex]
+                centers.chunk = FALSE
             }
 
             # compute scales
@@ -420,7 +426,7 @@ getGi <- function(x, nChunks = ceiling(ncol(x) / 10000), scales = NULL, centers 
 }
 
 
-getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, scaleG = TRUE, verbose = TRUE, nChunks = ceiling(ncol(x) / 10000), j = seq_len(ncol(x)), minVar = 1e-05, nChunks2 = parallel::detectCores(), mc.cores = parallel::detectCores()) {
+getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, centerCol = TRUE,scaleG = TRUE, verbose = TRUE, nChunks = ceiling(ncol(x) / 10000), j = seq_len(ncol(x)), minVar = 1e-05, nChunks2 = parallel::detectCores(), mc.cores = parallel::detectCores()) {
 
     nX <- nrow(x)
     pX <- ncol(x)
@@ -476,7 +482,6 @@ getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, scaleG = TRUE, v
 
             if (scaleCol) {
                 removeCols <- which(scales.chunk < sqrt(minVar))
-
                 if (length(removeCols) > 0) {
                   X1 <- X1[, -removeCols]
                   X2 <- X2[, -removeCols]
@@ -486,11 +491,14 @@ getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, scaleG = TRUE, v
             }
 
             if (ncol(X1) > 0) {
+                if (!centerCol) {
+                    centers.chunk <- FALSE
+                }
                 if (!scaleCol) {
-                  scales.chunk <- FALSE
+                    scales.chunk <- FALSE
                 }
                 if (verbose) {
-                  message("  =>Computing...")
+                    message("  =>Computing...")
                 }
                 X1 <- scale(X1, center = centers.chunk, scale = scales.chunk)
                 X1[is.na(X1)] <- 0
@@ -501,9 +509,9 @@ getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, scaleG = TRUE, v
             }
             if (scaleG) {
                 if (scaleCol) {
-                  K <- K + ncol(X1)
+                    K <- K + ncol(X1)
                 } else {
-                  K <- K + sum(scales.chunk^2)
+                    K <- K + sum(scales.chunk^2)
                 }
             }
         }

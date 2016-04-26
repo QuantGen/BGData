@@ -107,7 +107,7 @@ for (nCores in seq_len(2)) {
         for (nChunks in c(1, 3)) {
             for (nChunks2 in c(1, 3)) {
 
-                # all scalings
+                # both scalings
                 G <- tcrossprod(scale(X))
                 G <- G / mean(diag(G))
                 G2 <- getG(x = X, scaleG = TRUE, scaleCol = TRUE, verbose = FALSE, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
@@ -127,6 +127,11 @@ for (nCores in seq_len(2)) {
                 # no scaling at all
                 G <- tcrossprod(scale(X, center = TRUE, scale = FALSE))
                 G2 <- getG(x = X, scaleG = FALSE, scaleCol = FALSE, verbose = FALSE, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
+                expect_equal(G, G2, check.attributes = FALSE)
+
+                # neither scaling nor centering
+                G <- tcrossprod(X)
+                G2 <- getG(x = X, scaleG = FALSE, centerCol = FALSE, scaleCol = FALSE, verbose = FALSE, nChunks = nChunks, nChunks2 = nChunks2, mc.cores = nCores)
                 expect_equal(G, G2, check.attributes = FALSE)
 
             }

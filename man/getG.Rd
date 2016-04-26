@@ -4,10 +4,11 @@
 \alias{getG}
 \title{Computes a genomic relationship matrix G=xx'.}
 \usage{
-getG(x, nChunks = ceiling(ncol(x)/10000), scaleCol = TRUE, scaleG = TRUE,
-  verbose = TRUE, i = seq_len(nrow(x)), j = seq_len(ncol(x)), i2 = NULL,
-  minVar = 1e-05, nChunks2 = parallel::detectCores(), scales = NULL,
-  centers = NULL, saveG = FALSE, saveType = "RData", saveName = "Gij",
+getG(x, nChunks = ceiling(ncol(x)/10000), scaleCol = TRUE,
+  centerCol = TRUE, scaleG = TRUE, verbose = TRUE, i = seq_len(nrow(x)),
+  j = seq_len(ncol(x)), i2 = NULL, minVar = 1e-05,
+  nChunks2 = parallel::detectCores(), scales = NULL, centers = NULL,
+  saveG = FALSE, saveType = "RData", saveName = "Gij",
   mc.cores = parallel::detectCores())
 }
 \arguments{
@@ -17,6 +18,9 @@ getG(x, nChunks = ceiling(ncol(x)/10000), scaleCol = TRUE, scaleG = TRUE,
 \item{nChunks}{The number of columns that are processed at a time.}
 
 \item{scaleCol}{TRUE/FALSE whether columns must be scaled before computing
+xx'.}
+
+\item{centerCol}{TRUE/FALSE whether columns must be centered before computing
 xx'.}
 
 \item{scaleG}{TRUE/FALSE whether xx' must be scaled.}
