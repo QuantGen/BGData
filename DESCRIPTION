@@ -38,8 +38,9 @@ Imports:
     bigmemory,
     bit
 Suggests:
-    testthat,
     lme4,
-    SKAT
+    SKAT,
+    testthat,
+    roxygen2
 Remotes: QuantGen/symDMatrix
 RoxygenNote: 5.0.1
