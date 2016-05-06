@@ -5,9 +5,8 @@
 \title{Performs single marker regressions using a
 \code{\link[=BGData-class]{BGData}} object.}
 \usage{
-GWAS(formula, data, method, plot = FALSE, verbose = FALSE,
-  min.pValue = 1e-10, chunkSize = 5000, nTasks = parallel::detectCores(),
-  mc.cores = parallel::detectCores(), ...)
+GWAS(formula, data, method, verbose = FALSE, chunkSize = 5000,
+  nTasks = parallel::detectCores(), mc.cores = parallel::detectCores(), ...)
 }
 \arguments{
 \item{formula}{A formula (e.g. weight~sex+age) with the response on the
@@ -21,13 +20,7 @@ the right-hand side. The variables included in the formula must be in the
 methods are implemented: \code{\link{lm}}, \code{\link{lm.fit}},
 \code{\link{lsfit}}, \code{\link{glm}} and \code{\link[lme4]{lmer}}.}
 
-\item{plot}{If TRUE a Manhattan plot is produced and filled with points as
-the association tests are run.}
-
 \item{verbose}{If TRUE more messages are printed.}
-
-\item{min.pValue}{Numeric, the minimum p-value expected, used to determine
-the limits of the vertical axis of the Manhattan plot.}
 
 \item{chunkSize}{Represents the number of columns of \code{@geno} that are
 brought into RAM for processing (5000 by default).}

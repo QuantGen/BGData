@@ -724,11 +724,7 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
 #' @param method The regression method to be used. Currently, the following
 #'   methods are implemented: \code{\link{lm}}, \code{\link{lm.fit}},
 #'   \code{\link{lsfit}}, \code{\link{glm}} and \code{\link[lme4]{lmer}}.
-#' @param plot If TRUE a Manhattan plot is produced and filled with points as
-#'   the association tests are run.
 #' @param verbose If TRUE more messages are printed.
-#' @param min.pValue Numeric, the minimum p-value expected, used to determine
-#'   the limits of the vertical axis of the Manhattan plot.
 #' @param chunkSize Represents the number of columns of \code{@@geno} that are
 #'   brought into RAM for processing (5000 by default).
 #' @param nTasks The number of submatrices of \code{X} to be processed in
@@ -738,7 +734,7 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
 #' @param ... Additional arguments for chunkedApply and regression method.
 #' @return Returns a matrix with estimates, SE, p-value, etc.
 #' @export
-GWAS <- function(formula, data, method, plot = FALSE, verbose = FALSE, min.pValue = 1e-10, chunkSize = 5000, nTasks = parallel::detectCores(), mc.cores = parallel::detectCores(), ...) {
+GWAS <- function(formula, data, method, verbose = FALSE, chunkSize = 5000, nTasks = parallel::detectCores(), mc.cores = parallel::detectCores(), ...) {
 
     if (class(data) != "BGData") {
         stop("data must BGData")
@@ -751,9 +747,9 @@ GWAS <- function(formula, data, method, plot = FALSE, verbose = FALSE, min.pValu
     # We can have specialized methods, for instance for OLS it is better to use
     # lsfit (that is what GWAS.ols does)
     if (method %in% c("lm", "lm.fit", "lsfit")) {
-        OUT <- GWAS.ols(formula = formula, data = data, plot = plot, verbose = verbose, min.pValue = min.pValue, chunkSize = chunkSize, nTasks = nTasks, mc.cores = mc.cores, ...)
+        OUT <- GWAS.ols(formula = formula, data = data, verbose = verbose, chunkSize = chunkSize, nTasks = nTasks, mc.cores = mc.cores, ...)
     } else if (method == "SKAT") {
-        OUT <- GWAS.SKAT(formula = formula, data = data, plot = plot, verbose = verbose, min.pValue = min.pValue, ...)
+        OUT <- GWAS.SKAT(formula = formula, data = data, verbose = verbose, ...)
     } else {
         if (method == "lmer") {
             if (!requireNamespace("lme4", quietly = TRUE)) {
@@ -774,21 +770,6 @@ GWAS <- function(formula, data, method, plot = FALSE, verbose = FALSE, min.pValu
         OUT <- t(OUT)
     }
 
-    if (plot) {
-        # This code assumes that the p-values that are plotted on the y-axis
-        # are in the last column of the output.
-        title <- paste(as.character(formula[2]), as.character(formula[3]), sep = "~")
-        plot(numeric() ~ numeric(), xlim = c(0, nrow(OUT)), ylim = c(0, -log(min.pValue, base = 10)), ylab = "-log(p-value)", xlab = "Marker", main = title)
-        for (i in seq_len(nrow(OUT))) {
-            x <- c(i - 1, i)
-            y <- -log(OUT[x, ncol(OUT)], base = 10)
-            if (i > 1) {
-                lines(x = x, y = y, col = 8, lwd = 0.5)
-            }
-            points(x = i, y = y[2], col = 2, cex = 0.5)
-        }
-    }
-
     return(OUT)
 }
 
@@ -798,7 +779,7 @@ GWAS <- function(formula, data, method, plot = FALSE, verbose = FALSE, min.pValu
 # y~1 or y~factor(sex)+age
 # all the variables in the formula must be in data@pheno data (BGData)
 # containing slots @pheno and @geno
-GWAS.ols <- function(formula, data, plot = FALSE, verbose = FALSE, min.pValue = 1e-10, chunkSize = 10, nTasks = parallel::detectCores(), mc.cores = parallel::detectCores(), ...) {
+GWAS.ols <- function(formula, data, verbose = FALSE, chunkSize = 10, nTasks = parallel::detectCores(), mc.cores = parallel::detectCores(), ...) {
 
     X <- model.matrix(formula, data@pheno)
     X <- X[match(rownames(data@pheno), rownames(X)), ]
@@ -824,7 +805,7 @@ GWAS.ols <- function(formula, data, plot = FALSE, verbose = FALSE, min.pValue = 
 # containing slots @pheno and @geno
 # groups: a vector mapping markers into groups (can be integer, character or
 # factor)
-GWAS.SKAT <- function(formula, data, groups, plot = FALSE, verbose = FALSE, min.pValue = 1e-10, ...) {
+GWAS.SKAT <- function(formula, data, groups, verbose = FALSE, ...) {
 
     if (!requireNamespace("SKAT", quietly = TRUE)) {
         stop("SKAT needed for this function to work. Please install it.", call. = FALSE)
