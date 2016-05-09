@@ -242,6 +242,7 @@ for (nCores in seq_len(2)) {
 
         DATA <- BGData(geno = X, pheno = y)
 
+        # Without i
         comp <- t(apply(X, 2, function(z) {
             fm <- lsfit(x = cbind(z, 1), y = y, intercept = FALSE)
             ls.print(fm, print.it = FALSE)$coef.table[[1]][1, ]
@@ -251,6 +252,36 @@ for (nCores in seq_len(2)) {
         for (bufferSize in c(3, 6)) {
             for (nTasks in c(1, 2)) {
                 fm <- GWAS(formula = y ~ 1, data = DATA, method = "lsfit", chunkSize = bufferSize, nTasks = nTasks, mc.cores = nCores)
+                expect_equal(comp, fm)
+            }
+        }
+
+        # With i
+        i <- seq_len(nrow(X))[-3]
+        comp <- t(apply(X[i, ], 2, function(z) {
+            fm <- lsfit(x = cbind(z, 1), y = y[i, ], intercept = FALSE)
+            ls.print(fm, print.it = FALSE)$coef.table[[1]][1, ]
+        }))
+        rownames(comp) <- colnames(DATA@geno)
+
+        for (bufferSize in c(3, 6)) {
+            for (nTasks in c(1, 2)) {
+                fm <- GWAS(formula = y ~ 1, data = DATA, method = "lsfit", i = i, chunkSize = bufferSize, nTasks = nTasks, mc.cores = nCores)
+                expect_equal(comp, fm)
+            }
+        }
+
+        # With j
+        j <- seq_len(ncol(X))[-3]
+        comp <- t(apply(X[, j], 2, function(z) {
+            fm <- lsfit(x = cbind(z, 1), y = y, intercept = FALSE)
+            ls.print(fm, print.it = FALSE)$coef.table[[1]][1, ]
+        }))
+        rownames(comp) <- colnames(DATA@geno)[j]
+
+        for (bufferSize in c(3, 6)) {
+            for (nTasks in c(1, 2)) {
+                fm <- GWAS(formula = y ~ 1, data = DATA, method = "lsfit", j = j, chunkSize = bufferSize, nTasks = nTasks, mc.cores = nCores)
                 expect_equal(comp, fm)
             }
         }

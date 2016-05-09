@@ -5,7 +5,8 @@
 \title{Performs single marker regressions using a
 \code{\link[=BGData-class]{BGData}} object.}
 \usage{
-GWAS(formula, data, method, verbose = FALSE, chunkSize = 5000,
+GWAS(formula, data, method, i = seq_len(nrow(data@geno)),
+  j = seq_len(ncol(data@geno)), verbose = FALSE, chunkSize = 5000,
   nTasks = parallel::detectCores(), mc.cores = parallel::detectCores(), ...)
 }
 \arguments{

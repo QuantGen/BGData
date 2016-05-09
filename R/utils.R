@@ -734,7 +734,7 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
 #' @param ... Additional arguments for chunkedApply and regression method.
 #' @return Returns a matrix with estimates, SE, p-value, etc.
 #' @export
-GWAS <- function(formula, data, method, verbose = FALSE, chunkSize = 5000, nTasks = parallel::detectCores(), mc.cores = parallel::detectCores(), ...) {
+GWAS <- function(formula, data, method, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), verbose = FALSE, chunkSize = 5000, nTasks = parallel::detectCores(), mc.cores = parallel::detectCores(), ...) {
 
     if (class(data) != "BGData") {
         stop("data must BGData")
@@ -747,9 +747,9 @@ GWAS <- function(formula, data, method, verbose = FALSE, chunkSize = 5000, nTask
     # We can have specialized methods, for instance for OLS it is better to use
     # lsfit (that is what GWAS.ols does)
     if (method %in% c("lm", "lm.fit", "lsfit")) {
-        OUT <- GWAS.ols(formula = formula, data = data, verbose = verbose, chunkSize = chunkSize, nTasks = nTasks, mc.cores = mc.cores, ...)
+        OUT <- GWAS.ols(formula = formula, data = data, i = i, j = j, verbose = verbose, chunkSize = chunkSize, nTasks = nTasks, mc.cores = mc.cores, ...)
     } else if (method == "SKAT") {
-        OUT <- GWAS.SKAT(formula = formula, data = data, verbose = verbose, ...)
+        OUT <- GWAS.SKAT(formula = formula, data = data, i = i, j = j, verbose = verbose, ...)
     } else {
         if (method == "lmer") {
             if (!requireNamespace("lme4", quietly = TRUE)) {
@@ -761,12 +761,12 @@ GWAS <- function(formula, data, method, verbose = FALSE, chunkSize = 5000, nTask
         }
         pheno <- data@pheno
         GWAS.model <- update(as.formula(formula), ".~z+.")
-        OUT <- chunkedApply(data@geno, 2, function(col, ...) {
+        OUT <- chunkedApply(data@geno, 2, i = i, j = j, function(col, ...) {
             pheno$z <- col
             fm <- FUN(GWAS.model, data = pheno, ...)
             getCoefficients(fm)
         }, bufferSize = chunkSize, verbose = verbose, nTasks = nTasks, mc.cores = mc.cores, ...)
-        colnames(OUT) <- colnames(data@geno)
+        colnames(OUT) <- colnames(data@geno)[j]
         OUT <- t(OUT)
     }
 
@@ -779,20 +779,21 @@ GWAS <- function(formula, data, method, verbose = FALSE, chunkSize = 5000, nTask
 # y~1 or y~factor(sex)+age
 # all the variables in the formula must be in data@pheno data (BGData)
 # containing slots @pheno and @geno
-GWAS.ols <- function(formula, data, verbose = FALSE, chunkSize = 10, nTasks = parallel::detectCores(), mc.cores = parallel::detectCores(), ...) {
+GWAS.ols <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), verbose = FALSE, chunkSize = 10, nTasks = parallel::detectCores(), mc.cores = parallel::detectCores(), ...) {
 
-    X <- model.matrix(formula, data@pheno)
-    X <- X[match(rownames(data@pheno), rownames(X)), ]
-    X <- cbind(0, X) # Reserve space for marker column
+    # subset of model.frame has bizarre scoping issues
+    frame <- model.frame(formula = formula, data = data@pheno)[i, , drop = FALSE]
+    model <- model.matrix(formula, frame)
+    model <- cbind(1, model) # Reserve space for marker column
 
-    y <- data@pheno[, as.character(terms(formula)[[2]])]
+    y <- data@pheno[i, as.character(terms(formula)[[2]]), drop = TRUE]
 
-    res <- chunkedApply(data@geno, 2, function(col, ...) {
-        X[, 1] <- col
-        fm <- lsfit(x = X, y = y, intercept = FALSE)
+    res <- chunkedApply(data@geno, 2, i = i, j = j, function(col, ...) {
+        model[, 1] <- col
+        fm <- lsfit(x = model, y = y, intercept = FALSE)
         ls.print(fm, print.it = FALSE)$coef.table[[1]][1, ]
     }, bufferSize = chunkSize, verbose = verbose, nTasks = nTasks, mc.cores = mc.cores, ...)
-    colnames(res) <- colnames(data@geno)
+    colnames(res) <- colnames(data@geno)[j]
     res <- t(res)
 
     return(res)
@@ -805,28 +806,27 @@ GWAS.ols <- function(formula, data, verbose = FALSE, chunkSize = 10, nTasks = pa
 # containing slots @pheno and @geno
 # groups: a vector mapping markers into groups (can be integer, character or
 # factor)
-GWAS.SKAT <- function(formula, data, groups, verbose = FALSE, ...) {
+GWAS.SKAT <- function(formula, data, groups, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), verbose = FALSE, ...) {
 
     if (!requireNamespace("SKAT", quietly = TRUE)) {
         stop("SKAT needed for this function to work. Please install it.", call. = FALSE)
     }
 
-    p <- length(unique(groups))
+    uniqueGroups <- unique(groups)
 
-    OUT <- matrix(data = NA, nrow = p, ncol = 2)
+    OUT <- matrix(data = double(), nrow = length(uniqueGroups), ncol = 2)
     colnames(OUT) <- c("nMrk", "p-value")
-    levels <- unique(groups)
-    rownames(OUT) <- levels
+    rownames(OUT) <- uniqueGroups
 
-    H0 <- SKAT::SKAT_Null_Model(formula, data = data@pheno, ...)
+    H0 <- SKAT::SKAT_Null_Model(formula, data = data@pheno[i, , drop = FALSE], ...)
 
-    for (i in seq_len(p)) {
+    for (group in seq_len(length(uniqueGroups))) {
         time.in <- proc.time()[3]
-        Z <- data@geno[, groups == levels[i], drop = FALSE]
+        Z <- data@geno[i, groups == uniqueGroups[group], drop = FALSE]
         fm <- SKAT::SKAT(Z = Z, obj = H0, ...)
-        OUT[i, ] <- c(ncol(Z), fm$p.value)
+        OUT[group, ] <- c(ncol(Z), fm$p.value)
         if (verbose) {
-            message("Group ", i, " of ", p, " (", round(proc.time()[3] - time.in, 2), " seconds / chunk, ", round(i / p * 100, 3), "% done)")
+            message("Group ", group, " of ", length(uniqueGroups), " (", round(proc.time()[3] - time.in, 2), " seconds / chunk, ", round(group / length(uniqueGroups) * 100, 3), "% done)")
         }
     }
 
