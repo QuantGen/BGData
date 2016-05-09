@@ -21,6 +21,12 @@ the right-hand side. The variables included in the formula must be in the
 methods are implemented: \code{\link{lm}}, \code{\link{lm.fit}},
 \code{\link{lsfit}}, \code{\link{glm}} and \code{\link[lme4]{lmer}}.}
 
+\item{i}{(integer, boolean or character) Indicates which rows should be used.
+By default, all rows are used.}
+
+\item{j}{(integer, boolean or character) Indicates which columns should be
+used. By default, all columns are used.}
+
 \item{verbose}{If TRUE more messages are printed.}
 
 \item{chunkSize}{Represents the number of columns of \code{@geno} that are

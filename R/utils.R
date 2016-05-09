@@ -724,6 +724,10 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
 #' @param method The regression method to be used. Currently, the following
 #'   methods are implemented: \code{\link{lm}}, \code{\link{lm.fit}},
 #'   \code{\link{lsfit}}, \code{\link{glm}} and \code{\link[lme4]{lmer}}.
+#' @param i (integer, boolean or character) Indicates which rows should be used.
+#'   By default, all rows are used.
+#' @param j (integer, boolean or character) Indicates which columns should be
+#'   used. By default, all columns are used.
 #' @param verbose If TRUE more messages are printed.
 #' @param chunkSize Represents the number of columns of \code{@@geno} that are
 #'   brought into RAM for processing (5000 by default).
