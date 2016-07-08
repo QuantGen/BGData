@@ -1,9 +1,9 @@
-**BGData**: Memory Mapped Matrices and Data-Structures for Genomic Data for R
+BGData: Memory Mapped Matrices and Data-Structures for Genomic Data for R
 =========================================================================
 
 [![Travis-CI Build Status](https://travis-ci.org/QuantGen/BGData.svg?branch=master)](https://travis-ci.org/QuantGen/BGData)
 
-Contact:     gruenebe@msu.edu   gustavoc@msu.edu
+**Contact**:     gruenebe@msu.edu   gustavoc@msu.edu
 
 Genetic data can be very large and holding data in RAM is often not feasible. One approach to overcome this restriction are [memory mapped files](http://en.wikipedia.org/wiki/Memory-mapped_file) that store the actual data on the hard drive and only read in smaller chunks when they are needed.
 
