@@ -488,15 +488,15 @@ as.BGData.BEDMatrix <- function(x, alternatePhenotypeFile = NULL, ...) {
                 hasHeader = TRUE
             }
             alternatePhenotypes <- read.table(alternatePhenotypeFile, header = hasHeader, stringsAsFactors = FALSE, ...)
-            # Merge phenotypes and alternate phenotypes
-            mergedPhenotypes <- merge(pheno, alternatePhenotypes, by.x = c("Family_ID", "Individual_ID"), by.y = c("FID", "IID"), all.x = TRUE)
-            # Reorder phenotypes to match original order (merge's `sort =
-            # FALSE` order is unspecified, so an artificial column is
-            # introduced)
+            # Add artificial sort column to preserve order after merging
+            # (merge's `sort = FALSE` order is unspecified)
             pheno$.sortColumn <- seq_len(nrow(pheno))
-            mergedPhenotypes <- mergedPhenotypes[order(pheno$.sortColumn), ]
-            mergedPhenotypes <- mergedPhenotypes[, names(mergedPhenotypes) != ".sortColumn"]
-            pheno <- mergedPhenotypes
+            # Merge phenotypes and alternate phenotypes
+            pheno <- merge(pheno, alternatePhenotypes, by.x = c("Family_ID", "Individual_ID"), by.y = c("FID", "IID"), all.x = TRUE)
+            # Reorder phenotypes to match original order and delete artificial
+            # column
+            pheno <- pheno[order(pheno$.sortColumn), ]
+            pheno <- pheno[, names(pheno) != ".sortColumn"]
         }
     }
     BGData(geno = x, pheno = pheno)
