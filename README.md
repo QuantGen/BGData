@@ -97,10 +97,7 @@ colnames(BGData@geno)
 dimnames(BGData@geno)
 
 # Summaries
-rowSums(BGData@geno)
-colSums(BGData@geno)
-rowMeans(BGData@geno)
-colMeans(BGData@geno)
+summarize(BGData@geno)
 
 # apply
 countNAs <- apply(X=BGData@geno, MARGIN=2, FUN=function(x) sum(is.na(x)))
