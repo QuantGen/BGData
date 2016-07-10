@@ -100,7 +100,7 @@ dimnames(BGData@geno)
 summarize(BGData@geno)
 
 # apply
-countNAs <- apply(X=BGData@geno, MARGIN=2, FUN=function(x) sum(is.na(x)))
+countNAs <- chunkedApply(X=BGData@geno, MARGIN=2, FUN=function(x) sum(is.na(x)), bufferSize = 500)
 ```
 
 ### Running GWASes with different regression methods
