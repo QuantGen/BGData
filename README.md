@@ -104,20 +104,20 @@ countNAs <- chunkedApply(X=BGData@geno, MARGIN=2, FUN=function(x) sum(is.na(x)),
 ```
 
 ### Running GWASes with different regression methods
-A data structure for genomic data is useful when defining methods that act on both phenotype and genotype information. We have implemented a `GWAS` function that supports various regression methods and plotting. The formula takes phenotypes from `@pheno` and inserts one marker at a time.
+A data structure for genomic data is useful when defining methods that act on both phenotype and genotype information. We have implemented a `GWAS` function that supports various regression methods. The formula takes phenotypes from `@pheno` and inserts one marker at a time.
 
 ```R
-# lm (set plot=TRUE to get a Manhattan plot of the p values)
-fmLM <- GWAS(formula=Obesity.BMI~GENDER+Litter, data=BGData, method='lm', plot=T)
+# lm
+fmLM <- GWAS(formula=Obesity.BMI~GENDER+Litter, data=BGData, method='lm')
 
-# glm (set plot=TRUE to get a Manhattan plot of the p values)
+# glm
 BGData@pheno$GENDER01 <- ifelse(BGData@pheno[, 'GENDER'] == 'M', 1, 0)
 fmGLM <- GWAS(formula=GENDER01~Obesity.BMI, data=BGData, method='glm', family='binomial')
 
-# lmer (set plot=TRUE to get a Manhattan plot of the p values)
+# lmer
 fmLMER <- GWAS(formula=Obesity.BMI~GENDER+Litter+(1|cage), data=BGData, method='lmer')
 
-# SKAT (set plot=TRUE to get a Manhattan plot of the p values)
+# SKAT
 groups <- ceiling(1:ncol(BGData@geno) / 5)
 fmSKAT <- GWAS(formula=Obesity.BMI~GENDER+Litter, data=BGData, method='SKAT', groups=groups)
 ```
