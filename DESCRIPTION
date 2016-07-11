@@ -1,7 +1,7 @@
 Package: BGData
 Version: 0.0.0.9000
 License: MIT + file LICENSE
-Title: Memory Mapped Matrices and Data Structures for Genomic Data
+Title: A Suite of Packages for Analysis of Big Genomic Data
 Description: Genetic data can be very large and often holding data in RAM is not
     feasible. In a Memory Mapped File the actual data is stored on the HD. The ff R
     package implements memory mapped arrays and provides a very fast implementation

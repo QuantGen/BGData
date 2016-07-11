@@ -1,5 +1,5 @@
-BGData: Memory Mapped Matrices and Data-Structures for Genomic Data for R
-=========================================================================
+BGData: A Suite of Packages for Analysis of Big Genomic Data
+============================================================
 
 [![Travis-CI Build Status](https://travis-ci.org/QuantGen/BGData.svg?branch=master)](https://travis-ci.org/QuantGen/BGData)
 
