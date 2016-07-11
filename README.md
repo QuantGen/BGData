@@ -122,14 +122,6 @@ groups <- ceiling(1:ncol(BGData@geno) / 5)
 fmSKAT <- GWAS(formula=Obesity.BMI~GENDER+Litter, data=BGData, method='SKAT', groups=groups)
 ```
 
-### Adding columns to phenotype data
-`@pheno` is stored as a regular data frame and can be modified. These changes will also be available in functions such as `GWAS`.
-
-```R
-newPheno <- data.frame(SUBJECT.NAME=BGData@pheno$SUBJECT.NAME, NEWCOLUMN=1:nrow(BGData@pheno))
-BGData@pheno <- merge(BGData@pheno, newPheno, by='SUBJECT.NAME', sort=FALSE)
-```
-
 ### Generating the G Matrix
 ```R
 G <- getG(BGData@geno)
