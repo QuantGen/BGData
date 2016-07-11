@@ -22,7 +22,7 @@ The BGData package is not available on [CRAN](http://cran.r-project.org/) yet, b
 
 ```R
 # install.packages("devtools")
-install_github("QuantGen/BGData")
+devtools::install_github("QuantGen/BGData")
 ```
 
 Alternatively, you can download the most recent version as a bundle for [Windows](https://github.com/QuantGen/BGData/archive/master.zip) or [Mac OS / Linux](https://github.com/QuantGen/BGData/archive/master.tar.gz).
