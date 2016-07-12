@@ -464,12 +464,12 @@ as.BGData.BEDMatrix <- function(x, alternatePhenotypeFile = NULL, ...) {
     if (file.exists(famPath)) {
         message("Extracting phenotypes from FAM file...")
         pheno <- read.table(famPath, col.names = c(
-            "Family_ID",
-            "Individual_ID",
-            "Paternal_ID",
-            "Maternal_ID",
-            "Sex",
-            "Phenotype"
+            "FID",
+            "IID",
+            "PAT",
+            "MAT",
+            "SEX",
+            "PHENOTYPE"
         ), stringsAsFactors = FALSE)
     } else {
         pheno <- data.frame(IID = rownames(x), stringsAsFactors = FALSE)
@@ -492,7 +492,7 @@ as.BGData.BEDMatrix <- function(x, alternatePhenotypeFile = NULL, ...) {
             # (merge's `sort = FALSE` order is unspecified)
             pheno$.sortColumn <- seq_len(nrow(pheno))
             # Merge phenotypes and alternate phenotypes
-            pheno <- merge(pheno, alternatePhenotypes, by.x = c("Family_ID", "Individual_ID"), by.y = c("FID", "IID"), all.x = TRUE)
+            pheno <- merge(pheno, alternatePhenotypes, by = c("FID", "IID"), all.x = TRUE)
             # Reorder phenotypes to match original order and delete artificial
             # column
             pheno <- pheno[order(pheno$.sortColumn), ]
