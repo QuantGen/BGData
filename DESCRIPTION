@@ -2,23 +2,17 @@ Package: BGData
 Version: 0.0.0.9000
 License: MIT + file LICENSE
 Title: A Suite of Packages for Analysis of Big Genomic Data
-Description: Genetic data can be very large and often holding data in RAM is not
-    feasible. In a Memory Mapped File the actual data is stored on the HD. The ff R
-    package implements memory mapped arrays and provides a very fast implementation
-    of indexing operations, this allows accessing cells of the array almost at the
-    same speed as accessing those cells in a regular matrix object (held in RAM).
-    However, with ff the array size is limited by the largest integer supported by
-    the system; with genomic data we often exceed this. Therefore we are developing
-    new classes (RowLinkedMatrix and ColumnLinkedMatrix) which are essentially
-    collections of ff objects. In these classes we distribute a matrix either by
-    rows (RowLinkedMatrix) or columns (ColumnLinkedMatrix) into multiple ff objects.
-    We have developed indexing and many other methods that allows the user to
-    deal with these objects as if they were regular matrices. In addition we have
-    developed methods that can take RowLinkedMatrix or ColumnLinkedMatrix as input
-    to compute genomic relationship matrices, etc. The classes ColumnLinkedMatrix
-    and RowLinkedMatrix were designed to hold genotype data (integer coding), the
-    class BGData contains three slots @geno, @map and @pheno and can be used to hold
-    GWAS data.
+Description: Modern genomic datasets are big (large n), high-dimensional
+    (large p), and multi-layered. The challenges that need to be addressed are
+    memory requirements and computational demands. Our goal is to develop
+    software that will enable researchers to carry out analyses with big
+    genomic data within the R environment. The BGData package is an umbrella
+    package that comprises several packages: BEDMatrix, LinkedMatrix, and
+    symDMatrix. It features scalable and efficient computational methods for
+    large genomic datasets such as genome-wide association studies (GWAS) or
+    genomic relationship matrices (G matrix). It also contains a data
+    structure called BGData that holds genotypes in the @geno slot, phenotypes
+    in the @pheno slot, and additional information in the @map slot.
 Authors@R: c(
     person("Gustavo", "de los Campos", email = "gustavoc@msu.edu", role = c("aut")),
     person("Alexander", "Grueneberg", email = "alexander.grueneberg@googlemail.com", role = c("aut", "cre")),
