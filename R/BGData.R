@@ -140,7 +140,7 @@ parsePED <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1
     rownames(BGData@geno) <- IDs
 
     # Convert types in pheno
-    BGData@pheno[] <- lapply(BGData@pheno, type.convert, as.is = TRUE)
+    BGData@pheno[] <- lapply(BGData@pheno, utils::type.convert, as.is = TRUE)
 
     return(BGData)
 }
@@ -476,7 +476,7 @@ as.BGData.BEDMatrix <- function(x, alternatePhenotypeFile = NULL, ...) {
                 "PHENOTYPE"
             ), data.table = FALSE, showProgress = FALSE)
         } else {
-            pheno <- read.table(famPath, col.names = c(
+            pheno <- utils::read.table(famPath, col.names = c(
                 "FID",
                 "IID",
                 "PAT",
@@ -502,7 +502,7 @@ as.BGData.BEDMatrix <- function(x, alternatePhenotypeFile = NULL, ...) {
                 "allele_2"
             ), data.table = FALSE, showProgress = FALSE)
         } else {
-            map <- read.table(bimPath, col.names = c(
+            map <- utils::read.table(bimPath, col.names = c(
                 "chromosome",
                 "snp_id",
                 "genetic_distance",
@@ -534,7 +534,7 @@ as.BGData.BEDMatrix <- function(x, alternatePhenotypeFile = NULL, ...) {
                 if (grepl("FID\\s+IID", readLines(alternatePhenotypeFile, n = 1))) {
                     hasHeader = TRUE
                 }
-                alternatePhenotypes <- read.table(alternatePhenotypeFile, header = hasHeader, stringsAsFactors = FALSE, ...)
+                alternatePhenotypes <- utils::read.table(alternatePhenotypeFile, header = hasHeader, stringsAsFactors = FALSE, ...)
             }
             # Add artificial sort column to preserve order after merging
             # (merge's `sort = FALSE` order is unspecified)

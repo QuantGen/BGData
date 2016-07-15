@@ -387,7 +387,7 @@ getGi <- function(x, nChunks = ceiling(ncol(x) / 10000), scales = NULL, centers 
             # compute scales
             if (scaleCol) {
                 if (is.null(scales)) {
-                    scales.chunk <- apply(X = X, MARGIN = 2, FUN = sd, na.rm = TRUE)
+                    scales.chunk <- apply(X = X, MARGIN = 2, FUN = stats::sd, na.rm = TRUE)
                 } else {
                     scales.chunk <- scales[localColIndex]
                 }
@@ -596,7 +596,7 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
             scales <- rep(double(), p)
             for (k in seq_len(p)) {
                 xi <- X[i, j[k]]
-                scales[k] <- sd(xi, na.rm = TRUE) * sqrt((nX - 1) / nX)
+                scales[k] <- stats::sd(xi, na.rm = TRUE) * sqrt((nX - 1) / nX)
                 centers[k] <- mean(xi, na.rm = TRUE)
             }
         }
@@ -604,7 +604,7 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
             scales <- rep(double(), p)
             for (k in seq_len(p)) {
                 xi <- X[i, j[k]]
-                scales[k] <- sd(xi, na.rm = TRUE) * sqrt((nX - 1) / nX)
+                scales[k] <- stats::sd(xi, na.rm = TRUE) * sqrt((nX - 1) / nX)
             }
         }
         if ((is.null(centers)) & (!is.null(scales))) {
@@ -764,7 +764,7 @@ GWAS <- function(formula, data, method, i = seq_len(nrow(data@geno)), j = seq_le
             FUN <- match.fun(method)
         }
         pheno <- data@pheno
-        GWAS.model <- update(as.formula(formula), ".~z+.")
+        GWAS.model <- stats::update(stats::as.formula(formula), ".~z+.")
         OUT <- chunkedApply(data@geno, 2, i = i, j = j, function(col, ...) {
             pheno$z <- col
             fm <- FUN(GWAS.model, data = pheno, ...)
@@ -786,16 +786,16 @@ GWAS <- function(formula, data, method, i = seq_len(nrow(data@geno)), j = seq_le
 GWAS.ols <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), verbose = FALSE, chunkSize = 10, nTasks = parallel::detectCores(), mc.cores = parallel::detectCores(), ...) {
 
     # subset of model.frame has bizarre scoping issues
-    frame <- model.frame(formula = formula, data = data@pheno)[i, , drop = FALSE]
-    model <- model.matrix(formula, frame)
+    frame <- stats::model.frame(formula = formula, data = data@pheno)[i, , drop = FALSE]
+    model <- stats::model.matrix(formula, frame)
     model <- cbind(1, model) # Reserve space for marker column
 
-    y <- data@pheno[i, as.character(terms(formula)[[2]]), drop = TRUE]
+    y <- data@pheno[i, as.character(stats::terms(formula)[[2]]), drop = TRUE]
 
     res <- chunkedApply(data@geno, 2, i = i, j = j, function(col, ...) {
         model[, 1] <- col
-        fm <- lsfit(x = model, y = y, intercept = FALSE)
-        ls.print(fm, print.it = FALSE)$coef.table[[1]][1, ]
+        fm <- stats::lsfit(x = model, y = y, intercept = FALSE)
+        stats::ls.print(fm, print.it = FALSE)$coef.table[[1]][1, ]
     }, bufferSize = chunkSize, verbose = verbose, nTasks = nTasks, mc.cores = mc.cores, ...)
     colnames(res) <- colnames(data@geno)[j]
     res <- t(res)
@@ -855,7 +855,7 @@ getCoefficients.glm <- function(x) {
 
 getCoefficients.lmerMod <- function(x) {
     ans <- summary(x)$coef[2, ]
-    ans <- c(ans, c(1 - pnorm(ans[3])))
+    ans <- c(ans, c(1 - stats::pnorm(ans[3])))
     return(ans)
 }
 
@@ -880,7 +880,7 @@ summarize <- function(X, verbose = FALSE, bufferSize = 5000, i = seq_len(nrow(X)
     res <- chunkedApply(X, 2, function(col) {
         freqNA <- mean(is.na(col))
         alleleFreq <- mean(col, na.rm = TRUE) / 2
-        sd <- sd(col, na.rm = TRUE)
+        sd <- stats::sd(col, na.rm = TRUE)
         cbind(freqNA, alleleFreq, sd)
     }, bufferSize = bufferSize, verbose = verbose, i = i, j = j, nTasks = nTasks, mc.cores = mc.cores)
     rownames(res) <- c("freq_na", "allele_freq", "sd")
@@ -917,7 +917,7 @@ simPED <- function(filename, n, p, genoChars = 0:2, na.string = NA, propNA = 0.0
     write(header, ncolumns = pedP, append = TRUE, file = fileOut)
     for (i in seq_len(n)) {
         geno <- sample(genoChars, size = p, replace = TRUE)
-        geno[runif(p) < propNA] <- na.string
+        geno[stats::runif(p) < propNA] <- na.string
         pheno <- c(0, subjectNames[i], rep(NA, 4))
         x <- c(pheno, geno)
         write(x, ncolumns = pedP, append = TRUE, file = fileOut)
