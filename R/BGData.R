@@ -484,8 +484,8 @@ as.BGData.BEDMatrix <- function(x, alternatePhenotypeFile = NULL, ...) {
             ), stringsAsFactors = FALSE)
         }
     } else {
-        pheno <- data.frame(IID = rownames(x), stringsAsFactors = FALSE)
-        rownames(pheno) <- rownames(x)
+        splits <- strsplit(rownames(x), "_")
+        pheno <- data.frame(FID = sapply(splits, "[", 1), IID = sapply(splits, "[", 2), stringsAsFactors = FALSE)
     }
     if (!is.null(alternatePhenotypeFile)) {
         if (!file.exists(alternatePhenotypeFile)) {
