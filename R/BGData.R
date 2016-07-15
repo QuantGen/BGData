@@ -461,6 +461,8 @@ as.BGData.BEDMatrix <- function(x, alternatePhenotypeFile = NULL, ...) {
     bedPath <- attr(x, "path")
     # Path to FAM file
     famPath <- sub(".bed", ".fam", bedPath)
+    # Path to BIM file
+    bimPath <- sub(".bed", ".bim", bedPath)
     # Read in pheno file
     if (file.exists(famPath)) {
         message("Extracting phenotypes from FAM file...")
@@ -486,6 +488,36 @@ as.BGData.BEDMatrix <- function(x, alternatePhenotypeFile = NULL, ...) {
     } else {
         splits <- strsplit(rownames(x), "_")
         pheno <- data.frame(FID = sapply(splits, "[", 1), IID = sapply(splits, "[", 2), stringsAsFactors = FALSE)
+    }
+    # Read in map file
+    if (file.exists(bimPath)) {
+        message("Extracting map from BIM file...")
+        if (requireNamespace("data.table", quietly = TRUE)) {
+            map <- data.table::fread(bimPath, col.names = c(
+                "chromosome",
+                "snp_id",
+                "genetic_distance",
+                "base_pair_position",
+                "allele_1",
+                "allele_2"
+            ), data.table = FALSE, showProgress = FALSE)
+        } else {
+            map <- read.table(bimPath, col.names = c(
+                "chromosome",
+                "snp_id",
+                "genetic_distance",
+                "base_pair_position",
+                "allele_1",
+                "allele_2"
+            ), stringsAsFactors = FALSE)
+        }
+    } else {
+        splits <- strsplit(colnames(x), "_")
+        map <- data.frame(bimPath, snp_id = sapply(splits, function(x) {
+            paste0(x[seq_len(length(x) - 1)], collapse = "_")
+        }), allele_1 = sapply(splits, function(x) {
+            x[length(x)]
+        }), stringsAsFactors = FALSE)
     }
     if (!is.null(alternatePhenotypeFile)) {
         if (!file.exists(alternatePhenotypeFile)) {
@@ -515,7 +547,7 @@ as.BGData.BEDMatrix <- function(x, alternatePhenotypeFile = NULL, ...) {
             pheno <- pheno[, names(pheno) != ".sortColumn"]
         }
     }
-    BGData(geno = x, pheno = pheno)
+    BGData(geno = x, pheno = pheno, map = map)
 }
 
 
