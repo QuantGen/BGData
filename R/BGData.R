@@ -451,8 +451,9 @@ as.BGData <- function(x, ...) {
 #' @param alternatePhenotypeFile Path to an
 #'   \href{http://pngu.mgh.harvard.edu/~purcell/plink/data.shtml#pheno}{alternate
 #'    phenotype file}.
-#' @param ... Additional arguments to the \code{read.table} call to parse the
-#'   alternate pheno file.
+#' @param ... Additional arguments to the \code{read.table} or \code{fread}
+#'   call (if data.table package is installed) call to parse the alternate pheno
+#'   file.
 #' @return A \code{\link[=BGData-class]{BGData}} object.
 #' @export
 as.BGData.BEDMatrix <- function(x, alternatePhenotypeFile = NULL, ...) {
@@ -463,14 +464,25 @@ as.BGData.BEDMatrix <- function(x, alternatePhenotypeFile = NULL, ...) {
     # Read in pheno file
     if (file.exists(famPath)) {
         message("Extracting phenotypes from FAM file...")
-        pheno <- read.table(famPath, col.names = c(
-            "FID",
-            "IID",
-            "PAT",
-            "MAT",
-            "SEX",
-            "PHENOTYPE"
-        ), stringsAsFactors = FALSE)
+        if (requireNamespace("data.table", quietly = TRUE)) {
+            pheno <- data.table::fread(famPath, col.names = c(
+                "FID",
+                "IID",
+                "PAT",
+                "MAT",
+                "SEX",
+                "PHENOTYPE"
+            ), data.table = FALSE, showProgress = FALSE)
+        } else {
+            pheno <- read.table(famPath, col.names = c(
+                "FID",
+                "IID",
+                "PAT",
+                "MAT",
+                "SEX",
+                "PHENOTYPE"
+            ), stringsAsFactors = FALSE)
+        }
     } else {
         pheno <- data.frame(IID = rownames(x), stringsAsFactors = FALSE)
         rownames(pheno) <- rownames(x)
@@ -480,14 +492,18 @@ as.BGData.BEDMatrix <- function(x, alternatePhenotypeFile = NULL, ...) {
             stop("Alternate phenotype file does not exist.")
         } else {
             message("Merging alternate phenotype file...")
-            # Check if the file has a header, i.e. if the first row starts with
-            # an FID and an IID entry (unfortunately, treating the first row as
-            # colnames after read.table screws with the types)
-            hasHeader = FALSE
-            if (grepl("FID\\s+IID", readLines(alternatePhenotypeFile, n = 1))) {
-                hasHeader = TRUE
+            if (requireNamespace("data.table", quietly = TRUE)) {
+                alternatePhenotypes <- data.table::fread(alternatePhenotypeFile, data.table = FALSE, showProgress = FALSE, ...)
+            } else {
+                # Check if the file has a header, i.e. if the first row starts with
+                # an FID and an IID entry (unfortunately, treating the first row as
+                # colnames after read.table screws with the types)
+                hasHeader = FALSE
+                if (grepl("FID\\s+IID", readLines(alternatePhenotypeFile, n = 1))) {
+                    hasHeader = TRUE
+                }
+                alternatePhenotypes <- read.table(alternatePhenotypeFile, header = hasHeader, stringsAsFactors = FALSE, ...)
             }
-            alternatePhenotypes <- read.table(alternatePhenotypeFile, header = hasHeader, stringsAsFactors = FALSE, ...)
             # Add artificial sort column to preserve order after merging
             # (merge's `sort = FALSE` order is unspecified)
             pheno$.sortColumn <- seq_len(nrow(pheno))

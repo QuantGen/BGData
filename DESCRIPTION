@@ -32,6 +32,7 @@ Imports:
     bigmemory,
     bit
 Suggests:
+    data.table,
     lme4,
     SKAT,
     testthat,
