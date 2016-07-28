@@ -884,7 +884,7 @@ summarize <- function(X, verbose = FALSE, bufferSize = 5000, i = seq_len(nrow(X)
         cbind(freqNA, alleleFreq, sd)
     }, bufferSize = bufferSize, verbose = verbose, i = i, j = j, nTasks = nTasks, mc.cores = mc.cores)
     rownames(res) <- c("freq_na", "allele_freq", "sd")
-    colnames(res) <- colnames(X)
+    colnames(res) <- colnames(X)[j]
     t(res)
 }
 
