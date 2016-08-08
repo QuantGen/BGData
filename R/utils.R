@@ -366,7 +366,7 @@ getGi <- function(x, nChunks = ceiling(ncol(x) / 10000), scales = NULL, centers 
             end <- min(p, ini + chunkSize - 1)
             if (verbose) {
                 message("Chunk: ", k, " (markers ", ini, ":", end, " ~", round(100 * end / p, 1), "% done)")
-                message("  =>Acquiring genotypes...")
+                message("  => Acquiring genotypes...")
             }
 
             # subset
@@ -469,8 +469,8 @@ getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, centerCol = TRUE
         if (ini <= p) {
             end <- min(p, ini + chunkSize - 1)
             if (verbose) {
-                message("Working with chunk: ", k, " (markers ", ini, ":", end, " ~", round(100 * ini / p, 1), "% done)")
-                message("  =>Acquiring genotypes...")
+                message("Working on chunk: ", k, " (markers ", ini, ":", end, " ~", round(100 * ini / p, 1), "% done)")
+                message("  => Acquiring genotypes...")
             }
 
             # subset
@@ -498,7 +498,7 @@ getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, centerCol = TRUE
                     scales.chunk <- FALSE
                 }
                 if (verbose) {
-                    message("  =>Computing...")
+                    message("  => Computing...")
                 }
                 X1 <- scale(X1, center = centers.chunk, scale = scales.chunk)
                 X1[is.na(X1)] <- 0
@@ -656,7 +656,7 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
         for (s in r:nChunks) {
 
             if (verbose) {
-                message(" Working pair ", r, "-", s, " (", round(100 * counter / (nChunks * (nChunks + 1) / 2)), "% ", round(proc.time()[3] - timeIn, 3), " seconds).")
+                message("Working on chunk ", r, "-", s, " (", round(100 * counter / (nChunks * (nChunks + 1) / 2)), "% ", round(proc.time()[3] - timeIn, 3), " seconds)")
             }
 
             rowIndex_s <- chunkIndex[which(chunkIndex[, 2] == s), 1]
@@ -679,7 +679,7 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
             counter <- counter + 1
 
             if (verbose) {
-                message("  =>Done")
+                message("  => Done")
             }
         }
     }
