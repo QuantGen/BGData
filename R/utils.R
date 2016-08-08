@@ -672,9 +672,11 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
 
             Gij <- tcrossprod.parallel(x = Xi, y = Xj, mc.cores = mc.cores, nChunks = nChunks2)
 
-            DATA[[r]][[s - r + 1]] <- ff::ff(dim = dim(Gij), vmode = vmode, initdata = as.vector(Gij), filename = paste0("data_", r, "_", s, ".bin"), dimnames = list(rownames(X)[rowIndex_r], rownames(X)[rowIndex_s]))
-            bit::physical(DATA[[r]][[s - r + 1]])$pattern <- "ff"
-            bit::physical(DATA[[r]][[s - r + 1]])$filename <- paste0("data_", r, "_", s, ".bin")
+            blockName <- paste0("data_", padDigits(r, nChunks), "_", padDigits(s, nChunks), ".bin")
+            block <- ff::ff(dim = dim(Gij), vmode = vmode, initdata = as.vector(Gij), filename = blockName, dimnames = list(rownames(X)[rowIndex_r], rownames(X)[rowIndex_s]))
+            bit::physical(block)$pattern <- "ff"
+            bit::physical(block)$filename <- blockName
+            DATA[[r]][[s - r + 1]] <- block
 
             counter <- counter + 1
 
@@ -1002,4 +1004,9 @@ simplifyList <- function(x) {
         x <- unlist(x)
     }
     return(x)
+}
+
+
+padDigits <- function(x, total) {
+    formatC(x, width = as.integer(log10(total) + 1), format = "d", flag = "0")
 }
