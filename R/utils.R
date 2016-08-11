@@ -592,8 +592,8 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
 
     if ((centerCol | scaleCol) & (is.null(centers) | is.null(scales))) {
         if (is.null(centers) & is.null(scales)) {
-            centers <- rep(double(), p)
-            scales <- rep(double(), p)
+            centers <- vector(mode = "double", length = p)
+            scales <- vector(mode = "double", length = p)
             for (k in seq_len(p)) {
                 xi <- X[i, j[k]]
                 scales[k] <- stats::sd(xi, na.rm = TRUE) * sqrt((nX - 1) / nX)
@@ -601,14 +601,14 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
             }
         }
         if ((!is.null(centers)) & (is.null(scales))) {
-            scales <- rep(double(), p)
+            scales <- vector(mode = "double", length = p)
             for (k in seq_len(p)) {
                 xi <- X[i, j[k]]
                 scales[k] <- stats::sd(xi, na.rm = TRUE) * sqrt((nX - 1) / nX)
             }
         }
         if ((is.null(centers)) & (!is.null(scales))) {
-            centers <- rep(double(), p)
+            centers <- vector(mode = "double", length = p)
             for (k in seq_len(p)) {
                 xi <- X[i, j[k]]
                 centers[k] <- mean(xi, na.rm = TRUE)
