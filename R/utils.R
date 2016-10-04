@@ -628,7 +628,7 @@ getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, sc
     blockIndex <- cbind(i, ceiling(seq_len(n) / blockSize))
 
     nFiles <- nBlocks * (nBlocks + 1) / 2
-    DATA <- list()
+    DATA <- vector(mode = "list", length = nBlocks)
 
     if (file.exists(folder)) {
         stop(folder, " already exists")
@@ -640,7 +640,7 @@ getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, sc
     counter <- 1
     for (r in seq_len(nBlocks)) {
 
-        DATA[[r]] <- list()
+        DATA[[r]] <- vector(mode = "list", length = nBlocks - r)
 
         rowIndex_r <- blockIndex[which(blockIndex[, 2] == r), 1]
         Xi <- X[rowIndex_r, j, drop = FALSE]
