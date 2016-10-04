@@ -32,8 +32,8 @@ used. By default, all columns are used.}
 \item{chunkSize}{Represents the number of columns of \code{@geno} that are
 brought into RAM for processing (5000 by default).}
 
-\item{nTasks}{The number of submatrices of \code{X} to be processed in
-parallel.}
+\item{nTasks}{The number of tasks the problem should be broken into to be
+distributed among \code{mc.cores} cores.}
 
 \item{mc.cores}{The number of cores (passed to
 \code{\link[parallel]{mclapply}}).}

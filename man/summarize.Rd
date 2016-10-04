@@ -23,8 +23,8 @@ By default, all rows are used.}
 \item{j}{(integer, boolean or character) Indicates which columns should be
 used. By default, all columns are used.}
 
-\item{nTasks}{Represents the number of parallel tasks each buffer is split
-into.}
+\item{nTasks}{The number of tasks the problem should be broken into to be
+distributed among \code{mc.cores} cores.}
 
 \item{mc.cores}{The number of cores (passed to
 \code{\link[parallel]{mclapply}}).}

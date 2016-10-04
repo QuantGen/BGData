@@ -4,7 +4,7 @@
 \alias{crossprod.parallel}
 \title{Computes crossprod (x'y or x'x) in parallel.}
 \usage{
-crossprod.parallel(x, y = NULL, nChunks = parallel::detectCores(),
+crossprod.parallel(x, y = NULL, nTasks = parallel::detectCores(),
   mc.cores = parallel::detectCores())
 }
 \arguments{
@@ -13,7 +13,8 @@ crossprod.parallel(x, y = NULL, nChunks = parallel::detectCores(),
 
 \item{y}{vector or matrix-like object. NULL by default.}
 
-\item{nChunks}{The number of chunks used when X and y are partitioned.}
+\item{nTasks}{The number of tasks the problem should be broken into to be
+distributed among \code{mc.cores} cores.}
 
 \item{mc.cores}{The number of cores (passed to
 \code{\link[parallel]{mclapply}}).}

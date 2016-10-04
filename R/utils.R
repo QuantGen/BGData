@@ -90,8 +90,8 @@ apply2 <- function(X, MARGIN, FUN, ...) {
 #' @param MARGIN The subscripts which the function will be applied over. 1
 #'   indicates rows, 2 indicates columns.
 #' @param FUN The function to be applied.
-#' @param nTasks The number of submatrices of \code{X} to be processed in
-#'   parallel.
+#' @param nTasks The number of tasks the problem should be broken into to be
+#'   distributed among \code{mc.cores} cores.
 #' @param mc.cores The number of cores (passed to
 #'   \code{\link[parallel]{mclapply}}).
 #' @param ... Additional arguments to be passed to \code{apply}.
@@ -148,8 +148,8 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = parallel::detectCores(), mc.c
 #'   By default, all rows are used.
 #' @param j (integer, boolean or character) Indicates which columns should be
 #'   used. By default, all columns are used.
-#' @param nTasks The number of submatrices of each buffered subset of \code{X}
-#'   to be processed in parallel.
+#' @param nTasks The number of tasks the problem should be broken into to be
+#'   distributed among \code{mc.cores} cores.
 #' @param mc.cores The number of cores (passed to
 #'   \code{\link[parallel]{mclapply}}).
 #' @param verbose Whether to print additional information.
@@ -178,7 +178,7 @@ chunkedApply <- function(X, MARGIN, FUN, bufferSize, i = seq_len(nrow(X)), j = s
 
 
 # Computes crossprod(x,y) or tcrossprod(x,y)
-crossprods <- function(x, y = NULL, nChunks = parallel::detectCores(), use_tcrossprod = FALSE, mc.cores = parallel::detectCores()) {
+crossprods <- function(x, y = NULL, nTasks = parallel::detectCores(), use_tcrossprod = FALSE, mc.cores = parallel::detectCores()) {
     dx <- dim(x)
     if (!is.null(y)) {
         y <- as.matrix(y)
@@ -193,7 +193,7 @@ crossprods <- function(x, y = NULL, nChunks = parallel::detectCores(), use_tcros
             }
         }
     }
-    if (nChunks == 1) {
+    if (nTasks == 1) {
         if (use_tcrossprod) {
             Xy <- tcrossprod(x, y)
         } else {
@@ -204,9 +204,9 @@ crossprods <- function(x, y = NULL, nChunks = parallel::detectCores(), use_tcros
         if (!is.null(y)) {
             nY <- ifelse(use_tcrossprod, dy[2], dy[1])
         }
-        chunks <- parallel::mclapply(X = seq_len(nChunks), FUN = function(chunk) {
+        chunks <- parallel::mclapply(X = seq_len(nTasks), FUN = function(i, ...) {
             if (!is.null(y)) {
-                ranges <- LinkedMatrix:::chunkRanges(nY, nChunks, chunk)
+                ranges <- LinkedMatrix:::chunkRanges(nY, nTasks, i)
                 if (use_tcrossprod) {
                     Y <- y[, seq(ranges[1], ranges[2]), drop = FALSE]
                 } else {
@@ -215,7 +215,7 @@ crossprods <- function(x, y = NULL, nChunks = parallel::detectCores(), use_tcros
             } else {
                 Y <- NULL
             }
-            ranges <- LinkedMatrix:::chunkRanges(nX, nChunks, chunk)
+            ranges <- LinkedMatrix:::chunkRanges(nX, nTasks, i)
             if (use_tcrossprod) {
                 X <- x[, seq(ranges[1], ranges[2]), drop = FALSE]
                 Xy <- tcrossprod(X, Y)
@@ -242,13 +242,14 @@ crossprods <- function(x, y = NULL, nChunks = parallel::detectCores(), use_tcros
 #' @param x A matrix-like object, typically \code{@@geno} of a
 #'   \code{\link[=BGData-class]{BGData}} object.
 #' @param y vector or matrix-like object. NULL by default.
-#' @param nChunks The number of chunks used when X and y are partitioned.
+#' @param nTasks The number of tasks the problem should be broken into to be
+#'   distributed among \code{mc.cores} cores.
 #' @param mc.cores The number of cores (passed to
 #'   \code{\link[parallel]{mclapply}}).
 #' @return x'y' or x'x depending on whether y is provided.
 #' @export
-crossprod.parallel <- function(x, y = NULL, nChunks = parallel::detectCores(), mc.cores = parallel::detectCores()) {
-    crossprods(x = x, y = y, nChunks = nChunks, mc.cores = mc.cores, use_tcrossprod = FALSE)
+crossprod.parallel <- function(x, y = NULL, nTasks = parallel::detectCores(), mc.cores = parallel::detectCores()) {
+    crossprods(x = x, y = y, nTasks = nTasks, mc.cores = mc.cores, use_tcrossprod = FALSE)
 }
 
 
@@ -257,13 +258,14 @@ crossprod.parallel <- function(x, y = NULL, nChunks = parallel::detectCores(), m
 #' @param x A matrix-like object, typically \code{@@geno} of a
 #'   \code{\link[=BGData-class]{BGData}} object.
 #' @param y vector or matrix-like object. NULL by default.
-#' @param nChunks The number of chunks used when X and y are partitioned.
+#' @param nTasks The number of tasks the problem should be broken into to be
+#'   distributed among \code{mc.cores} cores.
 #' @param mc.cores The number of cores (passed to
 #'   \code{\link[parallel]{mclapply}}).
 #' @return xy' or xx' depending on whether y is provided.
 #' @export
-tcrossprod.parallel <- function(x, y = NULL, nChunks = parallel::detectCores(), mc.cores = parallel::detectCores()) {
-    crossprods(x = x, y = y, nChunks = nChunks, mc.cores = mc.cores, use_tcrossprod = TRUE)
+tcrossprod.parallel <- function(x, y = NULL, nTasks = parallel::detectCores(), mc.cores = parallel::detectCores()) {
+    crossprods(x = x, y = y, nTasks = nTasks, mc.cores = mc.cores, use_tcrossprod = TRUE)
 }
 
 
@@ -292,8 +294,8 @@ tcrossprod.parallel <- function(x, y = NULL, nChunks = parallel::detectCores(), 
 #'   to divide matrix into blocks.
 #' @param minVar Columns with variance lower than this value will not be used in
 #'   the computation (only if \code{scaleCol} is set).
-#' @param nChunks2 The number of chunks that each chunk is split into for
-#'   processing in parallel.
+#' @param nTasks The number of tasks the problem should be broken into to be
+#'   distributed among \code{mc.cores} cores.
 #' @param scales Precomputed scales if i2 is used.
 #' @param centers Precomputed centers if i2 is used.
 #' @param saveG Whether to save genomic relationship matrix into file.
@@ -305,12 +307,12 @@ tcrossprod.parallel <- function(x, y = NULL, nChunks = parallel::detectCores(), 
 #'   \code{\link[parallel]{mclapply}}).
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @export
-getG <- function(x, nChunks = ceiling(ncol(x) / 10000), scaleCol = TRUE, centerCol = TRUE, scaleG = TRUE, verbose = TRUE, i = seq_len(nrow(x)), j = seq_len(ncol(x)), i2 = NULL, minVar = 1e-05, nChunks2 = parallel::detectCores(), scales = NULL, centers = NULL, saveG = FALSE, saveType = "RData", saveName = "Gij", mc.cores = parallel::detectCores()) {
+getG <- function(x, nChunks = ceiling(ncol(x) / 10000), scaleCol = TRUE, centerCol = TRUE, scaleG = TRUE, verbose = TRUE, i = seq_len(nrow(x)), j = seq_len(ncol(x)), i2 = NULL, minVar = 1e-05, nTasks = parallel::detectCores(), scales = NULL, centers = NULL, saveG = FALSE, saveType = "RData", saveName = "Gij", mc.cores = parallel::detectCores()) {
     if (is.null(i2)) {
-        G <- getGi(x = x, nChunks = nChunks, scales = scales, centers = centers, scaleCol = scaleCol, centerCol = centerCol, scaleG = scaleG, verbose = verbose, i = i, j = j, minVar = minVar, nChunks2 = nChunks2, mc.cores = mc.cores)
+        G <- getGi(x = x, nChunks = nChunks, scales = scales, centers = centers, scaleCol = scaleCol, centerCol = centerCol, scaleG = scaleG, verbose = verbose, i = i, j = j, minVar = minVar, nTasks = nTasks, mc.cores = mc.cores)
     } else {
         if (is.null(scales) || is.null(centers)) stop("scales and centers need to be precomputed.")
-        G <- getGij(x = x, i1 = i, i2 = i2, scales = scales, centers = centers, scaleCol = scaleCol, centerCol = centerCol, scaleG = scaleG, verbose = verbose, nChunks = nChunks, j = j, minVar = minVar, nChunks2 = nChunks2, mc.cores = mc.cores)
+        G <- getGij(x = x, i1 = i, i2 = i2, scales = scales, centers = centers, scaleCol = scaleCol, centerCol = centerCol, scaleG = scaleG, verbose = verbose, nChunks = nChunks, j = j, minVar = minVar, nTasks = nTasks, mc.cores = mc.cores)
     }
     if (saveG) {
         if (saveType == "RData") {
@@ -325,7 +327,7 @@ getG <- function(x, nChunks = ceiling(ncol(x) / 10000), scaleCol = TRUE, centerC
 }
 
 
-getGi <- function(x, nChunks = ceiling(ncol(x) / 10000), scales = NULL, centers = NULL, scaleCol = TRUE, centerCol = FALSE, scaleG = TRUE, verbose = TRUE, i = seq_len(nrow(x)), j = seq_len(ncol(x)), minVar = 1e-05, nChunks2 = parallel::detectCores(), mc.cores = parallel::detectCores()) {
+getGi <- function(x, nChunks = ceiling(ncol(x) / 10000), scales = NULL, centers = NULL, scaleCol = TRUE, centerCol = FALSE, scaleG = TRUE, verbose = TRUE, i = seq_len(nrow(x)), j = seq_len(ncol(x)), minVar = 1e-05, nTasks = parallel::detectCores(), mc.cores = parallel::detectCores()) {
     nX <- nrow(x)
     pX <- ncol(x)
 
@@ -408,8 +410,8 @@ getGi <- function(x, nChunks = ceiling(ncol(x) / 10000), scales = NULL, centers 
                 X <- scale(X, center = centers.chunk, scale = scales.chunk)
                 X[is.na(X)] <- 0
 
-                if (nChunks2 > 1) {
-                  G_chunk <- crossprods(x = X, use_tcrossprod = TRUE, nChunks = nChunks2, mc.cores = mc.cores)
+                if (nTasks > 1) {
+                  G_chunk <- crossprods(x = X, use_tcrossprod = TRUE, nTasks = nTasks, mc.cores = mc.cores)
                 } else {
                   G_chunk <- tcrossprod(X)
                 }
@@ -426,7 +428,7 @@ getGi <- function(x, nChunks = ceiling(ncol(x) / 10000), scales = NULL, centers 
 }
 
 
-getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, centerCol = TRUE,scaleG = TRUE, verbose = TRUE, nChunks = ceiling(ncol(x) / 10000), j = seq_len(ncol(x)), minVar = 1e-05, nChunks2 = parallel::detectCores(), mc.cores = parallel::detectCores()) {
+getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, centerCol = TRUE,scaleG = TRUE, verbose = TRUE, nChunks = ceiling(ncol(x) / 10000), j = seq_len(ncol(x)), minVar = 1e-05, nTasks = parallel::detectCores(), mc.cores = parallel::detectCores()) {
 
     nX <- nrow(x)
     pX <- ncol(x)
@@ -504,7 +506,7 @@ getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, centerCol = TRUE
                 X1[is.na(X1)] <- 0
                 X2 <- scale(X2, center = centers.chunk, scale = scales.chunk)
                 X2[is.na(X2)] <- 0
-                G_chunk <- tcrossprod.parallel(x = X1, y = X2, mc.cores = mc.cores, nChunks = nChunks2)
+                G_chunk <- tcrossprod.parallel(x = X1, y = X2, mc.cores = mc.cores, nTasks = nTasks)
                 G[] <- G + G_chunk
             }
             if (scaleG) {
@@ -541,7 +543,7 @@ getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, centerCol = TRUE
 #' @param scaleCol TRUE/FALSE whether columns must be scaled before computing
 #'   xx'.
 #' @param scaleG TRUE/FALSE whether xx' must be scaled.
-#' @param nChunks2 The number of chunks that each block is split into for
+#' @param nTasks The number of chunks that each block is split into for
 #'   processing in parallel.
 #' @param folder Folder in which to save the
 #'   \code{\link[=symDMatrix-class]{symDMatrix}}.
@@ -557,7 +559,7 @@ getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, centerCol = TRUE
 #'   used. By default, all columns are used.
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @export
-getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, scales = NULL, centerCol = TRUE, scaleCol = TRUE, scaleG = TRUE, nChunks2 = parallel::detectCores(), folder = randomString(), vmode = "double", verbose = TRUE, saveRData = TRUE, mc.cores = parallel::detectCores(), i = seq_len(nrow(X)), j = seq_len(ncol(X))) {
+getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, scales = NULL, centerCol = TRUE, scaleCol = TRUE, scaleG = TRUE, nTasks = parallel::detectCores(), folder = randomString(), vmode = "double", verbose = TRUE, saveRData = TRUE, mc.cores = parallel::detectCores(), i = seq_len(nrow(X)), j = seq_len(ncol(X))) {
 
     timeIn <- proc.time()[3]
 
@@ -670,10 +672,11 @@ getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, sc
                 Xj[, k] <- xjk
             }
 
-            Gij <- tcrossprod.parallel(x = Xi, y = Xj, mc.cores = mc.cores, nChunks = nChunks2)
+            Gij <- tcrossprod.parallel(x = Xi, y = Xj, mc.cores = mc.cores, nTasks = nTasks)
 
             blockName <- paste0("data_", padDigits(r, nBlocks), "_", padDigits(s, nBlocks), ".bin")
             block <- ff::ff(dim = dim(Gij), vmode = vmode, initdata = as.vector(Gij), filename = blockName, dimnames = list(rownames(X)[rowIndex_r], rownames(X)[rowIndex_s]))
+            # Change ff path to a relative one
             bit::physical(block)$pattern <- "ff"
             bit::physical(block)$filename <- blockName
             DATA[[r]][[s - r + 1]] <- block
@@ -733,8 +736,8 @@ getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, sc
 #' @param verbose If TRUE more messages are printed.
 #' @param chunkSize Represents the number of columns of \code{@@geno} that are
 #'   brought into RAM for processing (5000 by default).
-#' @param nTasks The number of submatrices of \code{X} to be processed in
-#'   parallel.
+#' @param nTasks The number of tasks the problem should be broken into to be
+#'   distributed among \code{mc.cores} cores.
 #' @param mc.cores The number of cores (passed to
 #'   \code{\link[parallel]{mclapply}}).
 #' @param ... Additional arguments for chunkedApply and regression method.
@@ -873,8 +876,8 @@ getCoefficients.lmerMod <- function(x) {
 #'   By default, all rows are used.
 #' @param j (integer, boolean or character) Indicates which columns should be
 #'   used. By default, all columns are used.
-#' @param nTasks Represents the number of parallel tasks each buffer is split
-#'   into.
+#' @param nTasks The number of tasks the problem should be broken into to be
+#'   distributed among \code{mc.cores} cores.
 #' @param mc.cores The number of cores (passed to
 #'   \code{\link[parallel]{mclapply}}).
 #' @export

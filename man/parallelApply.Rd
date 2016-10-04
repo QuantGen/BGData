@@ -15,8 +15,8 @@ indicates rows, 2 indicates columns.}
 
 \item{FUN}{The function to be applied.}
 
-\item{nTasks}{The number of submatrices of \code{X} to be processed in
-parallel.}
+\item{nTasks}{The number of tasks the problem should be broken into to be
+distributed among \code{mc.cores} cores.}
 
 \item{mc.cores}{The number of cores (passed to
 \code{\link[parallel]{mclapply}}).}

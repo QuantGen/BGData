@@ -27,8 +27,8 @@ By default, all rows are used.}
 \item{j}{(integer, boolean or character) Indicates which columns should be
 used. By default, all columns are used.}
 
-\item{nTasks}{The number of submatrices of each buffered subset of \code{X}
-to be processed in parallel.}
+\item{nTasks}{The number of tasks the problem should be broken into to be
+distributed among \code{mc.cores} cores.}
 
 \item{mc.cores}{The number of cores (passed to
 \code{\link[parallel]{mclapply}}).}

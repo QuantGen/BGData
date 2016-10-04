@@ -7,7 +7,7 @@ creating a \code{\link[=symDMatrix-class]{symDMatrix}}.}
 \usage{
 getG.symDMatrix(X, nBlocks = 5, blockSize = NULL, centers = NULL,
   scales = NULL, centerCol = TRUE, scaleCol = TRUE, scaleG = TRUE,
-  nChunks2 = parallel::detectCores(), folder = randomString(),
+  nTasks = parallel::detectCores(), folder = randomString(),
   vmode = "double", verbose = TRUE, saveRData = TRUE,
   mc.cores = parallel::detectCores(), i = seq_len(nrow(X)),
   j = seq_len(ncol(X)))
@@ -32,7 +32,7 @@ xx'.}
 
 \item{scaleG}{TRUE/FALSE whether xx' must be scaled.}
 
-\item{nChunks2}{The number of chunks that each block is split into for
+\item{nTasks}{The number of chunks that each block is split into for
 processing in parallel.}
 
 \item{folder}{Folder in which to save the

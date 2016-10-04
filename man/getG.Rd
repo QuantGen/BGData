@@ -7,7 +7,7 @@
 getG(x, nChunks = ceiling(ncol(x)/10000), scaleCol = TRUE,
   centerCol = TRUE, scaleG = TRUE, verbose = TRUE, i = seq_len(nrow(x)),
   j = seq_len(ncol(x)), i2 = NULL, minVar = 1e-05,
-  nChunks2 = parallel::detectCores(), scales = NULL, centers = NULL,
+  nTasks = parallel::detectCores(), scales = NULL, centers = NULL,
   saveG = FALSE, saveType = "RData", saveName = "Gij",
   mc.cores = parallel::detectCores())
 }
@@ -39,8 +39,8 @@ to divide matrix into blocks.}
 \item{minVar}{Columns with variance lower than this value will not be used in
 the computation (only if \code{scaleCol} is set).}
 
-\item{nChunks2}{The number of chunks that each chunk is split into for
-processing in parallel.}
+\item{nTasks}{The number of tasks the problem should be broken into to be
+distributed among \code{mc.cores} cores.}
 
 \item{scales}{Precomputed scales if i2 is used.}
 
