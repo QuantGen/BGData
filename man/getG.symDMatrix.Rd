@@ -5,7 +5,7 @@
 \title{Computes a genomic relationship matrix G=xx' without ever loading G in RAM by
 creating a \code{\link[=symDMatrix-class]{symDMatrix}}.}
 \usage{
-getG.symDMatrix(X, nChunks = 5, chunkSize = NULL, centers = NULL,
+getG.symDMatrix(X, nBlocks = 5, blockSize = NULL, centers = NULL,
   scales = NULL, centerCol = TRUE, scaleCol = TRUE, scaleG = TRUE,
   nChunks2 = parallel::detectCores(), folder = randomString(),
   vmode = "double", verbose = TRUE, saveRData = TRUE,
@@ -16,9 +16,9 @@ getG.symDMatrix(X, nChunks = 5, chunkSize = NULL, centers = NULL,
 \item{X}{A matrix-like object, typically \code{@geno} of a
 \code{\link[=BGData-class]{BGData}} object.}
 
-\item{nChunks}{The number of columns that are processed at a time.}
+\item{nBlocks}{The number of blocks.}
 
-\item{chunkSize}{The number of columns that are processed at a time.}
+\item{blockSize}{The number of columns of a block (if NULL inferred from block).}
 
 \item{centers}{Precomputed centers.}
 
@@ -32,7 +32,7 @@ xx'.}
 
 \item{scaleG}{TRUE/FALSE whether xx' must be scaled.}
 
-\item{nChunks2}{The number of chunks that each chunk is split into for
+\item{nChunks2}{The number of chunks that each block is split into for
 processing in parallel.}
 
 \item{folder}{Folder in which to save the

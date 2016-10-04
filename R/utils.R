@@ -532,8 +532,8 @@ getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, centerCol = TRUE
 #'
 #' @param X A matrix-like object, typically \code{@@geno} of a
 #'   \code{\link[=BGData-class]{BGData}} object.
-#' @param nChunks The number of columns that are processed at a time.
-#' @param chunkSize The number of columns that are processed at a time.
+#' @param nBlocks The number of blocks.
+#' @param blockSize The number of columns of a block (if NULL inferred from block).
 #' @param centers Precomputed centers.
 #' @param scales Precomputed scales.
 #' @param centerCol TRUE/FALSE whether columns must be centered before computing
@@ -541,7 +541,7 @@ getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, centerCol = TRUE
 #' @param scaleCol TRUE/FALSE whether columns must be scaled before computing
 #'   xx'.
 #' @param scaleG TRUE/FALSE whether xx' must be scaled.
-#' @param nChunks2 The number of chunks that each chunk is split into for
+#' @param nChunks2 The number of chunks that each block is split into for
 #'   processing in parallel.
 #' @param folder Folder in which to save the
 #'   \code{\link[=symDMatrix-class]{symDMatrix}}.
@@ -557,7 +557,7 @@ getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, centerCol = TRUE
 #'   used. By default, all columns are used.
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @export
-getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, scales = NULL, centerCol = TRUE, scaleCol = TRUE, scaleG = TRUE, nChunks2 = parallel::detectCores(), folder = randomString(), vmode = "double", verbose = TRUE, saveRData = TRUE, mc.cores = parallel::detectCores(), i = seq_len(nrow(X)), j = seq_len(ncol(X))) {
+getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, scales = NULL, centerCol = TRUE, scaleCol = TRUE, scaleG = TRUE, nChunks2 = parallel::detectCores(), folder = randomString(), vmode = "double", verbose = TRUE, saveRData = TRUE, mc.cores = parallel::detectCores(), i = seq_len(nrow(X)), j = seq_len(ncol(X))) {
 
     timeIn <- proc.time()[3]
 
@@ -622,12 +622,12 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
         scales <- rep(1, p)
     }
 
-    if (is.null(chunkSize)) {
-        chunkSize <- ceiling(n / nChunks)
+    if (is.null(blockSize)) {
+        blockSize <- ceiling(n / nBlocks)
     }
-    chunkIndex <- cbind(i, ceiling(seq_len(n) / chunkSize))
+    blockIndex <- cbind(i, ceiling(seq_len(n) / blockSize))
 
-    nFiles <- nChunks * (nChunks + 1) / 2
+    nFiles <- nBlocks * (nBlocks + 1) / 2
     DATA <- list()
 
     if (file.exists(folder)) {
@@ -638,11 +638,11 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
     setwd(folder)
 
     counter <- 1
-    for (r in seq_len(nChunks)) {
+    for (r in seq_len(nBlocks)) {
 
         DATA[[r]] <- list()
 
-        rowIndex_r <- chunkIndex[which(chunkIndex[, 2] == r), 1]
+        rowIndex_r <- blockIndex[which(blockIndex[, 2] == r), 1]
         Xi <- X[rowIndex_r, j, drop = FALSE]
 
         # centering/scaling
@@ -653,13 +653,13 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
             Xi[, k] <- xik
         }
 
-        for (s in r:nChunks) {
+        for (s in r:nBlocks) {
 
             if (verbose) {
-                message("Working on chunk ", r, "-", s, " (", round(100 * counter / (nChunks * (nChunks + 1) / 2)), "% ", round(proc.time()[3] - timeIn, 3), " seconds)")
+                message("Working on block ", r, "-", s, " (", round(100 * counter / (nBlocks * (nBlocks + 1) / 2)), "% ", round(proc.time()[3] - timeIn, 3), " seconds)")
             }
 
-            rowIndex_s <- chunkIndex[which(chunkIndex[, 2] == s), 1]
+            rowIndex_s <- blockIndex[which(blockIndex[, 2] == s), 1]
             Xj <- X[rowIndex_s, j, drop = FALSE]
 
             # centering/scaling
@@ -672,7 +672,7 @@ getG.symDMatrix <- function(X, nChunks = 5, chunkSize = NULL, centers = NULL, sc
 
             Gij <- tcrossprod.parallel(x = Xi, y = Xj, mc.cores = mc.cores, nChunks = nChunks2)
 
-            blockName <- paste0("data_", padDigits(r, nChunks), "_", padDigits(s, nChunks), ".bin")
+            blockName <- paste0("data_", padDigits(r, nBlocks), "_", padDigits(s, nBlocks), ".bin")
             block <- ff::ff(dim = dim(Gij), vmode = vmode, initdata = as.vector(Gij), filename = blockName, dimnames = list(rownames(X)[rowIndex_r], rownames(X)[rowIndex_s]))
             bit::physical(block)$pattern <- "ff"
             bit::physical(block)$filename <- blockName

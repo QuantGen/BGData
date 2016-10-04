@@ -90,7 +90,7 @@ for (nCores in seq_len(2)) {
         G1 <- G1 / mean(diag(G1))
 
         for (nTasks in c(1, 3)) {
-            G2 <- getG.symDMatrix(X = W, nChunks = 3, folder = paste0(testPath, "test-", randomString()), nChunks2 = nTasks, mc.cores = nCores, verbose = FALSE)
+            G2 <- getG.symDMatrix(X = W, nBlocks = 3, folder = paste0(testPath, "test-", randomString()), nChunks2 = nTasks, mc.cores = nCores, verbose = FALSE)
             expect_equal(G2[], G1)
         }
 
