@@ -650,7 +650,7 @@ getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, sc
         # centering/scaling
         for (k in seq_len(p)) {
             xik <- Xi[, k]
-            xik <- (xik - centers[k]) / scales[k]
+            xik <- (xik - centers[j[k]]) / scales[j[k]]
             xik[is.na(xik)] <- 0
             Xi[, k] <- xik
         }
@@ -667,7 +667,7 @@ getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, sc
             # centering/scaling
             for (k in seq_len(p)) {
                 xjk <- Xj[, k]
-                xjk <- (xjk - centers[k]) / scales[k]
+                xjk <- (xjk - centers[j[k]]) / scales[j[k]]
                 xjk[is.na(xjk)] <- 0
                 Xj[, k] <- xjk
             }
