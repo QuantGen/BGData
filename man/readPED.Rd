@@ -7,11 +7,11 @@
 genotypes in a \code{\link[=LinkedMatrix-class]{LinkedMatrix}} that contains
 memory-mapped \code{ff} nodes.}
 \usage{
-readPED(fileIn, header, dataType, n = NULL, p = NULL, na.strings = "NA",
-  nColSkip = 6, idCol = c(1, 2), verbose = FALSE, nNodes = NULL,
-  linked.by = "rows", folderOut = paste("BGData_", sub("\\\\.[[:alnum:]]+$",
-  "", basename(fileIn)), sep = ""), dimorder = if (linked.by == "rows") 2:1
-  else 1:2)
+readPED(fileIn, header, dataType, n = NULL, p = NULL, sep = "",
+  na.strings = "NA", nColSkip = 6, idCol = c(1, 2), verbose = FALSE,
+  nNodes = NULL, linked.by = "rows", folderOut = paste("BGData_",
+  sub("\\\\.[[:alnum:]]+$", "", basename(fileIn)), sep = ""), dimorder = if
+  (linked.by == "rows") 2:1 else 1:2)
 }
 \arguments{
 \item{fileIn}{The path to the plaintext file.}
@@ -26,6 +26,11 @@ into a raw file.}
 \item{n}{The number of individuals.}
 
 \item{p}{The number of markers.}
+
+\item{sep}{The field separator character. Values on each line of the file
+are separated by this character. If \code{sep = ""} (the default for
+\code{readPED}) the separator is "white space", that is one or more spaces,
+tabs, newlines or carriage returns.}
 
 \item{na.strings}{The character string used in the plaintext file to denote
 missing value.}

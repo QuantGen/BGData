@@ -957,16 +957,16 @@ getLineCount <- function(path, header) {
 }
 
 
-getFileHeader <- function(path) {
+getFileHeader <- function(path, sep = "") {
     file <- gzfile(path, open = "r")
-    header <- scan(file, nlines = 1, what = character(), quiet = TRUE)
+    header <- scan(file, nlines = 1, what = character(), sep = sep, quiet = TRUE)
     close(file)
     return(header)
 }
 
 
-getColumnCount <- function(path) {
-    header <- getFileHeader(path)
+getColumnCount <- function(path, sep = "") {
+    header <- getFileHeader(path, sep)
     p <- length(header)
     return(p)
 }

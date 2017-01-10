@@ -6,7 +6,7 @@
 (generated with \code{--recodeA} in PLINK) or a PED-like file and stores the
 genotypes in an in-memory \code{matrix}.}
 \usage{
-readPED.matrix(fileIn, header, dataType, n = NULL, p = NULL,
+readPED.matrix(fileIn, header, dataType, n = NULL, p = NULL, sep = "",
   na.strings = "NA", nColSkip = 6, idCol = c(1, 2), verbose = FALSE)
 }
 \arguments{
@@ -20,6 +20,11 @@ or \code{integer()} for numeric coding.}
 \item{n}{The number of individuals.}
 
 \item{p}{The number of markers.}
+
+\item{sep}{The field separator character. Values on each line of the file
+are separated by this character. If \code{sep = ""} (the default for
+\code{readPED.matrix}) the separator is "white space", that is one or more
+spaces, tabs, newlines or carriage returns.}
 
 \item{na.strings}{The character string used in the plaintext file to denote
 missing value.}

@@ -92,30 +92,30 @@ setMethod("initialize", "BGData", function(.Object, geno, pheno, map) {
 })
 
 
-pedDims <- function(fileIn, header, n, p, nColSkip = 6) {
+pedDims <- function(fileIn, header, n, p, sep = "", nColSkip = 6) {
     if (is.null(n)) {
         n <- getLineCount(fileIn, header)
     }
     if (header) {
-        headerLine <- getFileHeader(fileIn)
+        headerLine <- getFileHeader(fileIn, sep)
         p <- length(headerLine) - nColSkip
     } else {
         if (is.null(p)) {
-            p <- getColumnCount(fileIn) - nColSkip
+            p <- getColumnCount(fileIn, sep) - nColSkip
         }
     }
     return(list(n = n, p = p))
 }
 
 
-parsePED <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1, 2), na.strings = "NA", verbose = FALSE, ...) {
+parsePED <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1, 2), sep = "", na.strings = "NA", verbose = FALSE, ...) {
 
     p <- ncol(BGData@geno)
     pedFile <- gzfile(fileIn, open = "r")
 
     # Update colnames
     if (header) {
-        headerLine <- scan(pedFile, nlines = 1, what = character(), quiet = TRUE)
+        headerLine <- scan(pedFile, nlines = 1, what = character(), sep = sep, quiet = TRUE)
         colnames(BGData@pheno) <- headerLine[seq_len(nColSkip)]
         colnames(BGData@geno) <- headerLine[-(seq_len(nColSkip))]
     }
@@ -124,8 +124,8 @@ parsePED <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1
     j <- seq_len(p)
     for (i in seq_len(nrow(BGData@geno))) {
         time <- proc.time()
-        xSkip <- scan(pedFile, n = nColSkip, what = character(), quiet = TRUE)
-        x <- scan(pedFile, n = p, what = dataType, na.strings = na.strings, quiet = TRUE)
+        xSkip <- scan(pedFile, n = nColSkip, what = character(), sep = sep, quiet = TRUE)
+        x <- scan(pedFile, n = p, what = dataType, sep = sep, na.strings = na.strings, quiet = TRUE)
         BGData@pheno[i, ] <- xSkip
         BGData@geno <- `[<-`(BGData@geno, i, j, ..., value = x)
         if (verbose) {
@@ -190,6 +190,10 @@ parsePED <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1
 #'   into a raw file.
 #' @param n The number of individuals.
 #' @param p The number of markers.
+#' @param sep The field separator character. Values on each line of the file
+#'   are separated by this character. If \code{sep = ""} (the default for
+#'   \code{readPED}) the separator is "white space", that is one or more spaces,
+#'   tabs, newlines or carriage returns.
 #' @param na.strings The character string used in the plaintext file to denote
 #'   missing value.
 #' @param nColSkip The number of columns to be skipped to reach the genotype
@@ -210,7 +214,7 @@ parsePED <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1
 #'   \code{\link[=ColumnLinkedMatrix-class]{ColumnLinkedMatrix}},
 #'   \code{\link[=RowLinkedMatrix-class]{RowLinkedMatrix}}, \code{\link[ff]{ff}}
 #' @export
-readPED <- function(fileIn, header, dataType, n = NULL, p = NULL, na.strings = "NA", nColSkip = 6, idCol = c(1, 2), verbose = FALSE, nNodes = NULL, linked.by = "rows", folderOut = paste("BGData_", sub("\\.[[:alnum:]]+$", "", basename(fileIn)), sep = ""), dimorder = if (linked.by == "rows") 2:1 else 1:2) {
+readPED <- function(fileIn, header, dataType, n = NULL, p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2), verbose = FALSE, nNodes = NULL, linked.by = "rows", folderOut = paste("BGData_", sub("\\.[[:alnum:]]+$", "", basename(fileIn)), sep = ""), dimorder = if (linked.by == "rows") 2:1 else 1:2) {
 
     # Create output directory
     if (file.exists(folderOut)) {
@@ -218,7 +222,7 @@ readPED <- function(fileIn, header, dataType, n = NULL, p = NULL, na.strings = "
     }
     dir.create(folderOut)
 
-    dims <- pedDims(fileIn = fileIn, header = header, n = n, p = p, nColSkip = nColSkip)
+    dims <- pedDims(fileIn = fileIn, header = header, n = n, p = p, sep = sep, nColSkip = nColSkip)
 
     # Determine number of nodes
     if (is.null(nNodes)) {
@@ -269,7 +273,7 @@ readPED <- function(fileIn, header, dataType, n = NULL, p = NULL, na.strings = "
     BGData <- new("BGData", geno = geno, pheno = pheno)
 
     # Parse PED file
-    BGData <- parsePED(BGData = BGData, fileIn = fileIn, header = header, dataType = dataType, nColSkip = nColSkip, idCol = idCol, na.strings = na.strings, verbose = verbose, nodes = nodes, index = index)
+    BGData <- parsePED(BGData = BGData, fileIn = fileIn, header = header, dataType = dataType, nColSkip = nColSkip, idCol = idCol, sep = sep, na.strings = na.strings, verbose = verbose, nodes = nodes, index = index)
 
     # Save BGData object
     attr(BGData, "origFile") <- list(path = fileIn, dataType = typeof(dataType))
@@ -303,6 +307,10 @@ readPED <- function(fileIn, header, dataType, n = NULL, p = NULL, na.strings = "
 #'   or \code{integer()} for numeric coding.
 #' @param n The number of individuals.
 #' @param p The number of markers.
+#' @param sep The field separator character. Values on each line of the file
+#'   are separated by this character. If \code{sep = ""} (the default for
+#'   \code{readPED.matrix}) the separator is "white space", that is one or more
+#'   spaces, tabs, newlines or carriage returns.
 #' @param na.strings The character string used in the plaintext file to denote
 #'   missing value.
 #' @param nColSkip The number of columns to be skipped to reach the genotype
@@ -313,9 +321,9 @@ readPED <- function(fileIn, header, dataType, n = NULL, p = NULL, na.strings = "
 #' @return Returns a \code{\link[=BGData-class]{BGData}} object.
 #' @seealso \code{\link[=BGData-class]{BGData}}
 #' @export
-readPED.matrix <- function(fileIn, header, dataType, n = NULL, p = NULL, na.strings = "NA", nColSkip = 6, idCol = c(1, 2), verbose = FALSE) {
+readPED.matrix <- function(fileIn, header, dataType, n = NULL, p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2), verbose = FALSE) {
 
-    dims <- pedDims(fileIn = fileIn, header = header, n = n, p = p, nColSkip = nColSkip)
+    dims <- pedDims(fileIn = fileIn, header = header, n = n, p = p, sep = sep, nColSkip = nColSkip)
 
     dataType <- normalizeType(dataType)
 
@@ -329,7 +337,7 @@ readPED.matrix <- function(fileIn, header, dataType, n = NULL, p = NULL, na.stri
     BGData <- new("BGData", geno = geno, pheno = pheno)
 
     # Parse PED file
-    BGData <- parsePED(BGData = BGData, fileIn = fileIn, header = header, dataType = dataType, nColSkip = nColSkip, idCol = idCol, na.strings = na.strings, verbose = verbose)
+    BGData <- parsePED(BGData = BGData, fileIn = fileIn, header = header, dataType = dataType, nColSkip = nColSkip, idCol = idCol, sep = sep, na.strings = na.strings, verbose = verbose)
 
     return(BGData)
 }
@@ -364,6 +372,10 @@ readPED.matrix <- function(fileIn, header, dataType, n = NULL, p = NULL, na.stri
 #'   or \code{integer()} for numeric coding.
 #' @param n The number of individuals.
 #' @param p The number of markers.
+#' @param sep The field separator character. Values on each line of the file
+#'   are separated by this character. If \code{sep = ""} (the default for
+#'   \code{readPED.big.matrix}) the separator is "white space", that is one or
+#'   more spaces, tabs, newlines or carriage returns.
 #' @param na.strings The character string used in the plaintext file to denote
 #'   missing value.
 #' @param nColSkip The number of columns to be skipped to reach the genotype
@@ -375,7 +387,7 @@ readPED.matrix <- function(fileIn, header, dataType, n = NULL, p = NULL, na.stri
 #' @return Returns a \code{\link[=BGData-class]{BGData}} object.
 #' @seealso \code{\link[=BGData-class]{BGData}}
 #' @export
-readPED.big.matrix <- function(fileIn, header, dataType, n = NULL, p = NULL, na.strings = "NA", nColSkip = 6, idCol = c(1, 2), verbose = FALSE, folderOut = paste("BGData_", sub("\\.[[:alnum:]]+$", "", basename(fileIn)), sep = "")) {
+readPED.big.matrix <- function(fileIn, header, dataType, n = NULL, p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2), verbose = FALSE, folderOut = paste("BGData_", sub("\\.[[:alnum:]]+$", "", basename(fileIn)), sep = "")) {
 
     if (file.exists(folderOut)) {
         stop(paste("Output folder", folderOut, "already exists. Please move it or pick a different one."))
@@ -390,7 +402,7 @@ readPED.big.matrix <- function(fileIn, header, dataType, n = NULL, p = NULL, na.
         stop("dataType must be either integer() or double()")
     }
 
-    dims <- pedDims(fileIn = fileIn, header = header, n = n, p = p, nColSkip = nColSkip)
+    dims <- pedDims(fileIn = fileIn, header = header, n = n, p = p, sep = sep, nColSkip = nColSkip)
 
     options(bigmemory.typecast.warning = FALSE)
     options(bigmemory.allow.dimnames = TRUE)
@@ -408,7 +420,7 @@ readPED.big.matrix <- function(fileIn, header, dataType, n = NULL, p = NULL, na.
     BGData <- new("BGData", geno = geno, pheno = pheno)
 
     # Parse PED file
-    BGData <- parsePED(BGData = BGData, fileIn = fileIn, header = header, dataType = dataType, nColSkip = nColSkip, idCol = idCol, na.strings = na.strings, verbose = verbose)
+    BGData <- parsePED(BGData = BGData, fileIn = fileIn, header = header, dataType = dataType, nColSkip = nColSkip, idCol = idCol, sep = sep, na.strings = na.strings, verbose = verbose)
 
     # Save BGData object
     attr(BGData, "origFile") <- list(path = fileIn, dataType = typeof(dataType))
