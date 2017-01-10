@@ -269,7 +269,7 @@ readPED <- function(fileIn, header, dataType, n = NULL, p = NULL, na.strings = "
     BGData <- new("BGData", geno = geno, pheno = pheno)
 
     # Parse PED file
-    BGData <- parsePED(BGData = BGData, fileIn = fileIn, header = header, dataType = dataType, nColSkip = nColSkip, na.strings = na.strings, verbose = verbose, nodes = nodes, index = index)
+    BGData <- parsePED(BGData = BGData, fileIn = fileIn, header = header, dataType = dataType, nColSkip = nColSkip, idCol = idCol, na.strings = na.strings, verbose = verbose, nodes = nodes, index = index)
 
     # Save BGData object
     attr(BGData, "origFile") <- list(path = fileIn, dataType = typeof(dataType))
@@ -329,7 +329,7 @@ readPED.matrix <- function(fileIn, header, dataType, n = NULL, p = NULL, na.stri
     BGData <- new("BGData", geno = geno, pheno = pheno)
 
     # Parse PED file
-    BGData <- parsePED(BGData = BGData, fileIn = fileIn, header = header, dataType = dataType, nColSkip = nColSkip, na.strings = na.strings, verbose = verbose)
+    BGData <- parsePED(BGData = BGData, fileIn = fileIn, header = header, dataType = dataType, nColSkip = nColSkip, idCol = idCol, na.strings = na.strings, verbose = verbose)
 
     return(BGData)
 }
@@ -408,7 +408,7 @@ readPED.big.matrix <- function(fileIn, header, dataType, n = NULL, p = NULL, na.
     BGData <- new("BGData", geno = geno, pheno = pheno)
 
     # Parse PED file
-    BGData <- parsePED(BGData = BGData, fileIn = fileIn, header = header, dataType = dataType, nColSkip = nColSkip, na.strings = na.strings, verbose = verbose)
+    BGData <- parsePED(BGData = BGData, fileIn = fileIn, header = header, dataType = dataType, nColSkip = nColSkip, idCol = idCol, na.strings = na.strings, verbose = verbose)
 
     # Save BGData object
     attr(BGData, "origFile") <- list(path = fileIn, dataType = typeof(dataType))
