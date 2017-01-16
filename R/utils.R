@@ -785,15 +785,20 @@ GWAS <- function(formula, data, method, i = seq_len(nrow(data@geno)), j = seq_le
 ## OLS for the regression y=xb+e (data is assumed to be pre-adjusted by non-genetic effects
     
 rayOLS=function(y,x,n=length(y)){
-    rhs=sum(x*y)
-    XtX=sum(x^2)
-    sol=rhs/XtX
-    error=y-x*sol
-    vE=sum(error^2)/(n-1)
-    SE=sqrt(vE/XtX)
-    z_stat=sol/SE
-    return(c(sol,SE,z_stat,pt(q=abs(z_stat),df=n-1,lower.tail=FALSE)*2))
+	tmp=!(is.na(x)|is.na(y))
+	x=x[tmp]
+	y=y[tmp]
+	
+	rhs=sum(x*y)
+	XtX=sum(x^2)
+	sol=rhs/XtX
+	error=y-x*sol
+	vE=sum(error^2)/(n-1)
+	SE=sqrt(vE/XtX)
+	z_stat=sol/SE
+	return(c(sol,SE,z_stat,pt(q=abs(z_stat),df=n-1,lower.tail=FALSE)*2))
 }
+
     
 # GWAS 'Ordinary Least Squares' (e.g., lsfit, lm.fit, lm)
 # formula: the formula for the GWAS model without including the marker, e.g.
