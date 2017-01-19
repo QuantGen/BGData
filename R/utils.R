@@ -912,49 +912,6 @@ summarize <- function(X, verbose = FALSE, bufferSize = 5000, i = seq_len(nrow(X)
 }
 
 
-#' Generates and stores a simulated plaintext raw PED file (see \code{--recodeA}
-#' in PLINK) or PED-like file for testing purposes.
-#'
-#' @param filename The path where to save the generated file.
-#' @param n The number of observations to generate.
-#' @param p The number of markers to generate.
-#' @param genoChars The alphabet used to generate the genotypes.
-#' @param na.string The symbol used to denote missing values.
-#' @param propNA The probability of generating NAs.
-#' @param returnGenos Whether to return the genotypes from the function.
-#' @export
-simPED <- function(filename, n, p, genoChars = 0:2, na.string = NA, propNA = 0.02, returnGenos = FALSE) {
-    if (file.exists(filename)) {
-        stop(paste("File", filename, "already exists. Please move it or pick a different name."))
-    }
-    markerNames <- paste0("mrk_", seq_len(p))
-    subjectNames <- paste0("id_", seq_len(n))
-    if (returnGenos) {
-        OUT <- matrix(data = NA, nrow = n, ncol = p)
-        colnames(OUT) <- markerNames
-        rownames(OUT) <- subjectNames
-    }
-    fileOut <- file(filename, open = "w")
-    pedP <- 6 + p
-    header <- c(c("FID", "IID", "PAT", "MAT", "SEX", "PHENOTYPE"), markerNames)
-    write(header, ncolumns = pedP, append = TRUE, file = fileOut)
-    for (i in seq_len(n)) {
-        geno <- sample(genoChars, size = p, replace = TRUE)
-        geno[stats::runif(p) < propNA] <- na.string
-        pheno <- c(0, subjectNames[i], rep(NA, 4))
-        x <- c(pheno, geno)
-        write(x, ncolumns = pedP, append = TRUE, file = fileOut)
-        if (returnGenos) {
-            OUT[i, ] <- geno
-        }
-    }
-    close(fileOut)
-    if (returnGenos) {
-        return(OUT)
-    }
-}
-
-
 getLineCount <- function(path, header) {
     # gzfile and readLines throw some warnings, but since it works, let's disable
     # warnings for this block
