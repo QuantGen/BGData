@@ -73,10 +73,10 @@ apply2 <- function(X, MARGIN, FUN, ...) {
 #'
 #' The input matrix \code{X} is broken into \code{nTasks} chunks and passed to
 #' \code{\link[parallel]{mclapply}}. The number of cores can be configured using
-#' \code{mc.cores}.
+#' \code{nCores}.
 #'
 #' \code{nTasks} has to be chosen carefully to avoid running out of memory. As a
-#' rule of thumb, at least around \code{object_size(X) + (mc.cores *
+#' rule of thumb, at least around \code{object_size(X) + (nCores *
 #' (object_size(X) / nTasks)) + object_size(result)} MB of total memory will be
 #' needed, not including potential copies of your data that might be created
 #' (for example \code{lsfit} runs \code{cbind(1, X)}). Therefore, for 20 nodes
@@ -91,12 +91,12 @@ apply2 <- function(X, MARGIN, FUN, ...) {
 #'   indicates rows, 2 indicates columns.
 #' @param FUN The function to be applied.
 #' @param nTasks The number of tasks the problem should be broken into to be
-#'   distributed among \code{mc.cores} cores.
-#' @param mc.cores The number of cores (passed to
+#'   distributed among \code{nCores} cores.
+#' @param nCores The number of cores (passed to
 #'   \code{\link[parallel]{mclapply}}).
 #' @param ... Additional arguments to be passed to \code{apply}.
 #' @export
-parallelApply <- function(X, MARGIN, FUN, nTasks = mc.cores, mc.cores = parallel::detectCores(), ...) {
+parallelApply <- function(X, MARGIN, FUN, nTasks = nCores, nCores = parallel::detectCores(), ...) {
     d <- dim(X)
     if (!length(d)) {
         stop("dim(X) must have a positive length")
@@ -116,7 +116,7 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = mc.cores, mc.cores = parallel
                 subset <- X[seq(range[1], range[2]), , drop = FALSE]
             }
             apply2(subset, MARGIN, FUN, ...)
-        }, ..., mc.preschedule = FALSE, mc.cores = mc.cores)
+        }, ..., mc.preschedule = FALSE, mc.cores = nCores)
         simplifyList(res)
     }
 }
@@ -127,7 +127,7 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = mc.cores, mc.cores = parallel
 #'
 #' \code{bufferSize} and \code{nTasks} have to be chosen carefully to avoid
 #' running out of memory. As a rule of thumb, at least around
-#' \code{object_size(buffer) + (mc.cores * (object_size(buffer) / nTasks)) +
+#' \code{object_size(buffer) + (nCores * (object_size(buffer) / nTasks)) +
 #' object_size(result)} MB of total memory will be needed, not including
 #' potential copies of your data that might be created (for example \code{lsfit}
 #' runs \code{cbind(1, X)}). Therefore, for 20 nodes and 20 tasks you will need
@@ -149,13 +149,13 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = mc.cores, mc.cores = parallel
 #' @param j (integer, boolean or character) Indicates which columns should be
 #'   used. By default, all columns are used.
 #' @param nTasks The number of tasks the problem should be broken into to be
-#'   distributed among \code{mc.cores} cores.
-#' @param mc.cores The number of cores (passed to
+#'   distributed among \code{nCores} cores.
+#' @param nCores The number of cores (passed to
 #'   \code{\link[parallel]{mclapply}}).
 #' @param verbose Whether to print additional information.
 #' @param ... Additional arguments to be passed to \code{parallelApply}.
 #' @export
-chunkedApply <- function(X, MARGIN, FUN, bufferSize, i = seq_len(nrow(X)), j = seq_len(ncol(X)), nTasks = mc.cores, mc.cores = parallel::detectCores(), verbose = FALSE, ...) {
+chunkedApply <- function(X, MARGIN, FUN, bufferSize, i = seq_len(nrow(X)), j = seq_len(ncol(X)), nTasks = nCores, nCores = parallel::detectCores(), verbose = FALSE, ...) {
     if (!length(dim(X))) {
         stop("dim(X) must have a positive length")
     }
@@ -171,14 +171,14 @@ chunkedApply <- function(X, MARGIN, FUN, bufferSize, i = seq_len(nrow(X)), j = s
         } else {
             subset <- X[i[seq(ranges[1, k], ranges[2, k])], j, drop = FALSE]
         }
-        parallelApply(X = subset, MARGIN = MARGIN, FUN = FUN, nTasks = nTasks, mc.cores = mc.cores, ...)
+        parallelApply(X = subset, MARGIN = MARGIN, FUN = FUN, nTasks = nTasks, nCores = nCores, ...)
     })
     simplifyList(res)
 }
 
 
 # Computes crossprod(x,y) or tcrossprod(x,y)
-crossprods <- function(x, y = NULL, nTasks = mc.cores, use_tcrossprod = FALSE, mc.cores = parallel::detectCores()) {
+crossprods <- function(x, y = NULL, nTasks = nCores, use_tcrossprod = FALSE, nCores = parallel::detectCores()) {
     dx <- dim(x)
     if (!is.null(y)) {
         y <- as.matrix(y)
@@ -224,7 +224,7 @@ crossprods <- function(x, y = NULL, nTasks = mc.cores, use_tcrossprod = FALSE, m
                 Xy <- crossprod(X, Y)
             }
             return(Xy)
-        }, mc.preschedule = FALSE, mc.cores = mc.cores)
+        }, mc.preschedule = FALSE, mc.cores = nCores)
         # We now need to add up chunks sequentially
         Xy <- chunks[[1]]
         if (length(chunks) > 1) {
@@ -243,13 +243,13 @@ crossprods <- function(x, y = NULL, nTasks = mc.cores, use_tcrossprod = FALSE, m
 #'   \code{\link[=BGData-class]{BGData}} object.
 #' @param y vector or matrix-like object. NULL by default.
 #' @param nTasks The number of tasks the problem should be broken into to be
-#'   distributed among \code{mc.cores} cores.
-#' @param mc.cores The number of cores (passed to
+#'   distributed among \code{nCores} cores.
+#' @param nCores The number of cores (passed to
 #'   \code{\link[parallel]{mclapply}}).
 #' @return x'y' or x'x depending on whether y is provided.
 #' @export
-crossprod.parallel <- function(x, y = NULL, nTasks = mc.cores, mc.cores = parallel::detectCores()) {
-    crossprods(x = x, y = y, nTasks = nTasks, mc.cores = mc.cores, use_tcrossprod = FALSE)
+crossprod.parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel::detectCores()) {
+    crossprods(x = x, y = y, nTasks = nTasks, nCores = nCores, use_tcrossprod = FALSE)
 }
 
 
@@ -259,13 +259,13 @@ crossprod.parallel <- function(x, y = NULL, nTasks = mc.cores, mc.cores = parall
 #'   \code{\link[=BGData-class]{BGData}} object.
 #' @param y vector or matrix-like object. NULL by default.
 #' @param nTasks The number of tasks the problem should be broken into to be
-#'   distributed among \code{mc.cores} cores.
-#' @param mc.cores The number of cores (passed to
+#'   distributed among \code{nCores} cores.
+#' @param nCores The number of cores (passed to
 #'   \code{\link[parallel]{mclapply}}).
 #' @return xy' or xx' depending on whether y is provided.
 #' @export
-tcrossprod.parallel <- function(x, y = NULL, nTasks = mc.cores, mc.cores = parallel::detectCores()) {
-    crossprods(x = x, y = y, nTasks = nTasks, mc.cores = mc.cores, use_tcrossprod = TRUE)
+tcrossprod.parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel::detectCores()) {
+    crossprods(x = x, y = y, nTasks = nTasks, nCores = nCores, use_tcrossprod = TRUE)
 }
 
 
@@ -295,7 +295,7 @@ tcrossprod.parallel <- function(x, y = NULL, nTasks = mc.cores, mc.cores = paral
 #' @param minVar Columns with variance lower than this value will not be used in
 #'   the computation (only if \code{scaleCol} is set).
 #' @param nTasks The number of tasks the problem should be broken into to be
-#'   distributed among \code{mc.cores} cores.
+#'   distributed among \code{nCores} cores.
 #' @param scales Precomputed scales if i2 is used.
 #' @param centers Precomputed centers if i2 is used.
 #' @param saveG Whether to save genomic relationship matrix into file.
@@ -303,16 +303,16 @@ tcrossprod.parallel <- function(x, y = NULL, nTasks = mc.cores, mc.cores = paral
 #'   \code{RData} or \code{ff}.
 #' @param saveName Name without extension to save genomic relationship matrix
 #'   with.
-#' @param mc.cores The number of cores (passed to
+#' @param nCores The number of cores (passed to
 #'   \code{\link[parallel]{mclapply}}).
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @export
-getG <- function(x, nChunks = ceiling(ncol(x) / 10000), scaleCol = TRUE, centerCol = TRUE, scaleG = TRUE, verbose = TRUE, i = seq_len(nrow(x)), j = seq_len(ncol(x)), i2 = NULL, minVar = 1e-05, nTasks = mc.cores, scales = NULL, centers = NULL, saveG = FALSE, saveType = "RData", saveName = "Gij", mc.cores = parallel::detectCores()) {
+getG <- function(x, nChunks = ceiling(ncol(x) / 10000), scaleCol = TRUE, centerCol = TRUE, scaleG = TRUE, verbose = TRUE, i = seq_len(nrow(x)), j = seq_len(ncol(x)), i2 = NULL, minVar = 1e-05, nTasks = nCores, scales = NULL, centers = NULL, saveG = FALSE, saveType = "RData", saveName = "Gij", nCores = parallel::detectCores()) {
     if (is.null(i2)) {
-        G <- getGi(x = x, nChunks = nChunks, scales = scales, centers = centers, scaleCol = scaleCol, centerCol = centerCol, scaleG = scaleG, verbose = verbose, i = i, j = j, minVar = minVar, nTasks = nTasks, mc.cores = mc.cores)
+        G <- getGi(x = x, nChunks = nChunks, scales = scales, centers = centers, scaleCol = scaleCol, centerCol = centerCol, scaleG = scaleG, verbose = verbose, i = i, j = j, minVar = minVar, nTasks = nTasks, nCores = nCores)
     } else {
         if (is.null(scales) || is.null(centers)) stop("scales and centers need to be precomputed.")
-        G <- getGij(x = x, i1 = i, i2 = i2, scales = scales, centers = centers, scaleCol = scaleCol, centerCol = centerCol, scaleG = scaleG, verbose = verbose, nChunks = nChunks, j = j, minVar = minVar, nTasks = nTasks, mc.cores = mc.cores)
+        G <- getGij(x = x, i1 = i, i2 = i2, scales = scales, centers = centers, scaleCol = scaleCol, centerCol = centerCol, scaleG = scaleG, verbose = verbose, nChunks = nChunks, j = j, minVar = minVar, nTasks = nTasks, nCores = nCores)
     }
     if (saveG) {
         if (saveType == "RData") {
@@ -327,7 +327,7 @@ getG <- function(x, nChunks = ceiling(ncol(x) / 10000), scaleCol = TRUE, centerC
 }
 
 
-getGi <- function(x, nChunks = ceiling(ncol(x) / 10000), scales = NULL, centers = NULL, scaleCol = TRUE, centerCol = FALSE, scaleG = TRUE, verbose = TRUE, i = seq_len(nrow(x)), j = seq_len(ncol(x)), minVar = 1e-05, nTasks = mc.cores, mc.cores = parallel::detectCores()) {
+getGi <- function(x, nChunks = ceiling(ncol(x) / 10000), scales = NULL, centers = NULL, scaleCol = TRUE, centerCol = FALSE, scaleG = TRUE, verbose = TRUE, i = seq_len(nrow(x)), j = seq_len(ncol(x)), minVar = 1e-05, nTasks = nCores, nCores = parallel::detectCores()) {
     nX <- nrow(x)
     pX <- ncol(x)
 
@@ -411,7 +411,7 @@ getGi <- function(x, nChunks = ceiling(ncol(x) / 10000), scales = NULL, centers 
                 X[is.na(X)] <- 0
 
                 if (nTasks > 1) {
-                  G_chunk <- crossprods(x = X, use_tcrossprod = TRUE, nTasks = nTasks, mc.cores = mc.cores)
+                  G_chunk <- crossprods(x = X, use_tcrossprod = TRUE, nTasks = nTasks, nCores = nCores)
                 } else {
                   G_chunk <- tcrossprod(X)
                 }
@@ -428,7 +428,7 @@ getGi <- function(x, nChunks = ceiling(ncol(x) / 10000), scales = NULL, centers 
 }
 
 
-getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, centerCol = TRUE,scaleG = TRUE, verbose = TRUE, nChunks = ceiling(ncol(x) / 10000), j = seq_len(ncol(x)), minVar = 1e-05, nTasks = mc.cores, mc.cores = parallel::detectCores()) {
+getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, centerCol = TRUE,scaleG = TRUE, verbose = TRUE, nChunks = ceiling(ncol(x) / 10000), j = seq_len(ncol(x)), minVar = 1e-05, nTasks = nCores, nCores = parallel::detectCores()) {
 
     nX <- nrow(x)
     pX <- ncol(x)
@@ -506,7 +506,7 @@ getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, centerCol = TRUE
                 X1[is.na(X1)] <- 0
                 X2 <- scale(X2, center = centers.chunk, scale = scales.chunk)
                 X2[is.na(X2)] <- 0
-                G_chunk <- tcrossprod.parallel(x = X1, y = X2, mc.cores = mc.cores, nTasks = nTasks)
+                G_chunk <- tcrossprod.parallel(x = X1, y = X2, nCores = nCores, nTasks = nTasks)
                 G[] <- G + G_chunk
             }
             if (scaleG) {
@@ -551,7 +551,7 @@ getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, centerCol = TRUE
 #' @param verbose If TRUE more messages are printed.
 #' @param saveRData Whether to save an RData file to easily reload
 #'   \code{\link[=symDMatrix-class]{symDMatrix}}
-#' @param mc.cores The number of cores (passed to
+#' @param nCores The number of cores (passed to
 #'   \code{\link[parallel]{mclapply}}).
 #' @param i (integer, boolean or character) Indicates which rows should be used.
 #'   By default, all rows are used.
@@ -559,7 +559,7 @@ getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, centerCol = TRUE
 #'   used. By default, all columns are used.
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @export
-getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, scales = NULL, centerCol = TRUE, scaleCol = TRUE, scaleG = TRUE, nTasks = mc.cores, folder = randomString(), vmode = "double", verbose = TRUE, saveRData = TRUE, mc.cores = parallel::detectCores(), i = seq_len(nrow(X)), j = seq_len(ncol(X))) {
+getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, scales = NULL, centerCol = TRUE, scaleCol = TRUE, scaleG = TRUE, nTasks = nCores, folder = randomString(), vmode = "double", verbose = TRUE, saveRData = TRUE, nCores = parallel::detectCores(), i = seq_len(nrow(X)), j = seq_len(ncol(X))) {
 
     timeIn <- proc.time()[3]
 
@@ -672,7 +672,7 @@ getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, sc
                 Xj[, k] <- xjk
             }
 
-            Gij <- tcrossprod.parallel(x = Xi, y = Xj, mc.cores = mc.cores, nTasks = nTasks)
+            Gij <- tcrossprod.parallel(x = Xi, y = Xj, nCores = nCores, nTasks = nTasks)
 
             blockName <- paste0("data_", padDigits(r, nBlocks), "_", padDigits(s, nBlocks), ".bin")
             block <- ff::ff(dim = dim(Gij), vmode = vmode, initdata = as.vector(Gij), filename = blockName, dimnames = list(rownames(X)[rowIndex_r], rownames(X)[rowIndex_s]))
@@ -737,13 +737,13 @@ getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, sc
 #' @param chunkSize Represents the number of columns of \code{@@geno} that are
 #'   brought into RAM for processing (5000 by default).
 #' @param nTasks The number of tasks the problem should be broken into to be
-#'   distributed among \code{mc.cores} cores.
-#' @param mc.cores The number of cores (passed to
+#'   distributed among \code{nCores} cores.
+#' @param nCores The number of cores (passed to
 #'   \code{\link[parallel]{mclapply}}).
 #' @param ... Additional arguments for chunkedApply and regression method.
 #' @return Returns a matrix with estimates, SE, p-value, etc.
 #' @export
-GWAS <- function(formula, data, method, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), verbose = FALSE, chunkSize = 5000, nTasks = mc.cores, mc.cores = parallel::detectCores(), ...) {
+GWAS <- function(formula, data, method, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), verbose = FALSE, chunkSize = 5000, nTasks = nCores, nCores = parallel::detectCores(), ...) {
 
     if (class(data) != "BGData") {
         stop("data must BGData")
@@ -756,7 +756,7 @@ GWAS <- function(formula, data, method, i = seq_len(nrow(data@geno)), j = seq_le
     # We can have specialized methods, for instance for OLS it is better to use
     # lsfit (that is what GWAS.ols does)
     if (method %in% c("lm", "lm.fit", "lsfit")) {
-        OUT <- GWAS.ols(formula = formula, data = data, i = i, j = j, verbose = verbose, chunkSize = chunkSize, nTasks = nTasks, mc.cores = mc.cores, ...)
+        OUT <- GWAS.ols(formula = formula, data = data, i = i, j = j, verbose = verbose, chunkSize = chunkSize, nTasks = nTasks, nCores = nCores, ...)
     } else if (method == "SKAT") {
         OUT <- GWAS.SKAT(formula = formula, data = data, i = i, j = j, verbose = verbose, ...)
     } else {
@@ -774,7 +774,7 @@ GWAS <- function(formula, data, method, i = seq_len(nrow(data@geno)), j = seq_le
             pheno$z <- col
             fm <- FUN(GWAS.model, data = pheno, ...)
             getCoefficients(fm)
-        }, bufferSize = chunkSize, verbose = verbose, nTasks = nTasks, mc.cores = mc.cores, ...)
+        }, bufferSize = chunkSize, verbose = verbose, nTasks = nTasks, nCores = nCores, ...)
         colnames(OUT) <- colnames(data@geno)[j]
         OUT <- t(OUT)
     }
@@ -805,7 +805,7 @@ rayOLS=function(y,x,n=length(y)){
 # y~1 or y~factor(sex)+age
 # all the variables in the formula must be in data@pheno data (BGData)
 # containing slots @pheno and @geno    
-GWAS.ols <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), verbose = FALSE, chunkSize = 10, nTasks = mc.cores, mc.cores = parallel::detectCores(), ...) {
+GWAS.ols <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), verbose = FALSE, chunkSize = 10, nTasks = nCores, nCores = parallel::detectCores(), ...) {
 
     # subset of model.frame has bizarre scoping issues
     frame <- stats::model.frame(formula = formula, data = data@pheno)[i, , drop = FALSE]
@@ -818,7 +818,7 @@ GWAS.ols <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(nc
         model[, 1] <- col
         fm <- stats::lsfit(x = model, y = y, intercept = FALSE)
         stats::ls.print(fm, print.it = FALSE)$coef.table[[1]][1, ]
-    }, bufferSize = chunkSize, verbose = verbose, nTasks = nTasks, mc.cores = mc.cores, ...)
+    }, bufferSize = chunkSize, verbose = verbose, nTasks = nTasks, nCores = nCores, ...)
     colnames(res) <- colnames(data@geno)[j]
     res <- t(res)
 
@@ -894,17 +894,17 @@ getCoefficients.lmerMod <- function(x) {
 #' @param j (integer, boolean or character) Indicates which columns should be
 #'   used. By default, all columns are used.
 #' @param nTasks The number of tasks the problem should be broken into to be
-#'   distributed among \code{mc.cores} cores.
-#' @param mc.cores The number of cores (passed to
+#'   distributed among \code{nCores} cores.
+#' @param nCores The number of cores (passed to
 #'   \code{\link[parallel]{mclapply}}).
 #' @export
-summarize <- function(X, verbose = FALSE, bufferSize = 5000, i = seq_len(nrow(X)), j = seq_len(ncol(X)), nTasks = mc.cores, mc.cores = parallel::detectCores()) {
+summarize <- function(X, verbose = FALSE, bufferSize = 5000, i = seq_len(nrow(X)), j = seq_len(ncol(X)), nTasks = nCores, nCores = parallel::detectCores()) {
     res <- chunkedApply(X, 2, function(col) {
         freqNA <- mean(is.na(col))
         alleleFreq <- mean(col, na.rm = TRUE) / 2
         sd <- stats::sd(col, na.rm = TRUE)
         cbind(freqNA, alleleFreq, sd)
-    }, bufferSize = bufferSize, verbose = verbose, i = i, j = j, nTasks = nTasks, mc.cores = mc.cores)
+    }, bufferSize = bufferSize, verbose = verbose, i = i, j = j, nTasks = nTasks, nCores = nCores)
     rownames(res) <- c("freq_na", "allele_freq", "sd")
     colnames(res) <- colnames(X)[j]
     t(res)

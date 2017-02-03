@@ -7,7 +7,7 @@
 \usage{
 GWAS(formula, data, method, i = seq_len(nrow(data@geno)),
   j = seq_len(ncol(data@geno)), verbose = FALSE, chunkSize = 5000,
-  nTasks = mc.cores, mc.cores = parallel::detectCores(), ...)
+  nTasks = nCores, nCores = parallel::detectCores(), ...)
 }
 \arguments{
 \item{formula}{A formula (e.g. weight~sex+age) with the response on the
@@ -33,9 +33,9 @@ used. By default, all columns are used.}
 brought into RAM for processing (5000 by default).}
 
 \item{nTasks}{The number of tasks the problem should be broken into to be
-distributed among \code{mc.cores} cores.}
+distributed among \code{nCores} cores.}
 
-\item{mc.cores}{The number of cores (passed to
+\item{nCores}{The number of cores (passed to
 \code{\link[parallel]{mclapply}}).}
 
 \item{...}{Additional arguments for chunkedApply and regression method.}

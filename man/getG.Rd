@@ -6,9 +6,9 @@
 \usage{
 getG(x, nChunks = ceiling(ncol(x)/10000), scaleCol = TRUE,
   centerCol = TRUE, scaleG = TRUE, verbose = TRUE, i = seq_len(nrow(x)),
-  j = seq_len(ncol(x)), i2 = NULL, minVar = 1e-05, nTasks = mc.cores,
+  j = seq_len(ncol(x)), i2 = NULL, minVar = 1e-05, nTasks = nCores,
   scales = NULL, centers = NULL, saveG = FALSE, saveType = "RData",
-  saveName = "Gij", mc.cores = parallel::detectCores())
+  saveName = "Gij", nCores = parallel::detectCores())
 }
 \arguments{
 \item{x}{A matrix-like object, typically \code{@geno} of a
@@ -39,7 +39,7 @@ to divide matrix into blocks.}
 the computation (only if \code{scaleCol} is set).}
 
 \item{nTasks}{The number of tasks the problem should be broken into to be
-distributed among \code{mc.cores} cores.}
+distributed among \code{nCores} cores.}
 
 \item{scales}{Precomputed scales if i2 is used.}
 
@@ -53,7 +53,7 @@ distributed among \code{mc.cores} cores.}
 \item{saveName}{Name without extension to save genomic relationship matrix
 with.}
 
-\item{mc.cores}{The number of cores (passed to
+\item{nCores}{The number of cores (passed to
 \code{\link[parallel]{mclapply}}).}
 }
 \value{

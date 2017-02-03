@@ -6,8 +6,8 @@
 function on each row or column of a matrix in parallel.}
 \usage{
 chunkedApply(X, MARGIN, FUN, bufferSize, i = seq_len(nrow(X)),
-  j = seq_len(ncol(X)), nTasks = mc.cores,
-  mc.cores = parallel::detectCores(), verbose = FALSE, ...)
+  j = seq_len(ncol(X)), nTasks = nCores, nCores = parallel::detectCores(),
+  verbose = FALSE, ...)
 }
 \arguments{
 \item{X}{A matrix-like object, typically \code{@geno} of a
@@ -28,9 +28,9 @@ By default, all rows are used.}
 used. By default, all columns are used.}
 
 \item{nTasks}{The number of tasks the problem should be broken into to be
-distributed among \code{mc.cores} cores.}
+distributed among \code{nCores} cores.}
 
-\item{mc.cores}{The number of cores (passed to
+\item{nCores}{The number of cores (passed to
 \code{\link[parallel]{mclapply}}).}
 
 \item{verbose}{Whether to print additional information.}
@@ -40,7 +40,7 @@ distributed among \code{mc.cores} cores.}
 \description{
 \code{bufferSize} and \code{nTasks} have to be chosen carefully to avoid
 running out of memory. As a rule of thumb, at least around
-\code{object_size(buffer) + (mc.cores * (object_size(buffer) / nTasks)) +
+\code{object_size(buffer) + (nCores * (object_size(buffer) / nTasks)) +
 object_size(result)} MB of total memory will be needed, not including
 potential copies of your data that might be created (for example \code{lsfit}
 runs \code{cbind(1, X)}). Therefore, for 20 nodes and 20 tasks you will need

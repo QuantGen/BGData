@@ -4,8 +4,8 @@
 \alias{tcrossprod.parallel}
 \title{Computes tcrossprod (xy' or xx') in parallel.}
 \usage{
-tcrossprod.parallel(x, y = NULL, nTasks = mc.cores,
-  mc.cores = parallel::detectCores())
+tcrossprod.parallel(x, y = NULL, nTasks = nCores,
+  nCores = parallel::detectCores())
 }
 \arguments{
 \item{x}{A matrix-like object, typically \code{@geno} of a
@@ -14,9 +14,9 @@ tcrossprod.parallel(x, y = NULL, nTasks = mc.cores,
 \item{y}{vector or matrix-like object. NULL by default.}
 
 \item{nTasks}{The number of tasks the problem should be broken into to be
-distributed among \code{mc.cores} cores.}
+distributed among \code{nCores} cores.}
 
-\item{mc.cores}{The number of cores (passed to
+\item{nCores}{The number of cores (passed to
 \code{\link[parallel]{mclapply}}).}
 }
 \value{

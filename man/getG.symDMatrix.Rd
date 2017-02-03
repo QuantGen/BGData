@@ -7,8 +7,8 @@ creating a \code{\link[=symDMatrix-class]{symDMatrix}}.}
 \usage{
 getG.symDMatrix(X, nBlocks = 5, blockSize = NULL, centers = NULL,
   scales = NULL, centerCol = TRUE, scaleCol = TRUE, scaleG = TRUE,
-  nTasks = mc.cores, folder = randomString(), vmode = "double",
-  verbose = TRUE, saveRData = TRUE, mc.cores = parallel::detectCores(),
+  nTasks = nCores, folder = randomString(), vmode = "double",
+  verbose = TRUE, saveRData = TRUE, nCores = parallel::detectCores(),
   i = seq_len(nrow(X)), j = seq_len(ncol(X)))
 }
 \arguments{
@@ -44,7 +44,7 @@ processing in parallel.}
 \item{saveRData}{Whether to save an RData file to easily reload
 \code{\link[=symDMatrix-class]{symDMatrix}}}
 
-\item{mc.cores}{The number of cores (passed to
+\item{nCores}{The number of cores (passed to
 \code{\link[parallel]{mclapply}}).}
 
 \item{i}{(integer, boolean or character) Indicates which rows should be used.

@@ -5,8 +5,7 @@
 \title{Calculates frequencies of missing values and alleles.}
 \usage{
 summarize(X, verbose = FALSE, bufferSize = 5000, i = seq_len(nrow(X)),
-  j = seq_len(ncol(X)), nTasks = mc.cores,
-  mc.cores = parallel::detectCores())
+  j = seq_len(ncol(X)), nTasks = nCores, nCores = parallel::detectCores())
 }
 \arguments{
 \item{X}{A matrix-like object, typically \code{@geno} of a
@@ -24,9 +23,9 @@ By default, all rows are used.}
 used. By default, all columns are used.}
 
 \item{nTasks}{The number of tasks the problem should be broken into to be
-distributed among \code{mc.cores} cores.}
+distributed among \code{nCores} cores.}
 
-\item{mc.cores}{The number of cores (passed to
+\item{nCores}{The number of cores (passed to
 \code{\link[parallel]{mclapply}}).}
 }
 \description{
