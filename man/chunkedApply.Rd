@@ -34,7 +34,8 @@ distributed among \code{nCores} cores. Defaults to \code{nCores}.}
 \code{\link[parallel]{mclapply}}). Defaults to the number of cores as
 detected by \code{\link[parallel]{detectCores}}).}
 
-\item{verbose}{Whether to print additional information.}
+\item{verbose}{Whether progress updates will be posted. Defaults to
+\code{FALSE}.}
 
 \item{...}{Additional arguments to be passed to \code{parallelApply}.}
 }

@@ -37,7 +37,8 @@ distributed among \code{nCores} cores. Defaults to \code{nCores}.}
 \code{\link[parallel]{mclapply}}). Defaults to the number of cores as
 detected by \code{\link[parallel]{detectCores}}).}
 
-\item{verbose}{If TRUE more messages are printed.}
+\item{verbose}{Whether progress updates will be posted. Defaults to
+\code{FALSE}.}
 
 \item{...}{Additional arguments for chunkedApply and regression method.}
 }

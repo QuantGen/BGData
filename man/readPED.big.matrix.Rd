@@ -39,7 +39,8 @@ both columns will be concatenated with "_".}
 
 \item{folderOut}{The path to the folder where to save the binary files.}
 
-\item{verbose}{If TRUE, progress updates will be posted.}
+\item{verbose}{Whether progress updates will be posted. Defaults to
+\code{FALSE}.}
 }
 \value{
 Returns a \code{\link[=BGData-class]{BGData}} object.

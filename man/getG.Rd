@@ -55,7 +55,8 @@ with.}
 \code{\link[parallel]{mclapply}}). Defaults to the number of cores as
 detected by \code{\link[parallel]{detectCores}}).}
 
-\item{verbose}{If TRUE more messages are printed.}
+\item{verbose}{Whether progress updates will be posted. Defaults to
+\code{TRUE}.}
 }
 \value{
 A positive semi-definite symmetric numeric matrix.

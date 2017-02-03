@@ -159,7 +159,8 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = nCores, nCores = parallel::de
 #' @param nCores The number of cores (passed to
 #'   \code{\link[parallel]{mclapply}}). Defaults to the number of cores as
 #'   detected by \code{\link[parallel]{detectCores}}).
-#' @param verbose Whether to print additional information.
+#' @param verbose Whether progress updates will be posted. Defaults to
+#'   \code{FALSE}.
 #' @param ... Additional arguments to be passed to \code{parallelApply}.
 #' @export
 chunkedApply <- function(X, MARGIN, FUN, bufferSize, i = seq_len(nrow(X)), j = seq_len(ncol(X)), nTasks = nCores, nCores = parallel::detectCores(), verbose = FALSE, ...) {
@@ -314,7 +315,8 @@ tcrossprod.parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel:
 #' @param nCores The number of cores (passed to
 #'   \code{\link[parallel]{mclapply}}). Defaults to the number of cores as
 #'   detected by \code{\link[parallel]{detectCores}}).
-#' @param verbose If TRUE more messages are printed.
+#' @param verbose Whether progress updates will be posted. Defaults to
+#'   \code{TRUE}.
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @export
 getG <- function(x, nChunks = ceiling(ncol(x) / 10000), scaleCol = TRUE, centerCol = TRUE, scaleG = TRUE, i = seq_len(nrow(x)), j = seq_len(ncol(x)), i2 = NULL, minVar = 1e-05, nTasks = nCores, scales = NULL, centers = NULL, saveG = FALSE, saveType = "RData", saveName = "Gij", nCores = parallel::detectCores(), verbose = TRUE) {
@@ -567,7 +569,8 @@ getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, centerCol = TRUE
 #'   By default, all rows are used.
 #' @param j (integer, boolean or character) Indicates which columns should be
 #'   used. By default, all columns are used.
-#' @param verbose If TRUE more messages are printed.
+#' @param verbose Whether progress updates will be posted. Defaults to
+#'   \code{TRUE}.
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @export
 getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, scales = NULL, centerCol = TRUE, scaleCol = TRUE, scaleG = TRUE, nTasks = nCores, folder = randomString(), vmode = "double", saveRData = TRUE, nCores = parallel::detectCores(), i = seq_len(nrow(X)), j = seq_len(ncol(X)), verbose = TRUE) {
@@ -751,7 +754,8 @@ getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, sc
 #' @param nCores The number of cores (passed to
 #'   \code{\link[parallel]{mclapply}}). Defaults to the number of cores as
 #'   detected by \code{\link[parallel]{detectCores}}).
-#' @param verbose If TRUE more messages are printed.
+#' @param verbose Whether progress updates will be posted. Defaults to
+#'   \code{FALSE}.
 #' @param ... Additional arguments for chunkedApply and regression method.
 #' @return Returns a matrix with estimates, SE, p-value, etc.
 #' @export
@@ -909,7 +913,8 @@ getCoefficients.lmerMod <- function(x) {
 #' @param nCores The number of cores (passed to
 #'   \code{\link[parallel]{mclapply}}). Defaults to the number of cores as
 #'   detected by \code{\link[parallel]{detectCores}}).
-#' @param verbose If TRUE more messages are printed.
+#' @param verbose Whether progress updates will be posted. Defaults to
+#'   \code{FALSE}.
 #' @export
 summarize <- function(X, bufferSize = 5000, i = seq_len(nrow(X)), j = seq_len(ncol(X)), nTasks = nCores, nCores = parallel::detectCores(), verbose = FALSE) {
     res <- chunkedApply(X, 2, function(col) {

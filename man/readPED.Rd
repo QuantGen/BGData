@@ -53,7 +53,8 @@ if \code{rows} a row-linked matrix
 \item{dimorder}{The physical layout of the underlying \code{ff} object of
 each node.}
 
-\item{verbose}{If TRUE, progress updates will be posted.}
+\item{verbose}{Whether progress updates will be posted. Defaults to
+\code{FALSE}.}
 }
 \description{
 \code{readPED} assumes that the plaintext file (\code{fileIn}) contains

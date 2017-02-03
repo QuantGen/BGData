@@ -35,7 +35,8 @@ information in the file.}
 \item{idCol}{The index of the ID column. If more than one index is given,
 both columns will be concatenated with "_".}
 
-\item{verbose}{If TRUE, progress updates will be posted.}
+\item{verbose}{Whether progress updates will be posted. Defaults to
+\code{FALSE}.}
 }
 \value{
 Returns a \code{\link[=BGData-class]{BGData}} object.

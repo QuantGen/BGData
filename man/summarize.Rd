@@ -28,7 +28,8 @@ distributed among \code{nCores} cores. Defaults to \code{nCores}.}
 \code{\link[parallel]{mclapply}}). Defaults to the number of cores as
 detected by \code{\link[parallel]{detectCores}}).}
 
-\item{verbose}{If TRUE more messages are printed.}
+\item{verbose}{Whether progress updates will be posted. Defaults to
+\code{FALSE}.}
 }
 \description{
 Calculates frequencies of missing values and alleles.

@@ -52,7 +52,8 @@ By default, all rows are used.}
 \item{j}{(integer, boolean or character) Indicates which columns should be
 used. By default, all columns are used.}
 
-\item{verbose}{If TRUE more messages are printed.}
+\item{verbose}{Whether progress updates will be posted. Defaults to
+\code{TRUE}.}
 }
 \value{
 A positive semi-definite symmetric numeric matrix.

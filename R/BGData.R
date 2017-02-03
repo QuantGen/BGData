@@ -208,7 +208,8 @@ parsePED <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1
 #' @param folderOut The path to the folder where to save the binary files.
 #' @param dimorder The physical layout of the underlying \code{ff} object of
 #'   each node.
-#' @param verbose If TRUE, progress updates will be posted.
+#' @param verbose Whether progress updates will be posted. Defaults to
+#'   \code{FALSE}.
 #' @seealso \code{\link[=BGData-class]{BGData}},
 #'   \code{\link[=LinkedMatrix-class]{LinkedMatrix}},
 #'   \code{\link[=ColumnLinkedMatrix-class]{ColumnLinkedMatrix}},
@@ -317,7 +318,8 @@ readPED <- function(fileIn, header, dataType, n = NULL, p = NULL, sep = "", na.s
 #'   information in the file.
 #' @param idCol The index of the ID column. If more than one index is given,
 #'   both columns will be concatenated with "_".
-#' @param verbose If TRUE, progress updates will be posted.
+#' @param verbose Whether progress updates will be posted. Defaults to
+#'   \code{FALSE}.
 #' @return Returns a \code{\link[=BGData-class]{BGData}} object.
 #' @seealso \code{\link[=BGData-class]{BGData}}
 #' @export
@@ -383,7 +385,8 @@ readPED.matrix <- function(fileIn, header, dataType, n = NULL, p = NULL, sep = "
 #' @param idCol The index of the ID column. If more than one index is given,
 #'   both columns will be concatenated with "_".
 #' @param folderOut The path to the folder where to save the binary files.
-#' @param verbose If TRUE, progress updates will be posted.
+#' @param verbose Whether progress updates will be posted. Defaults to
+#'   \code{FALSE}.
 #' @return Returns a \code{\link[=BGData-class]{BGData}} object.
 #' @seealso \code{\link[=BGData-class]{BGData}}
 #' @export
