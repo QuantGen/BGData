@@ -8,8 +8,8 @@ genotypes in a \code{\link[=big.matrix-class]{big.matrix}}.}
 \usage{
 readPED.big.matrix(fileIn, header, dataType, n = NULL, p = NULL, sep = "",
   na.strings = "NA", nColSkip = 6, idCol = c(1, 2),
-  folderOut = paste("BGData_", sub("\\\\.[[:alnum:]]+$", "",
-  basename(fileIn)), sep = ""), verbose = FALSE)
+  folderOut = paste0("BGData_", sub("\\\\.[[:alnum:]]+$", "",
+  basename(fileIn))), verbose = FALSE)
 }
 \arguments{
 \item{fileIn}{The path to the plaintext file.}

@@ -9,9 +9,9 @@ memory-mapped \code{ff} nodes.}
 \usage{
 readPED(fileIn, header, dataType, n = NULL, p = NULL, sep = "",
   na.strings = "NA", nColSkip = 6, idCol = c(1, 2), nNodes = NULL,
-  linked.by = "rows", folderOut = paste("BGData_", sub("\\\\.[[:alnum:]]+$",
-  "", basename(fileIn)), sep = ""), dimorder = if (linked.by == "rows") 2:1
-  else 1:2, verbose = FALSE)
+  linked.by = "rows", folderOut = paste0("BGData_",
+  sub("\\\\.[[:alnum:]]+$", "", basename(fileIn))), dimorder = if (linked.by
+  == "rows") 2:1 else 1:2, verbose = FALSE)
 }
 \arguments{
 \item{fileIn}{The path to the plaintext file.}

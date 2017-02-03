@@ -214,7 +214,7 @@ parsePED <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1
 #'   \code{\link[=ColumnLinkedMatrix-class]{ColumnLinkedMatrix}},
 #'   \code{\link[=RowLinkedMatrix-class]{RowLinkedMatrix}}, \code{\link[ff]{ff}}
 #' @export
-readPED <- function(fileIn, header, dataType, n = NULL, p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2), nNodes = NULL, linked.by = "rows", folderOut = paste("BGData_", sub("\\.[[:alnum:]]+$", "", basename(fileIn)), sep = ""), dimorder = if (linked.by == "rows") 2:1 else 1:2, verbose = FALSE) {
+readPED <- function(fileIn, header, dataType, n = NULL, p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2), nNodes = NULL, linked.by = "rows", folderOut = paste0("BGData_", sub("\\.[[:alnum:]]+$", "", basename(fileIn))), dimorder = if (linked.by == "rows") 2:1 else 1:2, verbose = FALSE) {
 
     # Create output directory
     if (file.exists(folderOut)) {
@@ -278,7 +278,7 @@ readPED <- function(fileIn, header, dataType, n = NULL, p = NULL, sep = "", na.s
     # Save BGData object
     attr(BGData, "origFile") <- list(path = fileIn, dataType = typeof(dataType))
     attr(BGData, "dateCreated") <- date()
-    save(BGData, file = paste(folderOut, "/BGData.RData", sep = ""))
+    save(BGData, file = paste0(folderOut, "/BGData.RData"))
 
     return(BGData)
 }
@@ -387,7 +387,7 @@ readPED.matrix <- function(fileIn, header, dataType, n = NULL, p = NULL, sep = "
 #' @return Returns a \code{\link[=BGData-class]{BGData}} object.
 #' @seealso \code{\link[=BGData-class]{BGData}}
 #' @export
-readPED.big.matrix <- function(fileIn, header, dataType, n = NULL, p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2), folderOut = paste("BGData_", sub("\\.[[:alnum:]]+$", "", basename(fileIn)), sep = ""), verbose = FALSE) {
+readPED.big.matrix <- function(fileIn, header, dataType, n = NULL, p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2), folderOut = paste0("BGData_", sub("\\.[[:alnum:]]+$", "", basename(fileIn))), verbose = FALSE) {
 
     if (file.exists(folderOut)) {
         stop(paste("Output folder", folderOut, "already exists. Please move it or pick a different one."))
@@ -425,7 +425,7 @@ readPED.big.matrix <- function(fileIn, header, dataType, n = NULL, p = NULL, sep
     # Save BGData object
     attr(BGData, "origFile") <- list(path = fileIn, dataType = typeof(dataType))
     attr(BGData, "dateCreated") <- date()
-    save(BGData, file = paste(folderOut, "/BGData.RData", sep = ""))
+    save(BGData, file = paste0(folderOut, "/BGData.RData"))
 
     return(BGData)
 }
