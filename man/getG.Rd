@@ -39,7 +39,7 @@ to divide matrix into blocks.}
 the computation (only if \code{scaleCol} is set).}
 
 \item{nTasks}{The number of tasks the problem should be broken into to be
-distributed among \code{nCores} cores.}
+distributed among \code{nCores} cores. Defaults to \code{nCores}.}
 
 \item{scales}{Precomputed scales if i2 is used.}
 

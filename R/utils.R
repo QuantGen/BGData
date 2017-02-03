@@ -91,7 +91,7 @@ apply2 <- function(X, MARGIN, FUN, ...) {
 #'   indicates rows, 2 indicates columns.
 #' @param FUN The function to be applied.
 #' @param nTasks The number of tasks the problem should be broken into to be
-#'   distributed among \code{nCores} cores.
+#'   distributed among \code{nCores} cores. Defaults to \code{nCores}.
 #' @param nCores The number of cores (passed to
 #'   \code{\link[parallel]{mclapply}}).
 #' @param ... Additional arguments to be passed to \code{apply}.
@@ -149,7 +149,7 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = nCores, nCores = parallel::de
 #' @param j (integer, boolean or character) Indicates which columns should be
 #'   used. By default, all columns are used.
 #' @param nTasks The number of tasks the problem should be broken into to be
-#'   distributed among \code{nCores} cores.
+#'   distributed among \code{nCores} cores. Defaults to \code{nCores}.
 #' @param nCores The number of cores (passed to
 #'   \code{\link[parallel]{mclapply}}).
 #' @param verbose Whether to print additional information.
@@ -243,7 +243,7 @@ crossprods <- function(x, y = NULL, nTasks = nCores, use_tcrossprod = FALSE, nCo
 #'   \code{\link[=BGData-class]{BGData}} object.
 #' @param y vector or matrix-like object. NULL by default.
 #' @param nTasks The number of tasks the problem should be broken into to be
-#'   distributed among \code{nCores} cores.
+#'   distributed among \code{nCores} cores. Defaults to \code{nCores}.
 #' @param nCores The number of cores (passed to
 #'   \code{\link[parallel]{mclapply}}).
 #' @return x'y' or x'x depending on whether y is provided.
@@ -259,7 +259,7 @@ crossprod.parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel::
 #'   \code{\link[=BGData-class]{BGData}} object.
 #' @param y vector or matrix-like object. NULL by default.
 #' @param nTasks The number of tasks the problem should be broken into to be
-#'   distributed among \code{nCores} cores.
+#'   distributed among \code{nCores} cores. Defaults to \code{nCores}.
 #' @param nCores The number of cores (passed to
 #'   \code{\link[parallel]{mclapply}}).
 #' @return xy' or xx' depending on whether y is provided.
@@ -295,7 +295,7 @@ tcrossprod.parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel:
 #' @param minVar Columns with variance lower than this value will not be used in
 #'   the computation (only if \code{scaleCol} is set).
 #' @param nTasks The number of tasks the problem should be broken into to be
-#'   distributed among \code{nCores} cores.
+#'   distributed among \code{nCores} cores. Defaults to \code{nCores}.
 #' @param scales Precomputed scales if i2 is used.
 #' @param centers Precomputed centers if i2 is used.
 #' @param saveG Whether to save genomic relationship matrix into file.
@@ -543,8 +543,8 @@ getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, centerCol = TRUE
 #' @param scaleCol TRUE/FALSE whether columns must be scaled before computing
 #'   xx'.
 #' @param scaleG TRUE/FALSE whether xx' must be scaled.
-#' @param nTasks The number of chunks that each block is split into for
-#'   processing in parallel.
+#' @param nTasks The number of tasks the problem should be broken into to be
+#'   distributed among \code{nCores} cores. Defaults to \code{nCores}.
 #' @param folder Folder in which to save the
 #'   \code{\link[=symDMatrix-class]{symDMatrix}}.
 #' @param vmode vmode of \code{ff} objects.
@@ -737,7 +737,7 @@ getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, sc
 #' @param chunkSize Represents the number of columns of \code{@@geno} that are
 #'   brought into RAM for processing (5000 by default).
 #' @param nTasks The number of tasks the problem should be broken into to be
-#'   distributed among \code{nCores} cores.
+#'   distributed among \code{nCores} cores. Defaults to \code{nCores}.
 #' @param nCores The number of cores (passed to
 #'   \code{\link[parallel]{mclapply}}).
 #' @param ... Additional arguments for chunkedApply and regression method.
@@ -894,7 +894,7 @@ getCoefficients.lmerMod <- function(x) {
 #' @param j (integer, boolean or character) Indicates which columns should be
 #'   used. By default, all columns are used.
 #' @param nTasks The number of tasks the problem should be broken into to be
-#'   distributed among \code{nCores} cores.
+#'   distributed among \code{nCores} cores. Defaults to \code{nCores}.
 #' @param nCores The number of cores (passed to
 #'   \code{\link[parallel]{mclapply}}).
 #' @export

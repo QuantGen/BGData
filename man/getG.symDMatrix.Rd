@@ -31,8 +31,8 @@ xx'.}
 
 \item{scaleG}{TRUE/FALSE whether xx' must be scaled.}
 
-\item{nTasks}{The number of chunks that each block is split into for
-processing in parallel.}
+\item{nTasks}{The number of tasks the problem should be broken into to be
+distributed among \code{nCores} cores. Defaults to \code{nCores}.}
 
 \item{folder}{Folder in which to save the
 \code{\link[=symDMatrix-class]{symDMatrix}}.}

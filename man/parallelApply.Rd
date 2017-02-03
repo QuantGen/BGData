@@ -16,7 +16,7 @@ indicates rows, 2 indicates columns.}
 \item{FUN}{The function to be applied.}
 
 \item{nTasks}{The number of tasks the problem should be broken into to be
-distributed among \code{nCores} cores.}
+distributed among \code{nCores} cores. Defaults to \code{nCores}.}
 
 \item{nCores}{The number of cores (passed to
 \code{\link[parallel]{mclapply}}).}

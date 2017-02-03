@@ -33,7 +33,7 @@ used. By default, all columns are used.}
 brought into RAM for processing (5000 by default).}
 
 \item{nTasks}{The number of tasks the problem should be broken into to be
-distributed among \code{nCores} cores.}
+distributed among \code{nCores} cores. Defaults to \code{nCores}.}
 
 \item{nCores}{The number of cores (passed to
 \code{\link[parallel]{mclapply}}).}
