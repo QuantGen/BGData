@@ -71,6 +71,8 @@ apply2 <- function(X, MARGIN, FUN, ...) {
 
 #' Applies a function on each row or column of a matrix in parallel.
 #'
+#' Similar to \code{apply}, designed to carry out operations in parallel.
+#'
 #' The input matrix \code{X} is broken into \code{nTasks} chunks and passed to
 #' \code{\link[parallel]{mclapply}}. The number of cores can be configured using
 #' \code{nCores}.

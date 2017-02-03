@@ -25,11 +25,13 @@ detected by \code{\link[parallel]{detectCores}}).}
 \item{...}{Additional arguments to be passed to \code{apply}.}
 }
 \description{
+Similar to \code{apply}, designed to carry out operations in parallel.
+}
+\details{
 The input matrix \code{X} is broken into \code{nTasks} chunks and passed to
 \code{\link[parallel]{mclapply}}. The number of cores can be configured using
 \code{nCores}.
-}
-\details{
+
 \code{nTasks} has to be chosen carefully to avoid running out of memory. As a
 rule of thumb, at least around \code{object_size(X) + (nCores *
 (object_size(X) / nTasks)) + object_size(result)} MB of total memory will be
