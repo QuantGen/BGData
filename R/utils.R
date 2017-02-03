@@ -96,7 +96,7 @@ apply2 <- function(X, MARGIN, FUN, ...) {
 #'   \code{\link[parallel]{mclapply}}).
 #' @param ... Additional arguments to be passed to \code{apply}.
 #' @export
-parallelApply <- function(X, MARGIN, FUN, nTasks = parallel::detectCores(), mc.cores = parallel::detectCores(), ...) {
+parallelApply <- function(X, MARGIN, FUN, nTasks = mc.cores, mc.cores = parallel::detectCores(), ...) {
     d <- dim(X)
     if (!length(d)) {
         stop("dim(X) must have a positive length")
@@ -155,7 +155,7 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = parallel::detectCores(), mc.c
 #' @param verbose Whether to print additional information.
 #' @param ... Additional arguments to be passed to \code{parallelApply}.
 #' @export
-chunkedApply <- function(X, MARGIN, FUN, bufferSize, i = seq_len(nrow(X)), j = seq_len(ncol(X)), nTasks = parallel::detectCores(), mc.cores = parallel::detectCores(), verbose = FALSE, ...) {
+chunkedApply <- function(X, MARGIN, FUN, bufferSize, i = seq_len(nrow(X)), j = seq_len(ncol(X)), nTasks = mc.cores, mc.cores = parallel::detectCores(), verbose = FALSE, ...) {
     if (!length(dim(X))) {
         stop("dim(X) must have a positive length")
     }
@@ -178,7 +178,7 @@ chunkedApply <- function(X, MARGIN, FUN, bufferSize, i = seq_len(nrow(X)), j = s
 
 
 # Computes crossprod(x,y) or tcrossprod(x,y)
-crossprods <- function(x, y = NULL, nTasks = parallel::detectCores(), use_tcrossprod = FALSE, mc.cores = parallel::detectCores()) {
+crossprods <- function(x, y = NULL, nTasks = mc.cores, use_tcrossprod = FALSE, mc.cores = parallel::detectCores()) {
     dx <- dim(x)
     if (!is.null(y)) {
         y <- as.matrix(y)
@@ -248,7 +248,7 @@ crossprods <- function(x, y = NULL, nTasks = parallel::detectCores(), use_tcross
 #'   \code{\link[parallel]{mclapply}}).
 #' @return x'y' or x'x depending on whether y is provided.
 #' @export
-crossprod.parallel <- function(x, y = NULL, nTasks = parallel::detectCores(), mc.cores = parallel::detectCores()) {
+crossprod.parallel <- function(x, y = NULL, nTasks = mc.cores, mc.cores = parallel::detectCores()) {
     crossprods(x = x, y = y, nTasks = nTasks, mc.cores = mc.cores, use_tcrossprod = FALSE)
 }
 
@@ -264,7 +264,7 @@ crossprod.parallel <- function(x, y = NULL, nTasks = parallel::detectCores(), mc
 #'   \code{\link[parallel]{mclapply}}).
 #' @return xy' or xx' depending on whether y is provided.
 #' @export
-tcrossprod.parallel <- function(x, y = NULL, nTasks = parallel::detectCores(), mc.cores = parallel::detectCores()) {
+tcrossprod.parallel <- function(x, y = NULL, nTasks = mc.cores, mc.cores = parallel::detectCores()) {
     crossprods(x = x, y = y, nTasks = nTasks, mc.cores = mc.cores, use_tcrossprod = TRUE)
 }
 
@@ -307,7 +307,7 @@ tcrossprod.parallel <- function(x, y = NULL, nTasks = parallel::detectCores(), m
 #'   \code{\link[parallel]{mclapply}}).
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @export
-getG <- function(x, nChunks = ceiling(ncol(x) / 10000), scaleCol = TRUE, centerCol = TRUE, scaleG = TRUE, verbose = TRUE, i = seq_len(nrow(x)), j = seq_len(ncol(x)), i2 = NULL, minVar = 1e-05, nTasks = parallel::detectCores(), scales = NULL, centers = NULL, saveG = FALSE, saveType = "RData", saveName = "Gij", mc.cores = parallel::detectCores()) {
+getG <- function(x, nChunks = ceiling(ncol(x) / 10000), scaleCol = TRUE, centerCol = TRUE, scaleG = TRUE, verbose = TRUE, i = seq_len(nrow(x)), j = seq_len(ncol(x)), i2 = NULL, minVar = 1e-05, nTasks = mc.cores, scales = NULL, centers = NULL, saveG = FALSE, saveType = "RData", saveName = "Gij", mc.cores = parallel::detectCores()) {
     if (is.null(i2)) {
         G <- getGi(x = x, nChunks = nChunks, scales = scales, centers = centers, scaleCol = scaleCol, centerCol = centerCol, scaleG = scaleG, verbose = verbose, i = i, j = j, minVar = minVar, nTasks = nTasks, mc.cores = mc.cores)
     } else {
@@ -327,7 +327,7 @@ getG <- function(x, nChunks = ceiling(ncol(x) / 10000), scaleCol = TRUE, centerC
 }
 
 
-getGi <- function(x, nChunks = ceiling(ncol(x) / 10000), scales = NULL, centers = NULL, scaleCol = TRUE, centerCol = FALSE, scaleG = TRUE, verbose = TRUE, i = seq_len(nrow(x)), j = seq_len(ncol(x)), minVar = 1e-05, nTasks = parallel::detectCores(), mc.cores = parallel::detectCores()) {
+getGi <- function(x, nChunks = ceiling(ncol(x) / 10000), scales = NULL, centers = NULL, scaleCol = TRUE, centerCol = FALSE, scaleG = TRUE, verbose = TRUE, i = seq_len(nrow(x)), j = seq_len(ncol(x)), minVar = 1e-05, nTasks = mc.cores, mc.cores = parallel::detectCores()) {
     nX <- nrow(x)
     pX <- ncol(x)
 
@@ -428,7 +428,7 @@ getGi <- function(x, nChunks = ceiling(ncol(x) / 10000), scales = NULL, centers 
 }
 
 
-getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, centerCol = TRUE,scaleG = TRUE, verbose = TRUE, nChunks = ceiling(ncol(x) / 10000), j = seq_len(ncol(x)), minVar = 1e-05, nTasks = parallel::detectCores(), mc.cores = parallel::detectCores()) {
+getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, centerCol = TRUE,scaleG = TRUE, verbose = TRUE, nChunks = ceiling(ncol(x) / 10000), j = seq_len(ncol(x)), minVar = 1e-05, nTasks = mc.cores, mc.cores = parallel::detectCores()) {
 
     nX <- nrow(x)
     pX <- ncol(x)
@@ -559,7 +559,7 @@ getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, centerCol = TRUE
 #'   used. By default, all columns are used.
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @export
-getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, scales = NULL, centerCol = TRUE, scaleCol = TRUE, scaleG = TRUE, nTasks = parallel::detectCores(), folder = randomString(), vmode = "double", verbose = TRUE, saveRData = TRUE, mc.cores = parallel::detectCores(), i = seq_len(nrow(X)), j = seq_len(ncol(X))) {
+getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, scales = NULL, centerCol = TRUE, scaleCol = TRUE, scaleG = TRUE, nTasks = mc.cores, folder = randomString(), vmode = "double", verbose = TRUE, saveRData = TRUE, mc.cores = parallel::detectCores(), i = seq_len(nrow(X)), j = seq_len(ncol(X))) {
 
     timeIn <- proc.time()[3]
 
@@ -743,7 +743,7 @@ getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, sc
 #' @param ... Additional arguments for chunkedApply and regression method.
 #' @return Returns a matrix with estimates, SE, p-value, etc.
 #' @export
-GWAS <- function(formula, data, method, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), verbose = FALSE, chunkSize = 5000, nTasks = parallel::detectCores(), mc.cores = parallel::detectCores(), ...) {
+GWAS <- function(formula, data, method, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), verbose = FALSE, chunkSize = 5000, nTasks = mc.cores, mc.cores = parallel::detectCores(), ...) {
 
     if (class(data) != "BGData") {
         stop("data must BGData")
@@ -805,8 +805,7 @@ rayOLS=function(y,x,n=length(y)){
 # y~1 or y~factor(sex)+age
 # all the variables in the formula must be in data@pheno data (BGData)
 # containing slots @pheno and @geno    
-GWAS.ols <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), verbose = FALSE, chunkSize = 10, 
-                     nTasks = parallel::detectCores(), mc.cores = parallel::detectCores(), ...) {
+GWAS.ols <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), verbose = FALSE, chunkSize = 10, nTasks = mc.cores, mc.cores = parallel::detectCores(), ...) {
 
     # subset of model.frame has bizarre scoping issues
     frame <- stats::model.frame(formula = formula, data = data@pheno)[i, , drop = FALSE]
@@ -899,7 +898,7 @@ getCoefficients.lmerMod <- function(x) {
 #' @param mc.cores The number of cores (passed to
 #'   \code{\link[parallel]{mclapply}}).
 #' @export
-summarize <- function(X, verbose = FALSE, bufferSize = 5000, i = seq_len(nrow(X)), j = seq_len(ncol(X)), nTasks = parallel::detectCores(), mc.cores = parallel::detectCores()) {
+summarize <- function(X, verbose = FALSE, bufferSize = 5000, i = seq_len(nrow(X)), j = seq_len(ncol(X)), nTasks = mc.cores, mc.cores = parallel::detectCores()) {
     res <- chunkedApply(X, 2, function(col) {
         freqNA <- mean(is.na(col))
         alleleFreq <- mean(col, na.rm = TRUE) / 2

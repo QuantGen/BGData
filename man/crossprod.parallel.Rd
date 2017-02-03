@@ -4,7 +4,7 @@
 \alias{crossprod.parallel}
 \title{Computes crossprod (x'y or x'x) in parallel.}
 \usage{
-crossprod.parallel(x, y = NULL, nTasks = parallel::detectCores(),
+crossprod.parallel(x, y = NULL, nTasks = mc.cores,
   mc.cores = parallel::detectCores())
 }
 \arguments{

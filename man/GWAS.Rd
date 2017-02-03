@@ -7,7 +7,7 @@
 \usage{
 GWAS(formula, data, method, i = seq_len(nrow(data@geno)),
   j = seq_len(ncol(data@geno)), verbose = FALSE, chunkSize = 5000,
-  nTasks = parallel::detectCores(), mc.cores = parallel::detectCores(), ...)
+  nTasks = mc.cores, mc.cores = parallel::detectCores(), ...)
 }
 \arguments{
 \item{formula}{A formula (e.g. weight~sex+age) with the response on the

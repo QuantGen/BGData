@@ -4,7 +4,7 @@
 \alias{tcrossprod.parallel}
 \title{Computes tcrossprod (xy' or xx') in parallel.}
 \usage{
-tcrossprod.parallel(x, y = NULL, nTasks = parallel::detectCores(),
+tcrossprod.parallel(x, y = NULL, nTasks = mc.cores,
   mc.cores = parallel::detectCores())
 }
 \arguments{
