@@ -8,8 +8,8 @@ creating a \code{\link[=symDMatrix-class]{symDMatrix}}.}
 getG.symDMatrix(X, nBlocks = 5, blockSize = NULL, centers = NULL,
   scales = NULL, centerCol = TRUE, scaleCol = TRUE, scaleG = TRUE,
   nTasks = nCores, folder = randomString(), vmode = "double",
-  verbose = TRUE, saveRData = TRUE, nCores = parallel::detectCores(),
-  i = seq_len(nrow(X)), j = seq_len(ncol(X)))
+  saveRData = TRUE, nCores = parallel::detectCores(),
+  i = seq_len(nrow(X)), j = seq_len(ncol(X)), verbose = TRUE)
 }
 \arguments{
 \item{X}{A matrix-like object, typically \code{@geno} of a
@@ -39,8 +39,6 @@ distributed among \code{nCores} cores. Defaults to \code{nCores}.}
 
 \item{vmode}{vmode of \code{ff} objects.}
 
-\item{verbose}{If TRUE more messages are printed.}
-
 \item{saveRData}{Whether to save an RData file to easily reload
 \code{\link[=symDMatrix-class]{symDMatrix}}}
 
@@ -53,6 +51,8 @@ By default, all rows are used.}
 
 \item{j}{(integer, boolean or character) Indicates which columns should be
 used. By default, all columns are used.}
+
+\item{verbose}{If TRUE more messages are printed.}
 }
 \value{
 A positive semi-definite symmetric numeric matrix.

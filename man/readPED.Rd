@@ -8,10 +8,10 @@ genotypes in a \code{\link[=LinkedMatrix-class]{LinkedMatrix}} that contains
 memory-mapped \code{ff} nodes.}
 \usage{
 readPED(fileIn, header, dataType, n = NULL, p = NULL, sep = "",
-  na.strings = "NA", nColSkip = 6, idCol = c(1, 2), verbose = FALSE,
-  nNodes = NULL, linked.by = "rows", folderOut = paste("BGData_",
-  sub("\\\\.[[:alnum:]]+$", "", basename(fileIn)), sep = ""), dimorder = if
-  (linked.by == "rows") 2:1 else 1:2)
+  na.strings = "NA", nColSkip = 6, idCol = c(1, 2), nNodes = NULL,
+  linked.by = "rows", folderOut = paste("BGData_", sub("\\\\.[[:alnum:]]+$",
+  "", basename(fileIn)), sep = ""), dimorder = if (linked.by == "rows") 2:1
+  else 1:2, verbose = FALSE)
 }
 \arguments{
 \item{fileIn}{The path to the plaintext file.}
@@ -41,8 +41,6 @@ information in the file.}
 \item{idCol}{The index of the ID column. If more than one index is given,
 both columns will be concatenated with "_".}
 
-\item{verbose}{If TRUE, progress updates will be posted.}
-
 \item{nNodes}{The number of nodes to create.}
 
 \item{linked.by}{If \code{columns} a column-linked matrix
@@ -54,6 +52,8 @@ if \code{rows} a row-linked matrix
 
 \item{dimorder}{The physical layout of the underlying \code{ff} object of
 each node.}
+
+\item{verbose}{If TRUE, progress updates will be posted.}
 }
 \description{
 \code{readPED} assumes that the plaintext file (\code{fileIn}) contains

@@ -110,28 +110,29 @@ for (nCores in seq_len(2)) {
                 # both scalings
                 G <- tcrossprod(scale(X))
                 G <- G / mean(diag(G))
-                G2 <- getG(x = X, scaleG = TRUE, scaleCol = TRUE, verbose = FALSE, nChunks = nChunks, nTasks = nTasks, nCores = nCores)
+                G2 <- getG(x = X, scaleG = TRUE, scaleCol = TRUE, nChunks = nChunks, nTasks = nTasks, nCores = nCores, verbose = FALSE)
                 expect_equal(G, G2, check.attributes = FALSE)
 
                 # without scaling to average diagonal = 1 (scaleG)
                 G <- tcrossprod(scale(X))
-                G2 <- getG(x = X, scaleG = FALSE, scaleCol = TRUE, verbose = FALSE, nChunks = nChunks, nTasks = nTasks, nCores = nCores)
+                G2 <- getG(x = X, scaleG = FALSE, scaleCol = TRUE, nChunks = nChunks, nTasks = nTasks, nCores = nCores, verbose = FALSE)
                 expect_equal(G, G2, check.attributes = FALSE)
 
                 # without scaling columns, but scaling average diagonal = 1 (scaleG)
                 G <- tcrossprod(scale(X, center = TRUE, scale = FALSE))
                 G <- G / mean(diag(G))
-                G2 <- getG(x = X, scaleG = TRUE, scaleCol = FALSE, verbose = FALSE, nChunks = nChunks, nTasks = nTasks, nCores = nCores)
+                G2 <- getG(x = X, scaleG = TRUE, scaleCol = FALSE, nChunks = nChunks, nTasks = nTasks, nCores = nCores, verbose = FALSE)
+
                 expect_equal(G, G2, check.attributes = FALSE)
 
                 # no scaling at all
                 G <- tcrossprod(scale(X, center = TRUE, scale = FALSE))
-                G2 <- getG(x = X, scaleG = FALSE, scaleCol = FALSE, verbose = FALSE, nChunks = nChunks, nTasks = nTasks, nCores = nCores)
+                G2 <- getG(x = X, scaleG = FALSE, scaleCol = FALSE, nChunks = nChunks, nTasks = nTasks, nCores = nCores, verbose = FALSE)
                 expect_equal(G, G2, check.attributes = FALSE)
 
                 # neither scaling nor centering
                 G <- tcrossprod(X)
-                G2 <- getG(x = X, scaleG = FALSE, centerCol = FALSE, scaleCol = FALSE, verbose = FALSE, nChunks = nChunks, nTasks = nTasks, nCores = nCores)
+                G2 <- getG(x = X, scaleG = FALSE, centerCol = FALSE, scaleCol = FALSE, nChunks = nChunks, nTasks = nTasks, nCores = nCores, verbose = FALSE)
                 expect_equal(G, G2, check.attributes = FALSE)
 
             }
@@ -164,18 +165,18 @@ for (nCores in seq_len(2)) {
                 # all scalings
                 G <- tcrossprod(scale(X))
                 G <- G / mean(diag(G))
-                G_12 <- getG(x = X, i = i, i2 = i2, centers = centers, scales = scales, scaleG = TRUE, verbose = FALSE, scaleCol = TRUE, nChunks = nChunks, nTasks = nTasks, nCores = nCores)
+                G_12 <- getG(x = X, i = i, i2 = i2, centers = centers, scales = scales, scaleG = TRUE, scaleCol = TRUE, nChunks = nChunks, nTasks = nTasks, nCores = nCores, verbose = FALSE)
                 expect_equal(G[i, i2], G_12, check.attributes = FALSE)
 
-                G_12 <- getG(x = X, i = i, i2 = i, centers = centers, scales = scales, scaleG = TRUE, verbose = FALSE, nChunks = nChunks, nTasks = nTasks, nCores = nCores)
+                G_12 <- getG(x = X, i = i, i2 = i, centers = centers, scales = scales, scaleG = TRUE, nChunks = nChunks, nTasks = nTasks, nCores = nCores, verbose = FALSE)
                 expect_equal(G[i, i], G_12, check.attributes = FALSE)
 
                 # without scaling to average diagonal = 1
                 G <- tcrossprod(scale(X) * sqrt(n/(n - 1)))
-                G_12 <- getG(x = X, i = i, i2 = i2, centers = centers, scales = scales, scaleG = FALSE, verbose = FALSE, nChunks = nChunks, nTasks = nTasks, nCores = nCores)
+                G_12 <- getG(x = X, i = i, i2 = i2, centers = centers, scales = scales, scaleG = FALSE, nChunks = nChunks, nTasks = nTasks, nCores = nCores, verbose = FALSE)
                 expect_equal(G[i, i2], G_12, check.attributes = FALSE)
 
-                G_12 <- getG(x = X, i = i, i2 = i, centers = centers, scales = scales, scaleG = FALSE, verbose = FALSE, nChunks = nChunks, nTasks = nTasks, nCores = nCores)
+                G_12 <- getG(x = X, i = i, i2 = i, centers = centers, scales = scales, scaleG = FALSE, nChunks = nChunks, nTasks = nTasks, nCores = nCores, verbose = FALSE)
                 expect_equal(G[i, i], G_12, check.attributes = FALSE)
 
                 # without scaling columns, but scaling average diagonal = 1
@@ -183,18 +184,18 @@ for (nCores in seq_len(2)) {
 
                 G <- tcrossprod(scale(X, center = TRUE, scale = FALSE))
                 G <- G / ncol(X)
-                G_12 <- getG(x = X, i = i, i2 = i2, centers = centers, scales = scales, scaleG = TRUE, verbose = FALSE, nChunks = nChunks, nTasks = nTasks, nCores = nCores)
+                G_12 <- getG(x = X, i = i, i2 = i2, centers = centers, scales = scales, scaleG = TRUE, nChunks = nChunks, nTasks = nTasks, nCores = nCores, verbose = FALSE)
                 expect_equal(G[i, i2], G_12, check.attributes = FALSE)
 
-                G_12 <- getG(x = X, i = i, i2 = i, centers = centers, scales = scales, scaleG = TRUE, verbose = FALSE, nChunks = nChunks, nTasks = nTasks, nCores = nCores)
+                G_12 <- getG(x = X, i = i, i2 = i, centers = centers, scales = scales, scaleG = TRUE, nChunks = nChunks, nTasks = nTasks, nCores = nCores, verbose = FALSE)
                 expect_equal(G[i, i], G_12, check.attributes = FALSE)
 
                 # no scaling at all
                 G <- tcrossprod(scale(X, center = TRUE, scale = FALSE))
-                G_12 <- getG(x = X, i = i, i2 = i2, centers = centers, scales = scales, scaleG = FALSE, verbose = FALSE, nChunks = nChunks, nTasks = nTasks, nCores = nCores)
+                G_12 <- getG(x = X, i = i, i2 = i2, centers = centers, scales = scales, scaleG = FALSE, nChunks = nChunks, nTasks = nTasks, nCores = nCores, verbose = FALSE)
                 expect_equal(G[i, i2], G_12, check.attributes = FALSE)
 
-                G_12 <- getG(x = X, i = i, i2 = i, centers = centers, scales = scales, scaleG = FALSE, verbose = FALSE, nChunks = nChunks, nTasks = nTasks, nCores = nCores)
+                G_12 <- getG(x = X, i = i, i2 = i, centers = centers, scales = scales, scaleG = FALSE, nChunks = nChunks, nTasks = nTasks, nCores = nCores, verbose = FALSE)
                 expect_equal(G[i, i], G_12, check.attributes = FALSE)
 
             }

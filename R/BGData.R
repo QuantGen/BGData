@@ -200,7 +200,6 @@ parsePED <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1
 #'   information in the file.
 #' @param idCol The index of the ID column. If more than one index is given,
 #'   both columns will be concatenated with "_".
-#' @param verbose If TRUE, progress updates will be posted.
 #' @param nNodes The number of nodes to create.
 #' @param linked.by If \code{columns} a column-linked matrix
 #'   (\code{\link[=ColumnLinkedMatrix-class]{ColumnLinkedMatrix}}) is created,
@@ -209,12 +208,13 @@ parsePED <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1
 #' @param folderOut The path to the folder where to save the binary files.
 #' @param dimorder The physical layout of the underlying \code{ff} object of
 #'   each node.
+#' @param verbose If TRUE, progress updates will be posted.
 #' @seealso \code{\link[=BGData-class]{BGData}},
 #'   \code{\link[=LinkedMatrix-class]{LinkedMatrix}},
 #'   \code{\link[=ColumnLinkedMatrix-class]{ColumnLinkedMatrix}},
 #'   \code{\link[=RowLinkedMatrix-class]{RowLinkedMatrix}}, \code{\link[ff]{ff}}
 #' @export
-readPED <- function(fileIn, header, dataType, n = NULL, p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2), verbose = FALSE, nNodes = NULL, linked.by = "rows", folderOut = paste("BGData_", sub("\\.[[:alnum:]]+$", "", basename(fileIn)), sep = ""), dimorder = if (linked.by == "rows") 2:1 else 1:2) {
+readPED <- function(fileIn, header, dataType, n = NULL, p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2), nNodes = NULL, linked.by = "rows", folderOut = paste("BGData_", sub("\\.[[:alnum:]]+$", "", basename(fileIn)), sep = ""), dimorder = if (linked.by == "rows") 2:1 else 1:2, verbose = FALSE) {
 
     # Create output directory
     if (file.exists(folderOut)) {
@@ -273,7 +273,7 @@ readPED <- function(fileIn, header, dataType, n = NULL, p = NULL, sep = "", na.s
     BGData <- new("BGData", geno = geno, pheno = pheno)
 
     # Parse PED file
-    BGData <- parsePED(BGData = BGData, fileIn = fileIn, header = header, dataType = dataType, nColSkip = nColSkip, idCol = idCol, sep = sep, na.strings = na.strings, verbose = verbose, nodes = nodes, index = index)
+    BGData <- parsePED(BGData = BGData, fileIn = fileIn, header = header, dataType = dataType, nColSkip = nColSkip, idCol = idCol, sep = sep, na.strings = na.strings, nodes = nodes, index = index, verbose = verbose)
 
     # Save BGData object
     attr(BGData, "origFile") <- list(path = fileIn, dataType = typeof(dataType))
@@ -382,12 +382,12 @@ readPED.matrix <- function(fileIn, header, dataType, n = NULL, p = NULL, sep = "
 #'   information in the file.
 #' @param idCol The index of the ID column. If more than one index is given,
 #'   both columns will be concatenated with "_".
-#' @param verbose If TRUE, progress updates will be posted.
 #' @param folderOut The path to the folder where to save the binary files.
+#' @param verbose If TRUE, progress updates will be posted.
 #' @return Returns a \code{\link[=BGData-class]{BGData}} object.
 #' @seealso \code{\link[=BGData-class]{BGData}}
 #' @export
-readPED.big.matrix <- function(fileIn, header, dataType, n = NULL, p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2), verbose = FALSE, folderOut = paste("BGData_", sub("\\.[[:alnum:]]+$", "", basename(fileIn)), sep = "")) {
+readPED.big.matrix <- function(fileIn, header, dataType, n = NULL, p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2), folderOut = paste("BGData_", sub("\\.[[:alnum:]]+$", "", basename(fileIn)), sep = ""), verbose = FALSE) {
 
     if (file.exists(folderOut)) {
         stop(paste("Output folder", folderOut, "already exists. Please move it or pick a different one."))

@@ -6,8 +6,8 @@
 \code{\link[=BGData-class]{BGData}} object.}
 \usage{
 GWAS(formula, data, method, i = seq_len(nrow(data@geno)),
-  j = seq_len(ncol(data@geno)), verbose = FALSE, chunkSize = 5000,
-  nTasks = nCores, nCores = parallel::detectCores(), ...)
+  j = seq_len(ncol(data@geno)), chunkSize = 5000, nTasks = nCores,
+  nCores = parallel::detectCores(), verbose = FALSE, ...)
 }
 \arguments{
 \item{formula}{A formula (e.g. weight~sex+age) with the response on the
@@ -27,8 +27,6 @@ By default, all rows are used.}
 \item{j}{(integer, boolean or character) Indicates which columns should be
 used. By default, all columns are used.}
 
-\item{verbose}{If TRUE more messages are printed.}
-
 \item{chunkSize}{Represents the number of columns of \code{@geno} that are
 brought into RAM for processing (5000 by default).}
 
@@ -38,6 +36,8 @@ distributed among \code{nCores} cores. Defaults to \code{nCores}.}
 \item{nCores}{The number of cores (passed to
 \code{\link[parallel]{mclapply}}). Defaults to the number of cores as
 detected by \code{\link[parallel]{detectCores}}).}
+
+\item{verbose}{If TRUE more messages are printed.}
 
 \item{...}{Additional arguments for chunkedApply and regression method.}
 }

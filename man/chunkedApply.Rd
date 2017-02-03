@@ -39,8 +39,8 @@ detected by \code{\link[parallel]{detectCores}}).}
 \item{...}{Additional arguments to be passed to \code{parallelApply}.}
 }
 \description{
-Similar to \code{apply}, designed bring chunks of data into memory and carry
-out operations on them in parallel.
+Similar to \code{apply}, designed to bring chunks of data into memory and
+carry out operations on them in parallel.
 }
 \details{
 \code{bufferSize} and \code{nTasks} have to be chosen carefully to avoid

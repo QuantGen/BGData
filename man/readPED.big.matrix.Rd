@@ -7,9 +7,9 @@
 genotypes in a \code{\link[=big.matrix-class]{big.matrix}}.}
 \usage{
 readPED.big.matrix(fileIn, header, dataType, n = NULL, p = NULL, sep = "",
-  na.strings = "NA", nColSkip = 6, idCol = c(1, 2), verbose = FALSE,
+  na.strings = "NA", nColSkip = 6, idCol = c(1, 2),
   folderOut = paste("BGData_", sub("\\\\.[[:alnum:]]+$", "",
-  basename(fileIn)), sep = ""))
+  basename(fileIn)), sep = ""), verbose = FALSE)
 }
 \arguments{
 \item{fileIn}{The path to the plaintext file.}
@@ -37,9 +37,9 @@ information in the file.}
 \item{idCol}{The index of the ID column. If more than one index is given,
 both columns will be concatenated with "_".}
 
-\item{verbose}{If TRUE, progress updates will be posted.}
-
 \item{folderOut}{The path to the folder where to save the binary files.}
+
+\item{verbose}{If TRUE, progress updates will be posted.}
 }
 \value{
 Returns a \code{\link[=BGData-class]{BGData}} object.

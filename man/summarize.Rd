@@ -4,14 +4,13 @@
 \alias{summarize}
 \title{Calculates frequencies of missing values and alleles.}
 \usage{
-summarize(X, verbose = FALSE, bufferSize = 5000, i = seq_len(nrow(X)),
-  j = seq_len(ncol(X)), nTasks = nCores, nCores = parallel::detectCores())
+summarize(X, bufferSize = 5000, i = seq_len(nrow(X)),
+  j = seq_len(ncol(X)), nTasks = nCores, nCores = parallel::detectCores(),
+  verbose = FALSE)
 }
 \arguments{
 \item{X}{A matrix-like object, typically \code{@geno} of a
 \code{\link[=BGData-class]{BGData}} object.}
-
-\item{verbose}{If TRUE more messages are printed.}
 
 \item{bufferSize}{Represents the number of columns of \code{@geno} that are
 brought into RAM for processing (5000 by default).}
@@ -28,6 +27,8 @@ distributed among \code{nCores} cores. Defaults to \code{nCores}.}
 \item{nCores}{The number of cores (passed to
 \code{\link[parallel]{mclapply}}). Defaults to the number of cores as
 detected by \code{\link[parallel]{detectCores}}).}
+
+\item{verbose}{If TRUE more messages are printed.}
 }
 \description{
 Calculates frequencies of missing values and alleles.
