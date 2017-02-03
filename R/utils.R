@@ -93,7 +93,8 @@ apply2 <- function(X, MARGIN, FUN, ...) {
 #' @param nTasks The number of tasks the problem should be broken into to be
 #'   distributed among \code{nCores} cores. Defaults to \code{nCores}.
 #' @param nCores The number of cores (passed to
-#'   \code{\link[parallel]{mclapply}}).
+#'   \code{\link[parallel]{mclapply}}). Defaults to the number of cores as
+#'   detected by \code{\link[parallel]{detectCores}}).
 #' @param ... Additional arguments to be passed to \code{apply}.
 #' @export
 parallelApply <- function(X, MARGIN, FUN, nTasks = nCores, nCores = parallel::detectCores(), ...) {
@@ -151,7 +152,8 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = nCores, nCores = parallel::de
 #' @param nTasks The number of tasks the problem should be broken into to be
 #'   distributed among \code{nCores} cores. Defaults to \code{nCores}.
 #' @param nCores The number of cores (passed to
-#'   \code{\link[parallel]{mclapply}}).
+#'   \code{\link[parallel]{mclapply}}). Defaults to the number of cores as
+#'   detected by \code{\link[parallel]{detectCores}}).
 #' @param verbose Whether to print additional information.
 #' @param ... Additional arguments to be passed to \code{parallelApply}.
 #' @export
@@ -245,7 +247,8 @@ crossprods <- function(x, y = NULL, nTasks = nCores, use_tcrossprod = FALSE, nCo
 #' @param nTasks The number of tasks the problem should be broken into to be
 #'   distributed among \code{nCores} cores. Defaults to \code{nCores}.
 #' @param nCores The number of cores (passed to
-#'   \code{\link[parallel]{mclapply}}).
+#'   \code{\link[parallel]{mclapply}}). Defaults to the number of cores as
+#'   detected by \code{\link[parallel]{detectCores}}).
 #' @return x'y' or x'x depending on whether y is provided.
 #' @export
 crossprod.parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel::detectCores()) {
@@ -261,7 +264,8 @@ crossprod.parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel::
 #' @param nTasks The number of tasks the problem should be broken into to be
 #'   distributed among \code{nCores} cores. Defaults to \code{nCores}.
 #' @param nCores The number of cores (passed to
-#'   \code{\link[parallel]{mclapply}}).
+#'   \code{\link[parallel]{mclapply}}). Defaults to the number of cores as
+#'   detected by \code{\link[parallel]{detectCores}}).
 #' @return xy' or xx' depending on whether y is provided.
 #' @export
 tcrossprod.parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel::detectCores()) {
@@ -304,7 +308,8 @@ tcrossprod.parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel:
 #' @param saveName Name without extension to save genomic relationship matrix
 #'   with.
 #' @param nCores The number of cores (passed to
-#'   \code{\link[parallel]{mclapply}}).
+#'   \code{\link[parallel]{mclapply}}). Defaults to the number of cores as
+#'   detected by \code{\link[parallel]{detectCores}}).
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @export
 getG <- function(x, nChunks = ceiling(ncol(x) / 10000), scaleCol = TRUE, centerCol = TRUE, scaleG = TRUE, verbose = TRUE, i = seq_len(nrow(x)), j = seq_len(ncol(x)), i2 = NULL, minVar = 1e-05, nTasks = nCores, scales = NULL, centers = NULL, saveG = FALSE, saveType = "RData", saveName = "Gij", nCores = parallel::detectCores()) {
@@ -552,7 +557,8 @@ getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, centerCol = TRUE
 #' @param saveRData Whether to save an RData file to easily reload
 #'   \code{\link[=symDMatrix-class]{symDMatrix}}
 #' @param nCores The number of cores (passed to
-#'   \code{\link[parallel]{mclapply}}).
+#'   \code{\link[parallel]{mclapply}}). Defaults to the number of cores as
+#'   detected by \code{\link[parallel]{detectCores}}).
 #' @param i (integer, boolean or character) Indicates which rows should be used.
 #'   By default, all rows are used.
 #' @param j (integer, boolean or character) Indicates which columns should be
@@ -739,7 +745,8 @@ getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, sc
 #' @param nTasks The number of tasks the problem should be broken into to be
 #'   distributed among \code{nCores} cores. Defaults to \code{nCores}.
 #' @param nCores The number of cores (passed to
-#'   \code{\link[parallel]{mclapply}}).
+#'   \code{\link[parallel]{mclapply}}). Defaults to the number of cores as
+#'   detected by \code{\link[parallel]{detectCores}}).
 #' @param ... Additional arguments for chunkedApply and regression method.
 #' @return Returns a matrix with estimates, SE, p-value, etc.
 #' @export
@@ -896,7 +903,8 @@ getCoefficients.lmerMod <- function(x) {
 #' @param nTasks The number of tasks the problem should be broken into to be
 #'   distributed among \code{nCores} cores. Defaults to \code{nCores}.
 #' @param nCores The number of cores (passed to
-#'   \code{\link[parallel]{mclapply}}).
+#'   \code{\link[parallel]{mclapply}}). Defaults to the number of cores as
+#'   detected by \code{\link[parallel]{detectCores}}).
 #' @export
 summarize <- function(X, verbose = FALSE, bufferSize = 5000, i = seq_len(nrow(X)), j = seq_len(ncol(X)), nTasks = nCores, nCores = parallel::detectCores()) {
     res <- chunkedApply(X, 2, function(col) {

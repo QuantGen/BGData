@@ -31,7 +31,8 @@ used. By default, all columns are used.}
 distributed among \code{nCores} cores. Defaults to \code{nCores}.}
 
 \item{nCores}{The number of cores (passed to
-\code{\link[parallel]{mclapply}}).}
+\code{\link[parallel]{mclapply}}). Defaults to the number of cores as
+detected by \code{\link[parallel]{detectCores}}).}
 
 \item{verbose}{Whether to print additional information.}
 

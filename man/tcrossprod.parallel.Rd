@@ -17,7 +17,8 @@ tcrossprod.parallel(x, y = NULL, nTasks = nCores,
 distributed among \code{nCores} cores. Defaults to \code{nCores}.}
 
 \item{nCores}{The number of cores (passed to
-\code{\link[parallel]{mclapply}}).}
+\code{\link[parallel]{mclapply}}). Defaults to the number of cores as
+detected by \code{\link[parallel]{detectCores}}).}
 }
 \value{
 xy' or xx' depending on whether y is provided.

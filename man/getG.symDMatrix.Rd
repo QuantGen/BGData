@@ -45,7 +45,8 @@ distributed among \code{nCores} cores. Defaults to \code{nCores}.}
 \code{\link[=symDMatrix-class]{symDMatrix}}}
 
 \item{nCores}{The number of cores (passed to
-\code{\link[parallel]{mclapply}}).}
+\code{\link[parallel]{mclapply}}). Defaults to the number of cores as
+detected by \code{\link[parallel]{detectCores}}).}
 
 \item{i}{(integer, boolean or character) Indicates which rows should be used.
 By default, all rows are used.}

@@ -36,7 +36,8 @@ brought into RAM for processing (5000 by default).}
 distributed among \code{nCores} cores. Defaults to \code{nCores}.}
 
 \item{nCores}{The number of cores (passed to
-\code{\link[parallel]{mclapply}}).}
+\code{\link[parallel]{mclapply}}). Defaults to the number of cores as
+detected by \code{\link[parallel]{detectCores}}).}
 
 \item{...}{Additional arguments for chunkedApply and regression method.}
 }
