@@ -7,9 +7,9 @@ creating a \code{\link[=symDMatrix-class]{symDMatrix}}.}
 \usage{
 getG.symDMatrix(X, nBlocks = 5, blockSize = NULL, centers = NULL,
   scales = NULL, centerCol = TRUE, scaleCol = TRUE, scaleG = TRUE,
-  nTasks = nCores, folder = randomString(), vmode = "double",
-  saveRData = TRUE, nCores = parallel::detectCores(),
-  i = seq_len(nrow(X)), j = seq_len(ncol(X)), verbose = TRUE)
+  folder = randomString(), vmode = "double", saveRData = TRUE,
+  i = seq_len(nrow(X)), j = seq_len(ncol(X)), nTasks = nCores,
+  nCores = parallel::detectCores(), verbose = TRUE)
 }
 \arguments{
 \item{X}{A matrix-like object, typically \code{@geno} of a
@@ -31,9 +31,6 @@ xx'.}
 
 \item{scaleG}{TRUE/FALSE whether xx' must be scaled.}
 
-\item{nTasks}{The number of tasks the problem should be broken into to be
-distributed among \code{nCores} cores. Defaults to \code{nCores}.}
-
 \item{folder}{Folder in which to save the
 \code{\link[=symDMatrix-class]{symDMatrix}}.}
 
@@ -42,15 +39,18 @@ distributed among \code{nCores} cores. Defaults to \code{nCores}.}
 \item{saveRData}{Whether to save an RData file to easily reload
 \code{\link[=symDMatrix-class]{symDMatrix}}}
 
-\item{nCores}{The number of cores (passed to
-\code{\link[parallel]{mclapply}}). Defaults to the number of cores as
-detected by \code{\link[parallel]{detectCores}}).}
-
 \item{i}{(integer, boolean or character) Indicates which rows should be used.
 By default, all rows are used.}
 
 \item{j}{(integer, boolean or character) Indicates which columns should be
 used. By default, all columns are used.}
+
+\item{nTasks}{The number of tasks the problem should be broken into to be
+distributed among \code{nCores} cores. Defaults to \code{nCores}.}
+
+\item{nCores}{The number of cores (passed to
+\code{\link[parallel]{mclapply}}). Defaults to the number of cores as
+detected by \code{\link[parallel]{detectCores}}).}
 
 \item{verbose}{Whether progress updates will be posted. Defaults to
 \code{TRUE}.}
