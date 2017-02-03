@@ -39,6 +39,10 @@ detected by \code{\link[parallel]{detectCores}}).}
 \item{...}{Additional arguments to be passed to \code{parallelApply}.}
 }
 \description{
+Similar to \code{apply}, designed bring chunks of data into memory and carry
+out operations on them in parallel.
+}
+\details{
 \code{bufferSize} and \code{nTasks} have to be chosen carefully to avoid
 running out of memory. As a rule of thumb, at least around
 \code{object_size(buffer) + (nCores * (object_size(buffer) / nTasks)) +
@@ -47,8 +51,7 @@ potential copies of your data that might be created (for example \code{lsfit}
 runs \code{cbind(1, X)}). Therefore, for 20 nodes and 20 tasks you will need
 at least \code{2 * object_size(buffer)} MB, for 20 nodes and 40 tasks
 \code{1.5 * object_size(buffer)} MB, etc.
-}
-\details{
+
 This function is only useful for memory-mapped files. For data that is
 already in memory, use \code{\link{parallelApply}} directly.
 }

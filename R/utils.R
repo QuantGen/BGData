@@ -128,6 +128,9 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = nCores, nCores = parallel::de
 #' Reads chunks of data from a memory-mapped file into memory and applies a
 #' function on each row or column of a matrix in parallel.
 #'
+#' Similar to \code{apply}, designed to bring chunks of data into memory and
+#' carry out operations on them in parallel.
+#'
 #' \code{bufferSize} and \code{nTasks} have to be chosen carefully to avoid
 #' running out of memory. As a rule of thumb, at least around
 #' \code{object_size(buffer) + (nCores * (object_size(buffer) / nTasks)) +
