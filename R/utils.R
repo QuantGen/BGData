@@ -168,11 +168,11 @@ chunkedApply <- function(X, MARGIN, FUN, bufferSize, i = seq_len(nrow(X)), j = s
         stop("dim(X) must have a positive length")
     }
     d <- c(length(i), length(j))
-    nChunks <- ceiling(d[MARGIN] / bufferSize)
-    ranges <- LinkedMatrix:::chunkRanges(d[MARGIN], nChunks)
-    res <- lapply(seq_len(nChunks), function(k) {
+    nBuffers <- ceiling(d[MARGIN] / bufferSize)
+    ranges <- LinkedMatrix:::chunkRanges(d[MARGIN], nBuffers)
+    res <- lapply(seq_len(nBuffers), function(k) {
         if (verbose) {
-            message("Processing chunk ", k, " of ", nChunks, " (", round(k / nChunks * 100, 3), "%) ...")
+            message("Processing chunk ", k, " of ", nBuffers, " (", round(k / nBuffers * 100, 3), "%) ...")
         }
         if (MARGIN == 2) {
             subset <- X[i, j[seq(ranges[1, k], ranges[2, k])], drop = FALSE]
@@ -289,7 +289,7 @@ tcrossprod.parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel:
 #'
 #' @param x A matrix-like object, typically \code{@@geno} of a
 #'   \code{\link[=BGData-class]{BGData}} object.
-#' @param nChunks The number of columns that are processed at a time.
+#' @param nBuffers The number of columns that are processed at a time.
 #' @param scaleCol TRUE/FALSE whether columns must be scaled before computing
 #'   xx'.
 #' @param centerCol TRUE/FALSE whether columns must be centered before computing
@@ -319,12 +319,12 @@ tcrossprod.parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel:
 #'   \code{TRUE}.
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @export
-getG <- function(x, nChunks = ceiling(ncol(x) / 10000), scaleCol = TRUE, centerCol = TRUE, scaleG = TRUE, i = seq_len(nrow(x)), j = seq_len(ncol(x)), i2 = NULL, minVar = 1e-05, scales = NULL, centers = NULL, saveG = FALSE, saveType = "RData", saveName = "Gij", nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
+getG <- function(x, nBuffers = ceiling(ncol(x) / 10000), scaleCol = TRUE, centerCol = TRUE, scaleG = TRUE, i = seq_len(nrow(x)), j = seq_len(ncol(x)), i2 = NULL, minVar = 1e-05, scales = NULL, centers = NULL, saveG = FALSE, saveType = "RData", saveName = "Gij", nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
     if (is.null(i2)) {
-        G <- getGi(x = x, nChunks = nChunks, scales = scales, centers = centers, scaleCol = scaleCol, centerCol = centerCol, scaleG = scaleG, i = i, j = j, minVar = minVar, nTasks = nTasks, nCores = nCores, verbose = verbose)
+        G <- getGi(x = x, nBuffers = nBuffers, scales = scales, centers = centers, scaleCol = scaleCol, centerCol = centerCol, scaleG = scaleG, i = i, j = j, minVar = minVar, nTasks = nTasks, nCores = nCores, verbose = verbose)
     } else {
         if (is.null(scales) || is.null(centers)) stop("scales and centers need to be precomputed.")
-        G <- getGij(x = x, i1 = i, i2 = i2, scales = scales, centers = centers, scaleCol = scaleCol, centerCol = centerCol, scaleG = scaleG, nChunks = nChunks, j = j, minVar = minVar, nTasks = nTasks, nCores = nCores, verbose = verbose)
+        G <- getGij(x = x, i1 = i, i2 = i2, scales = scales, centers = centers, scaleCol = scaleCol, centerCol = centerCol, scaleG = scaleG, nBuffers = nBuffers, j = j, minVar = minVar, nTasks = nTasks, nCores = nCores, verbose = verbose)
     }
     if (saveG) {
         if (saveType == "RData") {
@@ -339,7 +339,7 @@ getG <- function(x, nChunks = ceiling(ncol(x) / 10000), scaleCol = TRUE, centerC
 }
 
 
-getGi <- function(x, nChunks = ceiling(ncol(x) / 10000), scales = NULL, centers = NULL, scaleCol = TRUE, centerCol = FALSE, scaleG = TRUE, i = seq_len(nrow(x)), j = seq_len(ncol(x)), minVar = 1e-05, nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
+getGi <- function(x, nBuffers = ceiling(ncol(x) / 10000), scales = NULL, centers = NULL, scaleCol = TRUE, centerCol = FALSE, scaleG = TRUE, i = seq_len(nrow(x)), j = seq_len(ncol(x)), minVar = 1e-05, nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
     nX <- nrow(x)
     pX <- ncol(x)
 
@@ -371,10 +371,10 @@ getGi <- function(x, nChunks = ceiling(ncol(x) / 10000), scales = NULL, centers 
 
     G <- matrix(data = 0, nrow = n, ncol = n, dimnames = list(rownames(x)[i], rownames(x)[i]))
 
-    chunkSize <- ceiling(p / nChunks)
+    chunkSize <- ceiling(p / nBuffers)
 
     end <- 0
-    for (k in seq_len(nChunks)) {
+    for (k in seq_len(nBuffers)) {
         ini <- end + 1
         if (ini <= p) {
             end <- min(p, ini + chunkSize - 1)
@@ -440,7 +440,7 @@ getGi <- function(x, nChunks = ceiling(ncol(x) / 10000), scales = NULL, centers 
 }
 
 
-getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, centerCol = TRUE,scaleG = TRUE, nChunks = ceiling(ncol(x) / 10000), j = seq_len(ncol(x)), minVar = 1e-05, nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
+getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, centerCol = TRUE,scaleG = TRUE, nBuffers = ceiling(ncol(x) / 10000), j = seq_len(ncol(x)), minVar = 1e-05, nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
 
     nX <- nrow(x)
     pX <- ncol(x)
@@ -475,10 +475,10 @@ getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, centerCol = TRUE
 
     G <- matrix(data = 0, nrow = n1, ncol = n2, dimnames = list(rownames(x)[i1], rownames(x)[i2]))
 
-    chunkSize <- ceiling(p / nChunks)
+    chunkSize <- ceiling(p / nBuffers)
 
     end <- 0
-    for (k in seq_len(nChunks)) {
+    for (k in seq_len(nBuffers)) {
         ini <- end + 1
         if (ini <= p) {
             end <- min(p, ini + chunkSize - 1)

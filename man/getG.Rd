@@ -4,7 +4,7 @@
 \alias{getG}
 \title{Computes a genomic relationship matrix G=xx'.}
 \usage{
-getG(x, nChunks = ceiling(ncol(x)/10000), scaleCol = TRUE,
+getG(x, nBuffers = ceiling(ncol(x)/10000), scaleCol = TRUE,
   centerCol = TRUE, scaleG = TRUE, i = seq_len(nrow(x)),
   j = seq_len(ncol(x)), i2 = NULL, minVar = 1e-05, scales = NULL,
   centers = NULL, saveG = FALSE, saveType = "RData", saveName = "Gij",
@@ -14,7 +14,7 @@ getG(x, nChunks = ceiling(ncol(x)/10000), scaleCol = TRUE,
 \item{x}{A matrix-like object, typically \code{@geno} of a
 \code{\link[=BGData-class]{BGData}} object.}
 
-\item{nChunks}{The number of columns that are processed at a time.}
+\item{nBuffers}{The number of columns that are processed at a time.}
 
 \item{scaleCol}{TRUE/FALSE whether columns must be scaled before computing
 xx'.}
