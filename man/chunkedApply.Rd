@@ -6,7 +6,7 @@
 function on each row or column of a matrix in parallel.}
 \usage{
 chunkedApply(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(X)),
-  bufferSize, nTasks = nCores, nCores = parallel::detectCores(),
+  bufferSize = 5000, nTasks = nCores, nCores = parallel::detectCores(),
   verbose = FALSE, ...)
 }
 \arguments{
@@ -25,7 +25,7 @@ By default, all rows are used.}
 used. By default, all columns are used.}
 
 \item{bufferSize}{The number of rows or columns of \code{X} that are brought
-into memory for processing.}
+into memory for processing. Defaults to 5000.}
 
 \item{nTasks}{The number of tasks the problem should be broken into to be
 distributed among \code{nCores} cores. Defaults to \code{nCores}.}

@@ -153,7 +153,7 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = nCores, nCores = parallel::de
 #' @param j (integer, boolean or character) Indicates which columns should be
 #'   used. By default, all columns are used.
 #' @param bufferSize The number of rows or columns of \code{X} that are brought
-#'   into memory for processing.
+#'   into memory for processing. Defaults to 5000.
 #' @param nTasks The number of tasks the problem should be broken into to be
 #'   distributed among \code{nCores} cores. Defaults to \code{nCores}.
 #' @param nCores The number of cores (passed to
@@ -163,7 +163,7 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = nCores, nCores = parallel::de
 #'   \code{FALSE}.
 #' @param ... Additional arguments to be passed to \code{parallelApply}.
 #' @export
-chunkedApply <- function(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(X)), bufferSize, nTasks = nCores, nCores = parallel::detectCores(), verbose = FALSE, ...) {
+chunkedApply <- function(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(X)), bufferSize = 5000, nTasks = nCores, nCores = parallel::detectCores(), verbose = FALSE, ...) {
     if (!length(dim(X))) {
         stop("dim(X) must have a positive length")
     }
@@ -748,7 +748,7 @@ getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, sc
 #' @param j (integer, boolean or character) Indicates which columns should be
 #'   used. By default, all columns are used.
 #' @param bufferSize Represents the number of columns of \code{@@geno} that are
-#'   brought into RAM for processing (5000 by default).
+#'   brought into RAM for processing. Defaults to 5000.
 #' @param nTasks The number of tasks the problem should be broken into to be
 #'   distributed among \code{nCores} cores. Defaults to \code{nCores}.
 #' @param nCores The number of cores (passed to
@@ -821,7 +821,7 @@ rayOLS=function(y,x,n=length(y)){
 # y~1 or y~factor(sex)+age
 # all the variables in the formula must be in data@pheno data (BGData)
 # containing slots @pheno and @geno    
-GWAS.ols <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), bufferSize = 10, nTasks = nCores, nCores = parallel::detectCores(), verbose = FALSE, ...) {
+GWAS.ols <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), bufferSize = 5000, nTasks = nCores, nCores = parallel::detectCores(), verbose = FALSE, ...) {
 
     # subset of model.frame has bizarre scoping issues
     frame <- stats::model.frame(formula = formula, data = data@pheno)[i, , drop = FALSE]
@@ -907,7 +907,7 @@ getCoefficients.lmerMod <- function(x) {
 #' @param j (integer, boolean or character) Indicates which columns should be
 #'   used. By default, all columns are used.
 #' @param bufferSize Represents the number of columns of \code{@@geno} that are
-#'   brought into RAM for processing (5000 by default).
+#'   brought into RAM for processing. Defaults to 5000.
 #' @param nTasks The number of tasks the problem should be broken into to be
 #'   distributed among \code{nCores} cores. Defaults to \code{nCores}.
 #' @param nCores The number of cores (passed to

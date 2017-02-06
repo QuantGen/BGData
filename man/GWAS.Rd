@@ -28,7 +28,7 @@ By default, all rows are used.}
 used. By default, all columns are used.}
 
 \item{bufferSize}{Represents the number of columns of \code{@geno} that are
-brought into RAM for processing (5000 by default).}
+brought into RAM for processing. Defaults to 5000.}
 
 \item{nTasks}{The number of tasks the problem should be broken into to be
 distributed among \code{nCores} cores. Defaults to \code{nCores}.}
