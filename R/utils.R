@@ -609,8 +609,9 @@ getGij <- function(x, scaleCol = TRUE, scales, centerCol = FALSE, centers, scale
 #' @param scaleCol TRUE/FALSE whether columns must be scaled before computing
 #'   xx'.
 #' @param scaleG TRUE/FALSE whether xx' must be scaled.
-#' @param folder Folder in which to save the
-#'   \code{\link[=symDMatrix-class]{symDMatrix}}.
+#' @param folderOut The path to the folder where to save the
+#'   \code{\link[=symDMatrix-class]{symDMatrix}} object. Defaults to a random
+#'   string prefixed with "symDMatrix_".
 #' @param vmode vmode of \code{ff} objects.
 #' @param saveRData Whether to save an RData file to easily reload
 #'   \code{\link[=symDMatrix-class]{symDMatrix}}
@@ -627,7 +628,7 @@ getGij <- function(x, scaleCol = TRUE, scales, centerCol = FALSE, centers, scale
 #'   \code{TRUE}.
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @export
-getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, scales = NULL, centerCol = TRUE, scaleCol = TRUE, scaleG = TRUE, folder = randomString(), vmode = "double", saveRData = TRUE, i = seq_len(nrow(X)), j = seq_len(ncol(X)), nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
+getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, scales = NULL, centerCol = TRUE, scaleCol = TRUE, scaleG = TRUE, folderOut = paste0("symDMatrix_", randomString()), vmode = "double", saveRData = TRUE, i = seq_len(nrow(X)), j = seq_len(ncol(X)), nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
 
     nX <- nrow(X)
     pX <- ncol(X)
@@ -701,12 +702,12 @@ getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, sc
     nFiles <- nBlocks * (nBlocks + 1) / 2
     DATA <- vector(mode = "list", length = nBlocks)
 
-    if (file.exists(folder)) {
-        stop(folder, " already exists")
+    if (file.exists(folderOut)) {
+        stop(folderOut, " already exists")
     }
     curDir <- getwd()
-    dir.create(folder)
-    setwd(folder)
+    dir.create(folderOut)
+    setwd(folderOut)
 
     counter <- 1
     for (r in seq_len(nBlocks)) {

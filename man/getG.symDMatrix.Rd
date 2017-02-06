@@ -7,9 +7,9 @@ creating a \code{\link[=symDMatrix-class]{symDMatrix}}.}
 \usage{
 getG.symDMatrix(X, nBlocks = 5, blockSize = NULL, centers = NULL,
   scales = NULL, centerCol = TRUE, scaleCol = TRUE, scaleG = TRUE,
-  folder = randomString(), vmode = "double", saveRData = TRUE,
-  i = seq_len(nrow(X)), j = seq_len(ncol(X)), nTasks = nCores,
-  nCores = parallel::detectCores(), verbose = TRUE)
+  folderOut = paste0("symDMatrix_", randomString()), vmode = "double",
+  saveRData = TRUE, i = seq_len(nrow(X)), j = seq_len(ncol(X)),
+  nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE)
 }
 \arguments{
 \item{X}{A matrix-like object, typically \code{@geno} of a
@@ -31,8 +31,9 @@ xx'.}
 
 \item{scaleG}{TRUE/FALSE whether xx' must be scaled.}
 
-\item{folder}{Folder in which to save the
-\code{\link[=symDMatrix-class]{symDMatrix}}.}
+\item{folderOut}{The path to the folder where to save the
+\code{\link[=symDMatrix-class]{symDMatrix}} object. Defaults to a random
+string prefixed with "symDMatrix_".}
 
 \item{vmode}{vmode of \code{ff} objects.}
 
