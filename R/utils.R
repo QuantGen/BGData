@@ -361,7 +361,7 @@ getG <- function(x, scaleCol = TRUE, scales = NULL, centerCol = TRUE, centers = 
     if (is.null(i2)) {
         G <- getGi(x = x, scales = scales, centers = centers, scaleCol = scaleCol, centerCol = centerCol, scaleG = scaleG, minVar = minVar, i = i, j = j, bufferSize = bufferSize, nBuffers = nBuffers, nTasks = nTasks, nCores = nCores, verbose = verbose)
     } else {
-        G <- getGij(x = x, scales = scales, centers = centers, scaleCol = scaleCol, centerCol = centerCol, scaleG = scaleG, minVar = minVar, i1 = i, i2 = i2, j = j, bufferSize = bufferSize, nBuffers = nBuffers, nTasks = nTasks, nCores = nCores, verbose = verbose)
+        G <- getGij(x = x, scales = scales, centers = centers, scaleCol = scaleCol, centerCol = centerCol, scaleG = scaleG, minVar = minVar, i = i, i2 = i2, j = j, bufferSize = bufferSize, nBuffers = nBuffers, nTasks = nTasks, nCores = nCores, verbose = verbose)
     }
     if (saveG) {
         if (saveType == "RData") {
@@ -480,7 +480,7 @@ getGi <- function(x, scaleCol = TRUE, scales = NULL, centerCol = FALSE, centers 
 }
 
 
-getGij <- function(x, scaleCol = TRUE, scales, centerCol = FALSE, centers, scaleG = TRUE, minVar = 1e-05, i1, i2, j = seq_len(ncol(x)), bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
+getGij <- function(x, scaleCol = TRUE, scales, centerCol = FALSE, centers, scaleG = TRUE, minVar = 1e-05, i, i2, j = seq_len(ncol(x)), bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
 
     if (scaleCol && is.null(scales)) {
         stop("scales need to be precomputed.")
@@ -493,10 +493,10 @@ getGij <- function(x, scaleCol = TRUE, scales, centerCol = FALSE, centers, scale
     pX <- ncol(x)
 
     # Convert index types
-    if (is.logical(i1)) {
-        i1 <- which(i1)
-    } else if (is.character(i1)) {
-        i1 <- match(i1, rownames(x))
+    if (is.logical(i)) {
+        i <- which(i)
+    } else if (is.character(i)) {
+        i <- match(i, rownames(x))
     }
     if (is.logical(i2)) {
         i2 <- which(i2)
@@ -509,11 +509,11 @@ getGij <- function(x, scaleCol = TRUE, scales, centerCol = FALSE, centers, scale
         j <- match(j, colnames(x))
     }
 
-    n1 <- length(i1)
+    n1 <- length(i)
     p <- length(j)
     n2 <- length(i2)
 
-    if ((min(i1) < 1) | (max(i1) > nX)) {
+    if ((min(i) < 1) | (max(i) > nX)) {
         stop("Index out of bounds")
     }
     if ((min(i2) < 1) | (max(i2) > nX)) {
@@ -525,7 +525,7 @@ getGij <- function(x, scaleCol = TRUE, scales, centerCol = FALSE, centers, scale
 
     K <- 0
 
-    G <- matrix(data = 0, nrow = n1, ncol = n2, dimnames = list(rownames(x)[i1], rownames(x)[i2]))
+    G <- matrix(data = 0, nrow = n1, ncol = n2, dimnames = list(rownames(x)[i], rownames(x)[i2]))
 
     bufferSize <- ceiling(p / nBuffers)
 
@@ -541,7 +541,7 @@ getGij <- function(x, scaleCol = TRUE, scales, centerCol = FALSE, centers, scale
 
             # subset
             localColIndex <- j[ini:end]
-            X1 <- x[i1, localColIndex, drop = FALSE]
+            X1 <- x[i, localColIndex, drop = FALSE]
             X2 <- x[i2, localColIndex, drop = FALSE]
             if (centerCol) {
                 centers.chunk <- centers[localColIndex]
