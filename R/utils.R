@@ -371,13 +371,13 @@ getGi <- function(x, scales = NULL, centers = NULL, scaleCol = TRUE, centerCol =
 
     G <- matrix(data = 0, nrow = n, ncol = n, dimnames = list(rownames(x)[i], rownames(x)[i]))
 
-    chunkSize <- ceiling(p / nBuffers)
+    bufferSize <- ceiling(p / nBuffers)
 
     end <- 0
     for (k in seq_len(nBuffers)) {
         ini <- end + 1
         if (ini <= p) {
-            end <- min(p, ini + chunkSize - 1)
+            end <- min(p, ini + bufferSize - 1)
             if (verbose) {
                 message("Chunk: ", k, " (markers ", ini, ":", end, " ~", round(100 * end / p, 1), "% done)")
                 message("  => Acquiring genotypes...")
@@ -475,13 +475,13 @@ getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, centerCol = TRUE
 
     G <- matrix(data = 0, nrow = n1, ncol = n2, dimnames = list(rownames(x)[i1], rownames(x)[i2]))
 
-    chunkSize <- ceiling(p / nBuffers)
+    bufferSize <- ceiling(p / nBuffers)
 
     end <- 0
     for (k in seq_len(nBuffers)) {
         ini <- end + 1
         if (ini <= p) {
-            end <- min(p, ini + chunkSize - 1)
+            end <- min(p, ini + bufferSize - 1)
             if (verbose) {
                 message("Working on chunk: ", k, " (markers ", ini, ":", end, " ~", round(100 * ini / p, 1), "% done)")
                 message("  => Acquiring genotypes...")
@@ -747,7 +747,7 @@ getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, sc
 #'   By default, all rows are used.
 #' @param j (integer, boolean or character) Indicates which columns should be
 #'   used. By default, all columns are used.
-#' @param chunkSize Represents the number of columns of \code{@@geno} that are
+#' @param bufferSize Represents the number of columns of \code{@@geno} that are
 #'   brought into RAM for processing (5000 by default).
 #' @param nTasks The number of tasks the problem should be broken into to be
 #'   distributed among \code{nCores} cores. Defaults to \code{nCores}.
@@ -759,7 +759,7 @@ getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, sc
 #' @param ... Additional arguments for chunkedApply and regression method.
 #' @return Returns a matrix with estimates, SE, p-value, etc.
 #' @export
-GWAS <- function(formula, data, method, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), chunkSize = 5000, nTasks = nCores, nCores = parallel::detectCores(), verbose = FALSE, ...) {
+GWAS <- function(formula, data, method, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), bufferSize = 5000, nTasks = nCores, nCores = parallel::detectCores(), verbose = FALSE, ...) {
 
     if (class(data) != "BGData") {
         stop("data must BGData")
@@ -772,7 +772,7 @@ GWAS <- function(formula, data, method, i = seq_len(nrow(data@geno)), j = seq_le
     # We can have specialized methods, for instance for OLS it is better to use
     # lsfit (that is what GWAS.ols does)
     if (method %in% c("lm", "lm.fit", "lsfit")) {
-        OUT <- GWAS.ols(formula = formula, data = data, i = i, j = j, chunkSize = chunkSize, nTasks = nTasks, nCores = nCores, verbose = verbose, ...)
+        OUT <- GWAS.ols(formula = formula, data = data, i = i, j = j, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = verbose, ...)
     } else if (method == "SKAT") {
         OUT <- GWAS.SKAT(formula = formula, data = data, i = i, j = j, verbose = verbose, ...)
     } else {
@@ -790,7 +790,7 @@ GWAS <- function(formula, data, method, i = seq_len(nrow(data@geno)), j = seq_le
             pheno$z <- col
             fm <- FUN(GWAS.model, data = pheno, ...)
             getCoefficients(fm)
-        }, bufferSize = chunkSize, nTasks = nTasks, nCores = nCores, verbose = verbose, ...)
+        }, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = verbose, ...)
         colnames(OUT) <- colnames(data@geno)[j]
         OUT <- t(OUT)
     }
@@ -821,7 +821,7 @@ rayOLS=function(y,x,n=length(y)){
 # y~1 or y~factor(sex)+age
 # all the variables in the formula must be in data@pheno data (BGData)
 # containing slots @pheno and @geno    
-GWAS.ols <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), chunkSize = 10, nTasks = nCores, nCores = parallel::detectCores(), verbose = FALSE, ...) {
+GWAS.ols <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), bufferSize = 10, nTasks = nCores, nCores = parallel::detectCores(), verbose = FALSE, ...) {
 
     # subset of model.frame has bizarre scoping issues
     frame <- stats::model.frame(formula = formula, data = data@pheno)[i, , drop = FALSE]
@@ -834,7 +834,7 @@ GWAS.ols <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(nc
         model[, 1] <- col
         fm <- stats::lsfit(x = model, y = y, intercept = FALSE)
         stats::ls.print(fm, print.it = FALSE)$coef.table[[1]][1, ]
-    }, bufferSize = chunkSize, nTasks = nTasks, nCores = nCores, verbose = verbose, ...)
+    }, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = verbose, ...)
     colnames(res) <- colnames(data@geno)[j]
     res <- t(res)
 
