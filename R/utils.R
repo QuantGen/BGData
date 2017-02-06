@@ -361,7 +361,6 @@ getG <- function(x, scaleCol = TRUE, centerCol = TRUE, scaleG = TRUE, minVar = 1
     if (is.null(i2)) {
         G <- getGi(x = x, scales = scales, centers = centers, scaleCol = scaleCol, centerCol = centerCol, scaleG = scaleG, minVar = minVar, i = i, j = j, bufferSize = bufferSize, nBuffers = nBuffers, nTasks = nTasks, nCores = nCores, verbose = verbose)
     } else {
-        if (is.null(scales) || is.null(centers)) stop("scales and centers need to be precomputed.")
         G <- getGij(x = x, scales = scales, centers = centers, scaleCol = scaleCol, centerCol = centerCol, scaleG = scaleG, minVar = minVar, i1 = i, i2 = i2, j = j, bufferSize = bufferSize, nBuffers = nBuffers, nTasks = nTasks, nCores = nCores, verbose = verbose)
     }
     if (saveG) {
@@ -483,6 +482,13 @@ getGi <- function(x, scales = NULL, centers = NULL, scaleCol = TRUE, centerCol =
 
 getGij <- function(x, scales, centers, scaleCol = TRUE, centerCol = TRUE, scaleG = TRUE, minVar = 1e-05, i1, i2, j = seq_len(ncol(x)), bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
 
+    if (scaleCol && is.null(scales)) {
+        stop("scales need to be precomputed.")
+    }
+    if (centerCol && is.null(centers)) {
+        stop("centers need to be precomputed.")
+    }
+
     nX <- nrow(x)
     pX <- ncol(x)
 
@@ -537,8 +543,16 @@ getGij <- function(x, scales, centers, scaleCol = TRUE, centerCol = TRUE, scaleG
             localColIndex <- j[ini:end]
             X1 <- x[i1, localColIndex, drop = FALSE]
             X2 <- x[i2, localColIndex, drop = FALSE]
-            centers.chunk <- centers[localColIndex]
-            scales.chunk <- scales[localColIndex]
+            if (centerCol) {
+                centers.chunk <- centers[localColIndex]
+            } else {
+                centers.chunk <- FALSE
+            }
+            if (scaleCol) {
+                scales.chunk <- scales[localColIndex]
+            } else {
+                scales.chunk <- FALSE
+            }
 
             if (scaleCol) {
                 removeCols <- which(scales.chunk < sqrt(minVar))
@@ -551,12 +565,6 @@ getGij <- function(x, scales, centers, scaleCol = TRUE, centerCol = TRUE, scaleG
             }
 
             if (ncol(X1) > 0) {
-                if (!centerCol) {
-                    centers.chunk <- FALSE
-                }
-                if (!scaleCol) {
-                    scales.chunk <- FALSE
-                }
                 if (verbose) {
                     message("  => Computing...")
                 }
