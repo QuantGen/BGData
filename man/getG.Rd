@@ -4,15 +4,15 @@
 \alias{getG}
 \title{Computes a genomic relationship matrix G=xx'.}
 \usage{
-getG(x, scaleCol = TRUE, scales = NULL, centerCol = TRUE,
+getG(X, scaleCol = TRUE, scales = NULL, centerCol = TRUE,
   centers = NULL, scaleG = TRUE, minVar = 1e-05, saveG = FALSE,
   saveType = "RData", folderOut = paste0("G_", randomString()),
-  saveName = "Gij", i = seq_len(nrow(x)), j = seq_len(ncol(x)),
+  saveName = "Gij", i = seq_len(nrow(X)), j = seq_len(ncol(X)),
   i2 = NULL, bufferSize = 5000, nBuffers = NULL, nTasks = nCores,
   nCores = parallel::detectCores(), verbose = TRUE)
 }
 \arguments{
-\item{x}{A matrix-like object, typically \code{@geno} of a
+\item{X}{A matrix-like object, typically \code{@geno} of a
 \code{\link[=BGData-class]{BGData}} object.}
 
 \item{scaleCol}{TRUE/FALSE whether columns must be scaled before computing
@@ -41,22 +41,22 @@ by \code{saveType}. Defaults to a random string prefixed with "G_".}
 \item{saveName}{Name without extension to save genomic relationship matrix
 with.}
 
-\item{i}{(integer, boolean or character) Indicates which rows should be used.
-By default, all rows are used.}
+\item{i}{(integer, boolean or character) Indicates which rows of \code{X}
+should be used. By default, all rows are used.}
 
-\item{j}{(integer, boolean or character) Indicates which columns should be
-used. By default, all columns are used.}
+\item{j}{(integer, boolean or character) Indicates which columns of
+\code{X} should be used. By default, all columns are used.}
 
 \item{i2}{(integer, boolean or character) Indicates which rows should be used
 to divide matrix into blocks.}
 
-\item{bufferSize}{The number of columns of \code{x} that are brought into
+\item{bufferSize}{The number of columns of \code{X} that are brought into
 RAM for processing. Overwrites \code{nBuffers}. If both parameters are
-\code{NULL}, all columns of \code{x} are used. Defaults to 5000.}
+\code{NULL}, all columns of \code{X} are used. Defaults to 5000.}
 
-\item{nBuffers}{The number of partitions of the columns of \code{x} that are
+\item{nBuffers}{The number of partitions of the columns of \code{X} that are
 brought into RAM for processing. Is overwritten by \code{bufferSize}. If
-both parameters are \code{NULL}, all columns of \code{x} are used.}
+both parameters are \code{NULL}, all columns of \code{X} are used.}
 
 \item{nTasks}{The number of tasks the problem should be broken into to be
 distributed among \code{nCores} cores. Defaults to \code{nCores}.}

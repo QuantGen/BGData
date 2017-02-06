@@ -312,7 +312,7 @@ tcrossprod.parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel:
 #' \code{scaleG=FALSE}, \code{getG} produces the same outcome than
 #' \code{tcrossprod}.
 #'
-#' @param x A matrix-like object, typically \code{@@geno} of a
+#' @param X A matrix-like object, typically \code{@@geno} of a
 #'   \code{\link[=BGData-class]{BGData}} object.
 #' @param scaleCol TRUE/FALSE whether columns must be scaled before computing
 #'   xx'.
@@ -330,18 +330,18 @@ tcrossprod.parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel:
 #'   by \code{saveType}. Defaults to a random string prefixed with "G_".
 #' @param saveName Name without extension to save genomic relationship matrix
 #'   with.
-#' @param i (integer, boolean or character) Indicates which rows of \code{x}
+#' @param i (integer, boolean or character) Indicates which rows of \code{X}
 #'   should be used. By default, all rows are used.
 #' @param j (integer, boolean or character) Indicates which columns of
-#'   \code{x} should be used. By default, all columns are used.
+#'   \code{X} should be used. By default, all columns are used.
 #' @param i2 (integer, boolean or character) Indicates which rows should be used
 #'   to divide matrix into blocks.
-#' @param bufferSize The number of columns of \code{x} that are brought into
+#' @param bufferSize The number of columns of \code{X} that are brought into
 #'   RAM for processing. Overwrites \code{nBuffers}. If both parameters are
-#'   \code{NULL}, all columns of \code{x} are used. Defaults to 5000.
-#' @param nBuffers The number of partitions of the columns of \code{x} that are
+#'   \code{NULL}, all columns of \code{X} are used. Defaults to 5000.
+#' @param nBuffers The number of partitions of the columns of \code{X} that are
 #'   brought into RAM for processing. Is overwritten by \code{bufferSize}. If
-#'   both parameters are \code{NULL}, all columns of \code{x} are used.
+#'   both parameters are \code{NULL}, all columns of \code{X} are used.
 #' @param nTasks The number of tasks the problem should be broken into to be
 #'   distributed among \code{nCores} cores. Defaults to \code{nCores}.
 #' @param nCores The number of cores (passed to
@@ -351,7 +351,7 @@ tcrossprod.parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel:
 #'   \code{TRUE}.
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @export
-getG <- function(x, scaleCol = TRUE, scales = NULL, centerCol = TRUE, centers = NULL, scaleG = TRUE, minVar = 1e-05, saveG = FALSE, saveType = "RData", folderOut = paste0("G_", randomString()), saveName = "Gij", i = seq_len(nrow(x)), j = seq_len(ncol(x)), i2 = NULL, bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
+getG <- function(X, scaleCol = TRUE, scales = NULL, centerCol = TRUE, centers = NULL, scaleG = TRUE, minVar = 1e-05, saveG = FALSE, saveType = "RData", folderOut = paste0("G_", randomString()), saveName = "Gij", i = seq_len(nrow(X)), j = seq_len(ncol(X)), i2 = NULL, bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
 
     if (file.exists(folderOut)) {
         stop(folderOut, " already exists")
@@ -371,16 +371,16 @@ getG <- function(x, scaleCol = TRUE, scales = NULL, centerCol = TRUE, centers = 
     if (is.logical(i)) {
         i <- which(i)
     } else if (is.character(i)) {
-        i <- match(i, rownames(x))
+        i <- match(i, rownames(X))
     }
     if (is.logical(j)) {
         j <- which(j)
     } else if (is.character(j)) {
-        j <- match(j, colnames(x))
+        j <- match(j, colnames(X))
     }
 
-    nX <- nrow(x)
-    pX <- ncol(x)
+    nX <- nrow(X)
+    pX <- ncol(X)
 
     n <- length(i)
     p <- length(j)
@@ -397,7 +397,7 @@ getG <- function(x, scaleCol = TRUE, scales = NULL, centerCol = TRUE, centers = 
 
     if (!hasY) {
 
-        G <- matrix(data = 0, nrow = n, ncol = n, dimnames = list(rownames(x)[i], rownames(x)[i]))
+        G <- matrix(data = 0, nrow = n, ncol = n, dimnames = list(rownames(X)[i], rownames(X)[i]))
 
     } else {
 
@@ -411,7 +411,7 @@ getG <- function(x, scaleCol = TRUE, scales = NULL, centerCol = TRUE, centers = 
         if (is.logical(i2)) {
             i2 <- which(i2)
         } else if (is.character(i2)) {
-            i2 <- match(i2, rownames(x))
+            i2 <- match(i2, rownames(X))
         }
 
         n2 <- length(i2)
@@ -422,7 +422,7 @@ getG <- function(x, scaleCol = TRUE, scales = NULL, centerCol = TRUE, centers = 
 
         K <- 0
 
-        G <- matrix(data = 0, nrow = n, ncol = n2, dimnames = list(rownames(x)[i], rownames(x)[i2]))
+        G <- matrix(data = 0, nrow = n, ncol = n2, dimnames = list(rownames(X)[i], rownames(X)[i2]))
 
     }
 
@@ -439,15 +439,15 @@ getG <- function(x, scaleCol = TRUE, scales = NULL, centerCol = TRUE, centers = 
 
         # subset
         localColIndex <- j[ini:end]
-        X <- x[i, localColIndex, drop = FALSE]
+        X1 <- X[i, localColIndex, drop = FALSE]
         if (hasY) {
-            X2 <- x[i2, localColIndex, drop = FALSE]
+            X2 <- X[i2, localColIndex, drop = FALSE]
         }
 
         # compute centers
         if (centerCol) {
             if (is.null(centers)) {
-                centers.chunk <- colMeans(X, na.rm = TRUE)
+                centers.chunk <- colMeans(X1, na.rm = TRUE)
             } else {
                 centers.chunk <- centers[localColIndex]
             }
@@ -458,7 +458,7 @@ getG <- function(x, scaleCol = TRUE, scales = NULL, centerCol = TRUE, centers = 
         # compute scales
         if (scaleCol) {
             if (is.null(scales)) {
-                scales.chunk <- apply(X = X, MARGIN = 2, FUN = stats::sd, na.rm = TRUE)
+                scales.chunk <- apply(X = X1, MARGIN = 2, FUN = stats::sd, na.rm = TRUE)
             } else {
                 scales.chunk <- scales[localColIndex]
             }
@@ -470,7 +470,7 @@ getG <- function(x, scaleCol = TRUE, scales = NULL, centerCol = TRUE, centers = 
         if (scaleCol) {
             removeCols <- which(scales.chunk < minVar)
             if (length(removeCols) > 0) {
-                X <- X[, -removeCols]
+                X1 <- X1[, -removeCols]
                 if (hasY) {
                     X2 <- X2[, -removeCols]
                 }
@@ -480,15 +480,15 @@ getG <- function(x, scaleCol = TRUE, scales = NULL, centerCol = TRUE, centers = 
         }
 
         # compute XX'
-        if (ncol(X) > 0) {
+        if (ncol(X1) > 0) {
 
             if (verbose) {
               message("  => Computing...")
             }
 
             # scale and impute X
-            X <- scale(X, center = centers.chunk, scale = scales.chunk)
-            X[is.na(X)] <- 0
+            X1 <- scale(X1, center = centers.chunk, scale = scales.chunk)
+            X1[is.na(X1)] <- 0
             if (hasY) {
                 X2 <- scale(X2, center = centers.chunk, scale = scales.chunk)
                 X2[is.na(X2)] <- 0
@@ -496,15 +496,15 @@ getG <- function(x, scaleCol = TRUE, scales = NULL, centerCol = TRUE, centers = 
 
             if (nTasks > 1) {
                 if (!hasY) {
-                    G_chunk <- crossprods(x = X, use_tcrossprod = TRUE, nTasks = nTasks, nCores = nCores)
+                    G_chunk <- crossprods(x = X1, use_tcrossprod = TRUE, nTasks = nTasks, nCores = nCores)
                 } else {
-                    G_chunk <- crossprods(x = X, y = X2, use_tcrossprod = TRUE, nTasks = nTasks, nCores = nCores)
+                    G_chunk <- crossprods(x = X1, y = X2, use_tcrossprod = TRUE, nTasks = nTasks, nCores = nCores)
                 }
             } else {
                 if (!hasY) {
-                    G_chunk <- tcrossprod(X)
+                    G_chunk <- tcrossprod(X1)
                 } else {
-                    G_chunk <- tcrossprod(x = X, y = X2)
+                    G_chunk <- tcrossprod(x = X1, y = X2)
                 }
             }
 
@@ -514,7 +514,7 @@ getG <- function(x, scaleCol = TRUE, scales = NULL, centerCol = TRUE, centers = 
 
         if (hasY && scaleG) {
             if (scaleCol) {
-                K <- K + ncol(X)
+                K <- K + ncol(X1)
             } else {
                 K <- K + sum(scales.chunk^2)
             }
