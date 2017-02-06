@@ -352,10 +352,12 @@ tcrossprod.parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel:
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @export
 getG <- function(x, scaleCol = TRUE, scales = NULL, centerCol = TRUE, centers = NULL, scaleG = TRUE, minVar = 1e-05, saveG = FALSE, saveType = "RData", folderOut = paste0("G_", randomString()), saveName = "Gij", i = seq_len(nrow(x)), j = seq_len(ncol(x)), i2 = NULL, bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
+
     if (file.exists(folderOut)) {
         stop(folderOut, " already exists")
     }
     curDir <- getwd()
+
     if (is.null(bufferSize) && is.null(nBuffers)) {
         bufferSize <- length(j)
         nBuffers <- 1
@@ -364,11 +366,171 @@ getG <- function(x, scaleCol = TRUE, scales = NULL, centerCol = TRUE, centers = 
     } else {
         nBuffers <- ceiling(length(j) / bufferSize)
     }
-    if (is.null(i2)) {
-        G <- getGi(x = x, scales = scales, centers = centers, scaleCol = scaleCol, centerCol = centerCol, scaleG = scaleG, minVar = minVar, i = i, j = j, bufferSize = bufferSize, nBuffers = nBuffers, nTasks = nTasks, nCores = nCores, verbose = verbose)
-    } else {
-        G <- getGij(x = x, scales = scales, centers = centers, scaleCol = scaleCol, centerCol = centerCol, scaleG = scaleG, minVar = minVar, i = i, i2 = i2, j = j, bufferSize = bufferSize, nBuffers = nBuffers, nTasks = nTasks, nCores = nCores, verbose = verbose)
+
+    # Convert index types
+    if (is.logical(i)) {
+        i <- which(i)
+    } else if (is.character(i)) {
+        i <- match(i, rownames(x))
     }
+    if (is.logical(j)) {
+        j <- which(j)
+    } else if (is.character(j)) {
+        j <- match(j, colnames(x))
+    }
+
+    nX <- nrow(x)
+    pX <- ncol(x)
+
+    n <- length(i)
+    p <- length(j)
+
+    if ((min(i) < 1) | (max(i) > nX)) {
+        stop("Index out of bounds")
+    }
+    if ((min(j) < 1) | (max(j) > pX)) {
+        stop("Index out of bounds")
+    }
+
+    # compute XY' rather than XX'
+    hasY <- !is.null(i2)
+
+    if (!hasY) {
+
+        G <- matrix(data = 0, nrow = n, ncol = n, dimnames = list(rownames(x)[i], rownames(x)[i]))
+
+    } else {
+
+        if (scaleCol && is.null(scales)) {
+            stop("scales need to be precomputed.")
+        }
+        if (centerCol && is.null(centers)) {
+            stop("centers need to be precomputed.")
+        }
+
+        if (is.logical(i2)) {
+            i2 <- which(i2)
+        } else if (is.character(i2)) {
+            i2 <- match(i2, rownames(x))
+        }
+
+        n2 <- length(i2)
+
+        if ((min(i2) < 1) || (max(i2) > nX)) {
+            stop("Index out of bounds")
+        }
+
+        K <- 0
+
+        G <- matrix(data = 0, nrow = n, ncol = n2, dimnames = list(rownames(x)[i], rownames(x)[i2]))
+
+    }
+
+    bufferSize <- ceiling(p / nBuffers)
+    end <- 0
+    for (k in seq_len(nBuffers)) {
+        ini <- end + 1
+        end <- min(p, ini + bufferSize - 1)
+
+        if (verbose) {
+            message("Chunk: ", k, " (markers ", ini, ":", end, " ~", round(100 * end / p, 1), "% done)")
+            message("  => Acquiring genotypes...")
+        }
+
+        # subset
+        localColIndex <- j[ini:end]
+        X <- x[i, localColIndex, drop = FALSE]
+        if (hasY) {
+            X2 <- x[i2, localColIndex, drop = FALSE]
+        }
+
+        # compute centers
+        if (centerCol) {
+            if (is.null(centers)) {
+                centers.chunk <- colMeans(X, na.rm = TRUE)
+            } else {
+                centers.chunk <- centers[localColIndex]
+            }
+        } else {
+            centers.chunk = FALSE
+        }
+
+        # compute scales
+        if (scaleCol) {
+            if (is.null(scales)) {
+                scales.chunk <- apply(X = X, MARGIN = 2, FUN = stats::sd, na.rm = TRUE)
+            } else {
+                scales.chunk <- scales[localColIndex]
+            }
+        } else {
+            scales.chunk <- FALSE
+        }
+
+        # remove constant columns
+        if (scaleCol) {
+            removeCols <- which(scales.chunk < minVar)
+            if (length(removeCols) > 0) {
+                X <- X[, -removeCols]
+                if (hasY) {
+                    X2 <- X2[, -removeCols]
+                }
+                scales.chunk <- scales.chunk[-removeCols]
+                centers.chunk <- centers.chunk[-removeCols]
+            }
+        }
+
+        # compute XX'
+        if (ncol(X) > 0) {
+
+            if (verbose) {
+              message("  => Computing...")
+            }
+
+            # scale and impute X
+            X <- scale(X, center = centers.chunk, scale = scales.chunk)
+            X[is.na(X)] <- 0
+            if (hasY) {
+                X2 <- scale(X2, center = centers.chunk, scale = scales.chunk)
+                X2[is.na(X2)] <- 0
+            }
+
+            if (nTasks > 1) {
+                if (!hasY) {
+                    G_chunk <- crossprods(x = X, use_tcrossprod = TRUE, nTasks = nTasks, nCores = nCores)
+                } else {
+                    G_chunk <- crossprods(x = X, y = X2, use_tcrossprod = TRUE, nTasks = nTasks, nCores = nCores)
+                }
+            } else {
+                if (!hasY) {
+                    G_chunk <- tcrossprod(X)
+                } else {
+                    G_chunk <- tcrossprod(x = X, y = X2)
+                }
+            }
+
+            G[] <- G + G_chunk
+
+        }
+
+        if (hasY && scaleG) {
+            if (scaleCol) {
+                K <- K + ncol(X)
+            } else {
+                K <- K + sum(scales.chunk^2)
+            }
+        }
+
+    }
+
+    if (!hasY && scaleG) {
+        # Use seq instead of diag to avoid copy as it does not increase ref count
+        K <- mean(G[seq(from = 1, to = n * n, by = n + 1)])
+    }
+
+    if (scaleG) {
+        G[] <- G / K
+    }
+
     if (saveG) {
         dir.create(folderOut)
         setwd(folderOut)
@@ -381,223 +543,9 @@ getG <- function(x, scaleCol = TRUE, scales = NULL, centerCol = TRUE, centers = 
         }
         setwd(curDir)
     }
-    return(G)
-}
-
-
-getGi <- function(x, scaleCol = TRUE, scales = NULL, centerCol = FALSE, centers = NULL, scaleG = TRUE, minVar = 1e-05, i = seq_len(nrow(x)), j = seq_len(ncol(x)), bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
-    nX <- nrow(x)
-    pX <- ncol(x)
-
-    # Convert index types
-    if (is.logical(i)) {
-        i <- which(i)
-    } else if (is.character(i)) {
-        i <- match(i, rownames(x))
-    }
-    if (is.logical(j)) {
-        j <- which(j)
-    } else if (is.character(j)) {
-        j <- match(j, colnames(x))
-    }
-
-    n <- length(i)
-    p <- length(j)
-
-    if (n > nX | p > pX) {
-        stop("Index out of bounds")
-    }
-    if (is.numeric(i)) {
-        if ((min(i) < 1) | (max(i) > nX)) {
-            stop("Index out of bounds")
-        }
-    }
-    if (is.numeric(j)) {
-        if ((min(j) < 1) | (max(j) > pX)) {
-            stop("Index out of bounds")
-        }
-    }
-
-    G <- matrix(data = 0, nrow = n, ncol = n, dimnames = list(rownames(x)[i], rownames(x)[i]))
-
-    bufferSize <- ceiling(p / nBuffers)
-
-    end <- 0
-    for (k in seq_len(nBuffers)) {
-        ini <- end + 1
-        if (ini <= p) {
-            end <- min(p, ini + bufferSize - 1)
-            if (verbose) {
-                message("Chunk: ", k, " (markers ", ini, ":", end, " ~", round(100 * end / p, 1), "% done)")
-                message("  => Acquiring genotypes...")
-            }
-
-            # subset
-            localColIndex <- j[ini:end]
-            X <- x[i, localColIndex, drop = FALSE]
-
-            # compute centers
-            if (centerCol) {
-                if (is.null(centers)) {
-                    centers.chunk <- colMeans(X, na.rm = TRUE)
-                } else {
-                    centers.chunk <- centers[localColIndex]
-                }
-            } else {
-                centers.chunk = FALSE
-            }
-
-            # compute scales
-            if (scaleCol) {
-                if (is.null(scales)) {
-                    scales.chunk <- apply(X = X, MARGIN = 2, FUN = stats::sd, na.rm = TRUE)
-                } else {
-                    scales.chunk <- scales[localColIndex]
-                }
-                removeCols <- which(scales.chunk < minVar)
-                if (length(removeCols) > 0) {
-                  X <- X[, -removeCols]
-                  scales.chunk <- scales.chunk[-removeCols]
-                  centers.chunk <- centers.chunk[-removeCols]
-                }
-            } else {
-                scales.chunk <- FALSE
-            }
-
-            if (ncol(X) > 0) {
-                if (verbose) {
-                  message("  =>Computing...")
-                }
-                X <- scale(X, center = centers.chunk, scale = scales.chunk)
-                X[is.na(X)] <- 0
-
-                if (nTasks > 1) {
-                  G_chunk <- crossprods(x = X, use_tcrossprod = TRUE, nTasks = nTasks, nCores = nCores)
-                } else {
-                  G_chunk <- tcrossprod(X)
-                }
-                G[] <- G + G_chunk
-            }
-        }
-    }
-    if (scaleG) {
-        # Use seq instead of diag to avoid copy as it does not increase ref count
-        G[] <- G / mean(G[seq(from = 1, to = n * n, by = n + 1)])
-    }
 
     return(G)
-}
 
-
-getGij <- function(x, scaleCol = TRUE, scales, centerCol = FALSE, centers, scaleG = TRUE, minVar = 1e-05, i, i2, j = seq_len(ncol(x)), bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
-
-    if (scaleCol && is.null(scales)) {
-        stop("scales need to be precomputed.")
-    }
-    if (centerCol && is.null(centers)) {
-        stop("centers need to be precomputed.")
-    }
-
-    nX <- nrow(x)
-    pX <- ncol(x)
-
-    # Convert index types
-    if (is.logical(i)) {
-        i <- which(i)
-    } else if (is.character(i)) {
-        i <- match(i, rownames(x))
-    }
-    if (is.logical(i2)) {
-        i2 <- which(i2)
-    } else if (is.character(i2)) {
-        i2 <- match(i2, rownames(x))
-    }
-    if (is.logical(j)) {
-        j <- which(j)
-    } else if (is.character(j)) {
-        j <- match(j, colnames(x))
-    }
-
-    n1 <- length(i)
-    p <- length(j)
-    n2 <- length(i2)
-
-    if ((min(i) < 1) | (max(i) > nX)) {
-        stop("Index out of bounds")
-    }
-    if ((min(i2) < 1) | (max(i2) > nX)) {
-        stop("Index out of bounds")
-    }
-    if ((min(j) < 1) | (max(j) > pX)) {
-        stop("Index out of bounds")
-    }
-
-    K <- 0
-
-    G <- matrix(data = 0, nrow = n1, ncol = n2, dimnames = list(rownames(x)[i], rownames(x)[i2]))
-
-    bufferSize <- ceiling(p / nBuffers)
-
-    end <- 0
-    for (k in seq_len(nBuffers)) {
-        ini <- end + 1
-        if (ini <= p) {
-            end <- min(p, ini + bufferSize - 1)
-            if (verbose) {
-                message("Working on chunk: ", k, " (markers ", ini, ":", end, " ~", round(100 * ini / p, 1), "% done)")
-                message("  => Acquiring genotypes...")
-            }
-
-            # subset
-            localColIndex <- j[ini:end]
-            X1 <- x[i, localColIndex, drop = FALSE]
-            X2 <- x[i2, localColIndex, drop = FALSE]
-            if (centerCol) {
-                centers.chunk <- centers[localColIndex]
-            } else {
-                centers.chunk <- FALSE
-            }
-            if (scaleCol) {
-                scales.chunk <- scales[localColIndex]
-            } else {
-                scales.chunk <- FALSE
-            }
-
-            if (scaleCol) {
-                removeCols <- which(scales.chunk < sqrt(minVar))
-                if (length(removeCols) > 0) {
-                  X1 <- X1[, -removeCols]
-                  X2 <- X2[, -removeCols]
-                  scales.chunk <- scales.chunk[-removeCols]
-                  centers.chunk <- centers.chunk[-removeCols]
-                }
-            }
-
-            if (ncol(X1) > 0) {
-                if (verbose) {
-                    message("  => Computing...")
-                }
-                X1 <- scale(X1, center = centers.chunk, scale = scales.chunk)
-                X1[is.na(X1)] <- 0
-                X2 <- scale(X2, center = centers.chunk, scale = scales.chunk)
-                X2[is.na(X2)] <- 0
-                G_chunk <- tcrossprod.parallel(x = X1, y = X2, nTasks = nTasks, nCores = nCores)
-                G[] <- G + G_chunk
-            }
-            if (scaleG) {
-                if (scaleCol) {
-                    K <- K + ncol(X1)
-                } else {
-                    K <- K + sum(scales.chunk^2)
-                }
-            }
-        }
-    }
-    if (scaleG) {
-        G[] <- G / K
-    }
-
-    return(G)
 }
 
 
