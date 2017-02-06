@@ -109,7 +109,7 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = nCores, nCores = parallel::de
         stop("nTasks has to be greater than 0")
     }
     if (nTasks == 1) {
-        apply2(X, MARGIN, FUN, ...)
+        apply2(X = X, MARGIN = MARGIN, FUN = FUN, ...)
     } else {
         res <- parallel::mclapply(X = seq_len(nTasks), FUN = function(i, ...) {
             range <- LinkedMatrix:::chunkRanges(d[MARGIN], nTasks, i)
@@ -118,7 +118,7 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = nCores, nCores = parallel::de
             } else {
                 subset <- X[seq(range[1], range[2]), , drop = FALSE]
             }
-            apply2(subset, MARGIN, FUN, ...)
+            apply2(X = subset, MARGIN = MARGIN, FUN = FUN, ...)
         }, ..., mc.preschedule = FALSE, mc.cores = nCores)
         simplifyList(res)
     }
@@ -799,11 +799,11 @@ GWAS <- function(formula, data, method, i = seq_len(nrow(data@geno)), j = seq_le
         }
         pheno <- data@pheno
         GWAS.model <- stats::update(stats::as.formula(formula), ".~z+.")
-        OUT <- chunkedApply(data@geno, 2, i = i, j = j, function(col, ...) {
+        OUT <- chunkedApply(X = data@geno, MARGIN = 2, FUN = function(col, ...) {
             pheno$z <- col
             fm <- FUN(GWAS.model, data = pheno, ...)
             getCoefficients(fm)
-        }, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = verbose, ...)
+        }, i = i, j = j, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = verbose, ...)
         colnames(OUT) <- colnames(data@geno)[j]
         OUT <- t(OUT)
     }
@@ -843,11 +843,11 @@ GWAS.ols <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(nc
 
     y <- data@pheno[i, as.character(stats::terms(formula)[[2]]), drop = TRUE]
 
-    res <- chunkedApply(data@geno, 2, i = i, j = j, function(col, ...) {
+    res <- chunkedApply(X = data@geno, MARGIN = 2, FUN = function(col, ...) {
         model[, 1] <- col
         fm <- stats::lsfit(x = model, y = y, intercept = FALSE)
         stats::ls.print(fm, print.it = FALSE)$coef.table[[1]][1, ]
-    }, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = verbose, ...)
+    }, i = i, j = j, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = verbose, ...)
     colnames(res) <- colnames(data@geno)[j]
     res <- t(res)
 
@@ -930,7 +930,7 @@ getCoefficients.lmerMod <- function(x) {
 #'   \code{FALSE}.
 #' @export
 summarize <- function(X, i = seq_len(nrow(X)), j = seq_len(ncol(X)), bufferSize = 5000, nTasks = nCores, nCores = parallel::detectCores(), verbose = FALSE) {
-    res <- chunkedApply(X, 2, function(col) {
+    res <- chunkedApply(X = X, MARGIN = 2, FUN = function(col) {
         freqNA <- mean(is.na(col))
         alleleFreq <- mean(col, na.rm = TRUE) / 2
         sd <- stats::sd(col, na.rm = TRUE)

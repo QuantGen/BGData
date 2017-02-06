@@ -15,7 +15,7 @@ hasCores <- function(numCores) {
 test_that("parallelApply fails if nTasks is illegal", {
     X <- matrix(data = 1, nrow = 1, ncol = 1)
     for (nTasks in c(0, -1, "a")) {
-        expect_error(suppressWarnings(parallelApply(X, MARGIN = 1, bufferSize = 1, FUN = sum, nTasks = nTasks)))
+        expect_error(suppressWarnings(parallelApply(X = X, MARGIN = 1, FUN = sum, bufferSize = 1, nTasks = nTasks)))
     }
 })
 
@@ -29,10 +29,10 @@ for (nCores in seq_len(2)) {
 
         for (bufferSize in c(5, 10)) {
             for (nTasks in c(1, 3)) {
-                expect_equal(chunkedApply(X, MARGIN = 1, bufferSize = bufferSize, FUN = sum, nTasks = nTasks), rowSums(X))
-                expect_equal(chunkedApply(X, MARGIN = 2, bufferSize = bufferSize, FUN = sum, nTasks = nTasks), colSums(X))
-                expect_equal(chunkedApply(X, MARGIN = 1, bufferSize = bufferSize, FUN = sum, nTasks = nTasks), apply(X, 1, sum))
-                expect_equal(chunkedApply(X, MARGIN = 2, bufferSize = bufferSize, FUN = sum, nTasks = nTasks), apply(X, 2, sum))
+                expect_equal(chunkedApply(X = X, MARGIN = 1, FUN = sum, bufferSize = bufferSize, nTasks = nTasks), rowSums(X))
+                expect_equal(chunkedApply(X = X, MARGIN = 2, FUN = sum, bufferSize = bufferSize, nTasks = nTasks), colSums(X))
+                expect_equal(chunkedApply(X = X, MARGIN = 1, FUN = sum, bufferSize = bufferSize, nTasks = nTasks), apply(X, 1, sum))
+                expect_equal(chunkedApply(X = X, MARGIN = 2, FUN = sum, bufferSize = bufferSize, nTasks = nTasks), apply(X, 2, sum))
             }
         }
 
@@ -48,13 +48,13 @@ for (nCores in seq_len(2)) {
         # Testing X'X
         TMP <- crossprod(W)
         for (nTasks in c(1, 3)) {
-            expect_equal(crossprod.parallel(W, nTasks = nTasks, nCores = nCores), TMP)
+            expect_equal(crossprod.parallel(x = W, nTasks = nTasks, nCores = nCores), TMP)
         }
 
         # Testing X'y
         TMP <- crossprod(W, y = Z)
         for (nTasks in c(1, 3)) {
-            expect_equal(crossprod.parallel(W, y = Z, nTasks = nTasks, nCores = nCores), TMP)
+            expect_equal(crossprod.parallel(x = W, y = Z, nTasks = nTasks, nCores = nCores), TMP)
         }
 
     })
@@ -70,13 +70,13 @@ for (nCores in seq_len(2)) {
         # Testing XX'
         TMP <- tcrossprod(W)
         for (nTasks in c(1, 3)) {
-            expect_equal(tcrossprod.parallel(W, nTasks = nTasks, nCores = nCores), TMP)
+            expect_equal(tcrossprod.parallel(x = W, nTasks = nTasks, nCores = nCores), TMP)
         }
 
         # Testing XY'
         TMP <- tcrossprod(W, y = Z)
         for (nTasks in c(1, 3)) {
-            expect_equal(tcrossprod.parallel(W, y = Z, nTasks = nTasks, nCores = nCores), TMP)
+            expect_equal(tcrossprod.parallel(x = W, y = Z, nTasks = nTasks, nCores = nCores), TMP)
         }
 
     })
@@ -223,11 +223,11 @@ for (nCores in seq_len(2)) {
 
         for (bufferSize in c(3, 6)) {
             for (nTasks in c(1, 3)) {
-                expect_equal(summarize(genotypes, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores), computeDummy())
-                expect_equal(summarize(genotypes, bufferSize = bufferSize, i = c(1, 3), nTasks = nTasks, nCores = nCores), computeDummy(i = c(1, 3)))
-                expect_equal(summarize(genotypes, bufferSize = bufferSize, j = c(1, 3, 5), nTasks = nTasks, nCores = nCores), computeDummy(j =  c(1, 3, 5)))
-                expect_equal(summarize(genotypes, bufferSize = bufferSize, i = c(1, 3), j = c(1, 3, 5), nTasks = nTasks, nCores = nCores), computeDummy(i = c(1, 3), j = c(1, 3, 5)))
-                expect_equal(summarize(genotypes, nCores = nCores), computeDummy())
+                expect_equal(summarize(X = genotypes, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores), computeDummy())
+                expect_equal(summarize(X = genotypes, i = c(1, 3), bufferSize = bufferSize, nTasks = nTasks, nCores = nCores), computeDummy(i = c(1, 3)))
+                expect_equal(summarize(X = genotypes, j = c(1, 3, 5), bufferSize = bufferSize, nTasks = nTasks, nCores = nCores), computeDummy(j =  c(1, 3, 5)))
+                expect_equal(summarize(X = genotypes, i = c(1, 3), j = c(1, 3, 5), bufferSize = bufferSize, nTasks = nTasks, nCores = nCores), computeDummy(i = c(1, 3), j = c(1, 3, 5)))
+                expect_equal(summarize(X = genotypes, nCores = nCores), computeDummy())
             }
         }
 
