@@ -7,7 +7,7 @@
 getG(x, scaleCol = TRUE, centerCol = TRUE, scaleG = TRUE,
   i = seq_len(nrow(x)), j = seq_len(ncol(x)), i2 = NULL, minVar = 1e-05,
   scales = NULL, centers = NULL, saveG = FALSE, saveType = "RData",
-  saveName = "Gij", nBuffers = ceiling(ncol(x)/10000), nTasks = nCores,
+  saveName = "Gij", bufferSize = 5000, nBuffers = NULL, nTasks = nCores,
   nCores = parallel::detectCores(), verbose = TRUE)
 }
 \arguments{
@@ -46,7 +46,13 @@ the computation (only if \code{scaleCol} is set).}
 \item{saveName}{Name without extension to save genomic relationship matrix
 with.}
 
-\item{nBuffers}{The number of columns that are processed at a time.}
+\item{bufferSize}{The number of columns of \code{x} that are brought into
+RAM for processing. Overwrites \code{nBuffers}. If both parameters are
+\code{NULL}, all columns of \code{x} are used. Defaults to 5000.}
+
+\item{nBuffers}{The number of partitions of the columns of \code{x} that are
+brought into RAM for processing. Is overwritten by \code{bufferSize}. If
+both parameters are \code{NULL}, all columns of \code{x} are used.}
 
 \item{nTasks}{The number of tasks the problem should be broken into to be
 distributed among \code{nCores} cores. Defaults to \code{nCores}.}
