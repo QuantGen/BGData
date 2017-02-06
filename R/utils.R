@@ -602,8 +602,6 @@ getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, centerCol = TRUE
 #' @export
 getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, scales = NULL, centerCol = TRUE, scaleCol = TRUE, scaleG = TRUE, folder = randomString(), vmode = "double", saveRData = TRUE, i = seq_len(nrow(X)), j = seq_len(ncol(X)), nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
 
-    timeIn <- proc.time()[3]
-
     nX <- nrow(X)
     pX <- ncol(X)
 
@@ -699,7 +697,7 @@ getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, sc
         for (s in r:nBlocks) {
 
             if (verbose) {
-                message("Working on block ", r, "-", s, " (", round(100 * counter / (nBlocks * (nBlocks + 1) / 2)), "% ", round(proc.time()[3] - timeIn, 3), " seconds)")
+                message("Working on block ", r, "-", s, " (", round(100 * counter / (nBlocks * (nBlocks + 1) / 2)), "%)")
             }
 
             rowIndex_s <- blockIndex[which(blockIndex[, 2] == s), 1]
@@ -896,12 +894,11 @@ GWAS.SKAT <- function(formula, data, groups, i = seq_len(nrow(data@geno)), j = s
     H0 <- SKAT::SKAT_Null_Model(formula, data = data@pheno[i, , drop = FALSE], ...)
 
     for (group in seq_len(length(uniqueGroups))) {
-        time.in <- proc.time()[3]
         Z <- data@geno[i, groups == uniqueGroups[group], drop = FALSE]
         fm <- SKAT::SKAT(Z = Z, obj = H0, ...)
         OUT[group, ] <- c(ncol(Z), fm$p.value)
         if (verbose) {
-            message("Group ", group, " of ", length(uniqueGroups), " (", round(proc.time()[3] - time.in, 2), " seconds / chunk, ", round(group / length(uniqueGroups) * 100, 3), "% done)")
+            message("Group ", group, " of ", length(uniqueGroups), " (", round(group / length(uniqueGroups) * 100, 3), "% done)")
         }
     }
 

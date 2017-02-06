@@ -123,13 +123,12 @@ parsePED <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1
     # Parse file
     j <- seq_len(p)
     for (i in seq_len(nrow(BGData@geno))) {
-        time <- proc.time()
         xSkip <- scan(pedFile, n = nColSkip, what = character(), sep = sep, quiet = TRUE)
         x <- scan(pedFile, n = p, what = dataType, sep = sep, na.strings = na.strings, quiet = TRUE)
         BGData@pheno[i, ] <- xSkip
         BGData@geno <- `[<-`(BGData@geno, i, j, ..., value = x)
         if (verbose) {
-            message("Subject ", i, " (", round(proc.time()[3] - time[3], 3), " sec / subject)")
+            message("Subject ", i, " / ", nrow(BGData@geno))
         }
     }
     close(pedFile)
