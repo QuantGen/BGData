@@ -4,17 +4,15 @@
 \alias{getG}
 \title{Computes a genomic relationship matrix G=xx'.}
 \usage{
-getG(x, nBuffers = ceiling(ncol(x)/10000), scaleCol = TRUE,
-  centerCol = TRUE, scaleG = TRUE, i = seq_len(nrow(x)),
-  j = seq_len(ncol(x)), i2 = NULL, minVar = 1e-05, scales = NULL,
-  centers = NULL, saveG = FALSE, saveType = "RData", saveName = "Gij",
-  nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE)
+getG(x, scaleCol = TRUE, centerCol = TRUE, scaleG = TRUE,
+  i = seq_len(nrow(x)), j = seq_len(ncol(x)), i2 = NULL, minVar = 1e-05,
+  scales = NULL, centers = NULL, saveG = FALSE, saveType = "RData",
+  saveName = "Gij", nBuffers = ceiling(ncol(x)/10000), nTasks = nCores,
+  nCores = parallel::detectCores(), verbose = TRUE)
 }
 \arguments{
 \item{x}{A matrix-like object, typically \code{@geno} of a
 \code{\link[=BGData-class]{BGData}} object.}
-
-\item{nBuffers}{The number of columns that are processed at a time.}
 
 \item{scaleCol}{TRUE/FALSE whether columns must be scaled before computing
 xx'.}
@@ -47,6 +45,8 @@ the computation (only if \code{scaleCol} is set).}
 
 \item{saveName}{Name without extension to save genomic relationship matrix
 with.}
+
+\item{nBuffers}{The number of columns that are processed at a time.}
 
 \item{nTasks}{The number of tasks the problem should be broken into to be
 distributed among \code{nCores} cores. Defaults to \code{nCores}.}

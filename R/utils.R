@@ -148,12 +148,12 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = nCores, nCores = parallel::de
 #' @param MARGIN The subscripts which the function will be applied over. 1
 #'   indicates rows, 2 indicates columns.
 #' @param FUN The function to be applied.
-#' @param bufferSize The number of rows or columns of \code{X} that are brought
-#'   into memory for processing.
 #' @param i (integer, boolean or character) Indicates which rows should be used.
 #'   By default, all rows are used.
 #' @param j (integer, boolean or character) Indicates which columns should be
 #'   used. By default, all columns are used.
+#' @param bufferSize The number of rows or columns of \code{X} that are brought
+#'   into memory for processing.
 #' @param nTasks The number of tasks the problem should be broken into to be
 #'   distributed among \code{nCores} cores. Defaults to \code{nCores}.
 #' @param nCores The number of cores (passed to
@@ -163,7 +163,7 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = nCores, nCores = parallel::de
 #'   \code{FALSE}.
 #' @param ... Additional arguments to be passed to \code{parallelApply}.
 #' @export
-chunkedApply <- function(X, MARGIN, FUN, bufferSize, i = seq_len(nrow(X)), j = seq_len(ncol(X)), nTasks = nCores, nCores = parallel::detectCores(), verbose = FALSE, ...) {
+chunkedApply <- function(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(X)), bufferSize, nTasks = nCores, nCores = parallel::detectCores(), verbose = FALSE, ...) {
     if (!length(dim(X))) {
         stop("dim(X) must have a positive length")
     }
@@ -289,7 +289,6 @@ tcrossprod.parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel:
 #'
 #' @param x A matrix-like object, typically \code{@@geno} of a
 #'   \code{\link[=BGData-class]{BGData}} object.
-#' @param nBuffers The number of columns that are processed at a time.
 #' @param scaleCol TRUE/FALSE whether columns must be scaled before computing
 #'   xx'.
 #' @param centerCol TRUE/FALSE whether columns must be centered before computing
@@ -310,6 +309,7 @@ tcrossprod.parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel:
 #'   \code{RData} or \code{ff}.
 #' @param saveName Name without extension to save genomic relationship matrix
 #'   with.
+#' @param nBuffers The number of columns that are processed at a time.
 #' @param nTasks The number of tasks the problem should be broken into to be
 #'   distributed among \code{nCores} cores. Defaults to \code{nCores}.
 #' @param nCores The number of cores (passed to
@@ -319,12 +319,12 @@ tcrossprod.parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel:
 #'   \code{TRUE}.
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @export
-getG <- function(x, nBuffers = ceiling(ncol(x) / 10000), scaleCol = TRUE, centerCol = TRUE, scaleG = TRUE, i = seq_len(nrow(x)), j = seq_len(ncol(x)), i2 = NULL, minVar = 1e-05, scales = NULL, centers = NULL, saveG = FALSE, saveType = "RData", saveName = "Gij", nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
+getG <- function(x, scaleCol = TRUE, centerCol = TRUE, scaleG = TRUE, i = seq_len(nrow(x)), j = seq_len(ncol(x)), i2 = NULL, minVar = 1e-05, scales = NULL, centers = NULL, saveG = FALSE, saveType = "RData", saveName = "Gij", nBuffers = ceiling(ncol(x) / 10000), nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
     if (is.null(i2)) {
-        G <- getGi(x = x, nBuffers = nBuffers, scales = scales, centers = centers, scaleCol = scaleCol, centerCol = centerCol, scaleG = scaleG, i = i, j = j, minVar = minVar, nTasks = nTasks, nCores = nCores, verbose = verbose)
+        G <- getGi(x = x, scales = scales, centers = centers, scaleCol = scaleCol, centerCol = centerCol, scaleG = scaleG, i = i, j = j, minVar = minVar, nBuffers = nBuffers, nTasks = nTasks, nCores = nCores, verbose = verbose)
     } else {
         if (is.null(scales) || is.null(centers)) stop("scales and centers need to be precomputed.")
-        G <- getGij(x = x, i1 = i, i2 = i2, scales = scales, centers = centers, scaleCol = scaleCol, centerCol = centerCol, scaleG = scaleG, nBuffers = nBuffers, j = j, minVar = minVar, nTasks = nTasks, nCores = nCores, verbose = verbose)
+        G <- getGij(x = x, i1 = i, i2 = i2, scales = scales, centers = centers, scaleCol = scaleCol, centerCol = centerCol, scaleG = scaleG, j = j, minVar = minVar, nBuffers = nBuffers, nTasks = nTasks, nCores = nCores, verbose = verbose)
     }
     if (saveG) {
         if (saveType == "RData") {
@@ -339,7 +339,7 @@ getG <- function(x, nBuffers = ceiling(ncol(x) / 10000), scaleCol = TRUE, center
 }
 
 
-getGi <- function(x, nBuffers = ceiling(ncol(x) / 10000), scales = NULL, centers = NULL, scaleCol = TRUE, centerCol = FALSE, scaleG = TRUE, i = seq_len(nrow(x)), j = seq_len(ncol(x)), minVar = 1e-05, nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
+getGi <- function(x, scales = NULL, centers = NULL, scaleCol = TRUE, centerCol = FALSE, scaleG = TRUE, i = seq_len(nrow(x)), j = seq_len(ncol(x)), minVar = 1e-05, nBuffers = ceiling(ncol(x) / 10000), nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
     nX <- nrow(x)
     pX <- ncol(x)
 
@@ -440,7 +440,7 @@ getGi <- function(x, nBuffers = ceiling(ncol(x) / 10000), scales = NULL, centers
 }
 
 
-getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, centerCol = TRUE,scaleG = TRUE, nBuffers = ceiling(ncol(x) / 10000), j = seq_len(ncol(x)), minVar = 1e-05, nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
+getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, centerCol = TRUE, scaleG = TRUE, j = seq_len(ncol(x)), minVar = 1e-05, nBuffers = ceiling(ncol(x) / 10000), nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
 
     nX <- nrow(x)
     pX <- ncol(x)
@@ -902,12 +902,12 @@ getCoefficients.lmerMod <- function(x) {
 #'
 #' @param X A matrix-like object, typically \code{@@geno} of a
 #'   \code{\link[=BGData-class]{BGData}} object.
-#' @param bufferSize Represents the number of columns of \code{@@geno} that are
-#'   brought into RAM for processing (5000 by default).
 #' @param i (integer, boolean or character) Indicates which rows should be used.
 #'   By default, all rows are used.
 #' @param j (integer, boolean or character) Indicates which columns should be
 #'   used. By default, all columns are used.
+#' @param bufferSize Represents the number of columns of \code{@@geno} that are
+#'   brought into RAM for processing (5000 by default).
 #' @param nTasks The number of tasks the problem should be broken into to be
 #'   distributed among \code{nCores} cores. Defaults to \code{nCores}.
 #' @param nCores The number of cores (passed to
@@ -916,13 +916,13 @@ getCoefficients.lmerMod <- function(x) {
 #' @param verbose Whether progress updates will be posted. Defaults to
 #'   \code{FALSE}.
 #' @export
-summarize <- function(X, bufferSize = 5000, i = seq_len(nrow(X)), j = seq_len(ncol(X)), nTasks = nCores, nCores = parallel::detectCores(), verbose = FALSE) {
+summarize <- function(X, i = seq_len(nrow(X)), j = seq_len(ncol(X)), bufferSize = 5000, nTasks = nCores, nCores = parallel::detectCores(), verbose = FALSE) {
     res <- chunkedApply(X, 2, function(col) {
         freqNA <- mean(is.na(col))
         alleleFreq <- mean(col, na.rm = TRUE) / 2
         sd <- stats::sd(col, na.rm = TRUE)
         cbind(freqNA, alleleFreq, sd)
-    }, bufferSize = bufferSize, i = i, j = j, nTasks = nTasks, nCores = nCores, verbose = verbose)
+    }, i = i, j = j, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = verbose)
     rownames(res) <- c("freq_na", "allele_freq", "sd")
     colnames(res) <- colnames(X)[j]
     t(res)

@@ -4,22 +4,22 @@
 \alias{summarize}
 \title{Calculates frequencies of missing values and alleles.}
 \usage{
-summarize(X, bufferSize = 5000, i = seq_len(nrow(X)),
-  j = seq_len(ncol(X)), nTasks = nCores, nCores = parallel::detectCores(),
+summarize(X, i = seq_len(nrow(X)), j = seq_len(ncol(X)),
+  bufferSize = 5000, nTasks = nCores, nCores = parallel::detectCores(),
   verbose = FALSE)
 }
 \arguments{
 \item{X}{A matrix-like object, typically \code{@geno} of a
 \code{\link[=BGData-class]{BGData}} object.}
 
-\item{bufferSize}{Represents the number of columns of \code{@geno} that are
-brought into RAM for processing (5000 by default).}
-
 \item{i}{(integer, boolean or character) Indicates which rows should be used.
 By default, all rows are used.}
 
 \item{j}{(integer, boolean or character) Indicates which columns should be
 used. By default, all columns are used.}
+
+\item{bufferSize}{Represents the number of columns of \code{@geno} that are
+brought into RAM for processing (5000 by default).}
 
 \item{nTasks}{The number of tasks the problem should be broken into to be
 distributed among \code{nCores} cores. Defaults to \code{nCores}.}
