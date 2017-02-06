@@ -205,6 +205,8 @@ parsePED <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1
 #'   if \code{rows} a row-linked matrix
 #'   (\code{\link[=RowLinkedMatrix-class]{RowLinkedMatrix}}).
 #' @param folderOut The path to the folder where to save the binary files.
+#'   Defaults to the name of the input file (\code{fileIn}) without extension
+#'   prefixed with "BGData_".
 #' @param dimorder The physical layout of the underlying \code{ff} object of
 #'   each node.
 #' @param verbose Whether progress updates will be posted. Defaults to

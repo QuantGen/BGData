@@ -48,7 +48,9 @@ both columns will be concatenated with "_".}
 if \code{rows} a row-linked matrix
 (\code{\link[=RowLinkedMatrix-class]{RowLinkedMatrix}}).}
 
-\item{folderOut}{The path to the folder where to save the binary files.}
+\item{folderOut}{The path to the folder where to save the binary files.
+Defaults to the name of the input file (\code{fileIn}) without extension
+prefixed with "BGData_".}
 
 \item{dimorder}{The physical layout of the underlying \code{ff} object of
 each node.}
