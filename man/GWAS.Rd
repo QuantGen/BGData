@@ -22,11 +22,11 @@ methods are implemented: \code{\link{lm}}, \code{\link{lm.fit}},
 \code{\link{lsfit}}, \code{\link{glm}}, \code{\link[lme4]{lmer}},
 and \code{\link[SKAT]{SKAT}}.}
 
-\item{i}{(integer, boolean or character) Indicates which rows should be used.
-By default, all rows are used.}
+\item{i}{(integer, boolean or character) Indicates which rows of
+\code{@geno} should be used. By default, all rows are used.}
 
-\item{j}{(integer, boolean or character) Indicates which columns should be
-used. By default, all columns are used.}
+\item{j}{(integer, boolean or character) Indicates which columns of
+\code{@geno} should be used. By default, all columns are used.}
 
 \item{bufferSize}{The number of columns of \code{@geno} that are brought into
 RAM for processing. Overwrites \code{nBuffers}. If both parameters are

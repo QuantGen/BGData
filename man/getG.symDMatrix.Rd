@@ -40,11 +40,11 @@ string prefixed with "symDMatrix_".}
 \item{saveRData}{Whether to save an RData file to easily reload
 \code{\link[=symDMatrix-class]{symDMatrix}}}
 
-\item{i}{(integer, boolean or character) Indicates which rows should be used.
-By default, all rows are used.}
+\item{i}{(integer, boolean or character) Indicates which rows of \code{X}
+should be used. By default, all rows are used.}
 
-\item{j}{(integer, boolean or character) Indicates which columns should be
-used. By default, all columns are used.}
+\item{j}{(integer, boolean or character) Indicates which columns of
+\code{X} should be used. By default, all columns are used.}
 
 \item{nTasks}{The number of tasks the problem should be broken into to be
 distributed among \code{nCores} cores. Defaults to \code{nCores}.}

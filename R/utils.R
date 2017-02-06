@@ -148,10 +148,10 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = nCores, nCores = parallel::de
 #' @param MARGIN The subscripts which the function will be applied over. 1
 #'   indicates rows, 2 indicates columns.
 #' @param FUN The function to be applied.
-#' @param i (integer, boolean or character) Indicates which rows should be used.
-#'   By default, all rows are used.
-#' @param j (integer, boolean or character) Indicates which columns should be
-#'   used. By default, all columns are used.
+#' @param i (integer, boolean or character) Indicates which rows of \code{X}
+#'   should be used. By default, all rows are used.
+#' @param j (integer, boolean or character) Indicates which columns of
+#'   \code{X} should be used. By default, all columns are used.
 #' @param bufferSize The number of rows or columns of \code{X} that are brought
 #'   into RAM for processing. Overwrites \code{nBuffers}. If both parameters are
 #'   \code{NULL}, all elements in \code{i} or \code{j} are used. Defaults to
@@ -330,10 +330,10 @@ tcrossprod.parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel:
 #'   by \code{saveType}. Defaults to a random string prefixed with "G_".
 #' @param saveName Name without extension to save genomic relationship matrix
 #'   with.
-#' @param i (integer, boolean or character) Indicates which rows should be used.
-#'   By default, all rows are used.
-#' @param j (integer, boolean or character) Indicates which columns should be
-#'   used. By default, all columns are used.
+#' @param i (integer, boolean or character) Indicates which rows of \code{x}
+#'   should be used. By default, all rows are used.
+#' @param j (integer, boolean or character) Indicates which columns of
+#'   \code{x} should be used. By default, all columns are used.
 #' @param i2 (integer, boolean or character) Indicates which rows should be used
 #'   to divide matrix into blocks.
 #' @param bufferSize The number of columns of \code{x} that are brought into
@@ -572,10 +572,10 @@ getG <- function(x, scaleCol = TRUE, scales = NULL, centerCol = TRUE, centers = 
 #' @param vmode vmode of \code{ff} objects.
 #' @param saveRData Whether to save an RData file to easily reload
 #'   \code{\link[=symDMatrix-class]{symDMatrix}}
-#' @param i (integer, boolean or character) Indicates which rows should be used.
-#'   By default, all rows are used.
-#' @param j (integer, boolean or character) Indicates which columns should be
-#'   used. By default, all columns are used.
+#' @param i (integer, boolean or character) Indicates which rows of \code{X}
+#'   should be used. By default, all rows are used.
+#' @param j (integer, boolean or character) Indicates which columns of
+#'   \code{X} should be used. By default, all columns are used.
 #' @param nTasks The number of tasks the problem should be broken into to be
 #'   distributed among \code{nCores} cores. Defaults to \code{nCores}.
 #' @param nCores The number of cores (passed to
@@ -757,10 +757,10 @@ getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, sc
 #'   methods are implemented: \code{\link{lm}}, \code{\link{lm.fit}},
 #'   \code{\link{lsfit}}, \code{\link{glm}}, \code{\link[lme4]{lmer}},
 #'   and \code{\link[SKAT]{SKAT}}.
-#' @param i (integer, boolean or character) Indicates which rows should be used.
-#'   By default, all rows are used.
-#' @param j (integer, boolean or character) Indicates which columns should be
-#'   used. By default, all columns are used.
+#' @param i (integer, boolean or character) Indicates which rows of
+#'   \code{@@geno} should be used. By default, all rows are used.
+#' @param j (integer, boolean or character) Indicates which columns of
+#'   \code{@@geno} should be used. By default, all columns are used.
 #' @param bufferSize The number of columns of \code{@@geno} that are brought into
 #'   RAM for processing. Overwrites \code{nBuffers}. If both parameters are
 #'   \code{NULL}, all elements in \code{j} are used. Defaults to 5000.
@@ -920,10 +920,10 @@ getCoefficients.lmerMod <- function(x) {
 #'
 #' @param X A matrix-like object, typically \code{@@geno} of a
 #'   \code{\link[=BGData-class]{BGData}} object.
-#' @param i (integer, boolean or character) Indicates which rows should be used.
-#'   By default, all rows are used.
-#' @param j (integer, boolean or character) Indicates which columns should be
-#'   used. By default, all columns are used.
+#' @param i (integer, boolean or character) Indicates which rows of \code{X}
+#'   should be used. By default, all rows are used.
+#' @param j (integer, boolean or character) Indicates which columns of
+#'   \code{X} should be used. By default, all columns are used.
 #' @param bufferSize The number of columns of \code{X} that are brought into
 #'   RAM for processing. Overwrites \code{nBuffers}. If both parameters are
 #'   \code{NULL}, all elements in \code{j} are used. Defaults to 5000.
