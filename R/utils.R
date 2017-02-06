@@ -326,6 +326,8 @@ tcrossprod.parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel:
 #' @param saveG Whether to save genomic relationship matrix into file.
 #' @param saveType File format to save genomic relationship matrix in. Either
 #'   \code{RData} or \code{ff}.
+#' @param folderOut The path to the folder where to save the output generated
+#'   by \code{saveType}. Defaults to a random string prefixed with "G_".
 #' @param saveName Name without extension to save genomic relationship matrix
 #'   with.
 #' @param i (integer, boolean or character) Indicates which rows should be used.
@@ -349,7 +351,11 @@ tcrossprod.parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel:
 #'   \code{TRUE}.
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @export
-getG <- function(x, scaleCol = TRUE, scales = NULL, centerCol = TRUE, centers = NULL, scaleG = TRUE, minVar = 1e-05, saveG = FALSE, saveType = "RData", saveName = "Gij", i = seq_len(nrow(x)), j = seq_len(ncol(x)), i2 = NULL, bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
+getG <- function(x, scaleCol = TRUE, scales = NULL, centerCol = TRUE, centers = NULL, scaleG = TRUE, minVar = 1e-05, saveG = FALSE, saveType = "RData", folderOut = paste0("G_", randomString()), saveName = "Gij", i = seq_len(nrow(x)), j = seq_len(ncol(x)), i2 = NULL, bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
+    if (file.exists(folderOut)) {
+        stop(folderOut, " already exists")
+    }
+    curDir <- getwd()
     if (is.null(bufferSize) && is.null(nBuffers)) {
         bufferSize <- length(j)
         nBuffers <- 1
@@ -364,6 +370,8 @@ getG <- function(x, scaleCol = TRUE, scales = NULL, centerCol = TRUE, centers = 
         G <- getGij(x = x, scales = scales, centers = centers, scaleCol = scaleCol, centerCol = centerCol, scaleG = scaleG, minVar = minVar, i = i, i2 = i2, j = j, bufferSize = bufferSize, nBuffers = nBuffers, nTasks = nTasks, nCores = nCores, verbose = verbose)
     }
     if (saveG) {
+        dir.create(folderOut)
+        setwd(folderOut)
         if (saveType == "RData") {
             save(G, file = paste0(saveName, ".RData"))
         }
@@ -371,6 +379,7 @@ getG <- function(x, scaleCol = TRUE, scales = NULL, centerCol = TRUE, centers = 
             Gij <- ff::as.ff(G, file = paste0(saveName, ".bin"))
             save(Gij, file = paste0(saveName, ".ff"))
         }
+        setwd(curDir)
     }
     return(G)
 }

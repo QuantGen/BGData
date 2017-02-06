@@ -6,9 +6,10 @@
 \usage{
 getG(x, scaleCol = TRUE, scales = NULL, centerCol = TRUE,
   centers = NULL, scaleG = TRUE, minVar = 1e-05, saveG = FALSE,
-  saveType = "RData", saveName = "Gij", i = seq_len(nrow(x)),
-  j = seq_len(ncol(x)), i2 = NULL, bufferSize = 5000, nBuffers = NULL,
-  nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE)
+  saveType = "RData", folderOut = paste0("G_", randomString()),
+  saveName = "Gij", i = seq_len(nrow(x)), j = seq_len(ncol(x)),
+  i2 = NULL, bufferSize = 5000, nBuffers = NULL, nTasks = nCores,
+  nCores = parallel::detectCores(), verbose = TRUE)
 }
 \arguments{
 \item{x}{A matrix-like object, typically \code{@geno} of a
@@ -33,6 +34,9 @@ the computation (only if \code{scaleCol} is set).}
 
 \item{saveType}{File format to save genomic relationship matrix in. Either
 \code{RData} or \code{ff}.}
+
+\item{folderOut}{The path to the folder where to save the output generated
+by \code{saveType}. Defaults to a random string prefixed with "G_".}
 
 \item{saveName}{Name without extension to save genomic relationship matrix
 with.}
