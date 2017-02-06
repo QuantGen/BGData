@@ -319,12 +319,6 @@ tcrossprod.parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel:
 #' @param centerCol TRUE/FALSE whether columns must be centered before computing
 #'   xx'.
 #' @param scaleG TRUE/FALSE whether xx' must be scaled.
-#' @param i (integer, boolean or character) Indicates which rows should be used.
-#'   By default, all rows are used.
-#' @param j (integer, boolean or character) Indicates which columns should be
-#'   used. By default, all columns are used.
-#' @param i2 (integer, boolean or character) Indicates which rows should be used
-#'   to divide matrix into blocks.
 #' @param minVar Columns with variance lower than this value will not be used in
 #'   the computation (only if \code{scaleCol} is set).
 #' @param scales Precomputed scales if i2 is used.
@@ -334,6 +328,12 @@ tcrossprod.parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel:
 #'   \code{RData} or \code{ff}.
 #' @param saveName Name without extension to save genomic relationship matrix
 #'   with.
+#' @param i (integer, boolean or character) Indicates which rows should be used.
+#'   By default, all rows are used.
+#' @param j (integer, boolean or character) Indicates which columns should be
+#'   used. By default, all columns are used.
+#' @param i2 (integer, boolean or character) Indicates which rows should be used
+#'   to divide matrix into blocks.
 #' @param bufferSize The number of columns of \code{x} that are brought into
 #'   RAM for processing. Overwrites \code{nBuffers}. If both parameters are
 #'   \code{NULL}, all columns of \code{x} are used. Defaults to 5000.
@@ -349,7 +349,7 @@ tcrossprod.parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel:
 #'   \code{TRUE}.
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @export
-getG <- function(x, scaleCol = TRUE, centerCol = TRUE, scaleG = TRUE, i = seq_len(nrow(x)), j = seq_len(ncol(x)), i2 = NULL, minVar = 1e-05, scales = NULL, centers = NULL, saveG = FALSE, saveType = "RData", saveName = "Gij", bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
+getG <- function(x, scaleCol = TRUE, centerCol = TRUE, scaleG = TRUE, minVar = 1e-05, scales = NULL, centers = NULL, saveG = FALSE, saveType = "RData", saveName = "Gij", i = seq_len(nrow(x)), j = seq_len(ncol(x)), i2 = NULL, bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
     if (is.null(bufferSize) && is.null(nBuffers)) {
         bufferSize <- length(j)
         nBuffers <- 1
@@ -359,10 +359,10 @@ getG <- function(x, scaleCol = TRUE, centerCol = TRUE, scaleG = TRUE, i = seq_le
         nBuffers <- ceiling(length(j) / bufferSize)
     }
     if (is.null(i2)) {
-        G <- getGi(x = x, scales = scales, centers = centers, scaleCol = scaleCol, centerCol = centerCol, scaleG = scaleG, i = i, j = j, minVar = minVar, bufferSize = bufferSize, nBuffers = nBuffers, nTasks = nTasks, nCores = nCores, verbose = verbose)
+        G <- getGi(x = x, scales = scales, centers = centers, scaleCol = scaleCol, centerCol = centerCol, scaleG = scaleG, minVar = minVar, i = i, j = j, bufferSize = bufferSize, nBuffers = nBuffers, nTasks = nTasks, nCores = nCores, verbose = verbose)
     } else {
         if (is.null(scales) || is.null(centers)) stop("scales and centers need to be precomputed.")
-        G <- getGij(x = x, i1 = i, i2 = i2, scales = scales, centers = centers, scaleCol = scaleCol, centerCol = centerCol, scaleG = scaleG, j = j, minVar = minVar, bufferSize = bufferSize, nBuffers = nBuffers, nTasks = nTasks, nCores = nCores, verbose = verbose)
+        G <- getGij(x = x, scales = scales, centers = centers, scaleCol = scaleCol, centerCol = centerCol, scaleG = scaleG, minVar = minVar, i1 = i, i2 = i2, j = j, bufferSize = bufferSize, nBuffers = nBuffers, nTasks = nTasks, nCores = nCores, verbose = verbose)
     }
     if (saveG) {
         if (saveType == "RData") {
@@ -377,7 +377,7 @@ getG <- function(x, scaleCol = TRUE, centerCol = TRUE, scaleG = TRUE, i = seq_le
 }
 
 
-getGi <- function(x, scales = NULL, centers = NULL, scaleCol = TRUE, centerCol = FALSE, scaleG = TRUE, i = seq_len(nrow(x)), j = seq_len(ncol(x)), minVar = 1e-05, bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
+getGi <- function(x, scales = NULL, centers = NULL, scaleCol = TRUE, centerCol = FALSE, scaleG = TRUE, minVar = 1e-05, i = seq_len(nrow(x)), j = seq_len(ncol(x)), bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
     nX <- nrow(x)
     pX <- ncol(x)
 
@@ -481,7 +481,7 @@ getGi <- function(x, scales = NULL, centers = NULL, scaleCol = TRUE, centerCol =
 }
 
 
-getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, centerCol = TRUE, scaleG = TRUE, j = seq_len(ncol(x)), minVar = 1e-05, bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
+getGij <- function(x, scales, centers, scaleCol = TRUE, centerCol = TRUE, scaleG = TRUE, minVar = 1e-05, i1, i2, j = seq_len(ncol(x)), bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
 
     nX <- nrow(x)
     pX <- ncol(x)

@@ -5,10 +5,10 @@
 \title{Computes a genomic relationship matrix G=xx'.}
 \usage{
 getG(x, scaleCol = TRUE, centerCol = TRUE, scaleG = TRUE,
-  i = seq_len(nrow(x)), j = seq_len(ncol(x)), i2 = NULL, minVar = 1e-05,
-  scales = NULL, centers = NULL, saveG = FALSE, saveType = "RData",
-  saveName = "Gij", bufferSize = 5000, nBuffers = NULL, nTasks = nCores,
-  nCores = parallel::detectCores(), verbose = TRUE)
+  minVar = 1e-05, scales = NULL, centers = NULL, saveG = FALSE,
+  saveType = "RData", saveName = "Gij", i = seq_len(nrow(x)),
+  j = seq_len(ncol(x)), i2 = NULL, bufferSize = 5000, nBuffers = NULL,
+  nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE)
 }
 \arguments{
 \item{x}{A matrix-like object, typically \code{@geno} of a
@@ -21,15 +21,6 @@ xx'.}
 xx'.}
 
 \item{scaleG}{TRUE/FALSE whether xx' must be scaled.}
-
-\item{i}{(integer, boolean or character) Indicates which rows should be used.
-By default, all rows are used.}
-
-\item{j}{(integer, boolean or character) Indicates which columns should be
-used. By default, all columns are used.}
-
-\item{i2}{(integer, boolean or character) Indicates which rows should be used
-to divide matrix into blocks.}
 
 \item{minVar}{Columns with variance lower than this value will not be used in
 the computation (only if \code{scaleCol} is set).}
@@ -45,6 +36,15 @@ the computation (only if \code{scaleCol} is set).}
 
 \item{saveName}{Name without extension to save genomic relationship matrix
 with.}
+
+\item{i}{(integer, boolean or character) Indicates which rows should be used.
+By default, all rows are used.}
+
+\item{j}{(integer, boolean or character) Indicates which columns should be
+used. By default, all columns are used.}
+
+\item{i2}{(integer, boolean or character) Indicates which rows should be used
+to divide matrix into blocks.}
 
 \item{bufferSize}{The number of columns of \code{x} that are brought into
 RAM for processing. Overwrites \code{nBuffers}. If both parameters are
