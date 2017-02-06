@@ -173,6 +173,17 @@ chunkedApply <- function(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(
     if (!length(dim(X))) {
         stop("dim(X) must have a positive length")
     }
+    # Convert index types
+    if (is.logical(i)) {
+        i <- which(i)
+    } else if (is.character(i)) {
+        i <- match(i, rownames(X))
+    }
+    if (is.logical(j)) {
+        j <- which(j)
+    } else if (is.character(j)) {
+        j <- match(j, colnames(X))
+    }
     d <- c(length(i), length(j))
     if (is.null(bufferSize) && is.null(nBuffers)) {
         bufferSize <- d[MARGIN]
@@ -370,13 +381,16 @@ getGi <- function(x, scales = NULL, centers = NULL, scaleCol = TRUE, centerCol =
     nX <- nrow(x)
     pX <- ncol(x)
 
-    # Convert boolean to integer index (it leads to a more efficient subsetting
-    # than booleans)
+    # Convert index types
     if (is.logical(i)) {
         i <- which(i)
+    } else if (is.character(i)) {
+        i <- match(i, rownames(x))
     }
     if (is.logical(j)) {
         j <- which(j)
+    } else if (is.character(j)) {
+        j <- match(j, colnames(x))
     }
 
     n <- length(i)
@@ -472,16 +486,21 @@ getGij <- function(x, i1, i2, scales, centers, scaleCol = TRUE, centerCol = TRUE
     nX <- nrow(x)
     pX <- ncol(x)
 
-    # Convert boolean to integer index (it leads to a more efficient subsetting
-    # than booleans)
+    # Convert index types
     if (is.logical(i1)) {
         i1 <- which(i1)
+    } else if (is.character(i1)) {
+        i1 <- match(i1, rownames(x))
     }
     if (is.logical(i2)) {
         i2 <- which(i2)
+    } else if (is.character(i2)) {
+        i2 <- match(i2, rownames(x))
     }
     if (is.logical(j)) {
         j <- which(j)
+    } else if (is.character(j)) {
+        j <- match(j, colnames(x))
     }
 
     n1 <- length(i1)
@@ -605,13 +624,16 @@ getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, sc
     nX <- nrow(X)
     pX <- ncol(X)
 
-    # Convert boolean to integer index (it leads to a more efficient subsetting
-    # than booleans)
+    # Convert index types
     if (is.logical(i)) {
         i <- which(i)
+    } else if (is.character(i)) {
+        i <- match(i, rownames(X))
     }
     if (is.logical(j)) {
         j <- which(j)
+    } else if (is.character(j)) {
+        j <- match(j, colnames(X))
     }
 
     n <- length(i)
