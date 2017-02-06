@@ -769,7 +769,8 @@ getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, sc
 #' @param data A \code{\link[=BGData-class]{BGData}} object.
 #' @param method The regression method to be used. Currently, the following
 #'   methods are implemented: \code{\link{lm}}, \code{\link{lm.fit}},
-#'   \code{\link{lsfit}}, \code{\link{glm}} and \code{\link[lme4]{lmer}}.
+#'   \code{\link{lsfit}}, \code{\link{glm}}, \code{\link[lme4]{lmer}},
+#'   and \code{\link[SKAT]{SKAT}}.
 #' @param i (integer, boolean or character) Indicates which rows should be used.
 #'   By default, all rows are used.
 #' @param j (integer, boolean or character) Indicates which columns should be

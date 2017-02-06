@@ -19,7 +19,8 @@ the right-hand side. The variables included in the formula must be in the
 
 \item{method}{The regression method to be used. Currently, the following
 methods are implemented: \code{\link{lm}}, \code{\link{lm.fit}},
-\code{\link{lsfit}}, \code{\link{glm}} and \code{\link[lme4]{lmer}}.}
+\code{\link{lsfit}}, \code{\link{glm}}, \code{\link[lme4]{lmer}},
+and \code{\link[SKAT]{SKAT}}.}
 
 \item{i}{(integer, boolean or character) Indicates which rows should be used.
 By default, all rows are used.}
