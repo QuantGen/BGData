@@ -316,13 +316,13 @@ tcrossprod.parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel:
 #'   \code{\link[=BGData-class]{BGData}} object.
 #' @param scaleCol TRUE/FALSE whether columns must be scaled before computing
 #'   xx'.
+#' @param scales Precomputed scales if i2 is used.
 #' @param centerCol TRUE/FALSE whether columns must be centered before computing
 #'   xx'.
+#' @param centers Precomputed centers if i2 is used.
 #' @param scaleG TRUE/FALSE whether xx' must be scaled.
 #' @param minVar Columns with variance lower than this value will not be used in
 #'   the computation (only if \code{scaleCol} is set).
-#' @param scales Precomputed scales if i2 is used.
-#' @param centers Precomputed centers if i2 is used.
 #' @param saveG Whether to save genomic relationship matrix into file.
 #' @param saveType File format to save genomic relationship matrix in. Either
 #'   \code{RData} or \code{ff}.
@@ -349,7 +349,7 @@ tcrossprod.parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel:
 #'   \code{TRUE}.
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @export
-getG <- function(x, scaleCol = TRUE, centerCol = TRUE, scaleG = TRUE, minVar = 1e-05, scales = NULL, centers = NULL, saveG = FALSE, saveType = "RData", saveName = "Gij", i = seq_len(nrow(x)), j = seq_len(ncol(x)), i2 = NULL, bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
+getG <- function(x, scaleCol = TRUE, scales = NULL, centerCol = TRUE, centers = NULL, scaleG = TRUE, minVar = 1e-05, saveG = FALSE, saveType = "RData", saveName = "Gij", i = seq_len(nrow(x)), j = seq_len(ncol(x)), i2 = NULL, bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
     if (is.null(bufferSize) && is.null(nBuffers)) {
         bufferSize <- length(j)
         nBuffers <- 1
@@ -376,7 +376,7 @@ getG <- function(x, scaleCol = TRUE, centerCol = TRUE, scaleG = TRUE, minVar = 1
 }
 
 
-getGi <- function(x, scales = NULL, centers = NULL, scaleCol = TRUE, centerCol = FALSE, scaleG = TRUE, minVar = 1e-05, i = seq_len(nrow(x)), j = seq_len(ncol(x)), bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
+getGi <- function(x, scaleCol = TRUE, scales = NULL, centerCol = FALSE, centers = NULL, scaleG = TRUE, minVar = 1e-05, i = seq_len(nrow(x)), j = seq_len(ncol(x)), bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
     nX <- nrow(x)
     pX <- ncol(x)
 
@@ -480,7 +480,7 @@ getGi <- function(x, scales = NULL, centers = NULL, scaleCol = TRUE, centerCol =
 }
 
 
-getGij <- function(x, scales, centers, scaleCol = TRUE, centerCol = TRUE, scaleG = TRUE, minVar = 1e-05, i1, i2, j = seq_len(ncol(x)), bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
+getGij <- function(x, scaleCol = TRUE, scales, centerCol = FALSE, centers, scaleG = TRUE, minVar = 1e-05, i1, i2, j = seq_len(ncol(x)), bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
 
     if (scaleCol && is.null(scales)) {
         stop("scales need to be precomputed.")

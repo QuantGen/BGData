@@ -4,8 +4,8 @@
 \alias{getG}
 \title{Computes a genomic relationship matrix G=xx'.}
 \usage{
-getG(x, scaleCol = TRUE, centerCol = TRUE, scaleG = TRUE,
-  minVar = 1e-05, scales = NULL, centers = NULL, saveG = FALSE,
+getG(x, scaleCol = TRUE, scales = NULL, centerCol = TRUE,
+  centers = NULL, scaleG = TRUE, minVar = 1e-05, saveG = FALSE,
   saveType = "RData", saveName = "Gij", i = seq_len(nrow(x)),
   j = seq_len(ncol(x)), i2 = NULL, bufferSize = 5000, nBuffers = NULL,
   nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE)
@@ -17,17 +17,17 @@ getG(x, scaleCol = TRUE, centerCol = TRUE, scaleG = TRUE,
 \item{scaleCol}{TRUE/FALSE whether columns must be scaled before computing
 xx'.}
 
+\item{scales}{Precomputed scales if i2 is used.}
+
 \item{centerCol}{TRUE/FALSE whether columns must be centered before computing
 xx'.}
+
+\item{centers}{Precomputed centers if i2 is used.}
 
 \item{scaleG}{TRUE/FALSE whether xx' must be scaled.}
 
 \item{minVar}{Columns with variance lower than this value will not be used in
 the computation (only if \code{scaleCol} is set).}
-
-\item{scales}{Precomputed scales if i2 is used.}
-
-\item{centers}{Precomputed centers if i2 is used.}
 
 \item{saveG}{Whether to save genomic relationship matrix into file.}
 
