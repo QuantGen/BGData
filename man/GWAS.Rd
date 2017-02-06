@@ -6,8 +6,8 @@
 \code{\link[=BGData-class]{BGData}} object.}
 \usage{
 GWAS(formula, data, method, i = seq_len(nrow(data@geno)),
-  j = seq_len(ncol(data@geno)), bufferSize = 5000, nTasks = nCores,
-  nCores = parallel::detectCores(), verbose = FALSE, ...)
+  j = seq_len(ncol(data@geno)), bufferSize = 5000, nBuffers = NULL,
+  nTasks = nCores, nCores = parallel::detectCores(), verbose = FALSE, ...)
 }
 \arguments{
 \item{formula}{A formula (e.g. weight~sex+age) with the response on the
@@ -27,8 +27,14 @@ By default, all rows are used.}
 \item{j}{(integer, boolean or character) Indicates which columns should be
 used. By default, all columns are used.}
 
-\item{bufferSize}{Represents the number of columns of \code{@geno} that are
-brought into RAM for processing. Defaults to 5000.}
+\item{bufferSize}{The number of columns of \code{@geno} that are brought into
+RAM for processing. Overwrites \code{nBuffers}. If both parameters are
+\code{NULL}, all elements in \code{j} are used. Defaults to 5000.}
+
+\item{nBuffers}{The number of partitions of the columns of \code{@geno}
+that are brought into RAM for processing. Is overwritten by
+\code{bufferSize}. If both parameters are \code{NULL}, all elements in
+\code{j} are used.}
 
 \item{nTasks}{The number of tasks the problem should be broken into to be
 distributed among \code{nCores} cores. Defaults to \code{nCores}.}
