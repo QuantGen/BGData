@@ -389,10 +389,10 @@ getG <- function(X, scaleCol = TRUE, scales = NULL, centerCol = TRUE, centers = 
     nX <- nrow(X)
     pX <- ncol(X)
 
-    if ((min(i) < 1) | (max(i) > nX)) {
+    if ((min(i) < 1) || (max(i) > nX)) {
         stop("Index out of bounds")
     }
-    if ((min(j) < 1) | (max(j) > pX)) {
+    if ((min(j) < 1) || (max(j) > pX)) {
         stop("Index out of bounds")
     }
     if (hasY) {
@@ -579,22 +579,22 @@ getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, sc
     n <- length(i)
     p <- length(j)
 
-    if (n > nX | p > pX) {
+    if (n > nX || p > pX) {
         stop("Index out of bounds")
     }
     if (is.numeric(i)) {
-        if ((min(i) < 1) | (max(i) > nX)) {
+        if ((min(i) < 1) || (max(i) > nX)) {
             stop("Index out of bounds")
         }
     }
     if (is.numeric(j)) {
-        if ((min(j) < 1) | (max(j) > pX)) {
+        if ((min(j) < 1) || (max(j) > pX)) {
             stop("Index out of bounds")
         }
     }
 
-    if ((centerCol | scaleCol) & (is.null(centers) | is.null(scales))) {
-        if (is.null(centers) & is.null(scales)) {
+    if ((centerCol || scaleCol) && (is.null(centers) || is.null(scales))) {
+        if (is.null(centers) && is.null(scales)) {
             centers <- vector(mode = "double", length = p)
             scales <- vector(mode = "double", length = p)
             for (k in seq_len(p)) {
@@ -603,14 +603,14 @@ getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, sc
                 centers[k] <- mean(xi, na.rm = TRUE)
             }
         }
-        if ((!is.null(centers)) & (is.null(scales))) {
+        if ((!is.null(centers)) && (is.null(scales))) {
             scales <- vector(mode = "double", length = p)
             for (k in seq_len(p)) {
                 xi <- X[i, j[k]]
                 scales[k] <- stats::sd(xi, na.rm = TRUE) * sqrt((nX - 1) / nX)
             }
         }
-        if ((is.null(centers)) & (!is.null(scales))) {
+        if ((is.null(centers)) && (!is.null(scales))) {
             centers <- vector(mode = "double", length = p)
             for (k in seq_len(p)) {
                 xi <- X[i, j[k]]
