@@ -582,15 +582,11 @@ getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, sc
     if (n > nX || p > pX) {
         stop("Index out of bounds")
     }
-    if (is.numeric(i)) {
-        if ((min(i) < 1) || (max(i) > nX)) {
-            stop("Index out of bounds")
-        }
+    if ((min(i) < 1) || (max(i) > nX)) {
+        stop("Index out of bounds")
     }
-    if (is.numeric(j)) {
-        if ((min(j) < 1) || (max(j) > pX)) {
-            stop("Index out of bounds")
-        }
+    if ((min(j) < 1) || (max(j) > pX)) {
+        stop("Index out of bounds")
     }
 
     if ((centerCol || scaleCol) && (is.null(centers) || is.null(scales))) {
