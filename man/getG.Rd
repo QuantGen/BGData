@@ -5,11 +5,9 @@
 \title{Computes a genomic relationship matrix G=xx'.}
 \usage{
 getG(X, scaleCol = TRUE, scales = NULL, centerCol = TRUE,
-  centers = NULL, scaleG = TRUE, minVar = 1e-05, saveG = FALSE,
-  saveType = "RData", folderOut = paste0("G_", randomString()),
-  saveName = "Gij", i = seq_len(nrow(X)), j = seq_len(ncol(X)),
-  i2 = NULL, bufferSize = 5000, nBuffers = NULL, nTasks = nCores,
-  nCores = parallel::detectCores(), verbose = TRUE)
+  centers = NULL, scaleG = TRUE, minVar = 1e-05, i = seq_len(nrow(X)),
+  j = seq_len(ncol(X)), i2 = NULL, bufferSize = 5000, nBuffers = NULL,
+  nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE)
 }
 \arguments{
 \item{X}{A matrix-like object, typically \code{@geno} of a
@@ -29,17 +27,6 @@ xx'.}
 
 \item{minVar}{Columns with variance lower than this value will not be used in
 the computation (only if \code{scaleCol} is set).}
-
-\item{saveG}{Whether to save genomic relationship matrix into file.}
-
-\item{saveType}{File format to save genomic relationship matrix in. Either
-\code{RData} or \code{ff}.}
-
-\item{folderOut}{The path to the folder where to save the output generated
-by \code{saveType}. Defaults to a random string prefixed with "G_".}
-
-\item{saveName}{Name without extension to save genomic relationship matrix
-with.}
 
 \item{i}{(integer, boolean or character) Indicates which rows of \code{X}
 should be used. By default, all rows are used.}
