@@ -595,15 +595,13 @@ getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, sc
                 scales[k] <- stats::sd(xi, na.rm = TRUE) * sqrt((nX - 1) / nX)
                 centers[k] <- mean(xi, na.rm = TRUE)
             }
-        }
-        if ((!is.null(centers)) && (is.null(scales))) {
+        } else if ((!is.null(centers)) && (is.null(scales))) {
             scales <- vector(mode = "double", length = p)
             for (k in seq_len(p)) {
                 xi <- X[i, j[k]]
                 scales[k] <- stats::sd(xi, na.rm = TRUE) * sqrt((nX - 1) / nX)
             }
-        }
-        if ((is.null(centers)) && (!is.null(scales))) {
+        } else if ((is.null(centers)) && (!is.null(scales))) {
             centers <- vector(mode = "double", length = p)
             for (k in seq_len(p)) {
                 xi <- X[i, j[k]]
