@@ -579,9 +579,6 @@ getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, sc
     n <- length(i)
     p <- length(j)
 
-    if (n > nX || p > pX) {
-        stop("Index out of bounds")
-    }
     if ((min(i) < 1) || (max(i) > nX)) {
         stop("Index out of bounds")
     }
