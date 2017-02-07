@@ -425,7 +425,6 @@ getG <- function(X, scaleCol = TRUE, scales = NULL, centerCol = TRUE, centers = 
         K <- 0
     }
 
-    bufferSize <- ceiling(p / nBuffers)
     end <- 0
     for (k in seq_len(nBuffers)) {
         ini <- end + 1
