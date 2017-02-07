@@ -353,10 +353,21 @@ tcrossprod.parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel:
 #' @export
 getG <- function(X, scaleCol = TRUE, scales = NULL, centerCol = TRUE, centers = NULL, scaleG = TRUE, minVar = 1e-05, saveG = FALSE, saveType = "RData", folderOut = paste0("G_", randomString()), saveName = "Gij", i = seq_len(nrow(X)), j = seq_len(ncol(X)), i2 = NULL, bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
 
+    # compute XY' rather than XX'
+    hasY <- !is.null(i2)
+
+    if (hasY) {
+        if (scaleCol && is.null(scales)) {
+            stop("scales need to be precomputed.")
+        }
+        if (centerCol && is.null(centers)) {
+            stop("centers need to be precomputed.")
+        }
+    }
+
     if (file.exists(folderOut)) {
         stop(folderOut, " already exists")
     }
-    curDir <- getwd()
 
     if (is.null(bufferSize) && is.null(nBuffers)) {
         bufferSize <- length(j)
@@ -378,12 +389,16 @@ getG <- function(X, scaleCol = TRUE, scales = NULL, centerCol = TRUE, centers = 
     } else if (is.character(j)) {
         j <- match(j, colnames(X))
     }
+    if (hasY) {
+        if (is.logical(i2)) {
+            i2 <- which(i2)
+        } else if (is.character(i2)) {
+            i2 <- match(i2, rownames(X))
+        }
+    }
 
     nX <- nrow(X)
     pX <- ncol(X)
-
-    n <- length(i)
-    p <- length(j)
 
     if ((min(i) < 1) | (max(i) > nX)) {
         stop("Index out of bounds")
@@ -391,39 +406,23 @@ getG <- function(X, scaleCol = TRUE, scales = NULL, centerCol = TRUE, centers = 
     if ((min(j) < 1) | (max(j) > pX)) {
         stop("Index out of bounds")
     }
-
-    # compute XY' rather than XX'
-    hasY <- !is.null(i2)
-
-    if (!hasY) {
-
-        G <- matrix(data = 0, nrow = n, ncol = n, dimnames = list(rownames(X)[i], rownames(X)[i]))
-
-    } else {
-
-        if (scaleCol && is.null(scales)) {
-            stop("scales need to be precomputed.")
-        }
-        if (centerCol && is.null(centers)) {
-            stop("centers need to be precomputed.")
-        }
-
-        if (is.logical(i2)) {
-            i2 <- which(i2)
-        } else if (is.character(i2)) {
-            i2 <- match(i2, rownames(X))
-        }
-
-        n2 <- length(i2)
-
+    if (hasY) {
         if ((min(i2) < 1) || (max(i2) > nX)) {
             stop("Index out of bounds")
         }
+    }
 
-        K <- 0
+    n <- length(i)
+    p <- length(j)
+    if (hasY) {
+        n2 <- length(i2)
+    }
 
+    if (!hasY) {
+        G <- matrix(data = 0, nrow = n, ncol = n, dimnames = list(rownames(X)[i], rownames(X)[i]))
+    } else {
         G <- matrix(data = 0, nrow = n, ncol = n2, dimnames = list(rownames(X)[i], rownames(X)[i2]))
-
+        K <- 0
     }
 
     bufferSize <- ceiling(p / nBuffers)
@@ -510,14 +509,14 @@ getG <- function(X, scaleCol = TRUE, scales = NULL, centerCol = TRUE, centers = 
 
             G[] <- G + G_chunk
 
-        }
-
-        if (hasY && scaleG) {
-            if (scaleCol) {
-                K <- K + ncol(X1)
-            } else {
-                K <- K + sum(scales.chunk^2)
+            if (hasY && scaleG) {
+                if (scaleCol) {
+                    K <- K + ncol(X1)
+                } else {
+                    K <- K + sum(scales.chunk^2)
+                }
             }
+
         }
 
     }
@@ -532,6 +531,7 @@ getG <- function(X, scaleCol = TRUE, scales = NULL, centerCol = TRUE, centers = 
     }
 
     if (saveG) {
+        curDir <- getwd()
         dir.create(folderOut)
         setwd(folderOut)
         if (saveType == "RData") {
