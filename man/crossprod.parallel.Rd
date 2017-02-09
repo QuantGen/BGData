@@ -2,16 +2,20 @@
 % Please edit documentation in R/utils.R
 \name{crossprod.parallel}
 \alias{crossprod.parallel}
-\title{Computes crossprod (x'y or x'x) in Parallel.}
+\alias{tcrossprod.parallel}
+\title{Computes crossprod (x'x or x'y) or tcrossprod (xx' or xy') in Parallel.}
 \usage{
 crossprod.parallel(x, y = NULL, nTasks = nCores,
+  nCores = parallel::detectCores())
+
+tcrossprod.parallel(x, y = NULL, nTasks = nCores,
   nCores = parallel::detectCores())
 }
 \arguments{
 \item{x}{A matrix-like object, typically \code{@geno} of a \linkS4class{BGData}
 object.}
 
-\item{y}{vector or matrix-like object. NULL by default.}
+\item{y}{vector or matrix-like object. \code{NULL} by default.}
 
 \item{nTasks}{The number of tasks the problem should be broken into to be
 distributed among \code{nCores} cores. Defaults to \code{nCores}.}
@@ -20,8 +24,18 @@ distributed among \code{nCores} cores. Defaults to \code{nCores}.}
 Defaults to the number of cores as detected by \code{\link[parallel:detectCores]{parallel::detectCores()}}.}
 }
 \value{
-x'y or x'x depending on whether y is provided.
+x'x or x'y (\code{crossprod.parallel}), or xx' or xy'
+(\code{tcrossprod.parallel}), depending on whether \code{y} is provided.
 }
 \description{
-Computes crossprod (x'y or x'x) in Parallel.
+Similar to \code{\link[base:crossprod]{base::crossprod()}} and \code{\link[base:tcrossprod]{base::tcrossprod()}}, but breaks \code{x} (and
+\code{y} if not \code{NULL}) into \code{nTasks} chunks, computes \code{\link[base:crossprod]{base::crossprod()}} or
+\code{\link[base:tcrossprod]{base::tcrossprod()}} on each chunk in parallel, and adds up the results.
+}
+\details{
+If \code{nTasks} is \code{1}, \code{\link[base:crossprod]{base::crossprod()}} or \code{\link[base:tcrossprod]{base::tcrossprod()}} will be
+called directly without parallelism.
+}
+\seealso{
+\code{\link[=getG]{getG()}} to compute a genomic relationship matrix.
 }

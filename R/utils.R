@@ -205,7 +205,6 @@ chunkedApply <- function(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(
 }
 
 
-# Computes crossprod(x,y) or tcrossprod(x,y)
 crossprods <- function(x, y = NULL, use_tcrossprod = FALSE, nTasks = nCores, nCores = parallel::detectCores()) {
     dx <- dim(x)
     if (!is.null(y)) {
@@ -265,32 +264,32 @@ crossprods <- function(x, y = NULL, use_tcrossprod = FALSE, nTasks = nCores, nCo
 }
 
 
-#' Computes crossprod (x'y or x'x) in Parallel.
+#' Computes crossprod (x'x or x'y) or tcrossprod (xx' or xy') in Parallel.
+#'
+#' Similar to [base::crossprod()] and [base::tcrossprod()], but breaks `x` (and
+#' `y` if not `NULL`) into `nTasks` chunks, computes [base::crossprod()] or
+#' [base::tcrossprod()] on each chunk in parallel, and adds up the results.
+#'
+#' If `nTasks` is `1`, [base::crossprod()] or [base::tcrossprod()] will be
+#' called directly without parallelism.
 #'
 #' @param x A matrix-like object, typically `@@geno` of a [BGData-class]
 #' object.
-#' @param y vector or matrix-like object. NULL by default.
+#' @param y vector or matrix-like object. `NULL` by default.
 #' @param nTasks The number of tasks the problem should be broken into to be
 #' distributed among `nCores` cores. Defaults to `nCores`.
 #' @param nCores The number of cores (passed to [parallel::mclapply()]).
 #' Defaults to the number of cores as detected by [parallel::detectCores()].
-#' @return x'y or x'x depending on whether y is provided.
+#' @return x'x or x'y (`crossprod.parallel`), or xx' or xy'
+#' (`tcrossprod.parallel`), depending on whether `y` is provided.
+#' @seealso [getG()] to compute a genomic relationship matrix.
 #' @export
 crossprod.parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel::detectCores()) {
     crossprods(x = x, y = y, use_tcrossprod = FALSE, nTasks = nTasks, nCores = nCores)
 }
 
 
-#' Computes tcrossprod (xy' or xx') in Parallel.
-#'
-#' @param x A matrix-like object, typically `@@geno` of a [BGData-class]
-#' object.
-#' @param y vector or matrix-like object. NULL by default.
-#' @param nTasks The number of tasks the problem should be broken into to be
-#' distributed among `nCores` cores. Defaults to `nCores`.
-#' @param nCores The number of cores (passed to [parallel::mclapply()]).
-#' Defaults to the number of cores as detected by [parallel::detectCores()].
-#' @return xy' or xx' depending on whether y is provided.
+#' @rdname crossprod.parallel
 #' @export
 tcrossprod.parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel::detectCores()) {
     crossprods(x = x, y = y, use_tcrossprod = TRUE, nTasks = nTasks, nCores = nCores)
