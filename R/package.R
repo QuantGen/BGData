@@ -6,6 +6,5 @@
 #' @importClassesFrom LinkedMatrix LinkedMatrix
 #' @importClassesFrom symDMatrix symDMatrix
 #' @importClassesFrom bigmemory big.matrix
-#' @importMethodsFrom symDMatrix diag
 #' @aliases NULL
 NULL
