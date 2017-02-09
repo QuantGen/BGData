@@ -6,7 +6,7 @@ setOldClass("ff_matrix")
 setOldClass("BEDMatrix")
 
 
-#' An abstract S4 class union of matrix-like types.
+#' An Abstract S4 Class Union of Matrix-Like Types.
 #'
 #' [geno-class] is a class union of several matrix-like types, many of them
 #' suitable for very large datasets. Currently supported are
@@ -15,7 +15,7 @@ setOldClass("BEDMatrix")
 setClassUnion("geno", c("LinkedMatrix", "BEDMatrix", "big.matrix", "ff_matrix", "matrix"))
 
 
-#' An S4 class to represent phenotype and genotype data.
+#' An S4 Class to Represent Phenotype and Genotype Data.
 #'
 #' This class is inspired by the phenotype/genotype file format PED and its
 #' binary companion (also known as BED) of
@@ -53,7 +53,7 @@ setClassUnion("geno", c("LinkedMatrix", "BEDMatrix", "big.matrix", "ff_matrix", 
 BGData <- setClass("BGData", slots = c(geno = "geno", pheno = "data.frame", map = "data.frame"))
 
 
-#' Creates a new [BGData-class] instance.
+#' Creates a New BGData Instance.
 #'
 #' This method is run when a [BGData-class] object is created using
 #' `BGData(...)` or `new("BGData", ...)`.
@@ -148,9 +148,9 @@ parsePED <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1
 }
 
 
-#' Creates a [BGData-class] object from a raw PED file (generated with
-#' `--recodeA` in PLINK) or a PED-like file and stores the genotypes in a
-#' [LinkedMatrix::LinkedMatrix-class] that contains memory-mapped `ff` nodes.
+#' Creates a BGData Object From a Raw PED File (Generated with --recodeA in
+#' PLINK) or a PED-Like File and Stores the Genotypes in a LinkedMatrix that
+#' Contains Memory-Mapped ff Nodes.
 #'
 #' [readPED()] assumes that the plaintext file (`fileIn`) contains records of
 #' individuals in rows, and phenotypes, covariates and markers in columns. The
@@ -281,9 +281,8 @@ readPED <- function(fileIn, header, dataType, n = NULL, p = NULL, sep = "", na.s
 }
 
 
-#' Creates an [BGData-class] object from a raw PED file (generated with
-#' `--recodeA` in PLINK) or a PED-like file and stores the genotypes in an
-#' in-memory `matrix`.
+#' Creates an BGData Object from a Raw PED File (Generated with --recodeA in
+#' PLINK) or a PED-Like File and Stores the Genotypes in an In-Memory Matrix.
 #'
 #' [readPED.matrix()] assumes that the plaintext file (`fileIn`) contains
 #' records of individuals in rows, and phenotypes, covariates and markers in
@@ -338,9 +337,8 @@ readPED.matrix <- function(fileIn, header, dataType, n = NULL, p = NULL, sep = "
 }
 
 
-#' Creates a [BGData-class] object from a raw PED file (generated with
-#' `--recodeA` in PLINK) or a PED-like file and stores the genotypes in a
-#' [bigmemory::big.matrix-class].
+#' Creates a BGData Object from a Raw PED File (Generated with --recodeA in
+#' PLINK) or a PED-Like File and Stores the Genotypes in a big.matrix.
 #'
 #' [readPED.matrix()] assumes that the plaintext file (`fileIn`) contains
 #' records of individuals in rows, and phenotypes, covariates and markers in
@@ -424,7 +422,7 @@ readPED.big.matrix <- function(fileIn, header, dataType, n = NULL, p = NULL, sep
 }
 
 
-#' S3 generic to convert other objects into [BGData-class] objects.
+#' S3 Generic to Convert Other Objects into BGData Objects.
 #'
 #' @param x An object.
 #' @param ... Additional arguments (see method).
@@ -435,7 +433,7 @@ as.BGData <- function(x, ...) {
 }
 
 
-#' Converts a [BEDMatrix::BEDMatrix] object to a [BGData-class] object.
+#' Converts a BEDMatrix Object to a BGData Object.
 #'
 #' If a FAM file (which corresponds to the first six columns of a PED file) of
 #' the same name and in the same directory as the BED file exists, the
@@ -552,7 +550,7 @@ as.BGData.BEDMatrix <- function(x, alternatePhenotypeFile = NULL, ...) {
 }
 
 
-#' Loads [BGData-class] (and other) objects from `.RData` files.
+#' Loads BGData (and Other) Objects from .RData Files.
 #'
 #' This function is similar to [base::load()], but also initializes the
 #' different types of objects that the `@@geno` slot of a [BGData-class] object

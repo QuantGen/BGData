@@ -2,9 +2,8 @@
 % Please edit documentation in R/BGData.R
 \name{readPED.matrix}
 \alias{readPED.matrix}
-\title{Creates an \linkS4class{BGData} object from a raw PED file (generated with
-\code{--recodeA} in PLINK) or a PED-like file and stores the genotypes in an
-in-memory \code{matrix}.}
+\title{Creates an BGData Object from a Raw PED File (Generated with --recodeA in
+PLINK) or a PED-Like File and Stores the Genotypes in an In-Memory Matrix.}
 \usage{
 readPED.matrix(fileIn, header, dataType, n = NULL, p = NULL, sep = "",
   na.strings = "NA", nColSkip = 6, idCol = c(1, 2), verbose = FALSE)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{GWAS}
 \alias{GWAS}
-\title{Performs single marker regressions using a \linkS4class{BGData} object.}
+\title{Performs Single Marker Regressions Using a BGData Object.}
 \usage{
 GWAS(formula, data, method, i = seq_len(nrow(data@geno)),
   j = seq_len(ncol(data@geno)), bufferSize = 5000, nBuffers = NULL,

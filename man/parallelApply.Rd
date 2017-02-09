@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{parallelApply}
 \alias{parallelApply}
-\title{Applies a function on each row or column of a matrix in parallel.}
+\title{Applies a Function on Each Row or Column of a Matrix in Parallel.}
 \usage{
 parallelApply(X, MARGIN, FUN, nTasks = nCores,
   nCores = parallel::detectCores(), ...)

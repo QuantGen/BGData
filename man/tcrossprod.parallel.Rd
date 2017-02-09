@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{tcrossprod.parallel}
 \alias{tcrossprod.parallel}
-\title{Computes tcrossprod (xy' or xx') in parallel.}
+\title{Computes tcrossprod (xy' or xx') in Parallel.}
 \usage{
 tcrossprod.parallel(x, y = NULL, nTasks = nCores,
   nCores = parallel::detectCores())
@@ -23,5 +23,5 @@ Defaults to the number of cores as detected by \code{\link[parallel:detectCores]
 xy' or xx' depending on whether y is provided.
 }
 \description{
-Computes tcrossprod (xy' or xx') in parallel.
+Computes tcrossprod (xy' or xx') in Parallel.
 }

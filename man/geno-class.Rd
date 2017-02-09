@@ -3,7 +3,7 @@
 \docType{class}
 \name{geno-class}
 \alias{geno-class}
-\title{An abstract S4 class union of matrix-like types.}
+\title{An Abstract S4 Class Union of Matrix-Like Types.}
 \description{
 \linkS4class{geno} is a class union of several matrix-like types, many of them
 suitable for very large datasets. Currently supported are

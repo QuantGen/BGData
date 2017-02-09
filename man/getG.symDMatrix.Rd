@@ -2,8 +2,8 @@
 % Please edit documentation in R/utils.R
 \name{getG.symDMatrix}
 \alias{getG.symDMatrix}
-\title{Computes a genomic relationship matrix G=xx' without ever loading G in RAM
-by creating a \link[symDMatrix:symDMatrix-class]{symDMatrix::symDMatrix}.}
+\title{Computes a Genomic Relationship Matrix G=xx' without Ever Loading G in RAM
+by Creating a symDMatrix.}
 \usage{
 getG.symDMatrix(X, nBlocks = 5, blockSize = NULL, centers = NULL,
   scales = NULL, centerCol = TRUE, scaleCol = TRUE, scaleG = TRUE,

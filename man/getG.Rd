@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{getG}
 \alias{getG}
-\title{Computes a genomic relationship matrix G=xx'.}
+\title{Computes a Genomic Relationship Matrix G=xx'.}
 \usage{
 getG(X, scaleCol = TRUE, scales = NULL, centerCol = TRUE,
   centers = NULL, scaleG = TRUE, minVar = 1e-05, i = seq_len(nrow(X)),

@@ -2,7 +2,7 @@
 % Please edit documentation in R/BGData.R
 \name{as.BGData.BEDMatrix}
 \alias{as.BGData.BEDMatrix}
-\title{Converts a \link[BEDMatrix:BEDMatrix]{BEDMatrix::BEDMatrix} object to a \linkS4class{BGData} object.}
+\title{Converts a BEDMatrix Object to a BGData Object.}
 \usage{
 \method{as.BGData}{BEDMatrix}(x, alternatePhenotypeFile = NULL, ...)
 }

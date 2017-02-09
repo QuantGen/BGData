@@ -69,7 +69,7 @@ apply2 <- function(X, MARGIN, FUN, ...) {
 }
 
 
-#' Applies a function on each row or column of a matrix in parallel.
+#' Applies a Function on Each Row or Column of a Matrix in Parallel.
 #'
 #' Similar to [base::apply()], designed to carry out operations in parallel.
 #'
@@ -124,8 +124,8 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = nCores, nCores = parallel::de
 }
 
 
-#' Reads chunks of data from a memory-mapped file into memory and applies a
-#' function on each row or column of a matrix in parallel.
+#' Reads Chunks of Data from a Memory-Mapped File into Memory and Applies a
+#' Function on Each Row or Column of a Matrix in Parallel.
 #'
 #' Similar to [base::apply()], designed to bring chunks of data into memory and
 #' carry out operations on them in parallel.
@@ -265,7 +265,7 @@ crossprods <- function(x, y = NULL, use_tcrossprod = FALSE, nTasks = nCores, nCo
 }
 
 
-#' Computes crossprod (x'y or x'x) in parallel.
+#' Computes crossprod (x'y or x'x) in Parallel.
 #'
 #' @param x A matrix-like object, typically `@@geno` of a [BGData-class]
 #' object.
@@ -281,7 +281,7 @@ crossprod.parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel::
 }
 
 
-#' Computes tcrossprod (xy' or xx') in parallel.
+#' Computes tcrossprod (xy' or xx') in Parallel.
 #'
 #' @param x A matrix-like object, typically `@@geno` of a [BGData-class]
 #' object.
@@ -298,7 +298,7 @@ tcrossprod.parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel:
 
 
 
-#' Computes a genomic relationship matrix G=xx'.
+#' Computes a Genomic Relationship Matrix G=xx'.
 #'
 #' Offers options for centering and scaling the columns of x before computing
 #' xx'. If `centerCol=FALSE`, `scaleCol=FALSE` and `scaleG=FALSE`, [getG()]
@@ -513,8 +513,8 @@ getG <- function(X, scaleCol = TRUE, scales = NULL, centerCol = TRUE, centers = 
 }
 
 
-#' Computes a genomic relationship matrix G=xx' without ever loading G in RAM
-#' by creating a [symDMatrix::symDMatrix-class].
+#' Computes a Genomic Relationship Matrix G=xx' without Ever Loading G in RAM
+#' by Creating a symDMatrix.
 #'
 #' Offers options for centering and scaling the columns of x before computing
 #' xx'.
@@ -693,7 +693,7 @@ getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, sc
 }
 
 
-#' Performs single marker regressions using a [BGData-class] object.
+#' Performs Single Marker Regressions Using a BGData Object.
 #'
 #' Implements single marker regressions. The regression model includes all the
 #' covariates specified in the right-hand-side of the `formula` plus one column
@@ -863,7 +863,7 @@ getCoefficients.lmerMod <- function(x) {
 }
 
 
-#' Calculates frequencies of missing values and alleles.
+#' Calculates Frequencies of Missing Values and Alleles.
 #'
 #' @param X A matrix-like object, typically `@@geno` of a [BGData-class]
 #' object.

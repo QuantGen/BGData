@@ -2,7 +2,7 @@
 % Please edit documentation in R/BGData.R
 \name{load.BGData}
 \alias{load.BGData}
-\title{Loads \linkS4class{BGData} (and other) objects from \code{.RData} files.}
+\title{Loads BGData (and Other) Objects from .RData Files.}
 \usage{
 load.BGData(file, envir = parent.frame())
 }
