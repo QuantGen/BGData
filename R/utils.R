@@ -212,11 +212,11 @@ crossprods <- function(x, y = NULL, use_tcrossprod = FALSE, nTasks = nCores, nCo
         dy <- dim(y)
         if (use_tcrossprod) {
             if (dx[2] != ncol(y)) {
-                stop("Error in tcrossprod.parallel: non-conformable arguments.")
+                stop("Error in tcrossprod_parallel: non-conformable arguments.")
             }
         } else {
             if (dx[1] != dy[1]) {
-                stop("Error in crossprod.parallel: non-conformable arguments.")
+                stop("Error in crossprod_parallel: non-conformable arguments.")
             }
         }
     }
@@ -280,18 +280,18 @@ crossprods <- function(x, y = NULL, use_tcrossprod = FALSE, nTasks = nCores, nCo
 #' distributed among `nCores` cores. Defaults to `nCores`.
 #' @param nCores The number of cores (passed to [parallel::mclapply()]).
 #' Defaults to the number of cores as detected by [parallel::detectCores()].
-#' @return x'x or x'y (`crossprod.parallel`), or xx' or xy'
-#' (`tcrossprod.parallel`), depending on whether `y` is provided.
+#' @return x'x or x'y (`crossprod_parallel`), or xx' or xy'
+#' (`tcrossprod_parallel`), depending on whether `y` is provided.
 #' @seealso [getG()] to compute a genomic relationship matrix.
 #' @export
-crossprod.parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel::detectCores()) {
+crossprod_parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel::detectCores()) {
     crossprods(x = x, y = y, use_tcrossprod = FALSE, nTasks = nTasks, nCores = nCores)
 }
 
 
-#' @rdname crossprod.parallel
+#' @rdname crossprod_parallel
 #' @export
-tcrossprod.parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel::detectCores()) {
+tcrossprod_parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel::detectCores()) {
     crossprods(x = x, y = y, use_tcrossprod = TRUE, nTasks = nTasks, nCores = nCores)
 }
 
@@ -651,7 +651,7 @@ getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, sc
                 Xj[, k] <- xjk
             }
 
-            Gij <- tcrossprod.parallel(x = Xi, y = Xj, nTasks = nTasks, nCores = nCores)
+            Gij <- tcrossprod_parallel(x = Xi, y = Xj, nTasks = nTasks, nCores = nCores)
 
             blockName <- paste0("data_", padDigits(r, nBlocks), "_", padDigits(s, nBlocks), ".bin")
             block <- ff::ff(dim = dim(Gij), vmode = vmode, initdata = as.vector(Gij), filename = blockName, dimnames = list(rownames(X)[rowIndex_r], rownames(X)[rowIndex_s]))
