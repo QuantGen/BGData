@@ -114,7 +114,7 @@ pedDims <- function(fileIn, header, n, p, sep = "", nColSkip = 6) {
 parsePED <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1, 2), sep = "", na.strings = "NA", verbose = FALSE, ...) {
 
     p <- ncol(BGData@geno)
-    pedFile <- gzfile(fileIn, open = "r")
+    pedFile <- file(fileIn, open = "r")
 
     # Update colnames
     if (header) {

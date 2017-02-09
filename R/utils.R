@@ -897,11 +897,7 @@ summarize <- function(X, i = seq_len(nrow(X)), j = seq_len(ncol(X)), bufferSize 
 
 
 getLineCount <- function(path, header) {
-    # gzfile and readLines throw some warnings, but since it works, let's disable
-    # warnings for this block
-    warnLevel <- unlist(options("warn"))
-    options(warn = -1)
-    file <- gzfile(path, open = "r")
+    file <- file(path, open = "r")
     n <- 0
     while (length(readLines(file, n = 1)) > 0) {
         n <- n + 1
@@ -910,14 +906,12 @@ getLineCount <- function(path, header) {
         n <- n - 1
     }
     close(file)
-    # restore previous warning level
-    options(warn = warnLevel)
     return(n)
 }
 
 
 getFileHeader <- function(path, sep = "") {
-    file <- gzfile(path, open = "r")
+    file <- file(path, open = "r")
     header <- scan(file, nlines = 1, what = character(), sep = sep, quiet = TRUE)
     close(file)
     return(header)
