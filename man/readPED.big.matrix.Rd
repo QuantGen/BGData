@@ -2,9 +2,9 @@
 % Please edit documentation in R/BGData.R
 \name{readPED.big.matrix}
 \alias{readPED.big.matrix}
-\title{Creates a \code{\link[=BGData-class]{BGData}} object from a raw PED file
-(generated with \code{--recodeA} in PLINK) or a PED-like file and stores the
-genotypes in a \code{\link[=big.matrix-class]{big.matrix}}.}
+\title{Creates a \linkS4class{BGData} object from a raw PED file (generated with
+\code{--recodeA} in PLINK) or a PED-like file and stores the genotypes in a
+\link[bigmemory:big.matrix-class]{bigmemory::big.matrix}.}
 \usage{
 readPED.big.matrix(fileIn, header, dataType, n = NULL, p = NULL, sep = "",
   na.strings = "NA", nColSkip = 6, idCol = c(1, 2),
@@ -16,8 +16,8 @@ readPED.big.matrix(fileIn, header, dataType, n = NULL, p = NULL, sep = "",
 
 \item{header}{If TRUE, the file contains a header.}
 
-\item{dataType}{The coding of genotypes. Use \code{character()} for A/C/G/T
-or \code{integer()} for numeric coding.}
+\item{dataType}{The coding of genotypes. Use \code{character()} for A/C/G/T or
+\code{integer()} for numeric coding.}
 
 \item{n}{The number of individuals.}
 
@@ -25,8 +25,8 @@ or \code{integer()} for numeric coding.}
 
 \item{sep}{The field separator character. Values on each line of the file
 are separated by this character. If \code{sep = ""} (the default for
-\code{readPED.big.matrix}) the separator is "white space", that is one or
-more spaces, tabs, newlines or carriage returns.}
+\code{\link[=readPED.big.matrix]{readPED.big.matrix()}} the separator is "white space", that is one or more
+spaces, tabs, newlines or carriage returns.}
 
 \item{na.strings}{The character string used in the plaintext file to denote
 missing value.}
@@ -39,34 +39,30 @@ both columns will be concatenated with "_".}
 
 \item{folderOut}{The path to the folder where to save the binary files.}
 
-\item{verbose}{Whether progress updates will be posted. Defaults to
-\code{FALSE}.}
+\item{verbose}{Whether progress updates will be posted. Defaults to \code{FALSE}.}
 }
 \value{
-Returns a \code{\link[=BGData-class]{BGData}} object.
+Returns a \linkS4class{BGData} object.
 }
 \description{
-\code{readPED.matrix} assumes that the plaintext file (\code{fileIn})
-contains records of individuals in rows, and phenotypes, covariates and
-markers in columns. The columns included in columns \code{seq_len(nColSkip)} are
-used to populate the slot \code{@pheno} of a
-\code{\link[=BGData-class]{BGData}} object, and the remaining columns are
-used to fill the slot \code{@geno}. If the first row contains a header
-(\code{header=TRUE}), data in this row is used to determine variables names
-for \code{@pheno} and marker names for \code{@map} and \code{@geno}.
+\code{\link[=readPED.matrix]{readPED.matrix()}} assumes that the plaintext file (\code{fileIn}) contains
+records of individuals in rows, and phenotypes, covariates and markers in
+columns. The columns included in columns \code{seq_len(nColSkip)} are used to
+populate the slot \code{@pheno} of a \linkS4class{BGData} object, and the remaining
+columns are used to fill the slot \code{@geno}. If the first row contains a
+header (\code{header=TRUE}), data in this row is used to determine variables
+names for \code{@pheno} and marker names for \code{@map} and \code{@geno}.
 }
 \details{
-Genotypes are stored in a filebacked
-\code{\link[=big.matrix-class]{big.matrix}} object. \code{readPED.big.matrix}
-creates a folder (see \code{folderOut}) that contains the binary flat file
-(named \code{BGData.bin}), a descriptor file (named \code{BGData.desc}), and
-an external representation of the \code{\link[=BGData-class]{BGData}} object
-in \code{BGData.RData}. A \code{\link[=BGData-class]{BGData}} object can be
-reloaded using \code{load.BGData} (the regular \code{load} function will not
-work unless the \code{\link[=big.matrix-class]{big.matrix}} instance is
-manually attached using \code{\link[bigmemory]{attach.big.matrix}}).
+Genotypes are stored in a filebacked \link[bigmemory:big.matrix-class]{bigmemory::big.matrix} object.
+\code{\link[=readPED.big.matrix]{readPED.big.matrix()}} creates a folder (see \code{folderOut}) that contains the
+binary flat file (named \code{BGData.bin}), a descriptor file (named
+\code{BGData.desc}), and an external representation of the \linkS4class{BGData} object
+in \code{BGData.RData}. A \linkS4class{BGData} object can be reloaded using
+\code{\link[=load.BGData]{load.BGData()}} (the regular \code{\link[base:load]{base::load()}} function will not work unless
+the \link[bigmemory:big.matrix-class]{bigmemory::big.matrix} instance is manually attached using
+\code{\link[bigmemory:attach.big.matrix]{bigmemory::attach.big.matrix()}}).
 }
 \seealso{
-\code{\link[=BGData-class]{BGData}}
+\linkS4class{BGData}
 }
-

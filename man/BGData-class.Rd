@@ -2,47 +2,44 @@
 % Please edit documentation in R/BGData.R
 \docType{class}
 \name{BGData-class}
-\alias{BGData}
 \alias{BGData-class}
+\alias{BGData}
 \title{An S4 class to represent phenotype and genotype data.}
 \description{
 This class is inspired by the phenotype/genotype file format PED and its
 binary companion (also known as BED) of
-\href{http://pngu.mgh.harvard.edu/~purcell/plink/}{PLINK}. It is used by
-several functions of this package such as \code{\link{GWAS}} for performing a
-Genome Wide Association Study or \code{\link{getG}} for calculating a genomic
-relationship matrix.
+\href{http://pngu.mgh.harvard.edu/~purcell/plink/}{PLINK}. It is used by several
+functions of this package such as \code{\link[=GWAS]{GWAS()}} for performing a Genome Wide
+Association Study or \code{\link[=getG]{getG()}} for calculating a genomic relationship matrix.
 }
 \details{
-There are several ways to create an instance of this class:  \enumerate{
-\item from a raw PED file (or a PED-like file) using \code{\link{readPED}},
-\code{\link{readPED.matrix}}, or \code{\link{readPED.big.matrix}}. \item from
-a BED file using \code{\link[=as.BGData.BEDMatrix]{as.BGData}}. \item from
-arbitrary phenotype/genotype data using one of the constructors
-\code{BGData(...)} or \code{new("BGData",...)}. \item from a previously saved
-\code{BGData} object using \code{\link{load.BGData}}. \item from multiple
-files (even a mixture of different file types) using
-\code{\link[=LinkedMatrix-class]{LinkedMatrix}} }
+There are several ways to create an instance of this class:
+\itemize{
+\item from a raw PED file (or a PED-like file) using \code{\link[=readPED]{readPED()}},
+\code{\link[=readPED.matrix]{readPED.matrix()}}, or \code{\link[=readPED.big.matrix]{readPED.big.matrix()}}.
+\item from a BED file using \code{\link[=as.BGData]{as.BGData()}}.
+\item from arbitrary phenotype/genotype data using one of the constructors
+\code{[BGData(...)][initialize,BGData-method]} or \code{[new("BGData", ...)][initialize,BGData-method]}.
+\item from a previously saved \linkS4class{BGData} object using \code{\link[=load.BGData]{load.BGData()}}.
+\item from multiple files (even a mixture of different file types) using
+\link[LinkedMatrix:LinkedMatrix-class]{LinkedMatrix::LinkedMatrix}.
+}
 
 A PED file can be recoded to a raw PED in
-\href{http://pngu.mgh.harvard.edu/~purcell/plink/}{PLINK} using \code{plink
---file myfile --recodeA}, or converted to a BED file using \code{plink --file
-myfile --make-bed}. Conversely, a BED file can be transformed back to a PED
-file using \code{plink --bfile myfile --recode} or to a raw PED file using
-\code{plink --bfile myfile --recodeA} without losing information.
+\href{http://pngu.mgh.harvard.edu/~purcell/plink/}{PLINK} using \code{plink --file myfile --recodeA}, or converted to a BED file using \code{plink --file myfile --make-bed}. Conversely, a BED file can be transformed back to a PED file
+using \code{plink --bfile myfile --recode} or to a raw PED file using \code{plink --bfile myfile --recodeA} without losing information.
 }
 \section{Slots}{
 
 \describe{
-\item{\code{geno}}{A \code{geno} object that contains genotypes. \code{geno} is a
-class union of several matrix-like objects, many of them suitable for very
-large datasets. Currently supported are
-\code{\link[=LinkedMatrix-class]{LinkedMatrix}}, \code{BEDMatrix},
-\code{\link[=big.matrix-class]{big.matrix}}, \code{ff_matrix}, and
+\item{\code{geno}}{A \linkS4class{geno} object that contains genotypes. \linkS4class{geno} is a
+class union of several matrix-like types, many of them suitable for very
+large datasets. Currently supported are \link[LinkedMatrix:LinkedMatrix-class]{LinkedMatrix::LinkedMatrix},
+\link[BEDMatrix:BEDMatrix]{BEDMatrix::BEDMatrix}, \link[bigmemory:big.matrix-class]{bigmemory::big.matrix}, \code{ff_matrix}, and
 \code{matrix}.}
 
-\item{\code{pheno}}{A \code{\link{data.frame}} that contains phenotypes.}
+\item{\code{pheno}}{A \code{data.frame} that contains phenotypes.}
 
-\item{\code{map}}{A \code{\link{data.frame}} that contains a genetic map.}
+\item{\code{map}}{A \code{data.frame} that contains a genetic map.}
 }}
 

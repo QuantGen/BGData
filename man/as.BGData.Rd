@@ -2,8 +2,7 @@
 % Please edit documentation in R/BGData.R
 \name{as.BGData}
 \alias{as.BGData}
-\title{S3 generic to convert other objects into \code{\link[=BGData-class]{BGData}}
-objects.}
+\title{S3 generic to convert other objects into \linkS4class{BGData} objects.}
 \usage{
 as.BGData(x, ...)
 }
@@ -16,7 +15,5 @@ as.BGData(x, ...)
 A BGData object.
 }
 \description{
-S3 generic to convert other objects into \code{\link[=BGData-class]{BGData}}
-objects.
+S3 generic to convert other objects into \linkS4class{BGData} objects.
 }
-

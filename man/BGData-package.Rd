@@ -6,4 +6,3 @@
 \description{
 BGData: Memory Mapped Matrices and Data-Structures for Genomic Data for R
 }
-

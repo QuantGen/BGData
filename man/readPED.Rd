@@ -2,10 +2,9 @@
 % Please edit documentation in R/BGData.R
 \name{readPED}
 \alias{readPED}
-\title{Creates a \code{\link[=BGData-class]{BGData}} object from a raw PED file
-(generated with \code{--recodeA} in PLINK) or a PED-like file and stores the
-genotypes in a \code{\link[=LinkedMatrix-class]{LinkedMatrix}} that contains
-memory-mapped \code{ff} nodes.}
+\title{Creates a \linkS4class{BGData} object from a raw PED file (generated with
+\code{--recodeA} in PLINK) or a PED-like file and stores the genotypes in a
+\link[LinkedMatrix:LinkedMatrix-class]{LinkedMatrix::LinkedMatrix} that contains memory-mapped \code{ff} nodes.}
 \usage{
 readPED(fileIn, header, dataType, n = NULL, p = NULL, sep = "",
   na.strings = "NA", nColSkip = 6, idCol = c(1, 2), nNodes = NULL,
@@ -18,19 +17,18 @@ readPED(fileIn, header, dataType, n = NULL, p = NULL, sep = "",
 
 \item{header}{If TRUE, the file contains a header.}
 
-\item{dataType}{The coding of genotypes. Use \code{integer()} or
-\code{double()} for numeric coding. Character coding is currently not
-supported: use the \code{--recodeA} option of PLINK to convert the PED file
-into a raw file.}
+\item{dataType}{The coding of genotypes. Use \code{integer()} or \code{double()} for
+numeric coding. Character coding is currently not supported: use the
+\code{--recodeA} option of PLINK to convert the PED file into a raw file.}
 
 \item{n}{The number of individuals.}
 
 \item{p}{The number of markers.}
 
 \item{sep}{The field separator character. Values on each line of the file
-are separated by this character. If \code{sep = ""} (the default for
-\code{readPED}) the separator is "white space", that is one or more spaces,
-tabs, newlines or carriage returns.}
+are separated by this character. If \code{sep = ""} (the default for \code{\link[=readPED]{readPED()}}
+the separator is "white space", that is one or more spaces, tabs, newlines
+or carriage returns.}
 
 \item{na.strings}{The character string used in the plaintext file to denote
 missing value.}
@@ -44,57 +42,50 @@ both columns will be concatenated with "_".}
 \item{nNodes}{The number of nodes to create.}
 
 \item{linked.by}{If \code{columns} a column-linked matrix
-(\code{\link[=ColumnLinkedMatrix-class]{ColumnLinkedMatrix}}) is created,
-if \code{rows} a row-linked matrix
-(\code{\link[=RowLinkedMatrix-class]{RowLinkedMatrix}}).}
+(\link[LinkedMatrix:ColumnLinkedMatrix-class]{LinkedMatrix::ColumnLinkedMatrix}) is created, if \code{rows} a
+row-linked matrix (\link[LinkedMatrix:RowLinkedMatrix-class]{LinkedMatrix::RowLinkedMatrix}).}
 
 \item{folderOut}{The path to the folder where to save the binary files.
-Defaults to the name of the input file (\code{fileIn}) without extension
-prefixed with "BGData_".}
+Defaults to the name of the input file (\code{fileIn}) without extension prefixed
+with "BGData_".}
 
-\item{dimorder}{The physical layout of the underlying \code{ff} object of
-each node.}
+\item{dimorder}{The physical layout of the underlying \code{ff} object of each
+node.}
 
-\item{verbose}{Whether progress updates will be posted. Defaults to
-\code{FALSE}.}
+\item{verbose}{Whether progress updates will be posted. Defaults to \code{FALSE}.}
 }
 \description{
-\code{readPED} assumes that the plaintext file (\code{fileIn}) contains
-records of individuals in rows, and phenotypes, covariates and markers in
-columns. The columns included in the first couple of columns
-(\code{seq_len(nColSkip)}) are used to populate the \code{@pheno} slot of a
-\code{\link[=BGData-class]{BGData}} object, and the remaining columns are
-used to fill the \code{@geno} slot. If the first row contains a header
-(\code{header=TRUE}), data in this row is used to determine variables names
-for \code{@pheno} and marker names for \code{@map} and \code{@geno}.
+\code{\link[=readPED]{readPED()}} assumes that the plaintext file (\code{fileIn}) contains records of
+individuals in rows, and phenotypes, covariates and markers in columns. The
+columns included in the first couple of columns (\code{seq_len(nColSkip)}) are
+used to populate the \code{@pheno} slot of a \linkS4class{BGData} object, and the
+remaining columns are used to fill the \code{@geno} slot. If the first row
+contains a header (\code{header=TRUE}), data in this row is used to determine
+variables names for \code{@pheno} and marker names for \code{@map} and \code{@geno}.
 }
 \details{
-Genotypes are stored in a \code{\link[=LinkedMatrix-class]{LinkedMatrix}}
-object where each node is an \code{ff} instance rather than a single
-\code{ff} object. This is because the array size in \code{ff} is limited to
-the largest integer which can be represented on the system
-(\code{.Machine$integer.max}) and for genetic data this limitation is often
-exceeded. The \code{\link[=LinkedMatrix-class]{LinkedMatrix}} package makes
-it possible to link several \code{ff} files together by columns or by rows
-and treat them similarly to a single matrix. By default a
-\code{\link[=ColumnLinkedMatrix-class]{ColumnLinkedMatrix}} is used for
-\code{@geno}, but the user can modify this using the \code{linked.by}
-argument. The number of nodes to generate is either specified by the user
-using the \code{nNodes} argument or determined internally so that each
-\code{ff} object has a number of cells that is smaller than
-\code{.Machine$integer.max / 1.2}.
+Genotypes are stored in a \link[LinkedMatrix:LinkedMatrix-class]{LinkedMatrix::LinkedMatrix} object where
+each node is an \code{ff} instance rather than a single \code{ff} object. This is
+because the array size in \code{ff} is limited to the largest integer which can
+be represented on the system (\code{.Machine$integer.max}) and for genetic data
+this limitation is often exceeded. The \link[LinkedMatrix:LinkedMatrix-class]{LinkedMatrix::LinkedMatrix}
+package makes it possible to link several \code{ff} files together by columns or
+by rows and treat them similarly to a single matrix. By default a
+\link[LinkedMatrix:ColumnLinkedMatrix-class]{LinkedMatrix::ColumnLinkedMatrix} is used for \code{@geno}, but the user
+can modify this using the \code{linked.by} argument. The number of nodes to
+generate is either specified by the user using the \code{nNodes} argument or
+determined internally so that each \code{ff} object has a number of cells that is
+smaller than \code{.Machine$integer.max / 1.2}.
 
-\code{readPED} creates a folder (see \code{folderOut}) that contains the
-binary flat files (named \code{geno_*.bin}) and an external representation of
-the \code{\link[=BGData-class]{BGData}} object in \code{BGData.RData}. A
-\code{\link[=BGData-class]{BGData}} object can be reloaded using
-\code{load.BGData} (the regular \code{load} function will only work if the
-working directory is set to the path that contains the binary flat files).
+\code{\link[=readPED]{readPED()}} creates a folder (see \code{folderOut}) that contains the binary flat
+files (named \code{geno_*.bin}) and an external representation of the
+\linkS4class{BGData} object in \code{BGData.RData}. A \linkS4class{BGData} object can be
+reloaded using \code{\link[=load.BGData]{load.BGData()}} (the regular \code{\link[base:load]{base::load()}} function will
+only work if the working directory is set to the path that contains the
+binary flat files).
 }
 \seealso{
-\code{\link[=BGData-class]{BGData}},
-  \code{\link[=LinkedMatrix-class]{LinkedMatrix}},
-  \code{\link[=ColumnLinkedMatrix-class]{ColumnLinkedMatrix}},
-  \code{\link[=RowLinkedMatrix-class]{RowLinkedMatrix}}, \code{\link[ff]{ff}}
+\linkS4class{BGData}, \link[LinkedMatrix:LinkedMatrix-class]{LinkedMatrix::LinkedMatrix},
+\link[LinkedMatrix:ColumnLinkedMatrix-class]{LinkedMatrix::ColumnLinkedMatrix},
+\link[LinkedMatrix:RowLinkedMatrix-class]{LinkedMatrix::RowLinkedMatrix}, \code{\link[ff:ff]{ff::ff()}}
 }
-

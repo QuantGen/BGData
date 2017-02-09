@@ -10,58 +10,54 @@ getG(X, scaleCol = TRUE, scales = NULL, centerCol = TRUE,
   nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE)
 }
 \arguments{
-\item{X}{A matrix-like object, typically \code{@geno} of a
-\code{\link[=BGData-class]{BGData}} object.}
+\item{X}{A matrix-like object, typically \code{@geno} of a \linkS4class{BGData}
+object.}
 
 \item{scaleCol}{TRUE/FALSE whether columns must be scaled before computing
 xx'.}
 
 \item{scales}{Precomputed scales if i2 is used.}
 
-\item{centerCol}{TRUE/FALSE whether columns must be centered before computing
-xx'.}
+\item{centerCol}{TRUE/FALSE whether columns must be centered before
+computing xx'.}
 
 \item{centers}{Precomputed centers if i2 is used.}
 
 \item{scaleG}{TRUE/FALSE whether xx' must be scaled.}
 
-\item{minVar}{Columns with variance lower than this value will not be used in
-the computation (only if \code{scaleCol} is set).}
+\item{minVar}{Columns with variance lower than this value will not be used
+in the computation (only if \code{scaleCol} is set).}
 
-\item{i}{(integer, boolean or character) Indicates which rows of \code{X}
-should be used. By default, all rows are used.}
+\item{i}{(integer, boolean or character) Indicates which rows of \code{X} should
+be used. By default, all rows are used.}
 
-\item{j}{(integer, boolean or character) Indicates which columns of
-\code{X} should be used. By default, all columns are used.}
+\item{j}{(integer, boolean or character) Indicates which columns of \code{X}
+should be used. By default, all columns are used.}
 
-\item{i2}{(integer, boolean or character) Indicates which rows should be used
-to divide matrix into blocks.}
+\item{i2}{(integer, boolean or character) Indicates which rows should be
+used to divide matrix into blocks.}
 
-\item{bufferSize}{The number of columns of \code{X} that are brought into
-RAM for processing. Overwrites \code{nBuffers}. If both parameters are
-\code{NULL}, all columns of \code{X} are used. Defaults to 5000.}
+\item{bufferSize}{The number of columns of \code{X} that are brought into RAM for
+processing. Overwrites \code{nBuffers}. If both parameters are \code{NULL}, all
+columns of \code{X} are used. Defaults to 5000.}
 
 \item{nBuffers}{The number of partitions of the columns of \code{X} that are
-brought into RAM for processing. Is overwritten by \code{bufferSize}. If
-both parameters are \code{NULL}, all columns of \code{X} are used.}
+brought into RAM for processing. Is overwritten by \code{bufferSize}. If both
+parameters are \code{NULL}, all columns of \code{X} are used.}
 
 \item{nTasks}{The number of tasks the problem should be broken into to be
 distributed among \code{nCores} cores. Defaults to \code{nCores}.}
 
-\item{nCores}{The number of cores (passed to
-\code{\link[parallel]{mclapply}}). Defaults to the number of cores as
-detected by \code{\link[parallel]{detectCores}}).}
+\item{nCores}{The number of cores (passed to \code{\link[parallel:mclapply]{parallel::mclapply()}}).
+Defaults to the number of cores as detected by \code{\link[parallel:detectCores]{parallel::detectCores()}}.}
 
-\item{verbose}{Whether progress updates will be posted. Defaults to
-\code{TRUE}.}
+\item{verbose}{Whether progress updates will be posted. Defaults to \code{TRUE}.}
 }
 \value{
 A positive semi-definite symmetric numeric matrix.
 }
 \description{
 Offers options for centering and scaling the columns of x before computing
-xx'. If \code{centerCol=FALSE}, \code{scaleCol=FALSE} and
-\code{scaleG=FALSE}, \code{getG} produces the same outcome than
-\code{tcrossprod}.
+xx'. If \code{centerCol=FALSE}, \code{scaleCol=FALSE} and \code{scaleG=FALSE}, \code{\link[=getG]{getG()}}
+produces the same outcome than \code{\link[base:tcrossprod]{base::tcrossprod()}}.
 }
-

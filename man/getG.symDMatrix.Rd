@@ -2,8 +2,8 @@
 % Please edit documentation in R/utils.R
 \name{getG.symDMatrix}
 \alias{getG.symDMatrix}
-\title{Computes a genomic relationship matrix G=xx' without ever loading G in RAM by
-creating a \code{\link[=symDMatrix-class]{symDMatrix}}.}
+\title{Computes a genomic relationship matrix G=xx' without ever loading G in RAM
+by creating a \link[symDMatrix:symDMatrix-class]{symDMatrix::symDMatrix}.}
 \usage{
 getG.symDMatrix(X, nBlocks = 5, blockSize = NULL, centers = NULL,
   scales = NULL, centerCol = TRUE, scaleCol = TRUE, scaleG = TRUE,
@@ -12,8 +12,8 @@ getG.symDMatrix(X, nBlocks = 5, blockSize = NULL, centers = NULL,
   nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE)
 }
 \arguments{
-\item{X}{A matrix-like object, typically \code{@geno} of a
-\code{\link[=BGData-class]{BGData}} object.}
+\item{X}{A matrix-like object, typically \code{@geno} of a \linkS4class{BGData}
+object.}
 
 \item{nBlocks}{The number of blocks.}
 
@@ -23,8 +23,8 @@ getG.symDMatrix(X, nBlocks = 5, blockSize = NULL, centers = NULL,
 
 \item{scales}{Precomputed scales.}
 
-\item{centerCol}{TRUE/FALSE whether columns must be centered before computing
-xx'.}
+\item{centerCol}{TRUE/FALSE whether columns must be centered before
+computing xx'.}
 
 \item{scaleCol}{TRUE/FALSE whether columns must be scaled before computing
 xx'.}
@@ -32,29 +32,27 @@ xx'.}
 \item{scaleG}{TRUE/FALSE whether xx' must be scaled.}
 
 \item{folderOut}{The path to the folder where to save the
-\code{\link[=symDMatrix-class]{symDMatrix}} object. Defaults to a random
-string prefixed with "symDMatrix_".}
+\link[symDMatrix:symDMatrix-class]{symDMatrix::symDMatrix} object. Defaults to a random string prefixed
+with "symDMatrix_".}
 
 \item{vmode}{vmode of \code{ff} objects.}
 
-\item{saveRData}{Whether to save an RData file to easily reload
-\code{\link[=symDMatrix-class]{symDMatrix}}}
+\item{saveRData}{Whether to save an RData file to easily reload the
+\link[symDMatrix:symDMatrix-class]{symDMatrix::symDMatrix} object.}
 
-\item{i}{(integer, boolean or character) Indicates which rows of \code{X}
-should be used. By default, all rows are used.}
+\item{i}{(integer, boolean or character) Indicates which rows of \code{X} should
+be used. By default, all rows are used.}
 
-\item{j}{(integer, boolean or character) Indicates which columns of
-\code{X} should be used. By default, all columns are used.}
+\item{j}{(integer, boolean or character) Indicates which columns of \code{X}
+should be used. By default, all columns are used.}
 
 \item{nTasks}{The number of tasks the problem should be broken into to be
 distributed among \code{nCores} cores. Defaults to \code{nCores}.}
 
-\item{nCores}{The number of cores (passed to
-\code{\link[parallel]{mclapply}}). Defaults to the number of cores as
-detected by \code{\link[parallel]{detectCores}}).}
+\item{nCores}{The number of cores (passed to \code{\link[parallel:mclapply]{parallel::mclapply()}}).
+Defaults to the number of cores as detected by \code{\link[parallel:detectCores]{parallel::detectCores()}}.}
 
-\item{verbose}{Whether progress updates will be posted. Defaults to
-\code{TRUE}.}
+\item{verbose}{Whether progress updates will be posted. Defaults to \code{TRUE}.}
 }
 \value{
 A positive semi-definite symmetric numeric matrix.
@@ -63,4 +61,3 @@ A positive semi-definite symmetric numeric matrix.
 Offers options for centering and scaling the columns of x before computing
 xx'.
 }
-

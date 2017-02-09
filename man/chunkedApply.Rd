@@ -10,57 +10,50 @@ chunkedApply(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(X)),
   nCores = parallel::detectCores(), verbose = FALSE, ...)
 }
 \arguments{
-\item{X}{A matrix-like object, typically \code{@geno} of a
-\code{\link[=BGData-class]{BGData}} object.}
+\item{X}{A matrix-like object, typically \code{@geno} of a \linkS4class{BGData}
+object.}
 
 \item{MARGIN}{The subscripts which the function will be applied over. 1
 indicates rows, 2 indicates columns.}
 
 \item{FUN}{The function to be applied.}
 
-\item{i}{(integer, boolean or character) Indicates which rows of \code{X}
-should be used. By default, all rows are used.}
+\item{i}{(integer, boolean or character) Indicates which rows of \code{X} should
+be used. By default, all rows are used.}
 
-\item{j}{(integer, boolean or character) Indicates which columns of
-\code{X} should be used. By default, all columns are used.}
+\item{j}{(integer, boolean or character) Indicates which columns of \code{X}
+should be used. By default, all columns are used.}
 
-\item{bufferSize}{The number of rows or columns of \code{X} that are brought
-into RAM for processing. Overwrites \code{nBuffers}. If both parameters are
-\code{NULL}, all elements in \code{i} or \code{j} are used. Defaults to
-5000.}
+\item{bufferSize}{The number of rows or columns of \code{X} that are brought into
+RAM for processing. Overwrites \code{nBuffers}. If both parameters are \code{NULL},
+all elements in \code{i} or \code{j} are used. Defaults to 5000.}
 
-\item{nBuffers}{The number of partitions of the rows or columns of \code{X}
-that are brought into RAM for processing. Is overwritten by
-\code{bufferSize}. If both parameters are \code{NULL}, all elements in
-\code{i} or \code{j} are used.}
+\item{nBuffers}{The number of partitions of the rows or columns of \code{X} that
+are brought into RAM for processing. Is overwritten by \code{bufferSize}. If both
+parameters are \code{NULL}, all elements in \code{i} or \code{j} are used.}
 
 \item{nTasks}{The number of tasks the problem should be broken into to be
 distributed among \code{nCores} cores. Defaults to \code{nCores}.}
 
-\item{nCores}{The number of cores (passed to
-\code{\link[parallel]{mclapply}}). Defaults to the number of cores as
-detected by \code{\link[parallel]{detectCores}}).}
+\item{nCores}{The number of cores (passed to \code{\link[parallel:mclapply]{parallel::mclapply()}}).
+Defaults to the number of cores as detected by \code{\link[parallel:detectCores]{parallel::detectCores()}}.}
 
-\item{verbose}{Whether progress updates will be posted. Defaults to
-\code{FALSE}.}
+\item{verbose}{Whether progress updates will be posted. Defaults to \code{FALSE}.}
 
-\item{...}{Additional arguments to be passed to \code{parallelApply}.}
+\item{...}{Additional arguments to be passed to \code{\link[=parallelApply]{parallelApply()}}.}
 }
 \description{
-Similar to \code{apply}, designed to bring chunks of data into memory and
+Similar to \code{\link[base:apply]{base::apply()}}, designed to bring chunks of data into memory and
 carry out operations on them in parallel.
 }
 \details{
-\code{bufferSize} and \code{nTasks} have to be chosen carefully to avoid
-running out of memory. As a rule of thumb, at least around
-\code{object_size(buffer) + (nCores * (object_size(buffer) / nTasks)) +
-object_size(result)} MB of total memory will be needed, not including
-potential copies of your data that might be created (for example \code{lsfit}
-runs \code{cbind(1, X)}). Therefore, for 20 nodes and 20 tasks you will need
-at least \code{2 * object_size(buffer)} MB, for 20 nodes and 40 tasks
-\code{1.5 * object_size(buffer)} MB, etc.
+\code{bufferSize} and \code{nTasks} have to be chosen carefully to avoid running out
+of memory. As a rule of thumb, at least around \code{object_size(buffer) +
+(nCores * (object_size(buffer) / nTasks)) + object_size(result)} MB of total
+memory will be needed, not including potential copies of your data that
+might be created (for example \code{\link[stats:lsfit]{stats::lsfit()}} runs \code{cbind(1, X)}).
+Therefore, for 20 nodes and 20 tasks you will need at least \code{2 * object_size(buffer)} MB, for 20 nodes and 40 tasks \code{1.5 * object_size(buffer)} MB, etc.
 
 This function is only useful for memory-mapped files. For data that is
-already in memory, use \code{\link{parallelApply}} directly.
+already in memory, use \code{\link[=parallelApply]{parallelApply()}} directly.
 }
-

@@ -3,32 +3,29 @@
 \docType{methods}
 \name{initialize,BGData-method}
 \alias{initialize,BGData-method}
-\title{Creates a new \code{\link[=BGData-class]{BGData}} instance.}
+\title{Creates a new \linkS4class{BGData} instance.}
 \usage{
 \S4method{initialize}{BGData}(.Object, geno, pheno, map)
 }
 \arguments{
-\item{.Object}{The \code{\link[=BGData-class]{BGData}} instance to be
-initialized. This argument is passed in by R and can be ignored, but still
-needs to be documented.}
+\item{.Object}{The \linkS4class{BGData} instance to be initialized. This argument
+is passed in by R and can be ignored, but still needs to be documented.}
 
-\item{geno}{A \code{geno} object that contains genotypes. \code{geno} is a
-class union of several matrix-like objects, many of them suitable for very
-large datasets. Currently supported are
-\code{\link[=LinkedMatrix-class]{LinkedMatrix}}, \code{BEDMatrix},
-\code{\link[=big.matrix-class]{big.matrix}}, \code{ff_matrix}, and
+\item{geno}{A \linkS4class{geno} object that contains genotypes. \linkS4class{geno} is a
+class union of several matrix-like types, many of them suitable for very
+large datasets. Currently supported are \link[LinkedMatrix:LinkedMatrix-class]{LinkedMatrix::LinkedMatrix},
+\link[BEDMatrix:BEDMatrix]{BEDMatrix::BEDMatrix}, \link[bigmemory:big.matrix-class]{bigmemory::big.matrix}, \code{ff_matrix}, and
 \code{matrix}.}
 
-\item{pheno}{A \code{\link{data.frame}} that contains phenotypes. A stub that
-only contains an \code{IID} column populated with the rownames of
-\code{@geno} will be generated if missing.}
+\item{pheno}{A \code{data.frame} that contains phenotypes. A stub that only
+contains an \code{IID} column populated with the rownames of \code{@geno} will be
+generated if missing.}
 
-\item{map}{A \code{\link{data.frame}} that contains a genetic map. A stub
-that only contains a \code{mrk} column populated with the colnames of
-\code{@geno} will be generated if missing.}
+\item{map}{A \code{data.frame} that contains a genetic map. A stub that only
+contains a \code{mrk} column populated with the colnames of \code{@geno} will be
+generated if missing.}
 }
 \description{
-This method is run when a \code{\link[=BGData-class]{BGData}} object is
-created using \code{BGData(...)} or \code{new("BGData",...)}.
+This method is run when a \linkS4class{BGData} object is created using
+\code{BGData(...)} or \code{new("BGData", ...)}.
 }
-

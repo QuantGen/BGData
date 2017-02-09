@@ -8,22 +8,20 @@ crossprod.parallel(x, y = NULL, nTasks = nCores,
   nCores = parallel::detectCores())
 }
 \arguments{
-\item{x}{A matrix-like object, typically \code{@geno} of a
-\code{\link[=BGData-class]{BGData}} object.}
+\item{x}{A matrix-like object, typically \code{@geno} of a \linkS4class{BGData}
+object.}
 
 \item{y}{vector or matrix-like object. NULL by default.}
 
 \item{nTasks}{The number of tasks the problem should be broken into to be
 distributed among \code{nCores} cores. Defaults to \code{nCores}.}
 
-\item{nCores}{The number of cores (passed to
-\code{\link[parallel]{mclapply}}). Defaults to the number of cores as
-detected by \code{\link[parallel]{detectCores}}).}
+\item{nCores}{The number of cores (passed to \code{\link[parallel:mclapply]{parallel::mclapply()}}).
+Defaults to the number of cores as detected by \code{\link[parallel:detectCores]{parallel::detectCores()}}.}
 }
 \value{
-x'y' or x'x depending on whether y is provided.
+x'y or x'x depending on whether y is provided.
 }
 \description{
 Computes crossprod (x'y or x'x) in parallel.
 }
-

@@ -2,24 +2,21 @@
 % Please edit documentation in R/BGData.R
 \name{as.BGData.BEDMatrix}
 \alias{as.BGData.BEDMatrix}
-\title{Converts a \code{BEDMatrix} object to a \code{\link[=BGData-class]{BGData}}
-object.}
+\title{Converts a \link[BEDMatrix:BEDMatrix]{BEDMatrix::BEDMatrix} object to a \linkS4class{BGData} object.}
 \usage{
 \method{as.BGData}{BEDMatrix}(x, alternatePhenotypeFile = NULL, ...)
 }
 \arguments{
-\item{x}{A \code{BEDMatrix} object.}
+\item{x}{A \link[BEDMatrix:BEDMatrix]{BEDMatrix::BEDMatrix} object.}
 
-\item{alternatePhenotypeFile}{Path to an
-\href{http://pngu.mgh.harvard.edu/~purcell/plink/data.shtml#pheno}{alternate
- phenotype file}.}
+\item{alternatePhenotypeFile}{Path to an \href{http://pngu.mgh.harvard.edu/~purcell/plink/data.shtml#pheno}{alternate phenotypefile}.}
 
-\item{...}{Additional arguments to the \code{read.table} or \code{fread}
-call (if data.table package is installed) call to parse the alternate pheno
-file.}
+\item{...}{Additional arguments to the \code{\link[utils:read.table]{utils::read.table()}} or
+\code{\link[data.table:fread]{data.table::fread()}} call (if data.table package is installed) call to
+parse the alternate pheno file.}
 }
 \value{
-A \code{\link[=BGData-class]{BGData}} object.
+A \linkS4class{BGData} object.
 }
 \description{
 If a FAM file (which corresponds to the first six columns of a PED file) of
@@ -29,11 +26,8 @@ Otherwise a stub that only contains an \code{IID} column populated with the
 rownames of \code{@geno} will be generated.
 }
 \details{
-PED only allows for a single phenotype. If more phenotypes are required it is
-possible to store them in an
-\href{http://pngu.mgh.harvard.edu/~purcell/plink/data.shtml#pheno}{alternate
-phenotype file}. The path to such a file can be provided with
-\code{alternatePhenotypeFile} and will be merged with the data in the
-\code{@pheno} slot.
+PED only allows for a single phenotype. If more phenotypes are required it
+is possible to store them in an \href{http://pngu.mgh.harvard.edu/~purcell/plink/data.shtml#pheno}{alternate phenotypefile}. The path
+to such a file can be provided with \code{alternatePhenotypeFile} and will be
+merged with the data in the \code{@pheno} slot.
 }
-

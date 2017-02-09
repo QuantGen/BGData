@@ -18,29 +18,27 @@ indicates rows, 2 indicates columns.}
 \item{nTasks}{The number of tasks the problem should be broken into to be
 distributed among \code{nCores} cores. Defaults to \code{nCores}.}
 
-\item{nCores}{The number of cores (passed to
-\code{\link[parallel]{mclapply}}). Defaults to the number of cores as
-detected by \code{\link[parallel]{detectCores}}).}
+\item{nCores}{The number of cores (passed to \code{\link[parallel:mclapply]{parallel::mclapply()}}).
+Defaults to the number of cores as detected by \code{\link[parallel:detectCores]{parallel::detectCores()}}.}
 
-\item{...}{Additional arguments to be passed to \code{apply}.}
+\item{...}{Additional arguments to be passed to \code{\link[base:apply]{base::apply()}}.}
 }
 \description{
-Similar to \code{apply}, designed to carry out operations in parallel.
+Similar to \code{\link[base:apply]{base::apply()}}, designed to carry out operations in parallel.
 }
 \details{
 The input matrix \code{X} is broken into \code{nTasks} chunks and passed to
-\code{\link[parallel]{mclapply}}. The number of cores can be configured using
+\code{\link[parallel:mclapply]{parallel::mclapply()}}. The number of cores can be configured using
 \code{nCores}.
 
 \code{nTasks} has to be chosen carefully to avoid running out of memory. As a
 rule of thumb, at least around \code{object_size(X) + (nCores *
 (object_size(X) / nTasks)) + object_size(result)} MB of total memory will be
 needed, not including potential copies of your data that might be created
-(for example \code{lsfit} runs \code{cbind(1, X)}). Therefore, for 20 nodes
-and 20 tasks you will need at least \code{2 * object_size(X)} MB, for 20
-nodes and 40 tasks \code{1.5 * object_size(X)} MB, etc.
+(for example \code{\link[stats:lsfit]{stats::lsfit()}} runs \code{cbind(1, X)}). Therefore, for 20 nodes
+and 20 tasks you will need at least \code{2 * object_size(X)} MB, for 20 nodes
+and 40 tasks \code{1.5 * object_size(X)} MB, etc.
 
-If \code{nTasks} equals 1, the regular \code{apply} function will be called
-to preserve memory.
+If \code{nTasks} equals 1, the regular \code{\link[base:apply]{base::apply()}} function will be called to
+preserve memory.
 }
-

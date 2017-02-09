@@ -71,33 +71,32 @@ apply2 <- function(X, MARGIN, FUN, ...) {
 
 #' Applies a function on each row or column of a matrix in parallel.
 #'
-#' Similar to \code{apply}, designed to carry out operations in parallel.
+#' Similar to [base::apply()], designed to carry out operations in parallel.
 #'
-#' The input matrix \code{X} is broken into \code{nTasks} chunks and passed to
-#' \code{\link[parallel]{mclapply}}. The number of cores can be configured using
-#' \code{nCores}.
+#' The input matrix `X` is broken into `nTasks` chunks and passed to
+#' [parallel::mclapply()]. The number of cores can be configured using
+#' `nCores`.
 #'
-#' \code{nTasks} has to be chosen carefully to avoid running out of memory. As a
+#' `nTasks` has to be chosen carefully to avoid running out of memory. As a
 #' rule of thumb, at least around \code{object_size(X) + (nCores *
 #' (object_size(X) / nTasks)) + object_size(result)} MB of total memory will be
 #' needed, not including potential copies of your data that might be created
-#' (for example \code{lsfit} runs \code{cbind(1, X)}). Therefore, for 20 nodes
-#' and 20 tasks you will need at least \code{2 * object_size(X)} MB, for 20
-#' nodes and 40 tasks \code{1.5 * object_size(X)} MB, etc.
+#' (for example [stats::lsfit()] runs `cbind(1, X)`). Therefore, for 20 nodes
+#' and 20 tasks you will need at least `2 * object_size(X)` MB, for 20 nodes
+#' and 40 tasks `1.5 * object_size(X)` MB, etc.
 #'
-#' If \code{nTasks} equals 1, the regular \code{apply} function will be called
-#' to preserve memory.
+#' If `nTasks` equals 1, the regular [base::apply()] function will be called to
+#' preserve memory.
 #'
 #' @param X A matrix.
 #' @param MARGIN The subscripts which the function will be applied over. 1
-#'   indicates rows, 2 indicates columns.
+#' indicates rows, 2 indicates columns.
 #' @param FUN The function to be applied.
 #' @param nTasks The number of tasks the problem should be broken into to be
-#'   distributed among \code{nCores} cores. Defaults to \code{nCores}.
-#' @param nCores The number of cores (passed to
-#'   \code{\link[parallel]{mclapply}}). Defaults to the number of cores as
-#'   detected by \code{\link[parallel]{detectCores}}).
-#' @param ... Additional arguments to be passed to \code{apply}.
+#' distributed among `nCores` cores. Defaults to `nCores`.
+#' @param nCores The number of cores (passed to [parallel::mclapply()]).
+#' Defaults to the number of cores as detected by [parallel::detectCores()].
+#' @param ... Additional arguments to be passed to [base::apply()].
 #' @export
 parallelApply <- function(X, MARGIN, FUN, nTasks = nCores, nCores = parallel::detectCores(), ...) {
     d <- dim(X)
@@ -128,46 +127,42 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = nCores, nCores = parallel::de
 #' Reads chunks of data from a memory-mapped file into memory and applies a
 #' function on each row or column of a matrix in parallel.
 #'
-#' Similar to \code{apply}, designed to bring chunks of data into memory and
+#' Similar to [base::apply()], designed to bring chunks of data into memory and
 #' carry out operations on them in parallel.
 #'
-#' \code{bufferSize} and \code{nTasks} have to be chosen carefully to avoid
-#' running out of memory. As a rule of thumb, at least around
-#' \code{object_size(buffer) + (nCores * (object_size(buffer) / nTasks)) +
-#' object_size(result)} MB of total memory will be needed, not including
-#' potential copies of your data that might be created (for example \code{lsfit}
-#' runs \code{cbind(1, X)}). Therefore, for 20 nodes and 20 tasks you will need
-#' at least \code{2 * object_size(buffer)} MB, for 20 nodes and 40 tasks
-#' \code{1.5 * object_size(buffer)} MB, etc.
+#' `bufferSize` and `nTasks` have to be chosen carefully to avoid running out
+#' of memory. As a rule of thumb, at least around \code{object_size(buffer) +
+#' (nCores * (object_size(buffer) / nTasks)) + object_size(result)} MB of total
+#' memory will be needed, not including potential copies of your data that
+#' might be created (for example [stats::lsfit()] runs `cbind(1, X)`).
+#' Therefore, for 20 nodes and 20 tasks you will need at least `2 *
+#' object_size(buffer)` MB, for 20 nodes and 40 tasks `1.5 *
+#' object_size(buffer)` MB, etc.
 #'
 #' This function is only useful for memory-mapped files. For data that is
-#' already in memory, use \code{\link{parallelApply}} directly.
+#' already in memory, use [parallelApply()] directly.
 #'
-#' @param X A matrix-like object, typically \code{@@geno} of a
-#'   \code{\link[=BGData-class]{BGData}} object.
+#' @param X A matrix-like object, typically `@@geno` of a [BGData-class]
+#' object.
 #' @param MARGIN The subscripts which the function will be applied over. 1
-#'   indicates rows, 2 indicates columns.
+#' indicates rows, 2 indicates columns.
 #' @param FUN The function to be applied.
-#' @param i (integer, boolean or character) Indicates which rows of \code{X}
-#'   should be used. By default, all rows are used.
-#' @param j (integer, boolean or character) Indicates which columns of
-#'   \code{X} should be used. By default, all columns are used.
-#' @param bufferSize The number of rows or columns of \code{X} that are brought
-#'   into RAM for processing. Overwrites \code{nBuffers}. If both parameters are
-#'   \code{NULL}, all elements in \code{i} or \code{j} are used. Defaults to
-#'   5000.
-#' @param nBuffers The number of partitions of the rows or columns of \code{X}
-#'   that are brought into RAM for processing. Is overwritten by
-#'   \code{bufferSize}. If both parameters are \code{NULL}, all elements in
-#'   \code{i} or \code{j} are used.
+#' @param i (integer, boolean or character) Indicates which rows of `X` should
+#' be used. By default, all rows are used.
+#' @param j (integer, boolean or character) Indicates which columns of `X`
+#' should be used. By default, all columns are used.
+#' @param bufferSize The number of rows or columns of `X` that are brought into
+#' RAM for processing. Overwrites `nBuffers`. If both parameters are `NULL`,
+#' all elements in `i` or `j` are used. Defaults to 5000.
+#' @param nBuffers The number of partitions of the rows or columns of `X` that
+#' are brought into RAM for processing. Is overwritten by `bufferSize`. If both
+#' parameters are `NULL`, all elements in `i` or `j` are used.
 #' @param nTasks The number of tasks the problem should be broken into to be
-#'   distributed among \code{nCores} cores. Defaults to \code{nCores}.
-#' @param nCores The number of cores (passed to
-#'   \code{\link[parallel]{mclapply}}). Defaults to the number of cores as
-#'   detected by \code{\link[parallel]{detectCores}}).
-#' @param verbose Whether progress updates will be posted. Defaults to
-#'   \code{FALSE}.
-#' @param ... Additional arguments to be passed to \code{parallelApply}.
+#' distributed among `nCores` cores. Defaults to `nCores`.
+#' @param nCores The number of cores (passed to [parallel::mclapply()]).
+#' Defaults to the number of cores as detected by [parallel::detectCores()].
+#' @param verbose Whether progress updates will be posted. Defaults to `FALSE`.
+#' @param ... Additional arguments to be passed to [parallelApply()].
 #' @export
 chunkedApply <- function(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(X)), bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = parallel::detectCores(), verbose = FALSE, ...) {
     if (!length(dim(X))) {
@@ -272,15 +267,14 @@ crossprods <- function(x, y = NULL, use_tcrossprod = FALSE, nTasks = nCores, nCo
 
 #' Computes crossprod (x'y or x'x) in parallel.
 #'
-#' @param x A matrix-like object, typically \code{@@geno} of a
-#'   \code{\link[=BGData-class]{BGData}} object.
+#' @param x A matrix-like object, typically `@@geno` of a [BGData-class]
+#' object.
 #' @param y vector or matrix-like object. NULL by default.
 #' @param nTasks The number of tasks the problem should be broken into to be
-#'   distributed among \code{nCores} cores. Defaults to \code{nCores}.
-#' @param nCores The number of cores (passed to
-#'   \code{\link[parallel]{mclapply}}). Defaults to the number of cores as
-#'   detected by \code{\link[parallel]{detectCores}}).
-#' @return x'y' or x'x depending on whether y is provided.
+#' distributed among `nCores` cores. Defaults to `nCores`.
+#' @param nCores The number of cores (passed to [parallel::mclapply()]).
+#' Defaults to the number of cores as detected by [parallel::detectCores()].
+#' @return x'y or x'x depending on whether y is provided.
 #' @export
 crossprod.parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel::detectCores()) {
     crossprods(x = x, y = y, use_tcrossprod = FALSE, nTasks = nTasks, nCores = nCores)
@@ -289,14 +283,13 @@ crossprod.parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel::
 
 #' Computes tcrossprod (xy' or xx') in parallel.
 #'
-#' @param x A matrix-like object, typically \code{@@geno} of a
-#'   \code{\link[=BGData-class]{BGData}} object.
+#' @param x A matrix-like object, typically `@@geno` of a [BGData-class]
+#' object.
 #' @param y vector or matrix-like object. NULL by default.
 #' @param nTasks The number of tasks the problem should be broken into to be
-#'   distributed among \code{nCores} cores. Defaults to \code{nCores}.
-#' @param nCores The number of cores (passed to
-#'   \code{\link[parallel]{mclapply}}). Defaults to the number of cores as
-#'   detected by \code{\link[parallel]{detectCores}}).
+#' distributed among `nCores` cores. Defaults to `nCores`.
+#' @param nCores The number of cores (passed to [parallel::mclapply()]).
+#' Defaults to the number of cores as detected by [parallel::detectCores()].
 #' @return xy' or xx' depending on whether y is provided.
 #' @export
 tcrossprod.parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel::detectCores()) {
@@ -308,40 +301,37 @@ tcrossprod.parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel:
 #' Computes a genomic relationship matrix G=xx'.
 #'
 #' Offers options for centering and scaling the columns of x before computing
-#' xx'. If \code{centerCol=FALSE}, \code{scaleCol=FALSE} and
-#' \code{scaleG=FALSE}, \code{getG} produces the same outcome than
-#' \code{tcrossprod}.
+#' xx'. If `centerCol=FALSE`, `scaleCol=FALSE` and `scaleG=FALSE`, [getG()]
+#' produces the same outcome than [base::tcrossprod()].
 #'
-#' @param X A matrix-like object, typically \code{@@geno} of a
-#'   \code{\link[=BGData-class]{BGData}} object.
+#' @param X A matrix-like object, typically `@@geno` of a [BGData-class]
+#' object.
 #' @param scaleCol TRUE/FALSE whether columns must be scaled before computing
-#'   xx'.
+#' xx'.
 #' @param scales Precomputed scales if i2 is used.
-#' @param centerCol TRUE/FALSE whether columns must be centered before computing
-#'   xx'.
+#' @param centerCol TRUE/FALSE whether columns must be centered before
+#' computing xx'.
 #' @param centers Precomputed centers if i2 is used.
 #' @param scaleG TRUE/FALSE whether xx' must be scaled.
-#' @param minVar Columns with variance lower than this value will not be used in
-#'   the computation (only if \code{scaleCol} is set).
-#' @param i (integer, boolean or character) Indicates which rows of \code{X}
-#'   should be used. By default, all rows are used.
-#' @param j (integer, boolean or character) Indicates which columns of
-#'   \code{X} should be used. By default, all columns are used.
-#' @param i2 (integer, boolean or character) Indicates which rows should be used
-#'   to divide matrix into blocks.
-#' @param bufferSize The number of columns of \code{X} that are brought into
-#'   RAM for processing. Overwrites \code{nBuffers}. If both parameters are
-#'   \code{NULL}, all columns of \code{X} are used. Defaults to 5000.
-#' @param nBuffers The number of partitions of the columns of \code{X} that are
-#'   brought into RAM for processing. Is overwritten by \code{bufferSize}. If
-#'   both parameters are \code{NULL}, all columns of \code{X} are used.
+#' @param minVar Columns with variance lower than this value will not be used
+#' in the computation (only if `scaleCol` is set).
+#' @param i (integer, boolean or character) Indicates which rows of `X` should
+#' be used. By default, all rows are used.
+#' @param j (integer, boolean or character) Indicates which columns of `X`
+#' should be used. By default, all columns are used.
+#' @param i2 (integer, boolean or character) Indicates which rows should be
+#' used to divide matrix into blocks.
+#' @param bufferSize The number of columns of `X` that are brought into RAM for
+#' processing. Overwrites `nBuffers`. If both parameters are `NULL`, all
+#' columns of `X` are used. Defaults to 5000.
+#' @param nBuffers The number of partitions of the columns of `X` that are
+#' brought into RAM for processing. Is overwritten by `bufferSize`. If both
+#' parameters are `NULL`, all columns of `X` are used.
 #' @param nTasks The number of tasks the problem should be broken into to be
-#'   distributed among \code{nCores} cores. Defaults to \code{nCores}.
-#' @param nCores The number of cores (passed to
-#'   \code{\link[parallel]{mclapply}}). Defaults to the number of cores as
-#'   detected by \code{\link[parallel]{detectCores}}).
-#' @param verbose Whether progress updates will be posted. Defaults to
-#'   \code{TRUE}.
+#' distributed among `nCores` cores. Defaults to `nCores`.
+#' @param nCores The number of cores (passed to [parallel::mclapply()]).
+#' Defaults to the number of cores as detected by [parallel::detectCores()].
+#' @param verbose Whether progress updates will be posted. Defaults to `TRUE`.
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @export
 getG <- function(X, scaleCol = TRUE, scales = NULL, centerCol = TRUE, centers = NULL, scaleG = TRUE, minVar = 1e-05, i = seq_len(nrow(X)), j = seq_len(ncol(X)), i2 = NULL, bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
@@ -523,40 +513,38 @@ getG <- function(X, scaleCol = TRUE, scales = NULL, centerCol = TRUE, centers = 
 }
 
 
-#' Computes a genomic relationship matrix G=xx' without ever loading G in RAM by
-#' creating a \code{\link[=symDMatrix-class]{symDMatrix}}.
+#' Computes a genomic relationship matrix G=xx' without ever loading G in RAM
+#' by creating a [symDMatrix::symDMatrix-class].
 #'
 #' Offers options for centering and scaling the columns of x before computing
 #' xx'.
 #'
-#' @param X A matrix-like object, typically \code{@@geno} of a
-#'   \code{\link[=BGData-class]{BGData}} object.
+#' @param X A matrix-like object, typically `@@geno` of a [BGData-class]
+#' object.
 #' @param nBlocks The number of blocks.
 #' @param blockSize The number of columns of a block (if NULL inferred from block).
 #' @param centers Precomputed centers.
 #' @param scales Precomputed scales.
-#' @param centerCol TRUE/FALSE whether columns must be centered before computing
-#'   xx'.
+#' @param centerCol TRUE/FALSE whether columns must be centered before
+#' computing xx'.
 #' @param scaleCol TRUE/FALSE whether columns must be scaled before computing
-#'   xx'.
+#' xx'.
 #' @param scaleG TRUE/FALSE whether xx' must be scaled.
 #' @param folderOut The path to the folder where to save the
-#'   \code{\link[=symDMatrix-class]{symDMatrix}} object. Defaults to a random
-#'   string prefixed with "symDMatrix_".
-#' @param vmode vmode of \code{ff} objects.
-#' @param saveRData Whether to save an RData file to easily reload
-#'   \code{\link[=symDMatrix-class]{symDMatrix}}
-#' @param i (integer, boolean or character) Indicates which rows of \code{X}
-#'   should be used. By default, all rows are used.
-#' @param j (integer, boolean or character) Indicates which columns of
-#'   \code{X} should be used. By default, all columns are used.
+#' [symDMatrix::symDMatrix-class] object. Defaults to a random string prefixed
+#' with "symDMatrix_".
+#' @param vmode vmode of `ff` objects.
+#' @param saveRData Whether to save an RData file to easily reload the
+#' [symDMatrix::symDMatrix-class] object.
+#' @param i (integer, boolean or character) Indicates which rows of `X` should
+#' be used. By default, all rows are used.
+#' @param j (integer, boolean or character) Indicates which columns of `X`
+#' should be used. By default, all columns are used.
 #' @param nTasks The number of tasks the problem should be broken into to be
-#'   distributed among \code{nCores} cores. Defaults to \code{nCores}.
-#' @param nCores The number of cores (passed to
-#'   \code{\link[parallel]{mclapply}}). Defaults to the number of cores as
-#'   detected by \code{\link[parallel]{detectCores}}).
-#' @param verbose Whether progress updates will be posted. Defaults to
-#'   \code{TRUE}.
+#' distributed among `nCores` cores. Defaults to `nCores`.
+#' @param nCores The number of cores (passed to [parallel::mclapply()]).
+#' Defaults to the number of cores as detected by [parallel::detectCores()].
+#' @param verbose Whether progress updates will be posted. Defaults to `TRUE`.
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @export
 getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, scales = NULL, centerCol = TRUE, scaleCol = TRUE, scaleG = TRUE, folderOut = paste0("symDMatrix_", randomString()), vmode = "double", saveRData = TRUE, i = seq_len(nrow(X)), j = seq_len(ncol(X)), nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
@@ -705,41 +693,36 @@ getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, sc
 }
 
 
-#' Performs single marker regressions using a
-#' \code{\link[=BGData-class]{BGData}} object.
+#' Performs single marker regressions using a [BGData-class] object.
 #'
 #' Implements single marker regressions. The regression model includes all the
-#' covariates specified in the right-hand-side of the \code{formula} plus one
-#' column of \code{@@geno}, one column at a time. The data from the association
-#' tests is obtained from a \code{\link[=BGData-class]{BGData}} object.
+#' covariates specified in the right-hand-side of the `formula` plus one column
+#' of `@@geno`, one column at a time. The data from the association tests is
+#' obtained from a [BGData-class] object.
 #'
 #' @param formula A formula (e.g. weight~sex+age) with the response on the
-#'   left-hand side and predictors (all the covariates except the markers) on
-#'   the right-hand side. The variables included in the formula must be in the
-#'   \code{@@pheno} object of the \code{\link[=BGData-class]{BGData}}.
-#' @param data A \code{\link[=BGData-class]{BGData}} object.
+#' left-hand side and predictors (all the covariates except the markers) on the
+#' right-hand side. The variables included in the formula must be in the
+#' `@@pheno` object of the [BGData-class].
+#' @param data A [BGData-class] object.
 #' @param method The regression method to be used. Currently, the following
-#'   methods are implemented: \code{\link{lm}}, \code{\link{lm.fit}},
-#'   \code{\link{lsfit}}, \code{\link{glm}}, \code{\link[lme4]{lmer}},
-#'   and \code{\link[SKAT]{SKAT}}.
-#' @param i (integer, boolean or character) Indicates which rows of
-#'   \code{@@geno} should be used. By default, all rows are used.
-#' @param j (integer, boolean or character) Indicates which columns of
-#'   \code{@@geno} should be used. By default, all columns are used.
-#' @param bufferSize The number of columns of \code{@@geno} that are brought into
-#'   RAM for processing. Overwrites \code{nBuffers}. If both parameters are
-#'   \code{NULL}, all elements in \code{j} are used. Defaults to 5000.
-#' @param nBuffers The number of partitions of the columns of \code{@@geno}
-#'   that are brought into RAM for processing. Is overwritten by
-#'   \code{bufferSize}. If both parameters are \code{NULL}, all elements in
-#'   \code{j} are used.
+#' methods are implemented: [stats::lm()], [stats::lm.fit()], [stats::lsfit()],
+#' [stats::glm()], [lme4::lmer()], and [SKAT::SKAT()].
+#' @param i (integer, boolean or character) Indicates which rows of `@@geno`
+#' should be used. By default, all rows are used.
+#' @param j (integer, boolean or character) Indicates which columns of `@@geno`
+#' should be used. By default, all columns are used.
+#' @param bufferSize The number of columns of `@@geno` that are brought into
+#' RAM for processing. Overwrites `nBuffers`. If both parameters are `NULL`,
+#' all elements in `j` are used. Defaults to 5000.
+#' @param nBuffers The number of partitions of the columns of `@@geno` that are
+#' brought into RAM for processing. Is overwritten by `bufferSize`. If both
+#' parameters are `NULL`, all elements in `j` are used.
 #' @param nTasks The number of tasks the problem should be broken into to be
-#'   distributed among \code{nCores} cores. Defaults to \code{nCores}.
-#' @param nCores The number of cores (passed to
-#'   \code{\link[parallel]{mclapply}}). Defaults to the number of cores as
-#'   detected by \code{\link[parallel]{detectCores}}).
-#' @param verbose Whether progress updates will be posted. Defaults to
-#'   \code{FALSE}.
+#' distributed among `nCores` cores. Defaults to `nCores`.
+#' @param nCores The number of cores (passed to [parallel::mclapply()]).
+#' Defaults to the number of cores as detected by [parallel::detectCores()].
+#' @param verbose Whether progress updates will be posted. Defaults to `FALSE`.
 #' @param ... Additional arguments for chunkedApply and regression method.
 #' @return Returns a matrix with estimates, SE, p-value, etc.
 #' @export
@@ -882,25 +865,23 @@ getCoefficients.lmerMod <- function(x) {
 
 #' Calculates frequencies of missing values and alleles.
 #'
-#' @param X A matrix-like object, typically \code{@@geno} of a
-#'   \code{\link[=BGData-class]{BGData}} object.
-#' @param i (integer, boolean or character) Indicates which rows of \code{X}
-#'   should be used. By default, all rows are used.
-#' @param j (integer, boolean or character) Indicates which columns of
-#'   \code{X} should be used. By default, all columns are used.
-#' @param bufferSize The number of columns of \code{X} that are brought into
-#'   RAM for processing. Overwrites \code{nBuffers}. If both parameters are
-#'   \code{NULL}, all elements in \code{j} are used. Defaults to 5000.
-#' @param nBuffers The number of partitions of the columns of \code{X} that
-#'   are brought into RAM for processing. Is overwritten by \code{bufferSize}. If
-#'   both parameters are \code{NULL}, all elements in \code{j} are used.
+#' @param X A matrix-like object, typically `@@geno` of a [BGData-class]
+#' object.
+#' @param i (integer, boolean or character) Indicates which rows of `X` should
+#' be used. By default, all rows are used.
+#' @param j (integer, boolean or character) Indicates which columns of `X`
+#' should be used. By default, all columns are used.
+#' @param bufferSize The number of columns of `X` that are brought into RAM for
+#' processing. Overwrites `nBuffers`. If both parameters are `NULL`, all
+#' elements in `j` are used. Defaults to 5000.
+#' @param nBuffers The number of partitions of the columns of `X` that are
+#' brought into RAM for processing. Is overwritten by `bufferSize`. If both
+#' parameters are `NULL`, all elements in `j` are used.
 #' @param nTasks The number of tasks the problem should be broken into to be
-#'   distributed among \code{nCores} cores. Defaults to \code{nCores}.
-#' @param nCores The number of cores (passed to
-#'   \code{\link[parallel]{mclapply}}). Defaults to the number of cores as
-#'   detected by \code{\link[parallel]{detectCores}}).
-#' @param verbose Whether progress updates will be posted. Defaults to
-#'   \code{FALSE}.
+#' distributed among `nCores` cores. Defaults to `nCores`.
+#' @param nCores The number of cores (passed to [parallel::mclapply()]).
+#' Defaults to the number of cores as detected by [parallel::detectCores()].
+#' @param verbose Whether progress updates will be posted. Defaults to `FALSE`.
 #' @export
 summarize <- function(X, i = seq_len(nrow(X)), j = seq_len(ncol(X)), bufferSize = 5000, nTasks = nCores, nBuffers = NULL, nCores = parallel::detectCores(), verbose = FALSE) {
     res <- chunkedApply(X = X, MARGIN = 2, FUN = function(col) {
