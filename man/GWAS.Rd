@@ -4,7 +4,7 @@
 \alias{GWAS}
 \title{Performs Single Marker Regressions Using a BGData Object.}
 \usage{
-GWAS(formula, data, method, i = seq_len(nrow(data@geno)),
+GWAS(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)),
   j = seq_len(ncol(data@geno)), bufferSize = 5000, nBuffers = NULL,
   nTasks = nCores, nCores = parallel::detectCores(), verbose = FALSE, ...)
 }
@@ -18,7 +18,7 @@ right-hand side. The variables included in the formula must be in the
 
 \item{method}{The regression method to be used. Currently, the following
 methods are implemented: \code{\link[stats:lm]{stats::lm()}}, \code{\link[stats:lm.fit]{stats::lm.fit()}}, \code{\link[stats:lsfit]{stats::lsfit()}},
-\code{\link[stats:glm]{stats::glm()}}, \code{\link[lme4:lmer]{lme4::lmer()}}, and \code{\link[SKAT:SKAT]{SKAT::SKAT()}}.}
+\code{\link[stats:glm]{stats::glm()}}, \code{\link[lme4:lmer]{lme4::lmer()}}, and \code{\link[SKAT:SKAT]{SKAT::SKAT()}}. Defaults to \code{lsfit}.}
 
 \item{i}{(integer, boolean or character) Indicates which rows of \code{@geno}
 should be used. By default, all rows are used.}

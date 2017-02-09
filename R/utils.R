@@ -707,7 +707,7 @@ getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, sc
 #' @param data A [BGData-class] object.
 #' @param method The regression method to be used. Currently, the following
 #' methods are implemented: [stats::lm()], [stats::lm.fit()], [stats::lsfit()],
-#' [stats::glm()], [lme4::lmer()], and [SKAT::SKAT()].
+#' [stats::glm()], [lme4::lmer()], and [SKAT::SKAT()]. Defaults to `lsfit`.
 #' @param i (integer, boolean or character) Indicates which rows of `@@geno`
 #' should be used. By default, all rows are used.
 #' @param j (integer, boolean or character) Indicates which columns of `@@geno`
@@ -726,19 +726,19 @@ getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, sc
 #' @param ... Additional arguments for chunkedApply and regression method.
 #' @return Returns a matrix with estimates, SE, p-value, etc.
 #' @export
-GWAS <- function(formula, data, method, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = parallel::detectCores(), verbose = FALSE, ...) {
+GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = parallel::detectCores(), verbose = FALSE, ...) {
 
     if (class(data) != "BGData") {
         stop("data must BGData")
     }
 
     if (!method %in% c("lm", "lm.fit", "lsfit", "glm", "lmer", "SKAT")) {
-        stop("Only lm, glm, lmer and SKAT have been implemented so far.")
+        stop("Only lm, lm.fit, lsfit, glm, lmer and SKAT have been implemented so far.")
     }
 
     # We can have specialized methods, for instance for OLS it is better to use
     # lsfit (that is what GWAS.ols does)
-    if (method %in% c("lm", "lm.fit", "lsfit")) {
+    if (method == "lsfit") {
         OUT <- GWAS.ols(formula = formula, data = data, i = i, j = j, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = verbose, ...)
     } else if (method == "SKAT") {
         OUT <- GWAS.SKAT(formula = formula, data = data, i = i, j = j, verbose = verbose, ...)
