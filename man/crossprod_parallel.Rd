@@ -28,9 +28,11 @@ x'x or x'y (\code{crossprod_parallel}), or xx' or xy'
 (\code{tcrossprod_parallel}), depending on whether \code{y} is provided.
 }
 \description{
-Similar to \code{\link[base:crossprod]{base::crossprod()}} and \code{\link[base:tcrossprod]{base::tcrossprod()}}, but breaks \code{x} (and
-\code{y} if not \code{NULL}) into \code{nTasks} chunks, computes \code{\link[base:crossprod]{base::crossprod()}} or
-\code{\link[base:tcrossprod]{base::tcrossprod()}} on each chunk in parallel, and adds up the results.
+Similar to \code{\link[base:crossprod]{base::crossprod()}} and \code{\link[base:tcrossprod]{base::tcrossprod()}}, but designed to
+carry out operations in parallel. The input matrix \code{x} (and \code{y} if not
+\code{NULL}) is broken into \code{nTasks} chunks and passed to \code{\link[parallel:mclapply]{parallel::mclapply()}}
+which performs \code{\link[base:crossprod]{base::crossprod()}} or \code{\link[base:tcrossprod]{base::tcrossprod()}} on each chunk.
+The results are added up and returned.
 }
 \details{
 If \code{nTasks} is \code{1}, \code{\link[base:crossprod]{base::crossprod()}} or \code{\link[base:tcrossprod]{base::tcrossprod()}} will be

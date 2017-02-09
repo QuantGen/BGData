@@ -266,9 +266,11 @@ crossprods <- function(x, y = NULL, use_tcrossprod = FALSE, nTasks = nCores, nCo
 
 #' Computes crossprod (x'x or x'y) or tcrossprod (xx' or xy') in Parallel.
 #'
-#' Similar to [base::crossprod()] and [base::tcrossprod()], but breaks `x` (and
-#' `y` if not `NULL`) into `nTasks` chunks, computes [base::crossprod()] or
-#' [base::tcrossprod()] on each chunk in parallel, and adds up the results.
+#' Similar to [base::crossprod()] and [base::tcrossprod()], but designed to
+#' carry out operations in parallel. The input matrix `x` (and `y` if not
+#' `NULL`) is broken into `nTasks` chunks and passed to [parallel::mclapply()]
+#' which performs [base::crossprod()] or [base::tcrossprod()] on each chunk.
+#' The results are added up and returned.
 #'
 #' If `nTasks` is `1`, [base::crossprod()] or [base::tcrossprod()] will be
 #' called directly without parallelism.
