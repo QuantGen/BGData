@@ -8,10 +8,10 @@ parallelApply(X, MARGIN, FUN, nTasks = nCores,
   nCores = parallel::detectCores(), ...)
 }
 \arguments{
-\item{X}{A matrix.}
+\item{X}{A matrix or matrix-like object.}
 
-\item{MARGIN}{The subscripts which the function will be applied over. 1
-indicates rows, 2 indicates columns.}
+\item{MARGIN}{The subscripts which the function will be applied over. \code{1}
+indicates rows, \code{2} indicates columns.}
 
 \item{FUN}{The function to be applied.}
 
@@ -24,13 +24,12 @@ Defaults to the number of cores as detected by \code{\link[parallel:detectCores]
 \item{...}{Additional arguments to be passed to \code{\link[base:apply]{base::apply()}}.}
 }
 \description{
-Similar to \code{\link[base:apply]{base::apply()}}, designed to carry out operations in parallel.
+Similar to \code{\link[base:apply]{base::apply()}}, but designed to carry out operations in
+parallel.  The input matrix \code{X} is broken into \code{nTasks} chunks and passed to
+\code{\link[parallel:mclapply]{parallel::mclapply()}} which applies \code{FUN} on either the rows or the columns
+of each chunk.
 }
 \details{
-The input matrix \code{X} is broken into \code{nTasks} chunks and passed to
-\code{\link[parallel:mclapply]{parallel::mclapply()}}. The number of cores can be configured using
-\code{nCores}.
-
 \code{nTasks} has to be chosen carefully to avoid running out of memory. As a
 rule of thumb, at least around \code{object_size(X) + (nCores *
 (object_size(X) / nTasks)) + object_size(result)} MB of total memory will be
@@ -39,6 +38,10 @@ needed, not including potential copies of your data that might be created
 and 20 tasks you will need at least \code{2 * object_size(X)} MB, for 20 nodes
 and 40 tasks \code{1.5 * object_size(X)} MB, etc.
 
-If \code{nTasks} equals 1, the regular \code{\link[base:apply]{base::apply()}} function will be called to
-preserve memory.
+If \code{nTasks} is \code{1}, \code{\link[base:apply]{base::apply()}} will be called directly without
+parallelism.
+}
+\seealso{
+\code{\link[=chunkedApply]{chunkedApply()}} if \code{X} is a memory-mapped matrix and too large to
+hold in memory.
 }

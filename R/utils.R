@@ -71,11 +71,10 @@ apply2 <- function(X, MARGIN, FUN, ...) {
 
 #' Applies a Function on Each Row or Column of a Matrix in Parallel.
 #'
-#' Similar to [base::apply()], designed to carry out operations in parallel.
-#'
-#' The input matrix `X` is broken into `nTasks` chunks and passed to
-#' [parallel::mclapply()]. The number of cores can be configured using
-#' `nCores`.
+#' Similar to [base::apply()], but designed to carry out operations in
+#' parallel.  The input matrix `X` is broken into `nTasks` chunks and passed to
+#' [parallel::mclapply()] which applies `FUN` on either the rows or the columns
+#' of each chunk.
 #'
 #' `nTasks` has to be chosen carefully to avoid running out of memory. As a
 #' rule of thumb, at least around \code{object_size(X) + (nCores *
@@ -85,18 +84,20 @@ apply2 <- function(X, MARGIN, FUN, ...) {
 #' and 20 tasks you will need at least `2 * object_size(X)` MB, for 20 nodes
 #' and 40 tasks `1.5 * object_size(X)` MB, etc.
 #'
-#' If `nTasks` equals 1, the regular [base::apply()] function will be called to
-#' preserve memory.
+#' If `nTasks` is `1`, [base::apply()] will be called directly without
+#' parallelism.
 #'
-#' @param X A matrix.
-#' @param MARGIN The subscripts which the function will be applied over. 1
-#' indicates rows, 2 indicates columns.
+#' @param X A matrix or matrix-like object.
+#' @param MARGIN The subscripts which the function will be applied over. `1`
+#' indicates rows, `2` indicates columns.
 #' @param FUN The function to be applied.
 #' @param nTasks The number of tasks the problem should be broken into to be
 #' distributed among `nCores` cores. Defaults to `nCores`.
 #' @param nCores The number of cores (passed to [parallel::mclapply()]).
 #' Defaults to the number of cores as detected by [parallel::detectCores()].
 #' @param ... Additional arguments to be passed to [base::apply()].
+#' @seealso [chunkedApply()] if `X` is a memory-mapped matrix and too large to
+#' hold in memory.
 #' @export
 parallelApply <- function(X, MARGIN, FUN, nTasks = nCores, nCores = parallel::detectCores(), ...) {
     d <- dim(X)
