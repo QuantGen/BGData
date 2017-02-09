@@ -43,8 +43,11 @@ Defaults to the number of cores as detected by \code{\link[parallel:detectCores]
 \item{...}{Additional arguments to be passed to \code{\link[=parallelApply]{parallelApply()}}.}
 }
 \description{
-Similar to \code{\link[base:apply]{base::apply()}}, designed to bring chunks of data into memory and
-carry out operations on them in parallel.
+Similar to \code{\link[base:apply]{base::apply()}}, but designed to bring chunks of data into memory
+and carry out operations on them in parallel. \code{nBufferSize} rows or columns
+of the input matrix \code{X} are read into memory and handed over to
+\code{\link[=parallelApply]{parallelApply()}}. This function is only useful for memory-mapped files. For
+data that is already in memory, use \code{\link[=parallelApply]{parallelApply()}} directly.
 }
 \details{
 \code{bufferSize} and \code{nTasks} have to be chosen carefully to avoid running out
@@ -53,7 +56,8 @@ of memory. As a rule of thumb, at least around \code{object_size(buffer) +
 memory will be needed, not including potential copies of your data that
 might be created (for example \code{\link[stats:lsfit]{stats::lsfit()}} runs \code{cbind(1, X)}).
 Therefore, for 20 nodes and 20 tasks you will need at least \code{2 * object_size(buffer)} MB, for 20 nodes and 40 tasks \code{1.5 * object_size(buffer)} MB, etc.
-
-This function is only useful for memory-mapped files. For data that is
-already in memory, use \code{\link[=parallelApply]{parallelApply()}} directly.
+}
+\seealso{
+\code{\link[=parallelApply]{parallelApply()}} if \code{X} is not a memory-mapped matrix or can be
+held in memory.
 }

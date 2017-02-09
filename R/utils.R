@@ -128,8 +128,11 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = nCores, nCores = parallel::de
 #' Reads Chunks of Data from a Memory-Mapped File into Memory and Applies a
 #' Function on Each Row or Column of a Matrix in Parallel.
 #'
-#' Similar to [base::apply()], designed to bring chunks of data into memory and
-#' carry out operations on them in parallel.
+#' Similar to [base::apply()], but designed to bring chunks of data into memory
+#' and carry out operations on them in parallel. `nBufferSize` rows or columns
+#' of the input matrix `X` are read into memory and handed over to
+#' [parallelApply()]. This function is only useful for memory-mapped files. For
+#' data that is already in memory, use [parallelApply()] directly.
 #'
 #' `bufferSize` and `nTasks` have to be chosen carefully to avoid running out
 #' of memory. As a rule of thumb, at least around \code{object_size(buffer) +
@@ -139,9 +142,6 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = nCores, nCores = parallel::de
 #' Therefore, for 20 nodes and 20 tasks you will need at least `2 *
 #' object_size(buffer)` MB, for 20 nodes and 40 tasks `1.5 *
 #' object_size(buffer)` MB, etc.
-#'
-#' This function is only useful for memory-mapped files. For data that is
-#' already in memory, use [parallelApply()] directly.
 #'
 #' @param X A matrix-like object, typically `@@geno` of a [BGData-class]
 #' object.
@@ -164,6 +164,8 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = nCores, nCores = parallel::de
 #' Defaults to the number of cores as detected by [parallel::detectCores()].
 #' @param verbose Whether progress updates will be posted. Defaults to `FALSE`.
 #' @param ... Additional arguments to be passed to [parallelApply()].
+#' @seealso [parallelApply()] if `X` is not a memory-mapped matrix or can be
+#' held in memory.
 #' @export
 chunkedApply <- function(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(X)), bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = parallel::detectCores(), verbose = FALSE, ...) {
     if (!length(dim(X))) {
