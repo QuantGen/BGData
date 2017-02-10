@@ -2,9 +2,9 @@
 #'
 #' @docType package
 #' @name BGData-package
+#' @aliases NULL
 #' @import methods
 #' @importClassesFrom LinkedMatrix LinkedMatrix
 #' @importClassesFrom symDMatrix symDMatrix
 #' @importClassesFrom bigmemory big.matrix
-#' @aliases NULL
 NULL
