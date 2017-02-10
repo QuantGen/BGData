@@ -4,29 +4,27 @@
 \alias{getG}
 \title{Computes a Genomic Relationship Matrix G=xx'.}
 \usage{
-getG(X, scaleCol = TRUE, scales = NULL, centerCol = TRUE,
-  centers = NULL, scaleG = TRUE, minVar = 1e-05, i = seq_len(nrow(X)),
-  j = seq_len(ncol(X)), i2 = NULL, bufferSize = 5000, nBuffers = NULL,
-  nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE)
+getG(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05,
+  i = seq_len(nrow(X)), j = seq_len(ncol(X)), i2 = NULL,
+  bufferSize = 5000, nBuffers = NULL, nTasks = nCores,
+  nCores = parallel::detectCores(), verbose = TRUE)
 }
 \arguments{
 \item{X}{A matrix-like object, typically \code{@geno} of a \linkS4class{BGData}
 object.}
 
-\item{scaleCol}{TRUE/FALSE whether columns must be scaled before computing
-xx'.}
+\item{center}{Either a logical value or a numeric vector of length equal to
+the number of columns of \code{X}. Numeric vector required if \code{i2} is used.
+Defaults to \code{TRUE}.}
 
-\item{scales}{Precomputed scales if i2 is used.}
+\item{scale}{Either a logical value or a numeric vector of length equal to
+the number of columns of \code{X}. Numeric vector required if \code{i2} is used.
+Defaults to \code{TRUE}.}
 
-\item{centerCol}{TRUE/FALSE whether columns must be centered before
-computing xx'.}
-
-\item{centers}{Precomputed centers if i2 is used.}
-
-\item{scaleG}{TRUE/FALSE whether xx' must be scaled.}
+\item{scaleG}{Whether \code{XX'} should be scaled. Defaults to \code{TRUE}.}
 
 \item{minVar}{Columns with variance lower than this value will not be used
-in the computation (only if \code{scaleCol} is set).}
+in the computation (only if \code{scale} is not \code{FALSE}).}
 
 \item{i}{Indicates which rows of \code{X} should be used. Can be integer,
 boolean, or character. By default, all rows are used.}
@@ -58,6 +56,6 @@ A positive semi-definite symmetric numeric matrix.
 }
 \description{
 Offers options for centering and scaling the columns of x before computing
-xx'. If \code{centerCol=FALSE}, \code{scaleCol=FALSE} and \code{scaleG=FALSE}, \code{\link[=getG]{getG()}}
+xx'. If \code{center = FALSE}, \code{scale = FALSE} and \code{scaleG = FALSE}, \code{\link[=getG]{getG()}}
 produces the same outcome than \code{\link[base:tcrossprod]{base::tcrossprod()}}.
 }

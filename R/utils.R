@@ -306,20 +306,20 @@ tcrossprod_parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel:
 #' Computes a Genomic Relationship Matrix G=xx'.
 #'
 #' Offers options for centering and scaling the columns of x before computing
-#' xx'. If `centerCol=FALSE`, `scaleCol=FALSE` and `scaleG=FALSE`, [getG()]
+#' xx'. If `center = FALSE`, `scale = FALSE` and `scaleG = FALSE`, [getG()]
 #' produces the same outcome than [base::tcrossprod()].
 #'
 #' @param X A matrix-like object, typically `@@geno` of a [BGData-class]
 #' object.
-#' @param scaleCol TRUE/FALSE whether columns must be scaled before computing
-#' xx'.
-#' @param scales Precomputed scales if i2 is used.
-#' @param centerCol TRUE/FALSE whether columns must be centered before
-#' computing xx'.
-#' @param centers Precomputed centers if i2 is used.
-#' @param scaleG TRUE/FALSE whether xx' must be scaled.
+#' @param center Either a logical value or a numeric vector of length equal to
+#' the number of columns of `X`. Numeric vector required if `i2` is used.
+#' Defaults to `TRUE`.
+#' @param scale Either a logical value or a numeric vector of length equal to
+#' the number of columns of `X`. Numeric vector required if `i2` is used.
+#' Defaults to `TRUE`.
+#' @param scaleG Whether `XX'` should be scaled. Defaults to `TRUE`.
 #' @param minVar Columns with variance lower than this value will not be used
-#' in the computation (only if `scaleCol` is set).
+#' in the computation (only if `scale` is not `FALSE`).
 #' @param i Indicates which rows of `X` should be used. Can be integer,
 #' boolean, or character. By default, all rows are used.
 #' @param j Indicates which columns of `X` should be used. Can be integer,
@@ -339,17 +339,17 @@ tcrossprod_parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel:
 #' @param verbose Whether progress updates will be posted. Defaults to `TRUE`.
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @export
-getG <- function(X, scaleCol = TRUE, scales = NULL, centerCol = TRUE, centers = NULL, scaleG = TRUE, minVar = 1e-05, i = seq_len(nrow(X)), j = seq_len(ncol(X)), i2 = NULL, bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
+getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, i = seq_len(nrow(X)), j = seq_len(ncol(X)), i2 = NULL, bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
 
     # compute XY' rather than XX'
     hasY <- !is.null(i2)
 
     if (hasY) {
-        if (scaleCol && is.null(scales)) {
-            stop("scales need to be precomputed.")
+        if (!is.numeric(center)) {
+            stop("center need to be precomputed.")
         }
-        if (centerCol && is.null(centers)) {
-            stop("centers need to be precomputed.")
+        if (!is.numeric(scale)) {
+            stop("scale need to be precomputed.")
         }
     }
 
@@ -427,37 +427,33 @@ getG <- function(X, scaleCol = TRUE, scales = NULL, centerCol = TRUE, centers = 
         }
 
         # compute centers
-        if (centerCol) {
-            if (is.null(centers)) {
-                centers.chunk <- colMeans(X1, na.rm = TRUE)
-            } else {
-                centers.chunk <- centers[localColIndex]
-            }
+        if (is.logical(center) && center == TRUE) {
+            center.chunk <- colMeans(X1, na.rm = TRUE)
+        } else if (is.numeric(center)) {
+            center.chunk <- center[localColIndex]
         } else {
-            centers.chunk = FALSE
+            center.chunk = FALSE
         }
 
         # compute scales
-        if (scaleCol) {
-            if (is.null(scales)) {
-                scales.chunk <- apply(X = X1, MARGIN = 2, FUN = stats::sd, na.rm = TRUE)
-            } else {
-                scales.chunk <- scales[localColIndex]
-            }
+        if (is.logical(scale) && scale == TRUE) {
+            scale.chunk <- apply(X = X1, MARGIN = 2, FUN = stats::sd, na.rm = TRUE)
+        } else if (is.numeric(scale)) {
+            scale.chunk <- scale[localColIndex]
         } else {
-            scales.chunk <- FALSE
+            scale.chunk <- FALSE
         }
 
         # remove constant columns
-        if (scaleCol) {
-            removeCols <- which(scales.chunk < minVar)
+        if (!(is.logical(scale) && scale == FALSE)) {
+            removeCols <- which(scale.chunk < minVar)
             if (length(removeCols) > 0) {
                 X1 <- X1[, -removeCols]
                 if (hasY) {
                     X2 <- X2[, -removeCols]
                 }
-                scales.chunk <- scales.chunk[-removeCols]
-                centers.chunk <- centers.chunk[-removeCols]
+                scale.chunk <- scale.chunk[-removeCols]
+                center.chunk <- center.chunk[-removeCols]
             }
         }
 
@@ -469,10 +465,10 @@ getG <- function(X, scaleCol = TRUE, scales = NULL, centerCol = TRUE, centers = 
             }
 
             # scale and impute X
-            X1 <- scale(X1, center = centers.chunk, scale = scales.chunk)
+            X1 <- scale(X1, center = center.chunk, scale = scale.chunk)
             X1[is.na(X1)] <- 0
             if (hasY) {
-                X2 <- scale(X2, center = centers.chunk, scale = scales.chunk)
+                X2 <- scale(X2, center = center.chunk, scale = scale.chunk)
                 X2[is.na(X2)] <- 0
             }
 
@@ -493,10 +489,10 @@ getG <- function(X, scaleCol = TRUE, scales = NULL, centerCol = TRUE, centers = 
             G[] <- G + G_chunk
 
             if (hasY && scaleG) {
-                if (scaleCol) {
-                    K <- K + ncol(X1)
+                if (is.logical(scale) && scale == FALSE) {
+                    K <- K + sum(scale.chunk^2)
                 } else {
-                    K <- K + sum(scales.chunk^2)
+                    K <- K + ncol(X1)
                 }
             }
 
