@@ -303,29 +303,34 @@ tcrossprod_parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel:
 
 
 
-#' Computes a Genomic Relationship Matrix G=xx'.
+#' Computes a Genomic Relationship Matrix.
 #'
-#' Offers options for centering and scaling the columns of x before computing
-#' xx'. If `center = FALSE`, `scale = FALSE` and `scaleG = FALSE`, [getG()]
-#' produces the same outcome than [base::tcrossprod()].
+#' Computes a positive semi-definite symmetric genomic relation matrix G=XX'
+#' offering options for centering and scaling the columns of `X` beforehand.
+#'
+#' If `center = FALSE`, `scale = FALSE` and `scaleG = FALSE`, [getG()] produces
+#' the same outcome than [base::tcrossprod()].
 #'
 #' @param X A matrix-like object, typically `@@geno` of a [BGData-class]
 #' object.
 #' @param center Either a logical value or a numeric vector of length equal to
-#' the number of columns of `X`. Numeric vector required if `i2` is used.
-#' Defaults to `TRUE`.
+#' the number of columns of `X`. Numeric vector required if `i2` is used. If
+#' `FALSE`, no centering is done. Defaults to `TRUE`.
 #' @param scale Either a logical value or a numeric vector of length equal to
-#' the number of columns of `X`. Numeric vector required if `i2` is used.
-#' Defaults to `TRUE`.
-#' @param scaleG Whether `XX'` should be scaled. Defaults to `TRUE`.
+#' the number of columns of `X`. Numeric vector required if `i2` is used. If
+#' `FALSE`, no scaling is done.  Defaults to `TRUE`.
+#' @param scaleG Whether XX' should be scaled. Defaults to `TRUE`.
 #' @param minVar Columns with variance lower than this value will not be used
 #' in the computation (only if `scale` is not `FALSE`).
 #' @param i Indicates which rows of `X` should be used. Can be integer,
 #' boolean, or character. By default, all rows are used.
 #' @param j Indicates which columns of `X` should be used. Can be integer,
 #' boolean, or character. By default, all columns are used.
-#' @param i2 Indicates which rows should be used to divide matrix into blocks.
-#' Can be integer, boolean, or character. Defaults to `NULL`.
+#' @param i2 Indicates which rows should be used to compute a block of the
+#' genomic relationship matrix. Will compute XY' where X is determined by `i`
+#' and `j` and Y by `i2` and `j`. Can be integer, boolean, or character. If
+#' `NULL`, the whole genomic relationship matrix XX' is computed.  Defaults to
+#' `NULL`.
 #' @param bufferSize The number of columns of `X` that are brought into RAM for
 #' processing. Overwrites `nBuffers`. If both parameters are `NULL`, all
 #' columns of `X` are used. Defaults to 5000.

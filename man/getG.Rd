@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{getG}
 \alias{getG}
-\title{Computes a Genomic Relationship Matrix G=xx'.}
+\title{Computes a Genomic Relationship Matrix.}
 \usage{
 getG(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05,
   i = seq_len(nrow(X)), j = seq_len(ncol(X)), i2 = NULL,
@@ -14,14 +14,14 @@ getG(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05,
 object.}
 
 \item{center}{Either a logical value or a numeric vector of length equal to
-the number of columns of \code{X}. Numeric vector required if \code{i2} is used.
-Defaults to \code{TRUE}.}
+the number of columns of \code{X}. Numeric vector required if \code{i2} is used. If
+\code{FALSE}, no centering is done. Defaults to \code{TRUE}.}
 
 \item{scale}{Either a logical value or a numeric vector of length equal to
-the number of columns of \code{X}. Numeric vector required if \code{i2} is used.
-Defaults to \code{TRUE}.}
+the number of columns of \code{X}. Numeric vector required if \code{i2} is used. If
+\code{FALSE}, no scaling is done.  Defaults to \code{TRUE}.}
 
-\item{scaleG}{Whether \code{XX'} should be scaled. Defaults to \code{TRUE}.}
+\item{scaleG}{Whether XX' should be scaled. Defaults to \code{TRUE}.}
 
 \item{minVar}{Columns with variance lower than this value will not be used
 in the computation (only if \code{scale} is not \code{FALSE}).}
@@ -32,8 +32,11 @@ boolean, or character. By default, all rows are used.}
 \item{j}{Indicates which columns of \code{X} should be used. Can be integer,
 boolean, or character. By default, all columns are used.}
 
-\item{i2}{Indicates which rows should be used to divide matrix into blocks.
-Can be integer, boolean, or character. Defaults to \code{NULL}.}
+\item{i2}{Indicates which rows should be used to compute a block of the
+genomic relationship matrix. Will compute XY' where X is determined by \code{i}
+and \code{j} and Y by \code{i2} and \code{j}. Can be integer, boolean, or character. If
+\code{NULL}, the whole genomic relationship matrix XX' is computed.  Defaults to
+\code{NULL}.}
 
 \item{bufferSize}{The number of columns of \code{X} that are brought into RAM for
 processing. Overwrites \code{nBuffers}. If both parameters are \code{NULL}, all
@@ -55,7 +58,10 @@ Defaults to the number of cores as detected by \code{\link[parallel:detectCores]
 A positive semi-definite symmetric numeric matrix.
 }
 \description{
-Offers options for centering and scaling the columns of x before computing
-xx'. If \code{center = FALSE}, \code{scale = FALSE} and \code{scaleG = FALSE}, \code{\link[=getG]{getG()}}
-produces the same outcome than \code{\link[base:tcrossprod]{base::tcrossprod()}}.
+Computes a positive semi-definite symmetric genomic relation matrix G=XX'
+offering options for centering and scaling the columns of \code{X} beforehand.
+}
+\details{
+If \code{center = FALSE}, \code{scale = FALSE} and \code{scaleG = FALSE}, \code{\link[=getG]{getG()}} produces
+the same outcome than \code{\link[base:tcrossprod]{base::tcrossprod()}}.
 }
