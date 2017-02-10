@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{GWAS}
 \alias{GWAS}
-\title{Performs Single Marker Regressions Using a BGData Object.}
+\title{Performs Single Marker Regressions Using BGData Objects.}
 \usage{
 GWAS(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)),
   j = seq_len(ncol(data@geno)), bufferSize = 5000, nBuffers = NULL,
@@ -45,11 +45,11 @@ Defaults to the number of cores as detected by \code{\link[parallel:detectCores]
 \item{...}{Additional arguments for chunkedApply and regression method.}
 }
 \value{
-Returns a matrix with estimates, SE, p-value, etc.
+A matrix with estimates, SE, p-value, etc.
 }
 \description{
 Implements single marker regressions. The regression model includes all the
 covariates specified in the right-hand-side of the \code{formula} plus one column
-of \code{@geno}, one column at a time. The data from the association tests is
-obtained from a \linkS4class{BGData} object.
+of \code{@geno} at a time. The data from the association tests is obtained from
+a \linkS4class{BGData} object.
 }

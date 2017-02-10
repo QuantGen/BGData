@@ -699,12 +699,12 @@ getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, sc
 }
 
 
-#' Performs Single Marker Regressions Using a BGData Object.
+#' Performs Single Marker Regressions Using BGData Objects.
 #'
 #' Implements single marker regressions. The regression model includes all the
 #' covariates specified in the right-hand-side of the `formula` plus one column
-#' of `@@geno`, one column at a time. The data from the association tests is
-#' obtained from a [BGData-class] object.
+#' of `@@geno` at a time. The data from the association tests is obtained from
+#' a [BGData-class] object.
 #'
 #' @param formula A formula (e.g. weight~sex+age) with the response on the
 #' left-hand side and predictors (all the covariates except the markers) on the
@@ -730,7 +730,7 @@ getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, sc
 #' Defaults to the number of cores as detected by [parallel::detectCores()].
 #' @param verbose Whether progress updates will be posted. Defaults to `FALSE`.
 #' @param ... Additional arguments for chunkedApply and regression method.
-#' @return Returns a matrix with estimates, SE, p-value, etc.
+#' @return A matrix with estimates, SE, p-value, etc.
 #' @export
 GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = parallel::detectCores(), verbose = FALSE, ...) {
 
