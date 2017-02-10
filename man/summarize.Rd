@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{summarize}
 \alias{summarize}
-\title{Calculates Frequencies of Missing Values and Alleles.}
+\title{Generates Various Summary Statistics.}
 \usage{
 summarize(X, i = seq_len(nrow(X)), j = seq_len(ncol(X)),
   bufferSize = 5000, nTasks = nCores, nBuffers = NULL,
@@ -34,6 +34,12 @@ Defaults to the number of cores as detected by \code{\link[parallel:detectCores]
 
 \item{verbose}{Whether progress updates will be posted. Defaults to \code{FALSE}.}
 }
+\value{
+A \code{data.frame} with three columns: \code{freq_na} for frequencies of
+missing values, \code{allele_freq} for (minor) allele frequencies, and \code{sd} for
+standard deviations.
+}
 \description{
-Calculates Frequencies of Missing Values and Alleles.
+Computes the frequency of missing values, the (minor) allele frequency, and
+standard deviation of each column of \code{X}.
 }

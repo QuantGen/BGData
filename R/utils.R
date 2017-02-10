@@ -869,7 +869,10 @@ getCoefficients.lmerMod <- function(x) {
 }
 
 
-#' Calculates Frequencies of Missing Values and Alleles.
+#' Generates Various Summary Statistics.
+#'
+#' Computes the frequency of missing values, the (minor) allele frequency, and
+#' standard deviation of each column of `X`.
 #'
 #' @param X A matrix-like object, typically `@@geno` of a [BGData-class]
 #' object.
@@ -888,6 +891,9 @@ getCoefficients.lmerMod <- function(x) {
 #' @param nCores The number of cores (passed to [parallel::mclapply()]).
 #' Defaults to the number of cores as detected by [parallel::detectCores()].
 #' @param verbose Whether progress updates will be posted. Defaults to `FALSE`.
+#' @return A `data.frame` with three columns: `freq_na` for frequencies of
+#' missing values, `allele_freq` for (minor) allele frequencies, and `sd` for
+#' standard deviations.
 #' @export
 summarize <- function(X, i = seq_len(nrow(X)), j = seq_len(ncol(X)), bufferSize = 5000, nTasks = nCores, nBuffers = NULL, nCores = parallel::detectCores(), verbose = FALSE) {
     res <- chunkedApply(X = X, MARGIN = 2, FUN = function(col) {
@@ -898,7 +904,7 @@ summarize <- function(X, i = seq_len(nrow(X)), j = seq_len(ncol(X)), bufferSize 
     }, i = i, j = j, bufferSize = bufferSize, nBuffers = nBuffers, nTasks = nTasks, nCores = nCores, verbose = verbose)
     rownames(res) <- c("freq_na", "allele_freq", "sd")
     colnames(res) <- colnames(X)[j]
-    t(res)
+    as.data.frame(t(res))
 }
 
 
