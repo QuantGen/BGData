@@ -43,7 +43,7 @@ columns of \code{X} are used. Defaults to 5000.}
 
 \item{nBuffers}{The number of partitions of the columns of \code{X} that are
 brought into RAM for processing. Is overwritten by \code{bufferSize}. If both
-parameters are \code{NULL}, all columns of \code{X} are used.}
+parameters are \code{NULL}, all columns of \code{X} are used. Defaults to \code{NULL}.}
 
 \item{nTasks}{The number of tasks the problem should be broken into to be
 distributed among \code{nCores} cores. Defaults to \code{nCores}.}

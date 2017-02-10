@@ -27,7 +27,7 @@ distributed among \code{nCores} cores. Defaults to \code{nCores}.}
 
 \item{nBuffers}{The number of partitions of the columns of \code{X} that are
 brought into RAM for processing. Is overwritten by \code{bufferSize}. If both
-parameters are \code{NULL}, all elements in \code{j} are used.}
+parameters are \code{NULL}, all elements in \code{j} are used. Defaults to \code{NULL}.}
 
 \item{nCores}{The number of cores (passed to \code{\link[parallel:mclapply]{parallel::mclapply()}}).
 Defaults to the number of cores as detected by \code{\link[parallel:detectCores]{parallel::detectCores()}}.}

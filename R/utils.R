@@ -157,7 +157,8 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = nCores, nCores = parallel::de
 #' all elements in `i` or `j` are used. Defaults to 5000.
 #' @param nBuffers The number of partitions of the rows or columns of `X` that
 #' are brought into RAM for processing. Is overwritten by `bufferSize`. If both
-#' parameters are `NULL`, all elements in `i` or `j` are used.
+#' parameters are `NULL`, all elements in `i` or `j` are used. Defaults to
+#' `NULL`.
 #' @param nTasks The number of tasks the problem should be broken into to be
 #' distributed among `nCores` cores. Defaults to `nCores`.
 #' @param nCores The number of cores (passed to [parallel::mclapply()]).
@@ -330,7 +331,7 @@ tcrossprod_parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel:
 #' columns of `X` are used. Defaults to 5000.
 #' @param nBuffers The number of partitions of the columns of `X` that are
 #' brought into RAM for processing. Is overwritten by `bufferSize`. If both
-#' parameters are `NULL`, all columns of `X` are used.
+#' parameters are `NULL`, all columns of `X` are used. Defaults to `NULL`.
 #' @param nTasks The number of tasks the problem should be broken into to be
 #' distributed among `nCores` cores. Defaults to `nCores`.
 #' @param nCores The number of cores (passed to [parallel::mclapply()]).
@@ -721,7 +722,7 @@ getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, sc
 #' all elements in `j` are used. Defaults to 5000.
 #' @param nBuffers The number of partitions of the columns of `@@geno` that are
 #' brought into RAM for processing. Is overwritten by `bufferSize`. If both
-#' parameters are `NULL`, all elements in `j` are used.
+#' parameters are `NULL`, all elements in `j` are used. Defaults to `NULL`.
 #' @param nTasks The number of tasks the problem should be broken into to be
 #' distributed among `nCores` cores. Defaults to `nCores`.
 #' @param nCores The number of cores (passed to [parallel::mclapply()]).
@@ -880,7 +881,7 @@ getCoefficients.lmerMod <- function(x) {
 #' elements in `j` are used. Defaults to 5000.
 #' @param nBuffers The number of partitions of the columns of `X` that are
 #' brought into RAM for processing. Is overwritten by `bufferSize`. If both
-#' parameters are `NULL`, all elements in `j` are used.
+#' parameters are `NULL`, all elements in `j` are used. Defaults to `NULL`.
 #' @param nTasks The number of tasks the problem should be broken into to be
 #' distributed among `nCores` cores. Defaults to `nCores`.
 #' @param nCores The number of cores (passed to [parallel::mclapply()]).
