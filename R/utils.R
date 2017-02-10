@@ -148,10 +148,10 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = nCores, nCores = parallel::de
 #' @param MARGIN The subscripts which the function will be applied over. 1
 #' indicates rows, 2 indicates columns.
 #' @param FUN The function to be applied.
-#' @param i (integer, boolean or character) Indicates which rows of `X` should
-#' be used. By default, all rows are used.
-#' @param j (integer, boolean or character) Indicates which columns of `X`
-#' should be used. By default, all columns are used.
+#' @param i Indicates which rows of `X` should be used. Can be integer,
+#' boolean, or character. By default, all rows are used.
+#' @param j Indicates which columns of `X` should be used. Can be integer,
+#' boolean, or character. By default, all columns are used.
 #' @param bufferSize The number of rows or columns of `X` that are brought into
 #' RAM for processing. Overwrites `nBuffers`. If both parameters are `NULL`,
 #' all elements in `i` or `j` are used. Defaults to 5000.
@@ -319,12 +319,12 @@ tcrossprod_parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel:
 #' @param scaleG TRUE/FALSE whether xx' must be scaled.
 #' @param minVar Columns with variance lower than this value will not be used
 #' in the computation (only if `scaleCol` is set).
-#' @param i (integer, boolean or character) Indicates which rows of `X` should
-#' be used. By default, all rows are used.
-#' @param j (integer, boolean or character) Indicates which columns of `X`
-#' should be used. By default, all columns are used.
-#' @param i2 (integer, boolean or character) Indicates which rows should be
-#' used to divide matrix into blocks.
+#' @param i Indicates which rows of `X` should be used. Can be integer,
+#' boolean, or character. By default, all rows are used.
+#' @param j Indicates which columns of `X` should be used. Can be integer,
+#' boolean, or character. By default, all columns are used.
+#' @param i2 Indicates which rows should be used to divide matrix into blocks.
+#' Can be integer, boolean, or character. Defaults to `NULL`.
 #' @param bufferSize The number of columns of `X` that are brought into RAM for
 #' processing. Overwrites `nBuffers`. If both parameters are `NULL`, all
 #' columns of `X` are used. Defaults to 5000.
@@ -540,10 +540,10 @@ getG <- function(X, scaleCol = TRUE, scales = NULL, centerCol = TRUE, centers = 
 #' @param vmode vmode of `ff` objects.
 #' @param saveRData Whether to save an RData file to easily reload the
 #' [symDMatrix::symDMatrix-class] object.
-#' @param i (integer, boolean or character) Indicates which rows of `X` should
-#' be used. By default, all rows are used.
-#' @param j (integer, boolean or character) Indicates which columns of `X`
-#' should be used. By default, all columns are used.
+#' @param i Indicates which rows of `X` should be used. Can be integer,
+#' boolean, or character. By default, all rows are used.
+#' @param j Indicates which columns of `X` should be used. Can be integer,
+#' boolean, or character. By default, all columns are used.
 #' @param nTasks The number of tasks the problem should be broken into to be
 #' distributed among `nCores` cores. Defaults to `nCores`.
 #' @param nCores The number of cores (passed to [parallel::mclapply()]).
@@ -712,10 +712,10 @@ getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, sc
 #' @param method The regression method to be used. Currently, the following
 #' methods are implemented: [stats::lm()], [stats::lm.fit()], [stats::lsfit()],
 #' [stats::glm()], [lme4::lmer()], and [SKAT::SKAT()]. Defaults to `lsfit`.
-#' @param i (integer, boolean or character) Indicates which rows of `@@geno`
-#' should be used. By default, all rows are used.
-#' @param j (integer, boolean or character) Indicates which columns of `@@geno`
-#' should be used. By default, all columns are used.
+#' @param i Indicates which rows of `@@geno` should be used. Can be integer,
+#' boolean, or character. By default, all rows are used.
+#' @param j Indicates which columns of `@@geno` should be used. Can be integer,
+#' boolean, or character. By default, all columns are used.
 #' @param bufferSize The number of columns of `@@geno` that are brought into
 #' RAM for processing. Overwrites `nBuffers`. If both parameters are `NULL`,
 #' all elements in `j` are used. Defaults to 5000.
@@ -871,10 +871,10 @@ getCoefficients.lmerMod <- function(x) {
 #'
 #' @param X A matrix-like object, typically `@@geno` of a [BGData-class]
 #' object.
-#' @param i (integer, boolean or character) Indicates which rows of `X` should
-#' be used. By default, all rows are used.
-#' @param j (integer, boolean or character) Indicates which columns of `X`
-#' should be used. By default, all columns are used.
+#' @param i Indicates which rows of `X` should be used. Can be integer,
+#' boolean, or character. By default, all rows are used.
+#' @param j Indicates which columns of `X` should be used. Can be integer,
+#' boolean, or character. By default, all columns are used.
 #' @param bufferSize The number of columns of `X` that are brought into RAM for
 #' processing. Overwrites `nBuffers`. If both parameters are `NULL`, all
 #' elements in `j` are used. Defaults to 5000.

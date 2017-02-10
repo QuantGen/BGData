@@ -18,11 +18,11 @@ indicates rows, 2 indicates columns.}
 
 \item{FUN}{The function to be applied.}
 
-\item{i}{(integer, boolean or character) Indicates which rows of \code{X} should
-be used. By default, all rows are used.}
+\item{i}{Indicates which rows of \code{X} should be used. Can be integer,
+boolean, or character. By default, all rows are used.}
 
-\item{j}{(integer, boolean or character) Indicates which columns of \code{X}
-should be used. By default, all columns are used.}
+\item{j}{Indicates which columns of \code{X} should be used. Can be integer,
+boolean, or character. By default, all columns are used.}
 
 \item{bufferSize}{The number of rows or columns of \code{X} that are brought into
 RAM for processing. Overwrites \code{nBuffers}. If both parameters are \code{NULL},

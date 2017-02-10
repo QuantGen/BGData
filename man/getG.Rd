@@ -28,14 +28,14 @@ computing xx'.}
 \item{minVar}{Columns with variance lower than this value will not be used
 in the computation (only if \code{scaleCol} is set).}
 
-\item{i}{(integer, boolean or character) Indicates which rows of \code{X} should
-be used. By default, all rows are used.}
+\item{i}{Indicates which rows of \code{X} should be used. Can be integer,
+boolean, or character. By default, all rows are used.}
 
-\item{j}{(integer, boolean or character) Indicates which columns of \code{X}
-should be used. By default, all columns are used.}
+\item{j}{Indicates which columns of \code{X} should be used. Can be integer,
+boolean, or character. By default, all columns are used.}
 
-\item{i2}{(integer, boolean or character) Indicates which rows should be
-used to divide matrix into blocks.}
+\item{i2}{Indicates which rows should be used to divide matrix into blocks.
+Can be integer, boolean, or character. Defaults to \code{NULL}.}
 
 \item{bufferSize}{The number of columns of \code{X} that are brought into RAM for
 processing. Overwrites \code{nBuffers}. If both parameters are \code{NULL}, all

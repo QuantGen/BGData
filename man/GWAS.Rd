@@ -20,11 +20,11 @@ right-hand side. The variables included in the formula must be in the
 methods are implemented: \code{\link[stats:lm]{stats::lm()}}, \code{\link[stats:lm.fit]{stats::lm.fit()}}, \code{\link[stats:lsfit]{stats::lsfit()}},
 \code{\link[stats:glm]{stats::glm()}}, \code{\link[lme4:lmer]{lme4::lmer()}}, and \code{\link[SKAT:SKAT]{SKAT::SKAT()}}. Defaults to \code{lsfit}.}
 
-\item{i}{(integer, boolean or character) Indicates which rows of \code{@geno}
-should be used. By default, all rows are used.}
+\item{i}{Indicates which rows of \code{@geno} should be used. Can be integer,
+boolean, or character. By default, all rows are used.}
 
-\item{j}{(integer, boolean or character) Indicates which columns of \code{@geno}
-should be used. By default, all columns are used.}
+\item{j}{Indicates which columns of \code{@geno} should be used. Can be integer,
+boolean, or character. By default, all columns are used.}
 
 \item{bufferSize}{The number of columns of \code{@geno} that are brought into
 RAM for processing. Overwrites \code{nBuffers}. If both parameters are \code{NULL},
