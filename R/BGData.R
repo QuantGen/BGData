@@ -148,71 +148,95 @@ parsePED <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1
 }
 
 
-#' Creates a BGData Object From a Raw PED File (Generated with --recodeA in
-#' PLINK) or a PED-Like File and Stores the Genotypes in a LinkedMatrix that
-#' Contains Memory-Mapped ff Nodes.
+#' Creates a BGData Object From a Raw PED File or a PED-Like File.
 #'
-#' [readPED()] assumes that the plaintext file (`fileIn`) contains records of
-#' individuals in rows, and phenotypes, covariates and markers in columns. The
-#' columns included in the first couple of columns (`seq_len(nColSkip)`) are
-#' used to populate the `@@pheno` slot of a [BGData-class] object, and the
-#' remaining columns are used to fill the `@@geno` slot. If the first row
-#' contains a header (`header=TRUE`), data in this row is used to determine
-#' variables names for `@@pheno` and marker names for `@@map` and `@@geno`.
+#' Creates a [BGData-class] object from a raw PED file (generated with
+#' `--recodeA` in [PLINK](http://pngu.mgh.harvard.edu/~purcell/plink/)). Other
+#' text-based file formats are supported as well by tweaking some of the
+#' parameters as long as the records of individuals are in rows, and
+#' phenotypes, covariates and markers are in columns.
 #'
+#' The data included in the first couple of columns (up to `nColSkip`) is used
+#' to populate the `@@pheno` slot of a [BGData-class] object, and the remaining
+#' columns are used to fill the `@@geno` slot. If the first row contains a
+#' header (`header = TRUE`), data in this row is used to determine the column
+#' names for `@@pheno` and `@@geno`.
+#'
+#' `@@geno` can take several forms, depending on the function that is called
+#' (`readPED`, `readPED.matrix`, or `readPED.big.matrix`). The following
+#' sections illustrate each function in detail.
+#'
+#' @section readPED:
 #' Genotypes are stored in a [LinkedMatrix::LinkedMatrix-class] object where
-#' each node is an `ff` instance rather than a single `ff` object. This is
-#' because the array size in `ff` is limited to the largest integer which can
-#' be represented on the system (`.Machine$integer.max`) and for genetic data
-#' this limitation is often exceeded. The [LinkedMatrix::LinkedMatrix-class]
-#' package makes it possible to link several `ff` files together by columns or
-#' by rows and treat them similarly to a single matrix. By default a
+#' each node is an `ff` instance. Multiple `ff` files are used because the
+#' array size in `ff` is limited to the largest integer which can be
+#' represented on the system (`.Machine$integer.max`) and for genetic data this
+#' limitation is often exceeded. The [LinkedMatrix::LinkedMatrix-class] package
+#' makes it possible to link several `ff` files together by columns or by rows
+#' and treat them similarly to a single matrix. By default a
 #' [LinkedMatrix::ColumnLinkedMatrix-class] is used for `@@geno`, but the user
 #' can modify this using the `linked.by` argument. The number of nodes to
 #' generate is either specified by the user using the `nNodes` argument or
 #' determined internally so that each `ff` object has a number of cells that is
-#' smaller than `.Machine$integer.max / 1.2`.
+#' smaller than `.Machine$integer.max / 1.2`. A folder (see `folderOut`) that
+#' contains the binary flat files (named `geno_*.bin`) and an external
+#' representation of the [BGData-class] object in `BGData.RData` is created.
 #'
-#' [readPED()] creates a folder (see `folderOut`) that contains the binary flat
-#' files (named `geno_*.bin`) and an external representation of the
-#' [BGData-class] object in `BGData.RData`. A [BGData-class] object can be
-#' reloaded using [load.BGData()] (the regular [base::load()] function will
-#' only work if the working directory is set to the path that contains the
-#' binary flat files).
+#' @section readPED.matrix:
+#' Genotypes are stored in a regular `matrix` object. Therefore, this function
+#' will only work if the raw PED file is small enough to fit into memory.
+#'
+#' @section readPED.big.matrix:
+#' Genotypes are stored in a filebacked [bigmemory::big.matrix-class] object.
+#' A folder (see `folderOut`) that contains the binary flat file (named
+#' `BGData.bin`), a descriptor file (named `BGData.desc`), and an external
+#' representation of the [BGData-class] object in `BGData.RData` are created.
+#'
+#' @section Reloading a BGData object:
+#' To reload a [BGData-class] object, it is recommended to use the
+#' [load.BGData()] function instead of the [base::load()] function as
+#' [base::load()] does not initialize `ff` objects or attach
+#' [bigmemory::big.matrix-class] objects.
 #'
 #' @param fileIn The path to the plaintext file.
 #' @param header Whether `fileIn` contains a header. Defaults to `TRUE`.
 #' @param dataType The coding type of genotypes in `fileIn`. Use `integer()` or
 #' `double()` for numeric coding. Alpha-numeric coding is currently not
-#' supported for [readPED()]: use the `--recodeA` option of PLINK to convert
-#' the PED file into a raw file. Defaults to `integer()`.
-#' @param n The number of individuals.
-#' @param p The number of markers.
+#' supported for [readPED()] and [readPED.big.matrix()]: use the `--recodeA`
+#' option of PLINK to convert the PED file into a raw file. Defaults to
+#' `integer()`.
+#' @param n The number of individuals. Auto-detect if `NULL`. Defaults to
+#' `NULL`.
+#' @param p The number of markers. Auto-detect if `NULL`. Defaults to `NULL`.
 #' @param sep The field separator character. Values on each line of the file
 #' are separated by this character. If `sep = ""` (the default for [readPED()]
 #' the separator is "white space", that is one or more spaces, tabs, newlines
 #' or carriage returns.
 #' @param na.strings The character string used in the plaintext file to denote
-#' missing value.
+#' missing value. Defaults to `NA`.
 #' @param nColSkip The number of columns to be skipped to reach the genotype
-#' information in the file.
+#' information in the file. Defaults to `6`.
 #' @param idCol The index of the ID column. If more than one index is given,
-#' both columns will be concatenated with "_".
-#' @param nNodes The number of nodes to create.
+#' both columns will be concatenated with "_". Defaults to `c(1, 2)`, i.e. a
+#' concatenation of the first two columns.
+#' @param nNodes The number of nodes to create. Auto-detect if `NULL`. Defaults
+#' to `NULL`.
 #' @param linked.by If `columns` a column-linked matrix
 #' ([LinkedMatrix::ColumnLinkedMatrix-class]) is created, if `rows` a
-#' row-linked matrix ([LinkedMatrix::RowLinkedMatrix-class]).
+#' row-linked matrix ([LinkedMatrix::RowLinkedMatrix-class]). Defaults to
+#' `rows`.
 #' @param folderOut The path to the folder where to save the binary files.
 #' Defaults to the name of the input file (`fileIn`) without extension prefixed
 #' with "BGData_".
-#' @param outputType The data type (`vmode`) of the underlying `ff` object of
-#' each node.
+#' @param outputType The `vmode` for `ff` and `type` for
+#' [bigmemory::big.matrix-class]) objects. Default to `byte` for `ff` and
+#' `char` for [bigmemory::big.matrix-class] objects.
 #' @param dimorder The physical layout of the underlying `ff` object of each
 #' node.
 #' @param verbose Whether progress updates will be posted. Defaults to `FALSE`.
-#' @seealso [BGData-class], [LinkedMatrix::LinkedMatrix-class],
-#' [LinkedMatrix::ColumnLinkedMatrix-class],
-#' [LinkedMatrix::RowLinkedMatrix-class], [ff::ff()]
+#' @seealso [load.BGData()] to load a previously saved [BGData-class] object,
+#' [as.BGData()] to create [BGData-class] objects from non-text files (e.g. BED
+#' files).
 #' @export
 readPED <- function(fileIn, header = TRUE, dataType = integer(), n = NULL, p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2), nNodes = NULL, linked.by = "rows", folderOut = paste0("BGData_", sub("\\.[[:alnum:]]+$", "", basename(fileIn))), outputType = "byte", dimorder = if (linked.by == "rows") 2:1 else 1:2, verbose = FALSE) {
 
@@ -282,40 +306,7 @@ readPED <- function(fileIn, header = TRUE, dataType = integer(), n = NULL, p = N
 }
 
 
-#' Creates an BGData Object from a Raw PED File (Generated with --recodeA in
-#' PLINK) or a PED-Like File and Stores the Genotypes in an In-Memory Matrix.
-#'
-#' [readPED.matrix()] assumes that the plaintext file (`fileIn`) contains
-#' records of individuals in rows, and phenotypes, covariates and markers in
-#' columns. The columns included in columns `seq_len(nColSkip)` are used to
-#' populate the slot `@@pheno` of a [BGData-class] object, and the remaining
-#' columns are used to fill the slot `@@geno`. If the first row contains a
-#' header (`header=TRUE`), data in this row is used to determine variables
-#' names for `@@pheno` and marker names for `@@map` and `@@geno`.
-#'
-#' Genotypes are stored in a regular `matrix` object. Therefore, this function
-#' will only work if the raw PED file is small enough to fit into memory.
-#'
-#' @param fileIn The path to the plaintext file.
-#' @param header Whether `fileIn` contains a header. Defaults to `TRUE`.
-#' @param dataType The coding type of genotypes in `fileIn`. Use `integer()` or
-#' `double()` for numeric coding and `character()` for alpha-numeric coding.
-#' Defaults to `integer()`.
-#' @param n The number of individuals.
-#' @param p The number of markers.
-#' @param sep The field separator character. Values on each line of the file
-#' are separated by this character. If `sep = ""` (the default for
-#' [readPED.matrix()] the separator is "white space", that is one or more
-#' spaces, tabs, newlines or carriage returns.
-#' @param na.strings The character string used in the plaintext file to denote
-#' missing value.
-#' @param nColSkip The number of columns to be skipped to reach the genotype
-#' information in the file.
-#' @param idCol The index of the ID column. If more than one index is given,
-#' both columns will be concatenated with "_".
-#' @param verbose Whether progress updates will be posted. Defaults to `FALSE`.
-#' @return Returns a [BGData-class] object.
-#' @seealso [BGData-class]
+#' @rdname readPED
 #' @export
 readPED.matrix <- function(fileIn, header = TRUE, dataType = integer(), n = NULL, p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2), verbose = FALSE) {
 
@@ -339,49 +330,7 @@ readPED.matrix <- function(fileIn, header = TRUE, dataType = integer(), n = NULL
 }
 
 
-#' Creates a BGData Object from a Raw PED File (Generated with --recodeA in
-#' PLINK) or a PED-Like File and Stores the Genotypes in a big.matrix.
-#'
-#' [readPED.matrix()] assumes that the plaintext file (`fileIn`) contains
-#' records of individuals in rows, and phenotypes, covariates and markers in
-#' columns. The columns included in columns `seq_len(nColSkip)` are used to
-#' populate the slot `@@pheno` of a [BGData-class] object, and the remaining
-#' columns are used to fill the slot `@@geno`. If the first row contains a
-#' header (`header=TRUE`), data in this row is used to determine variables
-#' names for `@@pheno` and marker names for `@@map` and `@@geno`.
-#'
-#' Genotypes are stored in a filebacked [bigmemory::big.matrix-class] object.
-#' [readPED.big.matrix()] creates a folder (see `folderOut`) that contains the
-#' binary flat file (named `BGData.bin`), a descriptor file (named
-#' `BGData.desc`), and an external representation of the [BGData-class] object
-#' in `BGData.RData`. A [BGData-class] object can be reloaded using
-#' [load.BGData()] (the regular [base::load()] function will not work unless
-#' the [bigmemory::big.matrix-class] instance is manually attached using
-#' [bigmemory::attach.big.matrix()]).
-#'
-#' @param fileIn The path to the plaintext file.
-#' @param header Whether `fileIn` contains a header. Defaults to `TRUE`.
-#' @param dataType The coding type of genotypes in `fileIn`. Use `integer()` or
-#' `double()` for numeric coding. Alpha-numeric coding is currently not
-#' supported for [readPED()]: use the `--recodeA` option of PLINK to convert
-#' the PED file into a raw file. Defaults to `integer()`.
-#' @param n The number of individuals.
-#' @param p The number of markers.
-#' @param sep The field separator character. Values on each line of the file
-#' are separated by this character. If `sep = ""` (the default for
-#' [readPED.big.matrix()] the separator is "white space", that is one or more
-#' spaces, tabs, newlines or carriage returns.
-#' @param na.strings The character string used in the plaintext file to denote
-#' missing value.
-#' @param nColSkip The number of columns to be skipped to reach the genotype
-#' information in the file.
-#' @param idCol The index of the ID column. If more than one index is given,
-#' both columns will be concatenated with "_".
-#' @param folderOut The path to the folder where to save the binary files.
-#' @param outputType The type of the [bigmemory::big.matrix-class].
-#' @param verbose Whether progress updates will be posted. Defaults to `FALSE`.
-#' @return Returns a [BGData-class] object.
-#' @seealso [BGData-class]
+#' @rdname readPED
 #' @export
 readPED.big.matrix <- function(fileIn, header = TRUE, dataType = integer(), n = NULL, p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2), folderOut = paste0("BGData_", sub("\\.[[:alnum:]]+$", "", basename(fileIn))), outputType = "char", verbose = FALSE) {
 
