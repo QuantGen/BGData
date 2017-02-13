@@ -39,51 +39,51 @@ context("readPED")
 test_that("it complains if folderOut already exists", {
     dirExistsPath <- paste0(testPath, "dirExists")
     dir.create(dirExistsPath, showWarnings = FALSE)
-    expect_error(readPED(fileIn = pedPath, header = TRUE, dataType = "integer", n = nRows, folderOut = dirExistsPath))
+    expect_error(readPED(fileIn = pedPath, n = nRows, folderOut = dirExistsPath))
 })
 
 
 test_that("it reads PED files into BGData objects", {
 
     # With minimum number of parameters (with exception of folderOut)
-    BGData <- readPED(fileIn = pedPath, header = TRUE, dataType = integer(), folderOut = paste0(testPath, "test-", randomString()))
+    BGData <- readPED(fileIn = pedPath, folderOut = paste0(testPath, "test-", randomString()))
     expect_equal(BGData@pheno, phenotypes)
     expect_equal(BGData@geno[], genotypes, check.attributes = FALSE)
 
     # With n
-    BGData <- readPED(fileIn = pedPath, header = TRUE, dataType = integer(), n = nRows, folderOut = paste0(testPath, "test-", randomString()))
+    BGData <- readPED(fileIn = pedPath, n = nRows, folderOut = paste0(testPath, "test-", randomString()))
     expect_equal(BGData@pheno, phenotypes)
     expect_equal(BGData@geno[], genotypes, check.attributes = FALSE)
 
     # With p
-    BGData <- readPED(fileIn = pedPath, header = TRUE, dataType = integer(), p = nCols, folderOut = paste0(testPath, "test-", randomString()))
+    BGData <- readPED(fileIn = pedPath, p = nCols, folderOut = paste0(testPath, "test-", randomString()))
     expect_equal(BGData@pheno, phenotypes)
     expect_equal(BGData@geno[], genotypes, check.attributes = FALSE)
 
     # With both n and p
-    BGData <- readPED(fileIn = pedPath, header = TRUE, dataType = integer(), n = nRows, p = nCols, folderOut = paste0(testPath, "test-", randomString()))
+    BGData <- readPED(fileIn = pedPath, n = nRows, p = nCols, folderOut = paste0(testPath, "test-", randomString()))
     expect_equal(BGData@pheno, phenotypes)
     expect_equal(BGData@geno[], genotypes, check.attributes = FALSE)
 
     # As integer
     class(genotypes) <- "integer"
-    BGData <- readPED(fileIn = pedPath, header = TRUE, dataType = integer(), folderOut = paste0(testPath, "test-", randomString()))
+    BGData <- readPED(fileIn = pedPath, dataType = integer(), folderOut = paste0(testPath, "test-", randomString()))
     expect_equal(BGData@geno[], genotypes, check.attributes = FALSE)
-    BGData <- readPED(fileIn = pedPath, header = TRUE, dataType = "integer", folderOut = paste0(testPath, "test-", randomString()))
+    BGData <- readPED(fileIn = pedPath, dataType = "integer", folderOut = paste0(testPath, "test-", randomString()))
     expect_equal(BGData@geno[], genotypes, check.attributes = FALSE)
     genotypes <- restoreGenotypes()
 
     # As double
     class(genotypes) <- "double"
-    BGData <- readPED(fileIn = pedPath, header = TRUE, dataType = double(), folderOut = paste0(testPath, "test-", randomString()))
+    BGData <- readPED(fileIn = pedPath, dataType = double(), folderOut = paste0(testPath, "test-", randomString()))
     expect_equal(BGData@geno[], genotypes, check.attributes = FALSE)
-    BGData <- readPED(fileIn = pedPath, header = TRUE, dataType = "double", folderOut = paste0(testPath, "test-", randomString()))
+    BGData <- readPED(fileIn = pedPath, dataType = "double", folderOut = paste0(testPath, "test-", randomString()))
     expect_equal(BGData@geno[], genotypes, check.attributes = FALSE)
     genotypes <- restoreGenotypes()
 
     # As character
-    expect_error(readPED(fileIn = pedPath, header = TRUE, dataType = character(), folderOut = paste0(testPath, "test-", randomString())))
-    expect_error(readPED(fileIn = pedPath, header = TRUE, dataType = "character", folderOut = paste0(testPath, "test-", randomString())))
+    expect_error(readPED(fileIn = pedPath, dataType = character(), folderOut = paste0(testPath, "test-", randomString())))
+    expect_error(readPED(fileIn = pedPath, dataType = "character", folderOut = paste0(testPath, "test-", randomString())))
 
 })
 
@@ -93,46 +93,46 @@ context("readPED.matrix")
 test_that("it reads a PED file into a matrix object", {
 
     # With minimum number of parameters (with exception of folderOut)
-    BGData <- readPED.matrix(fileIn = pedPath, header = TRUE, dataType = integer())
+    BGData <- readPED.matrix(fileIn = pedPath)
     expect_equal(BGData@pheno, phenotypes)
     expect_equal(BGData@geno[], genotypes)
 
     # With n
-    BGData <- readPED.matrix(fileIn = pedPath, header = TRUE, dataType = integer(), n = nRows)
+    BGData <- readPED.matrix(fileIn = pedPath, n = nRows)
     expect_equal(BGData@pheno, phenotypes)
     expect_equal(BGData@geno[], genotypes)
 
     # With p
-    BGData <- readPED.matrix(fileIn = pedPath, header = TRUE, dataType = integer(), p = nCols)
+    BGData <- readPED.matrix(fileIn = pedPath, p = nCols)
     expect_equal(BGData@pheno, phenotypes)
     expect_equal(BGData@geno[], genotypes)
 
     # With both n and p
-    BGData <- readPED.matrix(fileIn = pedPath, header = TRUE, dataType = integer(), n = nRows, p = nCols)
+    BGData <- readPED.matrix(fileIn = pedPath, n = nRows, p = nCols)
     expect_equal(BGData@pheno, phenotypes)
     expect_equal(BGData@geno[], genotypes)
 
     # As integer
     class(genotypes) <- "integer"
-    BGData <- readPED.matrix(fileIn = pedPath, header = TRUE, dataType = integer())
+    BGData <- readPED.matrix(fileIn = pedPath, dataType = integer())
     expect_equal(BGData@geno[], genotypes)
-    BGData <- readPED.matrix(fileIn = pedPath, header = TRUE, dataType = "integer")
+    BGData <- readPED.matrix(fileIn = pedPath, dataType = "integer")
     expect_equal(BGData@geno[], genotypes)
     genotypes <- restoreGenotypes()
 
     # As double
     class(genotypes) <- "double"
-    BGData <- readPED.matrix(fileIn = pedPath, header = TRUE, dataType = double())
+    BGData <- readPED.matrix(fileIn = pedPath, dataType = double())
     expect_equal(BGData@geno[], genotypes)
-    BGData <- readPED.matrix(fileIn = pedPath, header = TRUE, dataType = "double")
+    BGData <- readPED.matrix(fileIn = pedPath, dataType = "double")
     expect_equal(BGData@geno[], genotypes)
     genotypes <- restoreGenotypes()
 
     # As character
     class(genotypes) <- "character"
-    BGData <- readPED.matrix(fileIn = pedPath, header = TRUE, dataType = character())
+    BGData <- readPED.matrix(fileIn = pedPath, dataType = character())
     expect_equal(BGData@geno[], genotypes)
-    BGData <- readPED.matrix(fileIn = pedPath, header = TRUE, dataType = "character")
+    BGData <- readPED.matrix(fileIn = pedPath, dataType = "character")
     expect_equal(BGData@geno[], genotypes)
     genotypes <- restoreGenotypes()
 
@@ -143,46 +143,44 @@ context("readPED.big.matrix")
 test_that("it reads a PED file into a big.matrix object", {
 
     # With minimum number of parameters (with exception of folderOut)
-    BGData <- readPED.big.matrix(fileIn = pedPath, header = TRUE, dataType = integer(), folderOut = paste0(testPath, "test-", randomString()))
+    BGData <- readPED.big.matrix(fileIn = pedPath, folderOut = paste0(testPath, "test-", randomString()))
     expect_equal(BGData@pheno, phenotypes)
     expect_equal(BGData@geno[], genotypes)
 
     # With n
-    BGData <- readPED.big.matrix(fileIn = pedPath, header = TRUE, dataType = integer(), n = nRows, folderOut = paste0(testPath, "test-", randomString()))
+    BGData <- readPED.big.matrix(fileIn = pedPath, n = nRows, folderOut = paste0(testPath, "test-", randomString()))
     expect_equal(BGData@pheno, phenotypes)
     expect_equal(BGData@geno[], genotypes)
 
     # With p
-    BGData <- readPED.big.matrix(fileIn = pedPath, header = TRUE, dataType = integer(), p = nCols, folderOut = paste0(testPath, "test-", randomString()))
+    BGData <- readPED.big.matrix(fileIn = pedPath, p = nCols, folderOut = paste0(testPath, "test-", randomString()))
     expect_equal(BGData@pheno, phenotypes)
     expect_equal(BGData@geno[], genotypes)
 
     # With both n and p
-    BGData <- readPED.big.matrix(fileIn = pedPath, header = TRUE, dataType = integer(), n = nRows, p = nCols, folderOut = paste0(testPath, "test-", randomString()))
+    BGData <- readPED.big.matrix(fileIn = pedPath, n = nRows, p = nCols, folderOut = paste0(testPath, "test-", randomString()))
     expect_equal(BGData@pheno, phenotypes)
     expect_equal(BGData@geno[], genotypes)
 
     # As integer
     class(genotypes) <- "integer"
-    BGData <- readPED.big.matrix(fileIn = pedPath, header = TRUE, dataType = integer(), folderOut = paste0(testPath, "test-", randomString()))
+    BGData <- readPED.big.matrix(fileIn = pedPath, dataType = integer(), folderOut = paste0(testPath, "test-", randomString()))
     expect_equal(BGData@geno[], genotypes)
-    BGData <- readPED.big.matrix(fileIn = pedPath, header = TRUE, dataType = "integer", folderOut = paste0(testPath, "test-", randomString()))
+    BGData <- readPED.big.matrix(fileIn = pedPath, dataType = "integer", folderOut = paste0(testPath, "test-", randomString()))
     expect_equal(BGData@geno[], genotypes)
     genotypes <- restoreGenotypes()
 
     # As double
     class(genotypes) <- "double"
-    BGData <- readPED.big.matrix(fileIn = pedPath, header = TRUE, dataType = double(), folderOut = paste0(testPath, "test-", randomString()))
+    BGData <- readPED.big.matrix(fileIn = pedPath, dataType = double(), folderOut = paste0(testPath, "test-", randomString()))
     expect_equal(BGData@geno[], genotypes)
-    BGData <- readPED.big.matrix(fileIn = pedPath, header = TRUE, dataType = "double", folderOut = paste0(testPath, "test-", randomString()))
+    BGData <- readPED.big.matrix(fileIn = pedPath, dataType = "double", folderOut = paste0(testPath, "test-", randomString()))
     expect_equal(BGData@geno[], genotypes)
     genotypes <- restoreGenotypes()
 
     # As character
-    class(genotypes) <- "character"
-    expect_error(readPED.big.matrix(fileIn = pedPath, header = TRUE, dataType = character(), folderOut = paste0(testPath, "test-", randomString())))
-    expect_error(readPED.big.matrix(fileIn = pedPath, header = TRUE, dataType = "character", folderOut = paste0(testPath, "test-", randomString())))
-    genotypes <- restoreGenotypes()
+    expect_error(readPED(fileIn = pedPath, dataType = character(), folderOut = paste0(testPath, "test-", randomString())))
+    expect_error(readPED(fileIn = pedPath, dataType = "character", folderOut = paste0(testPath, "test-", randomString())))
 
 })
 
@@ -192,7 +190,7 @@ test_that("it loads BGData objects created by readPED", {
 
     # Create dummy BGData object without returning data
     path <- paste0(testPath, "test-", randomString())
-    readPED(fileIn = pedPath, header = TRUE, dataType = integer(), folderOut = path)
+    readPED(fileIn = pedPath, folderOut = path)
     expect_true(!("BGData" %in% ls()))
 
     # Append BGData.RData to path
@@ -213,7 +211,7 @@ test_that("it loads BGData objects created by readPED.matrix", {
     # Create dummy BGData object
     path <- paste0(testPath, "test-", randomString(), "/", "BGData.RData")
     dir.create(dirname(path))
-    BGData <- readPED.matrix(fileIn = pedPath, header = TRUE, dataType = integer())
+    BGData <- readPED.matrix(fileIn = pedPath)
     save(BGData, file = path)
     rm(BGData)
     expect_true(!("BGData" %in% ls()))
@@ -229,7 +227,7 @@ test_that("it loads BGData objects created by readPED.big.matrix", {
 
     # Create dummy BGData object
     path <- paste0(testPath, "test-", randomString())
-    readPED.big.matrix(fileIn = pedPath, header = TRUE, dataType = integer(), folderOut = path)
+    readPED.big.matrix(fileIn = pedPath, dataType = integer(), folderOut = path)
     expect_true(!("BGData" %in% ls()))
 
     # Append BGData.RData to path
