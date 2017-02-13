@@ -9,8 +9,8 @@ Contains Memory-Mapped ff Nodes.}
 readPED(fileIn, header = TRUE, dataType = integer(), n = NULL, p = NULL,
   sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2),
   nNodes = NULL, linked.by = "rows", folderOut = paste0("BGData_",
-  sub("\\\\.[[:alnum:]]+$", "", basename(fileIn))), dimorder = if (linked.by
-  == "rows") 2:1 else 1:2, verbose = FALSE)
+  sub("\\\\.[[:alnum:]]+$", "", basename(fileIn))), outputType = "byte",
+  dimorder = if (linked.by == "rows") 2:1 else 1:2, verbose = FALSE)
 }
 \arguments{
 \item{fileIn}{The path to the plaintext file.}
@@ -18,9 +18,9 @@ readPED(fileIn, header = TRUE, dataType = integer(), n = NULL, p = NULL,
 \item{header}{Whether \code{fileIn} contains a header. Defaults to \code{TRUE}.}
 
 \item{dataType}{The coding type of genotypes in \code{fileIn}. Use \code{integer()} or
-\code{double()} for numeric coding. Character coding is currently not supported
-for \code{\link[=readPED]{readPED()}}: use the \code{--recodeA} option of PLINK to convert the PED file
-into a raw file. Defaults to \code{integer()}.}
+\code{double()} for numeric coding. Alpha-numeric coding is currently not
+supported for \code{\link[=readPED]{readPED()}}: use the \code{--recodeA} option of PLINK to convert
+the PED file into a raw file. Defaults to \code{integer()}.}
 
 \item{n}{The number of individuals.}
 
@@ -49,6 +49,9 @@ row-linked matrix (\link[LinkedMatrix:RowLinkedMatrix-class]{LinkedMatrix::RowLi
 \item{folderOut}{The path to the folder where to save the binary files.
 Defaults to the name of the input file (\code{fileIn}) without extension prefixed
 with "BGData_".}
+
+\item{outputType}{The data type (\code{vmode}) of the underlying \code{ff} object of
+each node.}
 
 \item{dimorder}{The physical layout of the underlying \code{ff} object of each
 node.}

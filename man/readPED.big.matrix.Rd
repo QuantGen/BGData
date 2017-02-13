@@ -8,7 +8,7 @@ PLINK) or a PED-Like File and Stores the Genotypes in a big.matrix.}
 readPED.big.matrix(fileIn, header = TRUE, dataType = integer(), n = NULL,
   p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1,
   2), folderOut = paste0("BGData_", sub("\\\\.[[:alnum:]]+$", "",
-  basename(fileIn))), verbose = FALSE)
+  basename(fileIn))), outputType = "char", verbose = FALSE)
 }
 \arguments{
 \item{fileIn}{The path to the plaintext file.}
@@ -16,8 +16,9 @@ readPED.big.matrix(fileIn, header = TRUE, dataType = integer(), n = NULL,
 \item{header}{Whether \code{fileIn} contains a header. Defaults to \code{TRUE}.}
 
 \item{dataType}{The coding type of genotypes in \code{fileIn}. Use \code{integer()} or
-\code{double()} for numeric coding and \code{character()} for alpha-numeric coding.
-Defaults to \code{integer()}.}
+\code{double()} for numeric coding. Alpha-numeric coding is currently not
+supported for \code{\link[=readPED]{readPED()}}: use the \code{--recodeA} option of PLINK to convert
+the PED file into a raw file. Defaults to \code{integer()}.}
 
 \item{n}{The number of individuals.}
 
@@ -38,6 +39,8 @@ information in the file.}
 both columns will be concatenated with "_".}
 
 \item{folderOut}{The path to the folder where to save the binary files.}
+
+\item{outputType}{The type of the \link[bigmemory:big.matrix-class]{bigmemory::big.matrix}.}
 
 \item{verbose}{Whether progress updates will be posted. Defaults to \code{FALSE}.}
 }

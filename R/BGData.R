@@ -183,9 +183,9 @@ parsePED <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1
 #' @param fileIn The path to the plaintext file.
 #' @param header Whether `fileIn` contains a header. Defaults to `TRUE`.
 #' @param dataType The coding type of genotypes in `fileIn`. Use `integer()` or
-#' `double()` for numeric coding. Character coding is currently not supported
-#' for [readPED()]: use the `--recodeA` option of PLINK to convert the PED file
-#' into a raw file. Defaults to `integer()`.
+#' `double()` for numeric coding. Alpha-numeric coding is currently not
+#' supported for [readPED()]: use the `--recodeA` option of PLINK to convert
+#' the PED file into a raw file. Defaults to `integer()`.
 #' @param n The number of individuals.
 #' @param p The number of markers.
 #' @param sep The field separator character. Values on each line of the file
@@ -205,6 +205,8 @@ parsePED <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1
 #' @param folderOut The path to the folder where to save the binary files.
 #' Defaults to the name of the input file (`fileIn`) without extension prefixed
 #' with "BGData_".
+#' @param outputType The data type (`vmode`) of the underlying `ff` object of
+#' each node.
 #' @param dimorder The physical layout of the underlying `ff` object of each
 #' node.
 #' @param verbose Whether progress updates will be posted. Defaults to `FALSE`.
@@ -212,7 +214,7 @@ parsePED <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1
 #' [LinkedMatrix::ColumnLinkedMatrix-class],
 #' [LinkedMatrix::RowLinkedMatrix-class], [ff::ff()]
 #' @export
-readPED <- function(fileIn, header = TRUE, dataType = integer(), n = NULL, p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2), nNodes = NULL, linked.by = "rows", folderOut = paste0("BGData_", sub("\\.[[:alnum:]]+$", "", basename(fileIn))), dimorder = if (linked.by == "rows") 2:1 else 1:2, verbose = FALSE) {
+readPED <- function(fileIn, header = TRUE, dataType = integer(), n = NULL, p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2), nNodes = NULL, linked.by = "rows", folderOut = paste0("BGData_", sub("\\.[[:alnum:]]+$", "", basename(fileIn))), outputType = "byte", dimorder = if (linked.by == "rows") 2:1 else 1:2, verbose = FALSE) {
 
     # Create output directory
     if (file.exists(folderOut)) {
@@ -253,10 +255,8 @@ readPED <- function(fileIn, header = TRUE, dataType = integer(), n = NULL, p = N
         stop("linked.by must be either columns or rows")
     }
 
-    vmode <- ifelse(typeof(dataType) == "integer", "byte", "double")
-
     # Prepare geno
-    geno <- LinkedMatrix::LinkedMatrix(nrow = dims$n, ncol = dims$p, nNodes = nNodes, linkedBy = linked.by, nodeInitializer = ffNodeInitializer, vmode = vmode, folderOut = folderOut, dimorder = dimorder)
+    geno <- LinkedMatrix::LinkedMatrix(nrow = dims$n, ncol = dims$p, nNodes = nNodes, linkedBy = linked.by, nodeInitializer = ffNodeInitializer, vmode = outputType, folderOut = folderOut, dimorder = dimorder)
 
     # Generate nodes
     nodes <- LinkedMatrix::nodes(geno)
@@ -362,8 +362,9 @@ readPED.matrix <- function(fileIn, header = TRUE, dataType = integer(), n = NULL
 #' @param fileIn The path to the plaintext file.
 #' @param header Whether `fileIn` contains a header. Defaults to `TRUE`.
 #' @param dataType The coding type of genotypes in `fileIn`. Use `integer()` or
-#' `double()` for numeric coding and `character()` for alpha-numeric coding.
-#' Defaults to `integer()`.
+#' `double()` for numeric coding. Alpha-numeric coding is currently not
+#' supported for [readPED()]: use the `--recodeA` option of PLINK to convert
+#' the PED file into a raw file. Defaults to `integer()`.
 #' @param n The number of individuals.
 #' @param p The number of markers.
 #' @param sep The field separator character. Values on each line of the file
@@ -377,22 +378,19 @@ readPED.matrix <- function(fileIn, header = TRUE, dataType = integer(), n = NULL
 #' @param idCol The index of the ID column. If more than one index is given,
 #' both columns will be concatenated with "_".
 #' @param folderOut The path to the folder where to save the binary files.
+#' @param outputType The type of the [bigmemory::big.matrix-class].
 #' @param verbose Whether progress updates will be posted. Defaults to `FALSE`.
 #' @return Returns a [BGData-class] object.
 #' @seealso [BGData-class]
 #' @export
-readPED.big.matrix <- function(fileIn, header = TRUE, dataType = integer(), n = NULL, p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2), folderOut = paste0("BGData_", sub("\\.[[:alnum:]]+$", "", basename(fileIn))), verbose = FALSE) {
+readPED.big.matrix <- function(fileIn, header = TRUE, dataType = integer(), n = NULL, p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2), folderOut = paste0("BGData_", sub("\\.[[:alnum:]]+$", "", basename(fileIn))), outputType = "char", verbose = FALSE) {
 
     if (file.exists(folderOut)) {
         stop(paste("Output folder", folderOut, "already exists. Please move it or pick a different one."))
     }
 
     dataType <- normalizeType(dataType)
-    if (typeof(dataType) == "double") {
-        type <- "double"
-    } else if (typeof(dataType) == "integer") {
-        type <- "char"
-    } else {
+    if (!typeof(dataType) %in% c("integer", "double")) {
         stop("dataType must be either integer() or double()")
     }
 
@@ -405,7 +403,7 @@ readPED.big.matrix <- function(fileIn, header = TRUE, dataType = integer(), n = 
     dir.create(folderOut)
 
     # Prepare geno
-    geno <- bigmemory::filebacked.big.matrix(nrow = dims$n, ncol = dims$p, type = type, backingpath = folderOut, backingfile = "BGData.bin", descriptorfile = "BGData.desc")
+    geno <- bigmemory::filebacked.big.matrix(nrow = dims$n, ncol = dims$p, type = outputType, backingpath = folderOut, backingfile = "BGData.bin", descriptorfile = "BGData.desc")
 
     # Prepare pheno
     pheno <- as.data.frame(matrix(nrow = dims$n, ncol = nColSkip), stringsAsFactors = FALSE)
