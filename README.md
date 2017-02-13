@@ -110,7 +110,7 @@ To load the BGData package:
 
 A `BGData` object can be generated from any plaintext file that stores individuals in rows, phenotypes in the first couple of columns (including an identifier for each individual), and genotypes as single allele dosage numbers in the remaining columns. This structure is intentionally similar to a [PED file](http://pngu.mgh.harvard.edu/~purcell/plink/data.shtml#ped) that further restricts the structure of the phenotype section. The `mice` dataset that we will use as an example is only PED-like: there are more than six initial columns and the order of the columns is not according to the specification, but the BGData package is flexible enough to read it thanks to the `nColSkip` and `idCol` parameters.
 
-    > bgd <- readPED(fileIn = "mice.raw.gz", header = TRUE, dataType= integer(), nColSkip = 17, idCol = 1)
+    > bgd <- readPED(fileIn = "mice.raw.gz", header = TRUE, dataType = integer(), nColSkip = 17, idCol = 1)
 
 Display structure of BGData object:
 
@@ -221,12 +221,15 @@ Use the `summarize` function to calculate minor allele frequencies and frequency
 
 A data structure for genomic data is useful when defining methods that act on both phenotype and genotype information. We have implemented a `GWAS` function that supports various regression methods. The formula takes phenotypes from `@pheno` and inserts one marker at a time.
 
+    # lsfit (the default method)
+    fmLM <- GWAS(formula = Obesity.BMI ~ GENDER + Litter, data = bgd)
+
     # lm
     fmLM <- GWAS(formula = Obesity.BMI ~ GENDER + Litter, data = bgd, method = "lm")
 
     # glm
     bgd@pheno$GENDER01 <- ifelse(bgd@pheno$GENDER == "M", 1, 0)
-    fmGLM <- GWAS(formula = GENDER01 ~ Obesity.BMI, data = bgd, method = "glm", family="binomial")
+    fmGLM <- GWAS(formula = GENDER01 ~ Obesity.BMI, data = bgd, method = "glm", family = "binomial")
 
     # lmer
     fmLMER <- GWAS(formula = Obesity.BMI ~ GENDER + Litter + (1|cage), data = bgd, method = "lmer")
