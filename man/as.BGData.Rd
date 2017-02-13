@@ -2,7 +2,7 @@
 % Please edit documentation in R/BGData.R
 \name{as.BGData}
 \alias{as.BGData}
-\title{S3 Generic to Convert Other Objects into BGData Objects.}
+\title{Convert Other Objects to BGData Objects.}
 \usage{
 as.BGData(x, ...)
 }
@@ -15,5 +15,9 @@ as.BGData(x, ...)
 A BGData object.
 }
 \description{
-S3 Generic to Convert Other Objects into BGData Objects.
+Convert Other Objects to BGData Objects.
+}
+\seealso{
+\code{\link[=as.BGData.BEDMatrix]{as.BGData.BEDMatrix()}} to convert \link[BEDMatrix:BEDMatrix]{BEDMatrix::BEDMatrix} objects
+to \linkS4class{BGData}.
 }

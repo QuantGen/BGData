@@ -12,6 +12,9 @@ setOldClass("BEDMatrix")
 #' suitable for very large datasets. Currently supported are
 #' [LinkedMatrix::LinkedMatrix-class], [BEDMatrix::BEDMatrix],
 #' [bigmemory::big.matrix-class], `ff_matrix`, and `matrix`.
+#'
+#' @seealso The `@@geno` slot of [BGData-class] that accepts [geno-class]
+#' objects.
 setClassUnion("geno", c("LinkedMatrix", "BEDMatrix", "big.matrix", "ff_matrix", "matrix"))
 
 
@@ -372,18 +375,20 @@ readPED.big.matrix <- function(fileIn, header = TRUE, dataType = integer(), n = 
 }
 
 
-#' S3 Generic to Convert Other Objects into BGData Objects.
+#' Convert Other Objects to BGData Objects.
 #'
 #' @param x An object.
 #' @param ... Additional arguments (see method).
 #' @return A BGData object.
+#' @seealso [as.BGData.BEDMatrix()] to convert [BEDMatrix::BEDMatrix] objects
+#' to [BGData-class].
 #' @export
 as.BGData <- function(x, ...) {
     UseMethod("as.BGData")
 }
 
 
-#' Converts a BEDMatrix Object to a BGData Object.
+#' Converts Other Objects to BGData Objects.
 #'
 #' If a FAM file (which corresponds to the first six columns of a PED file) of
 #' the same name and in the same directory as the BED file exists, the
@@ -404,6 +409,7 @@ as.BGData <- function(x, ...) {
 #' [data.table::fread()] call (if data.table package is installed) call to
 #' parse the alternate pheno file.
 #' @return A [BGData-class] object.
+#' @seealso [readPED()] to convert text files to [BGData-class] objects.
 #' @export
 as.BGData.BEDMatrix <- function(x, alternatePhenotypeFile = NULL, ...) {
     # Path to BED file

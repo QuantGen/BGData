@@ -2,7 +2,7 @@
 % Please edit documentation in R/BGData.R
 \name{as.BGData.BEDMatrix}
 \alias{as.BGData.BEDMatrix}
-\title{Converts a BEDMatrix Object to a BGData Object.}
+\title{Converts Other Objects to BGData Objects.}
 \usage{
 \method{as.BGData}{BEDMatrix}(x, alternatePhenotypeFile = NULL, ...)
 }
@@ -30,4 +30,7 @@ PED only allows for a single phenotype. If more phenotypes are required it
 is possible to store them in an \href{http://pngu.mgh.harvard.edu/~purcell/plink/data.shtml#pheno}{alternate phenotypefile}. The path
 to such a file can be provided with \code{alternatePhenotypeFile} and will be
 merged with the data in the \code{@pheno} slot.
+}
+\seealso{
+\code{\link[=readPED]{readPED()}} to convert text files to \linkS4class{BGData} objects.
 }

@@ -10,3 +10,7 @@ suitable for very large datasets. Currently supported are
 \link[LinkedMatrix:LinkedMatrix-class]{LinkedMatrix::LinkedMatrix}, \link[BEDMatrix:BEDMatrix]{BEDMatrix::BEDMatrix},
 \link[bigmemory:big.matrix-class]{bigmemory::big.matrix}, \code{ff_matrix}, and \code{matrix}.
 }
+\seealso{
+The \code{@geno} slot of \linkS4class{BGData} that accepts \linkS4class{geno}
+objects.
+}
