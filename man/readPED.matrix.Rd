@@ -5,13 +5,14 @@
 \title{Creates an BGData Object from a Raw PED File (Generated with --recodeA in
 PLINK) or a PED-Like File and Stores the Genotypes in an In-Memory Matrix.}
 \usage{
-readPED.matrix(fileIn, header, dataType, n = NULL, p = NULL, sep = "",
-  na.strings = "NA", nColSkip = 6, idCol = c(1, 2), verbose = FALSE)
+readPED.matrix(fileIn, header = TRUE, dataType, n = NULL, p = NULL,
+  sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2),
+  verbose = FALSE)
 }
 \arguments{
 \item{fileIn}{The path to the plaintext file.}
 
-\item{header}{If TRUE, the file contains a header.}
+\item{header}{Whether \code{fileIn} contains a header. Defaults to \code{TRUE}.}
 
 \item{dataType}{The coding of genotypes. Use \code{character()} for A/C/G/T or
 \code{integer()} for numeric coding.}

@@ -6,7 +6,7 @@
 PLINK) or a PED-Like File and Stores the Genotypes in a LinkedMatrix that
 Contains Memory-Mapped ff Nodes.}
 \usage{
-readPED(fileIn, header, dataType, n = NULL, p = NULL, sep = "",
+readPED(fileIn, header = TRUE, dataType, n = NULL, p = NULL, sep = "",
   na.strings = "NA", nColSkip = 6, idCol = c(1, 2), nNodes = NULL,
   linked.by = "rows", folderOut = paste0("BGData_",
   sub("\\\\.[[:alnum:]]+$", "", basename(fileIn))), dimorder = if (linked.by
@@ -15,7 +15,7 @@ readPED(fileIn, header, dataType, n = NULL, p = NULL, sep = "",
 \arguments{
 \item{fileIn}{The path to the plaintext file.}
 
-\item{header}{If TRUE, the file contains a header.}
+\item{header}{Whether \code{fileIn} contains a header. Defaults to \code{TRUE}.}
 
 \item{dataType}{The coding of genotypes. Use \code{integer()} or \code{double()} for
 numeric coding. Character coding is currently not supported: use the
