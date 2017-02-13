@@ -24,15 +24,15 @@ setClassUnion("geno", c("LinkedMatrix", "BEDMatrix", "big.matrix", "ff_matrix", 
 #' Association Study or [getG()] for calculating a genomic relationship matrix.
 #'
 #' There are several ways to create an instance of this class:
-#' * from a raw PED file (or a PED-like file) using [readPED()],
-#' [readPED.matrix()], or [readPED.big.matrix()].
-#' * from a BED file using [as.BGData()].
 #' * from arbitrary phenotype/genotype data using one of the constructors
 #' `[BGData(...)][initialize,BGData-method]` or `[new("BGData",
 #' ...)][initialize,BGData-method]`.
+#' * from a BED file using [as.BGData()].
 #' * from a previously saved [BGData-class] object using [load.BGData()].
 #' * from multiple files (even a mixture of different file types) using
 #' [LinkedMatrix::LinkedMatrix-class].
+#' * from a raw PED file (or a PED-like file) using [readPED()],
+#' [readPED.matrix()], or [readPED.big.matrix()].
 #'
 #' A PED file can be recoded to a raw PED in
 #' [PLINK](http://pngu.mgh.harvard.edu/~purcell/plink/) using `plink --file

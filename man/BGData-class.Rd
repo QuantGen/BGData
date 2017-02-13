@@ -15,14 +15,14 @@ Association Study or \code{\link[=getG]{getG()}} for calculating a genomic relat
 \details{
 There are several ways to create an instance of this class:
 \itemize{
-\item from a raw PED file (or a PED-like file) using \code{\link[=readPED]{readPED()}},
-\code{\link[=readPED.matrix]{readPED.matrix()}}, or \code{\link[=readPED.big.matrix]{readPED.big.matrix()}}.
-\item from a BED file using \code{\link[=as.BGData]{as.BGData()}}.
 \item from arbitrary phenotype/genotype data using one of the constructors
 \code{[BGData(...)][initialize,BGData-method]} or \code{[new("BGData", ...)][initialize,BGData-method]}.
+\item from a BED file using \code{\link[=as.BGData]{as.BGData()}}.
 \item from a previously saved \linkS4class{BGData} object using \code{\link[=load.BGData]{load.BGData()}}.
 \item from multiple files (even a mixture of different file types) using
 \link[LinkedMatrix:LinkedMatrix-class]{LinkedMatrix::LinkedMatrix}.
+\item from a raw PED file (or a PED-like file) using \code{\link[=readPED]{readPED()}},
+\code{\link[=readPED.matrix]{readPED.matrix()}}, or \code{\link[=readPED.big.matrix]{readPED.big.matrix()}}.
 }
 
 A PED file can be recoded to a raw PED in
