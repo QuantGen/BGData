@@ -5,9 +5,9 @@
 \title{Creates a BGData Object from a Raw PED File (Generated with --recodeA in
 PLINK) or a PED-Like File and Stores the Genotypes in a big.matrix.}
 \usage{
-readPED.big.matrix(fileIn, header = TRUE, dataType, n = NULL, p = NULL,
-  sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2),
-  folderOut = paste0("BGData_", sub("\\\\.[[:alnum:]]+$", "",
+readPED.big.matrix(fileIn, header = TRUE, dataType = integer(), n = NULL,
+  p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1,
+  2), folderOut = paste0("BGData_", sub("\\\\.[[:alnum:]]+$", "",
   basename(fileIn))), verbose = FALSE)
 }
 \arguments{
@@ -15,8 +15,9 @@ readPED.big.matrix(fileIn, header = TRUE, dataType, n = NULL, p = NULL,
 
 \item{header}{Whether \code{fileIn} contains a header. Defaults to \code{TRUE}.}
 
-\item{dataType}{The coding of genotypes. Use \code{character()} for A/C/G/T or
-\code{integer()} for numeric coding.}
+\item{dataType}{The coding type of genotypes in \code{fileIn}. Use \code{integer()} or
+\code{double()} for numeric coding and \code{character()} for alpha-numeric coding.
+Defaults to \code{integer()}.}
 
 \item{n}{The number of individuals.}
 

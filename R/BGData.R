@@ -182,9 +182,10 @@ parsePED <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1
 #'
 #' @param fileIn The path to the plaintext file.
 #' @param header Whether `fileIn` contains a header. Defaults to `TRUE`.
-#' @param dataType The coding of genotypes. Use `integer()` or `double()` for
-#' numeric coding. Character coding is currently not supported: use the
-#' `--recodeA` option of PLINK to convert the PED file into a raw file.
+#' @param dataType The coding type of genotypes in `fileIn`. Use `integer()` or
+#' `double()` for numeric coding. Character coding is currently not supported
+#' for [readPED()]: use the `--recodeA` option of PLINK to convert the PED file
+#' into a raw file. Defaults to `integer()`.
 #' @param n The number of individuals.
 #' @param p The number of markers.
 #' @param sep The field separator character. Values on each line of the file
@@ -211,7 +212,7 @@ parsePED <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1
 #' [LinkedMatrix::ColumnLinkedMatrix-class],
 #' [LinkedMatrix::RowLinkedMatrix-class], [ff::ff()]
 #' @export
-readPED <- function(fileIn, header = TRUE, dataType, n = NULL, p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2), nNodes = NULL, linked.by = "rows", folderOut = paste0("BGData_", sub("\\.[[:alnum:]]+$", "", basename(fileIn))), dimorder = if (linked.by == "rows") 2:1 else 1:2, verbose = FALSE) {
+readPED <- function(fileIn, header = TRUE, dataType = integer(), n = NULL, p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2), nNodes = NULL, linked.by = "rows", folderOut = paste0("BGData_", sub("\\.[[:alnum:]]+$", "", basename(fileIn))), dimorder = if (linked.by == "rows") 2:1 else 1:2, verbose = FALSE) {
 
     # Create output directory
     if (file.exists(folderOut)) {
@@ -297,8 +298,9 @@ readPED <- function(fileIn, header = TRUE, dataType, n = NULL, p = NULL, sep = "
 #'
 #' @param fileIn The path to the plaintext file.
 #' @param header Whether `fileIn` contains a header. Defaults to `TRUE`.
-#' @param dataType The coding of genotypes. Use `character()` for A/C/G/T or
-#' `integer()` for numeric coding.
+#' @param dataType The coding type of genotypes in `fileIn`. Use `integer()` or
+#' `double()` for numeric coding and `character()` for alpha-numeric coding.
+#' Defaults to `integer()`.
 #' @param n The number of individuals.
 #' @param p The number of markers.
 #' @param sep The field separator character. Values on each line of the file
@@ -315,7 +317,7 @@ readPED <- function(fileIn, header = TRUE, dataType, n = NULL, p = NULL, sep = "
 #' @return Returns a [BGData-class] object.
 #' @seealso [BGData-class]
 #' @export
-readPED.matrix <- function(fileIn, header = TRUE, dataType, n = NULL, p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2), verbose = FALSE) {
+readPED.matrix <- function(fileIn, header = TRUE, dataType = integer(), n = NULL, p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2), verbose = FALSE) {
 
     dims <- pedDims(fileIn = fileIn, header = header, n = n, p = p, sep = sep, nColSkip = nColSkip)
 
@@ -359,8 +361,9 @@ readPED.matrix <- function(fileIn, header = TRUE, dataType, n = NULL, p = NULL, 
 #'
 #' @param fileIn The path to the plaintext file.
 #' @param header Whether `fileIn` contains a header. Defaults to `TRUE`.
-#' @param dataType The coding of genotypes. Use `character()` for A/C/G/T or
-#' `integer()` for numeric coding.
+#' @param dataType The coding type of genotypes in `fileIn`. Use `integer()` or
+#' `double()` for numeric coding and `character()` for alpha-numeric coding.
+#' Defaults to `integer()`.
 #' @param n The number of individuals.
 #' @param p The number of markers.
 #' @param sep The field separator character. Values on each line of the file
@@ -378,7 +381,7 @@ readPED.matrix <- function(fileIn, header = TRUE, dataType, n = NULL, p = NULL, 
 #' @return Returns a [BGData-class] object.
 #' @seealso [BGData-class]
 #' @export
-readPED.big.matrix <- function(fileIn, header = TRUE, dataType, n = NULL, p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2), folderOut = paste0("BGData_", sub("\\.[[:alnum:]]+$", "", basename(fileIn))), verbose = FALSE) {
+readPED.big.matrix <- function(fileIn, header = TRUE, dataType = integer(), n = NULL, p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2), folderOut = paste0("BGData_", sub("\\.[[:alnum:]]+$", "", basename(fileIn))), verbose = FALSE) {
 
     if (file.exists(folderOut)) {
         stop(paste("Output folder", folderOut, "already exists. Please move it or pick a different one."))

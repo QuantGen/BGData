@@ -6,9 +6,9 @@
 PLINK) or a PED-Like File and Stores the Genotypes in a LinkedMatrix that
 Contains Memory-Mapped ff Nodes.}
 \usage{
-readPED(fileIn, header = TRUE, dataType, n = NULL, p = NULL, sep = "",
-  na.strings = "NA", nColSkip = 6, idCol = c(1, 2), nNodes = NULL,
-  linked.by = "rows", folderOut = paste0("BGData_",
+readPED(fileIn, header = TRUE, dataType = integer(), n = NULL, p = NULL,
+  sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2),
+  nNodes = NULL, linked.by = "rows", folderOut = paste0("BGData_",
   sub("\\\\.[[:alnum:]]+$", "", basename(fileIn))), dimorder = if (linked.by
   == "rows") 2:1 else 1:2, verbose = FALSE)
 }
@@ -17,9 +17,10 @@ readPED(fileIn, header = TRUE, dataType, n = NULL, p = NULL, sep = "",
 
 \item{header}{Whether \code{fileIn} contains a header. Defaults to \code{TRUE}.}
 
-\item{dataType}{The coding of genotypes. Use \code{integer()} or \code{double()} for
-numeric coding. Character coding is currently not supported: use the
-\code{--recodeA} option of PLINK to convert the PED file into a raw file.}
+\item{dataType}{The coding type of genotypes in \code{fileIn}. Use \code{integer()} or
+\code{double()} for numeric coding. Character coding is currently not supported
+for \code{\link[=readPED]{readPED()}}: use the \code{--recodeA} option of PLINK to convert the PED file
+into a raw file. Defaults to \code{integer()}.}
 
 \item{n}{The number of individuals.}
 
