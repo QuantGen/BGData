@@ -375,54 +375,11 @@ readPED.big.matrix <- function(fileIn, header = TRUE, dataType = integer(), n = 
 }
 
 
-#' Convert Other Objects to BGData Objects.
-#'
-#' @param x An object.
-#' @param ... Additional arguments (see method).
-#' @return A BGData object.
-#' @seealso [as.BGData.BEDMatrix()] to convert [BEDMatrix::BEDMatrix] objects
-#' to [BGData-class].
-#' @export
-as.BGData <- function(x, ...) {
-    UseMethod("as.BGData")
-}
-
-
-#' Converts Other Objects to BGData Objects.
-#'
-#' If a FAM file (which corresponds to the first six columns of a PED file) of
-#' the same name and in the same directory as the BED file exists, the
-#' `@@pheno` slot will be populated with the data stored in that file.
-#' Otherwise a stub that only contains an `IID` column populated with the
-#' rownames of `@@geno` will be generated.
-#'
-#' PED only allows for a single phenotype. If more phenotypes are required it
-#' is possible to store them in an [alternate phenotype
-#' file](http://pngu.mgh.harvard.edu/~purcell/plink/data.shtml#pheno). The path
-#' to such a file can be provided with `alternatePhenotypeFile` and will be
-#' merged with the data in the `@@pheno` slot.
-#'
-#' @param x A [BEDMatrix::BEDMatrix] object.
-#' @param alternatePhenotypeFile Path to an [alternate phenotype
-#' file](http://pngu.mgh.harvard.edu/~purcell/plink/data.shtml#pheno).
-#' @param ... Additional arguments to the [utils::read.table()] or
-#' [data.table::fread()] call (if data.table package is installed) call to
-#' parse the alternate pheno file.
-#' @return A [BGData-class] object.
-#' @seealso [readPED()] to convert text files to [BGData-class] objects.
-#' @export
-as.BGData.BEDMatrix <- function(x, alternatePhenotypeFile = NULL, ...) {
-    # Path to BED file
-    bedPath <- attr(x, "path")
-    # Path to FAM file
-    famPath <- sub(".bed", ".fam", bedPath)
-    # Path to BIM file
-    bimPath <- sub(".bed", ".bim", bedPath)
-    # Read in pheno file
-    if (file.exists(famPath)) {
+loadFamFile <- function(path) {
+    if (file.exists(path)) {
         message("Extracting phenotypes from FAM file...")
         if (requireNamespace("data.table", quietly = TRUE)) {
-            pheno <- data.table::fread(famPath, col.names = c(
+            pheno <- data.table::fread(path, col.names = c(
                 "FID",
                 "IID",
                 "PAT",
@@ -431,7 +388,7 @@ as.BGData.BEDMatrix <- function(x, alternatePhenotypeFile = NULL, ...) {
                 "PHENOTYPE"
             ), data.table = FALSE, showProgress = FALSE)
         } else {
-            pheno <- utils::read.table(famPath, col.names = c(
+            pheno <- utils::read.table(path, col.names = c(
                 "FID",
                 "IID",
                 "PAT",
@@ -444,11 +401,15 @@ as.BGData.BEDMatrix <- function(x, alternatePhenotypeFile = NULL, ...) {
         splits <- strsplit(rownames(x), "_")
         pheno <- data.frame(FID = sapply(splits, "[", 1), IID = sapply(splits, "[", 2), stringsAsFactors = FALSE)
     }
-    # Read in map file
-    if (file.exists(bimPath)) {
+    return(pheno)
+}
+
+
+loadBimFile <- function(path) {
+    if (file.exists(path)) {
         message("Extracting map from BIM file...")
         if (requireNamespace("data.table", quietly = TRUE)) {
-            map <- data.table::fread(bimPath, col.names = c(
+            map <- data.table::fread(path, col.names = c(
                 "chromosome",
                 "snp_id",
                 "genetic_distance",
@@ -457,7 +418,7 @@ as.BGData.BEDMatrix <- function(x, alternatePhenotypeFile = NULL, ...) {
                 "allele_2"
             ), data.table = FALSE, showProgress = FALSE)
         } else {
-            map <- utils::read.table(bimPath, col.names = c(
+            map <- utils::read.table(path, col.names = c(
                 "chromosome",
                 "snp_id",
                 "genetic_distance",
@@ -468,41 +429,133 @@ as.BGData.BEDMatrix <- function(x, alternatePhenotypeFile = NULL, ...) {
         }
     } else {
         splits <- strsplit(colnames(x), "_")
-        map <- data.frame(bimPath, snp_id = sapply(splits, function(x) {
+        map <- data.frame(path, snp_id = sapply(splits, function(x) {
             paste0(x[seq_len(length(x) - 1)], collapse = "_")
         }), allele_1 = sapply(splits, function(x) {
             x[length(x)]
         }), stringsAsFactors = FALSE)
     }
-    if (!is.null(alternatePhenotypeFile)) {
-        if (!file.exists(alternatePhenotypeFile)) {
-            stop("Alternate phenotype file does not exist.")
+    return(map)
+}
+
+
+loadAlternatePhenotypeFile <- function(path, ...) {
+    if (!file.exists(path)) {
+        stop("Alternate phenotype file does not exist.")
+    } else {
+        message("Merging alternate phenotype file...")
+        if (requireNamespace("data.table", quietly = TRUE)) {
+            alternatePhenotypes <- data.table::fread(path, data.table = FALSE, showProgress = FALSE, ...)
         } else {
-            message("Merging alternate phenotype file...")
-            if (requireNamespace("data.table", quietly = TRUE)) {
-                alternatePhenotypes <- data.table::fread(alternatePhenotypeFile, data.table = FALSE, showProgress = FALSE, ...)
-            } else {
-                # Check if the file has a header, i.e. if the first row starts with
-                # an FID and an IID entry (unfortunately, treating the first row as
-                # colnames after read.table screws with the types)
-                hasHeader = FALSE
-                if (grepl("FID\\s+IID", readLines(alternatePhenotypeFile, n = 1))) {
-                    hasHeader = TRUE
-                }
-                alternatePhenotypes <- utils::read.table(alternatePhenotypeFile, header = hasHeader, stringsAsFactors = FALSE, ...)
+            # Check if the file has a header, i.e. if the first row starts with
+            # an FID and an IID entry
+            hasHeader = FALSE
+            if (grepl("FID\\s+IID", readLines(path, n = 1))) {
+                hasHeader = TRUE
             }
-            # Add artificial sort column to preserve order after merging
-            # (merge's `sort = FALSE` order is unspecified)
-            pheno$.sortColumn <- seq_len(nrow(pheno))
-            # Merge phenotypes and alternate phenotypes
-            pheno <- merge(pheno, alternatePhenotypes, by = c("FID", "IID"), all.x = TRUE)
-            # Reorder phenotypes to match original order and delete artificial
-            # column
-            pheno <- pheno[order(pheno$.sortColumn), ]
-            pheno <- pheno[, names(pheno) != ".sortColumn"]
+            alternatePhenotypes <- utils::read.table(path, header = hasHeader, stringsAsFactors = FALSE, ...)
         }
     }
-    BGData(geno = x, pheno = pheno, map = map)
+    return(alternatePhenotypes)
+}
+
+
+mergeAlternatePhenotypes <- function(pheno, alternatePhenotypes) {
+    # Add artificial sort column to preserve order after merging
+    # (merge's `sort = FALSE` order is unspecified)
+    pheno$.sortColumn <- seq_len(nrow(pheno))
+    # Merge phenotypes and alternate phenotypes
+    pheno <- merge(pheno, alternatePhenotypes, by = c(1L, 2L), all.x = TRUE)
+    # Reorder phenotypes to match original order and delete artificial
+    # column
+    pheno <- pheno[order(pheno$.sortColumn), ]
+    pheno <- pheno[, names(pheno) != ".sortColumn"]
+    return(pheno)
+}
+
+
+#' Convert Other Objects to BGData Objects.
+#'
+#' Converts other objects to [BGData-class] objects by loading supplementary
+#' phenotypes and map files referenced by the object to be used for the
+#' `@@pheno` and `@@map` slot, respectively. Currently supported are
+#' [BEDMatrix::BEDMatrix] objects, plain or nested in
+#' [LinkedMatrix::ColumnLinkedMatrix-class] objects.
+#'
+#' The PED format only allows for a single phenotype. If more phenotypes are
+#' required it is possible to store them in an [alternate phenotype
+#' file](http://pngu.mgh.harvard.edu/~purcell/plink/data.shtml#pheno). The path
+#' to such a file can be provided with `alternatePhenotypeFile` and will be
+#' merged with the data in the `@@pheno` slot.
+#'
+#' For [BEDMatrix::BEDMatrix] objects: If a FAM file (which corresponds to the
+#' first six columns of a PED file) of the same name and in the same directory
+#' as the BED file exists, the `@@pheno` slot will be populated with the data
+#' stored in that file.  Otherwise a stub that only contains an `IID` column
+#' populated with the rownames of `@@geno` will be generated. The same will
+#' happen for a BIM file for the `@@map` slot.
+#'
+#' For [LinkedMatrix::ColumnLinkedMatrix-class] objects: See the case for
+#' [BEDMatrix::BEDMatrix] objects, but only the FAM file of the first node of
+#' the [LinkedMatrix::LinkedMatrix-class] will be read and used for the
+#' `@@pheno` slot, and the BIM files of all nodes will be combined and used for
+#' the `@@map` slot.
+#'
+#' @param x An object. Currently supported are [BEDMatrix::BEDMatrix] objects,
+#' plain or nested in [LinkedMatrix::ColumnLinkedMatrix-class] objects.
+#' @param alternatePhenotypeFile Path to an [alternate phenotype
+#' file](http://pngu.mgh.harvard.edu/~purcell/plink/data.shtml#pheno).
+#' @param ... Additional arguments to the [utils::read.table()] or
+#' [data.table::fread()] call (if data.table package is installed) call to
+#' parse the alternate pheno file.
+#' @return A [BGData-class] object.
+#' @seealso [readPED()] to convert text files to [BGData-class] objects.
+#' @export
+as.BGData <- function(x, alternatePhenotypeFile = NULL, ...) {
+    UseMethod("as.BGData")
+}
+
+
+#' @rdname as.BGData
+#' @export
+as.BGData.BEDMatrix <- function(x, alternatePhenotypeFile = NULL, ...) {
+    # Extract path to BED file
+    bedPath <- attr(x, "path")
+    # Read in pheno file
+    fam <- loadFamFile(sub(".bed", ".fam", bedPath))
+    # Read in map file
+    map <- loadBimFile(sub(".bed", ".bim", bedPath))
+    # Load and merge alternate phenotype file
+    if (!is.null(alternatePhenotypeFile)) {
+        alternatePhenotypes <- loadAlternatePhenotypeFile(alternatePhenotypeFile, ...)
+        fam <- mergeAlternatePhenotypes(fam, alternatePhenotypes)
+    }
+    BGData(geno = x, pheno = fam, map = map)
+}
+
+
+#' @rdname as.BGData
+#' @export
+as.BGData.ColumnLinkedMatrix <- function(x, alternatePhenotypeFile = NULL, ...) {
+    n <- LinkedMatrix::nNodes(x)
+    # For now, all elements have to be of type BEDMatrix
+    if (!all(sapply(x, function(node) class(node)) == "BEDMatrix")) {
+        stop("Only BEDMatrix instances are supported as elements of the LinkedMatrix right now.")
+    }
+    # Read in the fam file of the first node
+    message("Extracting phenotypes from FAM file, assuming that the FAM file of the first BEDMatrix instance is representative of all the other nodes...")
+    fam <- suppressMessages(loadFamFile(sub(".bed", ".fam", attr(x[[1]], "path"))))
+    # Read in map files
+    message("Extracting map from BIM files...")
+    map <- do.call("rbind", lapply(x, function(node) {
+        suppressMessages(loadBimFile(sub(".bed", ".bim", attr(node, "path"))))
+    }))
+    # Load and merge alternate phenotype file
+    if (!is.null(alternatePhenotypeFile)) {
+        alternatePhenotypes <- loadAlternatePhenotypeFile(alternatePhenotypeFile, ...)
+        fam <- mergeAlternatePhenotypes(fam, alternatePhenotypes)
+    }
+    BGData(geno = x, pheno = fam, map = map)
 }
 
 
