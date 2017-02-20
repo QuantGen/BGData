@@ -242,3 +242,9 @@ A data structure for genomic data is useful when defining methods that act on bo
 ### Generating the G Matrix
 
     G <- getG(bgd@geno)
+
+
+Example Dataset
+---------------
+
+The example dataset in the `inst/extdata` folder was generated from the 250k SNP and phenotype data in [Atwell et al. (2010)](http://www.nature.com/nature/journal/v465/n7298/full/nature08800.html). Only the first 300 SNPs of chromosome 1, 2, and 3 were included to keep the size of the example dataset small. [PLINK](http://pngu.mgh.harvard.edu/~purcell/plink/) was used to convert the data to BED and RAW files. `FT10` has been chosen as a phenotype and is provided as an [alternate phenotype file](http://pngu.mgh.harvard.edu/~purcell/plink/data.shtml#pheno). The file is intentionally shuffled to demonstrate that the additional phenotypes are put in the same order as the rest of the phenotypes.

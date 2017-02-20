@@ -243,7 +243,7 @@ test_that("it loads BGData objects created by readPED.big.matrix", {
 test_that("it loads BGData objects containing a BEDMatrix object", {
 
     # Create dummy objects
-    bedMatrix <- BEDMatrix::BEDMatrix(system.file("extdata", "example.bed", package = "BEDMatrix"))
+    bedMatrix <- BEDMatrix::BEDMatrix(system.file("extdata", "chr1.bed", package = "BGData"))
     bedDims <- dim(bedMatrix)
     bedDNames <- dimnames(bedMatrix)
     bedRow <- bedMatrix[1, ]
@@ -268,7 +268,7 @@ test_that("it loads BGData objects containing a BEDMatrix object", {
 context("as.BGData")
 
 test_that("it converts a BEDMatrix object to a BGData object", {
-    bedMatrix <- BEDMatrix::BEDMatrix(system.file("extdata", "example.bed", package = "BEDMatrix"))
+    bedMatrix <- BEDMatrix::BEDMatrix(system.file("extdata", "chr1.bed", package = "BGData"))
     bgData <- as.BGData(bedMatrix)
     expect_is(bgData, "BGData")
     expect_equal(dim(bgData@geno), dim(bedMatrix))
@@ -279,18 +279,18 @@ test_that("it converts a BEDMatrix object to a BGData object", {
 })
 
 test_that("it throws an error if an alternate phenotype file does not exist when converting a BEDMatrix object to a BGData object", {
-    bedMatrix <- BEDMatrix::BEDMatrix(system.file("extdata", "example.bed", package = "BEDMatrix"))
+    bedMatrix <- BEDMatrix::BEDMatrix(system.file("extdata", "chr1.bed", package = "BGData"))
     expect_error(as.BGData(bedMatrix, alternatePhenotypeFile = "NOT_FOUND"))
 })
 
 test_that("it reads an alternate phenotype file when converting a BEDMatrix object to a BGData object", {
-    bedMatrix <- BEDMatrix::BEDMatrix(system.file("extdata", "example.bed", package = "BEDMatrix"))
+    bedMatrix <- BEDMatrix::BEDMatrix(system.file("extdata", "chr1.bed", package = "BGData"))
     bgData <- as.BGData(bedMatrix, alternatePhenotypeFile = system.file("extdata", "pheno.txt", package = "BGData"))
     expect_is(bgData, "BGData")
-    # Test if pheno has two extra columns
-    expect_equal(ncol(bgData@pheno), 8)
+    # Test if pheno has an extra column for the phenotype
+    expect_equal(ncol(bgData@pheno), 7)
     # Test merging and NA handling
-    expect_equal(bgData@pheno[3, 8], 24.12)
+    expect_equal(bgData@pheno[1, 7], 57.0)
     expect_equal(nrow(bgData@pheno), nrow(bgData@geno))
-    expect_true(all(is.na(bgData@pheno[2, c(7, 8)])))
+    expect_true(all(is.na(bgData@pheno[c(178, 180, 189, 190, 196), 7])))
 })
