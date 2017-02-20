@@ -978,3 +978,13 @@ simplifyList <- function(x) {
 padDigits <- function(x, total) {
     formatC(x, width = as.integer(log10(total) + 1), format = "d", flag = "0")
 }
+
+
+loadExample <- function() {
+    path <- system.file("extdata", package = "BGData")
+    message("Loading chromosomes as BED files...")
+    m <- do.call("ColumnLinkedMatrix", lapply(c("chr1", "chr2", "chr3"), function(chr) {
+        suppressMessages(BEDMatrix(paste0(path, "/", chr)))
+    }))
+    as.BGData(m)
+}
