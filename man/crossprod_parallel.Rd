@@ -6,10 +6,10 @@
 \title{Computes crossprod (x'x or x'y) or tcrossprod (xx' or xy') in Parallel.}
 \usage{
 crossprod_parallel(x, y = NULL, nTasks = nCores,
-  nCores = parallel::detectCores())
+  nCores = getOption("mc.cores", 2L))
 
 tcrossprod_parallel(x, y = NULL, nTasks = nCores,
-  nCores = parallel::detectCores())
+  nCores = getOption("mc.cores", 2L))
 }
 \arguments{
 \item{x}{A matrix-like object, typically \code{@geno} of a \linkS4class{BGData}

@@ -99,7 +99,7 @@ apply2 <- function(X, MARGIN, FUN, ...) {
 #' @seealso [chunkedApply()] if `X` is a memory-mapped matrix and too large to
 #' hold in memory.
 #' @export
-parallelApply <- function(X, MARGIN, FUN, nTasks = nCores, nCores = parallel::detectCores(), ...) {
+parallelApply <- function(X, MARGIN, FUN, nTasks = nCores, nCores = getOption("mc.cores", 2L), ...) {
     d <- dim(X)
     if (!length(d)) {
         stop("dim(X) must have a positive length")
@@ -168,7 +168,7 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = nCores, nCores = parallel::de
 #' @seealso [parallelApply()] if `X` is not a memory-mapped matrix or can be
 #' held in memory.
 #' @export
-chunkedApply <- function(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(X)), bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = parallel::detectCores(), verbose = FALSE, ...) {
+chunkedApply <- function(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(X)), bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
     if (!length(dim(X))) {
         stop("dim(X) must have a positive length")
     }
@@ -209,7 +209,7 @@ chunkedApply <- function(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(
 }
 
 
-crossprods <- function(x, y = NULL, use_tcrossprod = FALSE, nTasks = nCores, nCores = parallel::detectCores()) {
+crossprods <- function(x, y = NULL, use_tcrossprod = FALSE, nTasks = nCores, nCores = getOption("mc.cores", 2L)) {
     dx <- dim(x)
     if (!is.null(y)) {
         y <- as.matrix(y)
@@ -290,14 +290,14 @@ crossprods <- function(x, y = NULL, use_tcrossprod = FALSE, nTasks = nCores, nCo
 #' (`tcrossprod_parallel`), depending on whether `y` is provided.
 #' @seealso [getG()] to compute a genomic relationship matrix.
 #' @export
-crossprod_parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel::detectCores()) {
+crossprod_parallel <- function(x, y = NULL, nTasks = nCores, nCores = getOption("mc.cores", 2L)) {
     crossprods(x = x, y = y, use_tcrossprod = FALSE, nTasks = nTasks, nCores = nCores)
 }
 
 
 #' @rdname crossprod_parallel
 #' @export
-tcrossprod_parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel::detectCores()) {
+tcrossprod_parallel <- function(x, y = NULL, nTasks = nCores, nCores = getOption("mc.cores", 2L)) {
     crossprods(x = x, y = y, use_tcrossprod = TRUE, nTasks = nTasks, nCores = nCores)
 }
 
@@ -344,7 +344,7 @@ tcrossprod_parallel <- function(x, y = NULL, nTasks = nCores, nCores = parallel:
 #' @param verbose Whether progress updates will be posted. Defaults to `TRUE`.
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @export
-getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, i = seq_len(nrow(X)), j = seq_len(ncol(X)), i2 = NULL, bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
+getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, i = seq_len(nrow(X)), j = seq_len(ncol(X)), i2 = NULL, bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = TRUE) {
 
     # compute XY' rather than XX'
     hasY <- !is.null(i2)
@@ -553,7 +553,7 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
 #' @param verbose Whether progress updates will be posted. Defaults to `TRUE`.
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @export
-getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, scales = NULL, centerCol = TRUE, scaleCol = TRUE, scaleG = TRUE, folderOut = paste0("symDMatrix_", randomString()), vmode = "double", saveRData = TRUE, i = seq_len(nrow(X)), j = seq_len(ncol(X)), nTasks = nCores, nCores = parallel::detectCores(), verbose = TRUE) {
+getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, scales = NULL, centerCol = TRUE, scaleCol = TRUE, scaleG = TRUE, folderOut = paste0("symDMatrix_", randomString()), vmode = "double", saveRData = TRUE, i = seq_len(nrow(X)), j = seq_len(ncol(X)), nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = TRUE) {
 
     nX <- nrow(X)
     pX <- ncol(X)
@@ -731,7 +731,7 @@ getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, sc
 #' @param ... Additional arguments for chunkedApply and regression method.
 #' @return The same matrix that would be returned by `coef(summary(model))`.
 #' @export
-GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = parallel::detectCores(), verbose = FALSE, ...) {
+GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
 
     if (class(data) != "BGData") {
         stop("data must BGData")
@@ -785,7 +785,7 @@ rayOLS <- function(y, x, n = length(y)){
 }
 
 
-GWAS.lsfit <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = parallel::detectCores(), verbose = FALSE, ...) {
+GWAS.lsfit <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
 
     # subset of model.frame has bizarre scoping issues
     frame <- stats::model.frame(formula = formula, data = data@pheno)[i, , drop = FALSE]
@@ -887,7 +887,7 @@ getCoefficients.lmerMod <- function(x) {
 #' missing values, `allele_freq` for (minor) allele frequencies, and `sd` for
 #' standard deviations.
 #' @export
-summarize <- function(X, i = seq_len(nrow(X)), j = seq_len(ncol(X)), bufferSize = 5000, nTasks = nCores, nBuffers = NULL, nCores = parallel::detectCores(), verbose = FALSE) {
+summarize <- function(X, i = seq_len(nrow(X)), j = seq_len(ncol(X)), bufferSize = 5000, nTasks = nCores, nBuffers = NULL, nCores = getOption("mc.cores", 2L), verbose = FALSE) {
     m <- chunkedApply(X = X, MARGIN = 2, FUN = function(col) {
         freqNA <- mean(is.na(col))
         alleleFreq <- mean(col, na.rm = TRUE) / 2

@@ -5,7 +5,7 @@
 \title{Applies a Function on Each Row or Column of a Matrix in Parallel.}
 \usage{
 parallelApply(X, MARGIN, FUN, nTasks = nCores,
-  nCores = parallel::detectCores(), ...)
+  nCores = getOption("mc.cores", 2L), ...)
 }
 \arguments{
 \item{X}{A matrix or matrix-like object.}

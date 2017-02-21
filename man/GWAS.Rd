@@ -6,7 +6,8 @@
 \usage{
 GWAS(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)),
   j = seq_len(ncol(data@geno)), bufferSize = 5000, nBuffers = NULL,
-  nTasks = nCores, nCores = parallel::detectCores(), verbose = FALSE, ...)
+  nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE,
+  ...)
 }
 \arguments{
 \item{formula}{The formula for the GWAS model without including the marker,

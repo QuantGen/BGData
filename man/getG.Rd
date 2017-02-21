@@ -7,7 +7,7 @@
 getG(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05,
   i = seq_len(nrow(X)), j = seq_len(ncol(X)), i2 = NULL,
   bufferSize = 5000, nBuffers = NULL, nTasks = nCores,
-  nCores = parallel::detectCores(), verbose = TRUE)
+  nCores = getOption("mc.cores", 2L), verbose = TRUE)
 }
 \arguments{
 \item{X}{A matrix-like object, typically \code{@geno} of a \linkS4class{BGData}
