@@ -888,15 +888,20 @@ getCoefficients.lmerMod <- function(x) {
 #' standard deviations.
 #' @export
 summarize <- function(X, i = seq_len(nrow(X)), j = seq_len(ncol(X)), bufferSize = 5000, nTasks = nCores, nBuffers = NULL, nCores = parallel::detectCores(), verbose = FALSE) {
-    res <- chunkedApply(X = X, MARGIN = 2, FUN = function(col) {
+    m <- chunkedApply(X = X, MARGIN = 2, FUN = function(col) {
         freqNA <- mean(is.na(col))
         alleleFreq <- mean(col, na.rm = TRUE) / 2
         sd <- stats::sd(col, na.rm = TRUE)
         cbind(freqNA, alleleFreq, sd)
     }, i = i, j = j, bufferSize = bufferSize, nBuffers = nBuffers, nTasks = nTasks, nCores = nCores, verbose = verbose)
-    rownames(res) <- c("freq_na", "allele_freq", "sd")
-    colnames(res) <- colnames(X)[j]
-    as.data.frame(t(res))
+    df <- data.frame(
+        freq_na = m[1, ],
+        allele_freq = m[2, ],
+        sd = m[3, ],
+        stringsAsFactors = FALSE
+    )
+    rownames(df) <- colnames(X)[j]
+    return(df)
 }
 
 
