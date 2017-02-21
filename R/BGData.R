@@ -376,28 +376,41 @@ readPED.big.matrix <- function(fileIn, header = TRUE, dataType = integer(), n = 
 
 
 loadFamFile <- function(path) {
-    if (file.exists(path)) {
-        message("Extracting phenotypes from FAM file...")
-        if (requireNamespace("data.table", quietly = TRUE)) {
-            pheno <- data.table::fread(path, col.names = c(
-                "FID",
-                "IID",
-                "PAT",
-                "MAT",
-                "SEX",
-                "PHENOTYPE"
-            ), data.table = FALSE, showProgress = FALSE)
-        } else {
-            pheno <- utils::read.table(path, col.names = c(
-                "FID",
-                "IID",
-                "PAT",
-                "MAT",
-                "SEX",
-                "PHENOTYPE"
-            ), stringsAsFactors = FALSE)
-        }
+    if (!file.exists(path)) {
+        stop(path, " not found")
+    }
+    message("Extracting phenotypes from FAM file...")
+    if (requireNamespace("data.table", quietly = TRUE)) {
+        pheno <- data.table::fread(path, col.names = c(
+            "FID",
+            "IID",
+            "PAT",
+            "MAT",
+            "SEX",
+            "PHENOTYPE"
+        ), data.table = FALSE, showProgress = FALSE)
     } else {
+        pheno <- utils::read.table(path, col.names = c(
+            "FID",
+            "IID",
+            "PAT",
+            "MAT",
+            "SEX",
+            "PHENOTYPE"
+        ), stringsAsFactors = FALSE)
+    }
+    return(pheno)
+}
+
+
+generatePheno <- function(x) {
+    # Extract path to BED file
+    bedPath <- attr(x, "path")
+    # Try to load FAM file, generate pheno otherwise
+    ex <- try({
+        pheno <- loadFamFile(sub(".bed", ".fam", bedPath))
+    }, silent = TRUE)
+    if (class(ex) == "try-error") {
         splits <- strsplit(rownames(x), "_")
         pheno <- data.frame(FID = sapply(splits, "[", 1), IID = sapply(splits, "[", 2), stringsAsFactors = FALSE)
     }
@@ -406,34 +419,51 @@ loadFamFile <- function(path) {
 
 
 loadBimFile <- function(path) {
-    if (file.exists(path)) {
-        message("Extracting map from BIM file...")
-        if (requireNamespace("data.table", quietly = TRUE)) {
-            map <- data.table::fread(path, col.names = c(
-                "chromosome",
-                "snp_id",
-                "genetic_distance",
-                "base_pair_position",
-                "allele_1",
-                "allele_2"
-            ), data.table = FALSE, showProgress = FALSE)
-        } else {
-            map <- utils::read.table(path, col.names = c(
-                "chromosome",
-                "snp_id",
-                "genetic_distance",
-                "base_pair_position",
-                "allele_1",
-                "allele_2"
-            ), stringsAsFactors = FALSE)
-        }
+    if (!file.exists(path)) {
+        stop(path, " not found")
+    }
+    message("Extracting map from BIM file...")
+    if (requireNamespace("data.table", quietly = TRUE)) {
+        map <- data.table::fread(path, col.names = c(
+            "chromosome",
+            "snp_id",
+            "genetic_distance",
+            "base_pair_position",
+            "allele_1",
+            "allele_2"
+        ), data.table = FALSE, showProgress = FALSE)
     } else {
+        map <- utils::read.table(path, col.names = c(
+            "chromosome",
+            "snp_id",
+            "genetic_distance",
+            "base_pair_position",
+            "allele_1",
+            "allele_2"
+        ), stringsAsFactors = FALSE)
+    }
+    return(map)
+}
+
+
+generateMap <- function(x) {
+    # Extract path to BED file
+    bedPath <- attr(x, "path")
+    # Try to load FAM file, generate pheno otherwise
+    ex <- try({
+        map <- loadBimFile(sub(".bed", ".bim", bedPath))
+    }, silent = TRUE)
+    if (class(ex) == "try-error") {
         splits <- strsplit(colnames(x), "_")
-        map <- data.frame(path, snp_id = sapply(splits, function(x) {
-            paste0(x[seq_len(length(x) - 1)], collapse = "_")
-        }), allele_1 = sapply(splits, function(x) {
-            x[length(x)]
-        }), stringsAsFactors = FALSE)
+        map <- data.frame(
+            snp_id = sapply(splits, function(x) {
+                paste0(x[seq_len(length(x) - 1)], collapse = "_")
+            }),
+            allele_1 = sapply(splits, function(x) {
+                x[length(x)]
+            }),
+            stringsAsFactors = FALSE
+        )
     }
     return(map)
 }
@@ -519,12 +549,10 @@ as.BGData <- function(x, alternatePhenotypeFile = NULL, ...) {
 #' @rdname as.BGData
 #' @export
 as.BGData.BEDMatrix <- function(x, alternatePhenotypeFile = NULL, ...) {
-    # Extract path to BED file
-    bedPath <- attr(x, "path")
     # Read in pheno file
-    fam <- loadFamFile(sub(".bed", ".fam", bedPath))
+    fam <- generatePheno(x)
     # Read in map file
-    map <- loadBimFile(sub(".bed", ".bim", bedPath))
+    map <- generateMap(x)
     # Load and merge alternate phenotype file
     if (!is.null(alternatePhenotypeFile)) {
         alternatePhenotypes <- loadAlternatePhenotypeFile(alternatePhenotypeFile, ...)
@@ -544,11 +572,11 @@ as.BGData.ColumnLinkedMatrix <- function(x, alternatePhenotypeFile = NULL, ...) 
     }
     # Read in the fam file of the first node
     message("Extracting phenotypes from FAM file, assuming that the FAM file of the first BEDMatrix instance is representative of all the other nodes...")
-    fam <- suppressMessages(loadFamFile(sub(".bed", ".fam", attr(x[[1]], "path"))))
+    fam <- suppressMessages(generatePheno(x[[1]]))
     # Read in map files
     message("Extracting map from BIM files...")
     map <- do.call("rbind", lapply(x, function(node) {
-        suppressMessages(loadBimFile(sub(".bed", ".bim", attr(node, "path"))))
+        suppressMessages(generateMap(node))
     }))
     # Load and merge alternate phenotype file
     if (!is.null(alternatePhenotypeFile)) {
