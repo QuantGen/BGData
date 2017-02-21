@@ -741,10 +741,8 @@ GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)), 
         stop("Only lm, lm.fit, lsfit, glm, lmer and SKAT have been implemented so far.")
     }
 
-    # We can have specialized methods, for instance for OLS it is better to use
-    # lsfit (that is what GWAS.ols does)
     if (method == "lsfit") {
-        OUT <- GWAS.ols(formula = formula, data = data, i = i, j = j, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = verbose, ...)
+        OUT <- GWAS.lsfit(formula = formula, data = data, i = i, j = j, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = verbose, ...)
     } else if (method == "SKAT") {
         OUT <- GWAS.SKAT(formula = formula, data = data, i = i, j = j, verbose = verbose, ...)
     } else {
@@ -787,7 +785,7 @@ rayOLS <- function(y, x, n = length(y)){
 }
 
 
-GWAS.ols <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = parallel::detectCores(), verbose = FALSE, ...) {
+GWAS.lsfit <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = parallel::detectCores(), verbose = FALSE, ...) {
 
     # subset of model.frame has bizarre scoping issues
     frame <- stats::model.frame(formula = formula, data = data@pheno)[i, , drop = FALSE]
