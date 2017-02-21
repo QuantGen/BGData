@@ -983,5 +983,5 @@ loadExample <- function() {
     m <- do.call("ColumnLinkedMatrix", lapply(c("chr1", "chr2", "chr3"), function(chr) {
         suppressMessages(BEDMatrix::BEDMatrix(paste0(path, "/", chr)))
     }))
-    as.BGData(m)
+    as.BGData(m, alternatePhenotypeFile = paste0(path, "/pheno.txt"))
 }
