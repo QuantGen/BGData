@@ -36,7 +36,7 @@ Examples
 
 ### Creating a BGData object from a PLINK BED file
 
-This example uses a [BED version](http://pngu.mgh.harvard.edu/~purcell/plink/data.shtml#bed) of the `mice` dataset that is included in the BGLR package. See the [mice.bed gist](https://gist.github.com/agrueneberg/812564cbe860db4ee864d019be940aaf) for instructions on how it was generated.
+This example uses a [BED version](https://www.cog-genomics.org/plink2/formats#bed) of the `mice` dataset that is included in the BGLR package. See the [mice.bed gist](https://gist.github.com/agrueneberg/812564cbe860db4ee864d019be940aaf) for instructions on how it was generated.
 
 Load the BGData package:
 
@@ -108,7 +108,7 @@ To load the BGData package:
 
     > library(BGData)
 
-A `BGData` object can be generated from any plaintext file that stores individuals in rows, phenotypes in the first couple of columns (including an identifier for each individual), and genotypes as single allele dosage numbers in the remaining columns. This structure is intentionally similar to a [PED file](http://pngu.mgh.harvard.edu/~purcell/plink/data.shtml#ped) that further restricts the structure of the phenotype section. The `mice` dataset that we will use as an example is only PED-like: there are more than six initial columns and the order of the columns is not according to the specification, but the BGData package is flexible enough to read it thanks to the `nColSkip` and `idCol` parameters.
+A `BGData` object can be generated from any plaintext file that stores individuals in rows, phenotypes in the first couple of columns (including an identifier for each individual), and genotypes as single allele dosage numbers in the remaining columns. This structure is intentionally similar to a [PED file](https://www.cog-genomics.org/plink2/formats#ped) that further restricts the structure of the phenotype section. The `mice` dataset that we will use as an example is only PED-like: there are more than six initial columns and the order of the columns is not according to the specification, but the BGData package is flexible enough to read it thanks to the `nColSkip` and `idCol` parameters.
 
     > bgd <- readPED(fileIn = "mice.raw.gz", header = TRUE, dataType = integer(), nColSkip = 17, idCol = 1)
 
@@ -247,4 +247,4 @@ A data structure for genomic data is useful when defining methods that act on bo
 Example Dataset
 ---------------
 
-The example dataset in the `inst/extdata` folder was generated from the 250k SNP and phenotype data in [Atwell et al. (2010)](http://www.nature.com/nature/journal/v465/n7298/full/nature08800.html). Only the first 300 SNPs of chromosome 1, 2, and 3 were included to keep the size of the example dataset small. [PLINK](http://pngu.mgh.harvard.edu/~purcell/plink/) was used to convert the data to BED and RAW files. `FT10` has been chosen as a phenotype and is provided as an [alternate phenotype file](http://pngu.mgh.harvard.edu/~purcell/plink/data.shtml#pheno). The file is intentionally shuffled to demonstrate that the additional phenotypes are put in the same order as the rest of the phenotypes.
+The example dataset in the `inst/extdata` folder was generated from the 250k SNP and phenotype data in [Atwell et al. (2010)](http://www.nature.com/nature/journal/v465/n7298/full/nature08800.html). Only the first 300 SNPs of chromosome 1, 2, and 3 were included to keep the size of the example dataset small. [PLINK](https://www.cog-genomics.org/plink2) was used to convert the data to BED and RAW files. `FT10` has been chosen as a phenotype and is provided as an [alternate phenotype file](https://www.cog-genomics.org/plink2/input#pheno). The file is intentionally shuffled to demonstrate that the additional phenotypes are put in the same order as the rest of the phenotypes.

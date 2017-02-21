@@ -16,7 +16,7 @@ as.BGData(x, alternatePhenotypeFile = NULL, ...)
 \item{x}{An object. Currently supported are \link[BEDMatrix:BEDMatrix]{BEDMatrix::BEDMatrix} objects,
 plain or nested in \link[LinkedMatrix:ColumnLinkedMatrix-class]{LinkedMatrix::ColumnLinkedMatrix} objects.}
 
-\item{alternatePhenotypeFile}{Path to an \href{http://pngu.mgh.harvard.edu/~purcell/plink/data.shtml#pheno}{alternate phenotypefile}.}
+\item{alternatePhenotypeFile}{Path to an \href{https://www.cog-genomics.org/plink2/input#pheno}{alternate phenotypefile}.}
 
 \item{...}{Additional arguments to the \code{\link[utils:read.table]{utils::read.table()}} or
 \code{\link[data.table:fread]{data.table::fread()}} call (if data.table package is installed) call to
@@ -34,9 +34,9 @@ phenotypes and map files referenced by the object to be used for the
 }
 \details{
 The PED format only allows for a single phenotype. If more phenotypes are
-required it is possible to store them in an \href{http://pngu.mgh.harvard.edu/~purcell/plink/data.shtml#pheno}{alternate phenotypefile}. The path
-to such a file can be provided with \code{alternatePhenotypeFile} and will be
-merged with the data in the \code{@pheno} slot.
+required it is possible to store them in an \href{https://www.cog-genomics.org/plink2/input#pheno}{alternate phenotypefile}. The path to such a
+file can be provided with \code{alternatePhenotypeFile} and will be merged with
+the data in the \code{@pheno} slot.
 
 For \link[BEDMatrix:BEDMatrix]{BEDMatrix::BEDMatrix} objects: If a FAM file (which corresponds to the
 first six columns of a PED file) of the same name and in the same directory

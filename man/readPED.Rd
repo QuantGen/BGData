@@ -75,7 +75,7 @@ node.}
 }
 \description{
 Creates a \linkS4class{BGData} object from a raw PED file (generated with
-\code{--recodeA} in \href{http://pngu.mgh.harvard.edu/~purcell/plink/}{PLINK}). Other
+\code{--recodeA} in \href{https://www.cog-genomics.org/plink2}{PLINK}). Other
 text-based file formats are supported as well by tweaking some of the
 parameters as long as the records of individuals are in rows, and
 phenotypes, covariates and markers are in columns.

@@ -22,7 +22,7 @@ setClassUnion("geno", c("LinkedMatrix", "BEDMatrix", "big.matrix", "ff_matrix", 
 #'
 #' This class is inspired by the phenotype/genotype file format PED and its
 #' binary companion (also known as BED) of
-#' [PLINK](http://pngu.mgh.harvard.edu/~purcell/plink/). It is used by several
+#' [PLINK](https://www.cog-genomics.org/plink2). It is used by several
 #' functions of this package such as [GWAS()] for performing a Genome Wide
 #' Association Study or [getG()] for calculating a genomic relationship matrix.
 #'
@@ -38,8 +38,8 @@ setClassUnion("geno", c("LinkedMatrix", "BEDMatrix", "big.matrix", "ff_matrix", 
 #' [readPED.matrix()], or [readPED.big.matrix()].
 #'
 #' A PED file can be recoded to a raw PED in
-#' [PLINK](http://pngu.mgh.harvard.edu/~purcell/plink/) using `plink --file
-#' myfile --recodeA`, or converted to a BED file using `plink --file myfile
+#' [PLINK](https://www.cog-genomics.org/plink2) using `plink --file myfile
+#' --recodeA`, or converted to a BED file using `plink --file myfile
 #' --make-bed`. Conversely, a BED file can be transformed back to a PED file
 #' using `plink --bfile myfile --recode` or to a raw PED file using `plink
 #' --bfile myfile --recodeA` without losing information.
@@ -154,7 +154,7 @@ parsePED <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1
 #' Creates a BGData Object From a Raw PED File or a PED-Like File.
 #'
 #' Creates a [BGData-class] object from a raw PED file (generated with
-#' `--recodeA` in [PLINK](http://pngu.mgh.harvard.edu/~purcell/plink/)). Other
+#' `--recodeA` in [PLINK](https://www.cog-genomics.org/plink2)). Other
 #' text-based file formats are supported as well by tweaking some of the
 #' parameters as long as the records of individuals are in rows, and
 #' phenotypes, covariates and markers are in columns.
@@ -484,9 +484,9 @@ mergeAlternatePhenotypes <- function(pheno, alternatePhenotypes) {
 #'
 #' The PED format only allows for a single phenotype. If more phenotypes are
 #' required it is possible to store them in an [alternate phenotype
-#' file](http://pngu.mgh.harvard.edu/~purcell/plink/data.shtml#pheno). The path
-#' to such a file can be provided with `alternatePhenotypeFile` and will be
-#' merged with the data in the `@@pheno` slot.
+#' file](https://www.cog-genomics.org/plink2/input#pheno). The path to such a
+#' file can be provided with `alternatePhenotypeFile` and will be merged with
+#' the data in the `@@pheno` slot.
 #'
 #' For [BEDMatrix::BEDMatrix] objects: If a FAM file (which corresponds to the
 #' first six columns of a PED file) of the same name and in the same directory
@@ -504,7 +504,7 @@ mergeAlternatePhenotypes <- function(pheno, alternatePhenotypes) {
 #' @param x An object. Currently supported are [BEDMatrix::BEDMatrix] objects,
 #' plain or nested in [LinkedMatrix::ColumnLinkedMatrix-class] objects.
 #' @param alternatePhenotypeFile Path to an [alternate phenotype
-#' file](http://pngu.mgh.harvard.edu/~purcell/plink/data.shtml#pheno).
+#' file](https://www.cog-genomics.org/plink2/input#pheno).
 #' @param ... Additional arguments to the [utils::read.table()] or
 #' [data.table::fread()] call (if data.table package is installed) call to
 #' parse the alternate pheno file.

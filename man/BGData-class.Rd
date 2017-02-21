@@ -8,7 +8,7 @@
 \description{
 This class is inspired by the phenotype/genotype file format PED and its
 binary companion (also known as BED) of
-\href{http://pngu.mgh.harvard.edu/~purcell/plink/}{PLINK}. It is used by several
+\href{https://www.cog-genomics.org/plink2}{PLINK}. It is used by several
 functions of this package such as \code{\link[=GWAS]{GWAS()}} for performing a Genome Wide
 Association Study or \code{\link[=getG]{getG()}} for calculating a genomic relationship matrix.
 }
@@ -26,7 +26,7 @@ There are several ways to create an instance of this class:
 }
 
 A PED file can be recoded to a raw PED in
-\href{http://pngu.mgh.harvard.edu/~purcell/plink/}{PLINK} using \code{plink --file myfile --recodeA}, or converted to a BED file using \code{plink --file myfile --make-bed}. Conversely, a BED file can be transformed back to a PED file
+\href{https://www.cog-genomics.org/plink2}{PLINK} using \code{plink --file myfile --recodeA}, or converted to a BED file using \code{plink --file myfile --make-bed}. Conversely, a BED file can be transformed back to a PED file
 using \code{plink --bfile myfile --recode} or to a raw PED file using \code{plink --bfile myfile --recodeA} without losing information.
 }
 \section{Slots}{
