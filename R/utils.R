@@ -729,7 +729,7 @@ getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, sc
 #' Defaults to the number of cores as detected by [parallel::detectCores()].
 #' @param verbose Whether progress updates will be posted. Defaults to `FALSE`.
 #' @param ... Additional arguments for chunkedApply and regression method.
-#' @return A matrix with estimates, SE, p-value, etc.
+#' @return The same matrix that would be returned by `coef(summary(model))`.
 #' @export
 GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = parallel::detectCores(), verbose = FALSE, ...) {
 

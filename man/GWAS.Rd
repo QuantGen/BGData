@@ -44,7 +44,7 @@ Defaults to the number of cores as detected by \code{\link[parallel:detectCores]
 \item{...}{Additional arguments for chunkedApply and regression method.}
 }
 \value{
-A matrix with estimates, SE, p-value, etc.
+The same matrix that would be returned by \code{coef(summary(model))}.
 }
 \description{
 Implements single marker regressions. The regression model includes all the
