@@ -706,10 +706,9 @@ getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, sc
 #' of `@@geno` at a time. The data from the association tests is obtained from
 #' a [BGData-class] object.
 #'
-#' @param formula A formula (e.g. weight~sex+age) with the response on the
-#' left-hand side and predictors (all the covariates except the markers) on the
-#' right-hand side. The variables included in the formula must be in the
-#' `@@pheno` object of the [BGData-class].
+#' @param formula The formula for the GWAS model without including the marker,
+#' e.g. `y ~ 1` or `y ~ factor(sex) + age`. The variables included in the
+#' formula must be in the `@@pheno` object of the [BGData-class].
 #' @param data A [BGData-class] object.
 #' @param method The regression method to be used. Currently, the following
 #' methods are implemented: [stats::lm()], [stats::lm.fit()], [stats::lsfit()],
@@ -788,11 +787,6 @@ rayOLS <- function(y, x, n = length(y)){
 }
 
 
-# GWAS 'Ordinary Least Squares' (e.g., lsfit, lm.fit, lm)
-# formula: the formula for the GWAS model without including the marker, e.g.
-# y~1 or y~factor(sex)+age
-# all the variables in the formula must be in data@pheno data (BGData)
-# containing slots @pheno and @geno
 GWAS.ols <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = parallel::detectCores(), verbose = FALSE, ...) {
 
     # subset of model.frame has bizarre scoping issues

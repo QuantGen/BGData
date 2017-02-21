@@ -9,10 +9,9 @@ GWAS(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)),
   nTasks = nCores, nCores = parallel::detectCores(), verbose = FALSE, ...)
 }
 \arguments{
-\item{formula}{A formula (e.g. weight~sex+age) with the response on the
-left-hand side and predictors (all the covariates except the markers) on the
-right-hand side. The variables included in the formula must be in the
-\code{@pheno} object of the \linkS4class{BGData}.}
+\item{formula}{The formula for the GWAS model without including the marker,
+e.g. \code{y ~ 1} or \code{y ~ factor(sex) + age}. The variables included in the
+formula must be in the \code{@pheno} object of the \linkS4class{BGData}.}
 
 \item{data}{A \linkS4class{BGData} object.}
 
