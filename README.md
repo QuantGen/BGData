@@ -20,15 +20,6 @@ We have identified several approaches to tackle those challanges within R:
 The BGData package is an umbrella package that comprises several packages: [BEDMatrix](https://github.com/QuantGen/BEDMatrix), [LinkedMatrix](https://github.com/QuantGen/LinkedMatrix), and [symDMatrix](https://github.com/QuantGen/symDMatrix). It features scalable and efficient computational methods for large genomic datasets such as genome-wide association studies (GWAS) or genomic relationship matrices (G matrix). It also contains a data structure called `BGData` that holds genotypes in the `@geno` slot, phenotypes in the `@pheno` slot, and additional information in the `@map` slot.
 
 
-Installation
-------------
-
-The BGData package is not available on [CRAN](http://cran.r-project.org/) yet, but it can be installed directly from GitHub using the [devtools](https://github.com/hadley/devtools) package:
-
-    # install.packages("devtools")
-    devtools::install_github("QuantGen/BGData")
-
-
 Examples
 --------
 
@@ -240,6 +231,15 @@ A data structure for genomic data is useful when defining methods that act on bo
 ### Generating the G Matrix
 
     G <- getG(bgd@geno)
+
+
+Installation
+------------
+
+The BGData package is not available on [CRAN](http://cran.r-project.org/) yet, but it can be installed directly from GitHub using the [devtools](https://github.com/hadley/devtools) package:
+
+    # install.packages("devtools")
+    devtools::install_github("QuantGen/BGData")
 
 
 Example Dataset
