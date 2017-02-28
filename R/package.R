@@ -2,7 +2,7 @@
 #'
 #' @docType package
 #' @name BGData-package
-#' @aliases NULL
+#' @aliases BGData-package
 #' @import methods
 #' @importClassesFrom BEDMatrix BEDMatrix
 #' @importClassesFrom LinkedMatrix LinkedMatrix

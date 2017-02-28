@@ -2,6 +2,7 @@
 % Please edit documentation in R/package.R
 \docType{package}
 \name{BGData-package}
+\alias{BGData-package}
 \title{BGData: Memory Mapped Matrices and Data-Structures for Genomic Data for R}
 \description{
 BGData: Memory Mapped Matrices and Data-Structures for Genomic Data for R
