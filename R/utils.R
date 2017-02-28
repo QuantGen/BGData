@@ -741,6 +741,18 @@ GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)), 
         stop("Only lm, lm.fit, lsfit, glm, lmer and SKAT have been implemented so far.")
     }
 
+    # Convert index types
+    if (is.logical(i)) {
+        i <- which(i)
+    } else if (is.character(i)) {
+        i <- match(i, rownames(data@geno))
+    }
+    if (is.logical(j)) {
+        j <- which(j)
+    } else if (is.character(j)) {
+        j <- match(j, colnames(data@geno))
+    }
+
     if (method == "lsfit") {
         OUT <- GWAS.lsfit(formula = formula, data = data, i = i, j = j, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = verbose, ...)
     } else if (method == "SKAT") {
@@ -888,6 +900,17 @@ getCoefficients.lmerMod <- function(x) {
 #' standard deviations.
 #' @export
 summarize <- function(X, i = seq_len(nrow(X)), j = seq_len(ncol(X)), bufferSize = 5000, nTasks = nCores, nBuffers = NULL, nCores = getOption("mc.cores", 2L), verbose = FALSE) {
+    # Convert index types
+    if (is.logical(i)) {
+        i <- which(i)
+    } else if (is.character(i)) {
+        i <- match(i, rownames(X))
+    }
+    if (is.logical(j)) {
+        j <- which(j)
+    } else if (is.character(j)) {
+        j <- match(j, colnames(X))
+    }
     m <- chunkedApply(X = X, MARGIN = 2, FUN = function(col) {
         freqNA <- mean(is.na(col))
         alleleFreq <- mean(col, na.rm = TRUE) / 2
