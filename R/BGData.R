@@ -2,15 +2,11 @@
 setOldClass("ff_matrix")
 
 
-# Convert BEDMatrix into an S4 class
-setOldClass("BEDMatrix")
-
-
 #' An Abstract S4 Class Union of Matrix-Like Types.
 #'
 #' [geno-class] is a class union of several matrix-like types, many of them
 #' suitable for very large datasets. Currently supported are
-#' [LinkedMatrix::LinkedMatrix-class], [BEDMatrix::BEDMatrix],
+#' [LinkedMatrix::LinkedMatrix-class], [BEDMatrix::BEDMatrix-class],
 #' [bigmemory::big.matrix-class], `ff_matrix`, and `matrix`.
 #'
 #' @seealso The `@@geno` slot of [BGData-class] that accepts [geno-class]
@@ -47,8 +43,8 @@ setClassUnion("geno", c("LinkedMatrix", "BEDMatrix", "big.matrix", "ff_matrix", 
 #' @slot geno A [geno-class] object that contains genotypes. [geno-class] is a
 #' class union of several matrix-like types, many of them suitable for very
 #' large datasets. Currently supported are [LinkedMatrix::LinkedMatrix-class],
-#' [BEDMatrix::BEDMatrix], [bigmemory::big.matrix-class], `ff_matrix`, and
-#' `matrix`.
+#' [BEDMatrix::BEDMatrix-class], [bigmemory::big.matrix-class], `ff_matrix`,
+#' and `matrix`.
 #' @slot pheno A `data.frame` that contains phenotypes.
 #' @slot map A `data.frame` that contains a genetic map.
 #' @export BGData
@@ -66,8 +62,8 @@ BGData <- setClass("BGData", slots = c(geno = "geno", pheno = "data.frame", map 
 #' @param geno A [geno-class] object that contains genotypes. [geno-class] is a
 #' class union of several matrix-like types, many of them suitable for very
 #' large datasets. Currently supported are [LinkedMatrix::LinkedMatrix-class],
-#' [BEDMatrix::BEDMatrix], [bigmemory::big.matrix-class], `ff_matrix`, and
-#' `matrix`.
+#' [BEDMatrix::BEDMatrix-class], [bigmemory::big.matrix-class], `ff_matrix`,
+#' and `matrix`.
 #' @param pheno A `data.frame` that contains phenotypes. A stub that only
 #' contains an `IID` column populated with the rownames of `@@geno` will be
 #' generated if missing.
@@ -509,7 +505,7 @@ mergeAlternatePhenotypes <- function(pheno, alternatePhenotypes) {
 #' Converts other objects to [BGData-class] objects by loading supplementary
 #' phenotypes and map files referenced by the object to be used for the
 #' `@@pheno` and `@@map` slot, respectively. Currently supported are
-#' [BEDMatrix::BEDMatrix] objects, plain or nested in
+#' [BEDMatrix::BEDMatrix-class] objects, plain or nested in
 #' [LinkedMatrix::ColumnLinkedMatrix-class] objects.
 #'
 #' The PED format only allows for a single phenotype. If more phenotypes are
@@ -518,21 +514,22 @@ mergeAlternatePhenotypes <- function(pheno, alternatePhenotypes) {
 #' file can be provided with `alternatePhenotypeFile` and will be merged with
 #' the data in the `@@pheno` slot.
 #'
-#' For [BEDMatrix::BEDMatrix] objects: If a FAM file (which corresponds to the
-#' first six columns of a PED file) of the same name and in the same directory
-#' as the BED file exists, the `@@pheno` slot will be populated with the data
-#' stored in that file.  Otherwise a stub that only contains an `IID` column
-#' populated with the rownames of `@@geno` will be generated. The same will
-#' happen for a BIM file for the `@@map` slot.
+#' For [BEDMatrix::BEDMatrix-class] objects: If a FAM file (which corresponds
+#' to the first six columns of a PED file) of the same name and in the same
+#' directory as the BED file exists, the `@@pheno` slot will be populated with
+#' the data stored in that file.  Otherwise a stub that only contains an `IID`
+#' column populated with the rownames of `@@geno` will be generated. The same
+#' will happen for a BIM file for the `@@map` slot.
 #'
 #' For [LinkedMatrix::ColumnLinkedMatrix-class] objects: See the case for
-#' [BEDMatrix::BEDMatrix] objects, but only the FAM file of the first node of
-#' the [LinkedMatrix::LinkedMatrix-class] will be read and used for the
+#' [BEDMatrix::BEDMatrix-class] objects, but only the FAM file of the first
+#' node of the [LinkedMatrix::LinkedMatrix-class] will be read and used for the
 #' `@@pheno` slot, and the BIM files of all nodes will be combined and used for
 #' the `@@map` slot.
 #'
-#' @param x An object. Currently supported are [BEDMatrix::BEDMatrix] objects,
-#' plain or nested in [LinkedMatrix::ColumnLinkedMatrix-class] objects.
+#' @param x An object. Currently supported are [BEDMatrix::BEDMatrix-class]
+#' objects, plain or nested in [LinkedMatrix::ColumnLinkedMatrix-class]
+#' objects.
 #' @param alternatePhenotypeFile Path to an [alternate phenotype
 #' file](https://www.cog-genomics.org/plink2/input#pheno).
 #' @param ... Additional arguments to the [utils::read.table()] or
@@ -592,8 +589,8 @@ as.BGData.ColumnLinkedMatrix <- function(x, alternatePhenotypeFile = NULL, ...) 
 #' This function is similar to [base::load()], but also initializes the
 #' different types of objects that the `@@geno` slot of a [BGData-class] object
 #' can take. Currently supported are `ff_matrix`,
-#' [bigmemory::big.matrix-class], and [BEDMatrix::BEDMatrix] objects. If the
-#' object is of type [LinkedMatrix::LinkedMatrix-class], all nodes will be
+#' [bigmemory::big.matrix-class], and [BEDMatrix::BEDMatrix-class] objects. If
+#' the object is of type [LinkedMatrix::LinkedMatrix-class], all nodes will be
 #' initialized with their appropriate method.
 #'
 #' @param file The name of the .RData file to be loaded.

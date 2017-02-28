@@ -4,6 +4,7 @@
 #' @name BGData-package
 #' @aliases NULL
 #' @import methods
+#' @importClassesFrom BEDMatrix BEDMatrix
 #' @importClassesFrom LinkedMatrix LinkedMatrix
 #' @importClassesFrom symDMatrix symDMatrix
 #' @importClassesFrom bigmemory big.matrix

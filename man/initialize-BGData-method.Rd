@@ -14,8 +14,8 @@ is passed in by R and can be ignored, but still needs to be documented.}
 \item{geno}{A \linkS4class{geno} object that contains genotypes. \linkS4class{geno} is a
 class union of several matrix-like types, many of them suitable for very
 large datasets. Currently supported are \link[LinkedMatrix:LinkedMatrix-class]{LinkedMatrix::LinkedMatrix},
-\link[BEDMatrix:BEDMatrix]{BEDMatrix::BEDMatrix}, \link[bigmemory:big.matrix-class]{bigmemory::big.matrix}, \code{ff_matrix}, and
-\code{matrix}.}
+\link[BEDMatrix:BEDMatrix-class]{BEDMatrix::BEDMatrix}, \link[bigmemory:big.matrix-class]{bigmemory::big.matrix}, \code{ff_matrix},
+and \code{matrix}.}
 
 \item{pheno}{A \code{data.frame} that contains phenotypes. A stub that only
 contains an \code{IID} column populated with the rownames of \code{@geno} will be

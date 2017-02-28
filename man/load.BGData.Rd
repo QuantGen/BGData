@@ -15,7 +15,7 @@ load.BGData(file, envir = parent.frame())
 This function is similar to \code{\link[base:load]{base::load()}}, but also initializes the
 different types of objects that the \code{@geno} slot of a \linkS4class{BGData} object
 can take. Currently supported are \code{ff_matrix},
-\link[bigmemory:big.matrix-class]{bigmemory::big.matrix}, and \link[BEDMatrix:BEDMatrix]{BEDMatrix::BEDMatrix} objects. If the
-object is of type \link[LinkedMatrix:LinkedMatrix-class]{LinkedMatrix::LinkedMatrix}, all nodes will be
+\link[bigmemory:big.matrix-class]{bigmemory::big.matrix}, and \link[BEDMatrix:BEDMatrix-class]{BEDMatrix::BEDMatrix} objects. If
+the object is of type \link[LinkedMatrix:LinkedMatrix-class]{LinkedMatrix::LinkedMatrix}, all nodes will be
 initialized with their appropriate method.
 }
