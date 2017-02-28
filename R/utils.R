@@ -98,6 +98,7 @@ apply2 <- function(X, MARGIN, FUN, ...) {
 #' @param ... Additional arguments to be passed to [base::apply()].
 #' @seealso [chunkedApply()] if `X` is a memory-mapped matrix and too large to
 #' hold in memory.
+#' @example man/examples/parallelApply.R
 #' @export
 parallelApply <- function(X, MARGIN, FUN, nTasks = nCores, nCores = getOption("mc.cores", 2L), ...) {
     d <- dim(X)
@@ -167,6 +168,7 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = nCores, nCores = getOption("m
 #' @param ... Additional arguments to be passed to [parallelApply()].
 #' @seealso [parallelApply()] if `X` is not a memory-mapped matrix or can be
 #' held in memory.
+#' @example man/examples/chunkedApply.R
 #' @export
 chunkedApply <- function(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(X)), bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
     if (!length(dim(X))) {
@@ -289,6 +291,7 @@ crossprods <- function(x, y = NULL, use_tcrossprod = FALSE, nTasks = nCores, nCo
 #' @return x'x or x'y (`crossprod_parallel`), or xx' or xy'
 #' (`tcrossprod_parallel`), depending on whether `y` is provided.
 #' @seealso [getG()] to compute a genomic relationship matrix.
+#' @example man/examples/crossprod_parallel.R
 #' @export
 crossprod_parallel <- function(x, y = NULL, nTasks = nCores, nCores = getOption("mc.cores", 2L)) {
     crossprods(x = x, y = y, use_tcrossprod = FALSE, nTasks = nTasks, nCores = nCores)
@@ -343,6 +346,7 @@ tcrossprod_parallel <- function(x, y = NULL, nTasks = nCores, nCores = getOption
 #' Defaults to the number of cores as detected by [parallel::detectCores()].
 #' @param verbose Whether progress updates will be posted. Defaults to `TRUE`.
 #' @return A positive semi-definite symmetric numeric matrix.
+#' @example man/examples/getG.R
 #' @export
 getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, i = seq_len(nrow(X)), j = seq_len(ncol(X)), i2 = NULL, bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = TRUE) {
 
@@ -730,6 +734,7 @@ getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, sc
 #' @param verbose Whether progress updates will be posted. Defaults to `FALSE`.
 #' @param ... Additional arguments for chunkedApply and regression method.
 #' @return The same matrix that would be returned by `coef(summary(model))`.
+#' @example man/examples/GWAS.R
 #' @export
 GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
 
@@ -898,6 +903,7 @@ getCoefficients.lmerMod <- function(x) {
 #' @return A `data.frame` with three columns: `freq_na` for frequencies of
 #' missing values, `allele_freq` for (minor) allele frequencies, and `sd` for
 #' standard deviations.
+#' @example man/examples/summarize.R
 #' @export
 summarize <- function(X, i = seq_len(nrow(X)), j = seq_len(ncol(X)), bufferSize = 5000, nTasks = nCores, nBuffers = NULL, nCores = getOption("mc.cores", 2L), verbose = FALSE) {
     # Convert index types

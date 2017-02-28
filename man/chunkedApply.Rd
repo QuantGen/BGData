@@ -58,6 +58,13 @@ memory will be needed, not including potential copies of your data that
 might be created (for example \code{\link[stats:lsfit]{stats::lsfit()}} runs \code{cbind(1, X)}).
 Therefore, for 20 nodes and 20 tasks you will need at least \code{2 * object_size(buffer)} MB, for 20 nodes and 40 tasks \code{1.5 * object_size(buffer)} MB, etc.
 }
+\examples{
+# Load example data
+bg <- BGData:::loadExample()
+
+# Compute standard deviation of columns
+chunkedApply(X = bg@geno, MARGIN = 2, FUN = sd)
+}
 \seealso{
 \code{\link[=parallelApply]{parallelApply()}} if \code{X} is not a memory-mapped matrix or can be
 held in memory.

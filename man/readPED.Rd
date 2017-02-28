@@ -131,6 +131,13 @@ To reload a \linkS4class{BGData} object, it is recommended to use the
 \link[bigmemory:big.matrix-class]{bigmemory::big.matrix} objects.
 }
 
+\examples{
+# Path to example data
+path <- system.file("extdata", package = "BGData")
+
+# Convert RAW files of chromosome 1 to a BGData object
+bg <- readPED(fileIn = paste0(path, "/chr1.raw"))
+}
 \seealso{
 \code{\link[=load.BGData]{load.BGData()}} to load a previously saved \linkS4class{BGData} object,
 \code{\link[=as.BGData]{as.BGData()}} to create \linkS4class{BGData} objects from non-text files (e.g. BED

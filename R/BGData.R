@@ -236,6 +236,7 @@ parsePED <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1
 #' @seealso [load.BGData()] to load a previously saved [BGData-class] object,
 #' [as.BGData()] to create [BGData-class] objects from non-text files (e.g. BED
 #' files).
+#' @example man/examples/readPED.R
 #' @export
 readPED <- function(fileIn, header = TRUE, dataType = integer(), n = NULL, p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2), nNodes = NULL, linked.by = "rows", folderOut = paste0("BGData_", sub("\\.[[:alnum:]]+$", "", basename(fileIn))), outputType = "byte", dimorder = if (linked.by == "rows") 2:1 else 1:2, verbose = FALSE) {
 
@@ -537,6 +538,7 @@ mergeAlternatePhenotypes <- function(pheno, alternatePhenotypes) {
 #' parse the alternate pheno file.
 #' @return A [BGData-class] object.
 #' @seealso [readPED()] to convert text files to [BGData-class] objects.
+#' @example man/examples/as.BGData.R
 #' @export
 as.BGData <- function(x, alternatePhenotypeFile = NULL, ...) {
     UseMethod("as.BGData")

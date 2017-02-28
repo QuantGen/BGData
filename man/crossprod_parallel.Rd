@@ -38,6 +38,19 @@ The results are added up and returned.
 If \code{nTasks} is \code{1}, \code{\link[base:crossprod]{base::crossprod()}} or \code{\link[base:tcrossprod]{base::tcrossprod()}} will be
 called directly without parallelism.
 }
+\examples{
+# Load example data
+bg <- BGData:::loadExample()
+
+# Compute xx' in parallel
+tcrossprod_parallel(x = bg@geno)
+
+# Compute xy' in parallel (see getG)
+tcrossprod_parallel(x = bg@geno, y = bg@geno[1:50, ])
+
+# Compute x'x in parallel
+crossprod_parallel(x = bg@geno)
+}
 \seealso{
 \code{\link[=getG]{getG()}} to compute a genomic relationship matrix.
 }

@@ -41,6 +41,13 @@ and 40 tasks \code{1.5 * object_size(X)} MB, etc.
 If \code{nTasks} is \code{1}, \code{\link[base:apply]{base::apply()}} will be called directly without
 parallelism.
 }
+\examples{
+# Load example data
+bg <- BGData:::loadExample()
+
+# Compute standard deviation of columns
+parallelApply(X = bg@geno, MARGIN = 2, FUN = sd)
+}
 \seealso{
 \code{\link[=chunkedApply]{chunkedApply()}} if \code{X} is a memory-mapped matrix and too large to
 hold in memory.
