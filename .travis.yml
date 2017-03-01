@@ -2,12 +2,3 @@ language: r
 sudo: false
 cache: packages
 warnings_are_errors: true
-r_github_packages:
-  - agrueneberg/staticdocs
-after_success:
-  - curl -OL https://gist.githubusercontent.com/agrueneberg/5c59faee22855ea3f78f/raw/2180fa90816e1166f8774d9ad001fffda3c90667/push-docs.sh
-  - chmod 755 ./push-docs.sh
-  - ./push-docs.sh
-env:
-  global:
-    - secure: "G6NSOXvsiRQTFyW3JGdezz5d7v+yINF6L3dfL3k6MwmnlrDc5xkDOmLkncVyd7YIAc+2gN6gCYnzgqc5g3BxmkVL0EREkAwUZH7DiAmV4kM3sBD5Xjput4G8jYWgmp550/XAbg2YdUusLzUbcsd+vtxfgfVOw+vBIpIPhCB25eaDZRbq0ezAj5wViRYrBGtoonsIk9L72q1cd3lMJGxfQIP/akLa5yIA6vBBZp/MBEctxjX7RPReFjuFvpEK/2zRWTvGqVPv1UvARIfKAQs9Ecgx5mj2GylAeTsiRjcKPhysaoLQyQhZmIvfm9xJA0YahZAd1xk99NPEBumHY9REN+nFW8paH1pKMd9crIXZtJABN8NmJeShQ9JFMTwvgSQwe5gwjIShqSUp/huM9RLnAnySIXJuRbAJKK7kKUfmZt58WCdPg9IrBGlc/S2pB+A1+QgVYygD2waZS88TaNGBCCw7yckXeKeDkNcQScoJIf3AAn+ZoE60Sw64OkNxtcjxmnI4eEYAYhvnQzvdGEJz3UyADBfPPMLwufyne6sPKuD9OEROgfxukSe1pNdkUAAtDOwbA7HAAK140G9hUPJ8dCv0LQYu0ziywS6Db/tgFtGwk4863X+OZvm+5z8pZRauyV/0wAWHmOHjMMQG166C9qZf/EVvKUbaLGakv8EeQb4="
