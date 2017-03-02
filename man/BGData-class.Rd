@@ -21,8 +21,8 @@ There are several ways to create an instance of this class:
 \item from a previously saved \linkS4class{BGData} object using \code{\link[=load.BGData]{load.BGData()}}.
 \item from multiple files (even a mixture of different file types) using
 \link[LinkedMatrix:LinkedMatrix-class]{LinkedMatrix::LinkedMatrix}.
-\item from a raw PED file (or a PED-like file) using \code{\link[=readPED]{readPED()}},
-\code{\link[=readPED.matrix]{readPED.matrix()}}, or \code{\link[=readPED.big.matrix]{readPED.big.matrix()}}.
+\item from a raw PED file (or a PED-like file) using \code{\link[=readRAW]{readRAW()}},
+\code{\link[=readRAW.matrix]{readRAW.matrix()}}, or \code{\link[=readRAW.big.matrix]{readRAW.big.matrix()}}.
 }
 
 A PED file can be recoded to a raw PED in

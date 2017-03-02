@@ -2,4 +2,4 @@
 path <- system.file("extdata", package = "BGData")
 
 # Convert RAW files of chromosome 1 to a BGData object
-bg <- readPED(fileIn = paste0(path, "/chr1.raw"))
+bg <- readRAW(fileIn = paste0(path, "/chr1.raw"))

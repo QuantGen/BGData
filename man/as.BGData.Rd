@@ -70,5 +70,5 @@ bg2 <- as.BGData(clm)
 bg3 <- as.BGData(clm, alternatePhenotypeFile = paste0(path, "/pheno.txt"))
 }
 \seealso{
-\code{\link[=readPED]{readPED()}} to convert text files to \linkS4class{BGData} objects.
+\code{\link[=readRAW]{readRAW()}} to convert text files to \linkS4class{BGData} objects.
 }

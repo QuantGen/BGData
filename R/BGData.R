@@ -30,8 +30,8 @@ setClassUnion("geno", c("LinkedMatrix", "BEDMatrix", "big.matrix", "ff_matrix", 
 #' * from a previously saved [BGData-class] object using [load.BGData()].
 #' * from multiple files (even a mixture of different file types) using
 #' [LinkedMatrix::LinkedMatrix-class].
-#' * from a raw PED file (or a PED-like file) using [readPED()],
-#' [readPED.matrix()], or [readPED.big.matrix()].
+#' * from a raw PED file (or a PED-like file) using [readRAW()],
+#' [readRAW.matrix()], or [readRAW.big.matrix()].
 #'
 #' A PED file can be recoded to a raw PED in
 #' [PLINK](https://www.cog-genomics.org/plink2) using `plink --file myfile
@@ -162,10 +162,10 @@ parsePED <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1
 #' names for `@@pheno` and `@@geno`.
 #'
 #' `@@geno` can take several forms, depending on the function that is called
-#' (`readPED`, `readPED.matrix`, or `readPED.big.matrix`). The following
+#' (`readRAW`, `readRAW.matrix`, or `readRAW.big.matrix`). The following
 #' sections illustrate each function in detail.
 #'
-#' @section readPED:
+#' @section readRAW:
 #' Genotypes are stored in a [LinkedMatrix::LinkedMatrix-class] object where
 #' each node is an `ff` instance. Multiple `ff` files are used because the
 #' array size in `ff` is limited to the largest integer which can be
@@ -181,11 +181,11 @@ parsePED <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1
 #' contains the binary flat files (named `geno_*.bin`) and an external
 #' representation of the [BGData-class] object in `BGData.RData` is created.
 #'
-#' @section readPED.matrix:
+#' @section readRAW.matrix:
 #' Genotypes are stored in a regular `matrix` object. Therefore, this function
 #' will only work if the raw PED file is small enough to fit into memory.
 #'
-#' @section readPED.big.matrix:
+#' @section readRAW.big.matrix:
 #' Genotypes are stored in a filebacked [bigmemory::big.matrix-class] object.
 #' A folder (see `folderOut`) that contains the binary flat file (named
 #' `BGData.bin`), a descriptor file (named `BGData.desc`), and an external
@@ -201,14 +201,14 @@ parsePED <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1
 #' @param header Whether `fileIn` contains a header. Defaults to `TRUE`.
 #' @param dataType The coding type of genotypes in `fileIn`. Use `integer()` or
 #' `double()` for numeric coding. Alpha-numeric coding is currently not
-#' supported for [readPED()] and [readPED.big.matrix()]: use the `--recodeA`
+#' supported for [readRAW()] and [readRAW.big.matrix()]: use the `--recodeA`
 #' option of PLINK to convert the PED file into a raw file. Defaults to
 #' `integer()`.
 #' @param n The number of individuals. Auto-detect if `NULL`. Defaults to
 #' `NULL`.
 #' @param p The number of markers. Auto-detect if `NULL`. Defaults to `NULL`.
 #' @param sep The field separator character. Values on each line of the file
-#' are separated by this character. If `sep = ""` (the default for [readPED()]
+#' are separated by this character. If `sep = ""` (the default for [readRAW()]
 #' the separator is "white space", that is one or more spaces, tabs, newlines
 #' or carriage returns.
 #' @param na.strings The character string used in the plaintext file to denote
@@ -236,9 +236,9 @@ parsePED <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1
 #' @seealso [load.BGData()] to load a previously saved [BGData-class] object,
 #' [as.BGData()] to create [BGData-class] objects from non-text files (e.g. BED
 #' files).
-#' @example man/examples/readPED.R
+#' @example man/examples/readRAW.R
 #' @export
-readPED <- function(fileIn, header = TRUE, dataType = integer(), n = NULL, p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2), nNodes = NULL, linked.by = "rows", folderOut = paste0("BGData_", sub("\\.[[:alnum:]]+$", "", basename(fileIn))), outputType = "byte", dimorder = if (linked.by == "rows") 2:1 else 1:2, verbose = FALSE) {
+readRAW <- function(fileIn, header = TRUE, dataType = integer(), n = NULL, p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2), nNodes = NULL, linked.by = "rows", folderOut = paste0("BGData_", sub("\\.[[:alnum:]]+$", "", basename(fileIn))), outputType = "byte", dimorder = if (linked.by == "rows") 2:1 else 1:2, verbose = FALSE) {
 
     # Create output directory
     if (file.exists(folderOut)) {
@@ -306,9 +306,9 @@ readPED <- function(fileIn, header = TRUE, dataType = integer(), n = NULL, p = N
 }
 
 
-#' @rdname readPED
+#' @rdname readRAW
 #' @export
-readPED.matrix <- function(fileIn, header = TRUE, dataType = integer(), n = NULL, p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2), verbose = FALSE) {
+readRAW.matrix <- function(fileIn, header = TRUE, dataType = integer(), n = NULL, p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2), verbose = FALSE) {
 
     dims <- pedDims(fileIn = fileIn, header = header, n = n, p = p, sep = sep, nColSkip = nColSkip)
 
@@ -330,9 +330,9 @@ readPED.matrix <- function(fileIn, header = TRUE, dataType = integer(), n = NULL
 }
 
 
-#' @rdname readPED
+#' @rdname readRAW
 #' @export
-readPED.big.matrix <- function(fileIn, header = TRUE, dataType = integer(), n = NULL, p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2), folderOut = paste0("BGData_", sub("\\.[[:alnum:]]+$", "", basename(fileIn))), outputType = "char", verbose = FALSE) {
+readRAW.big.matrix <- function(fileIn, header = TRUE, dataType = integer(), n = NULL, p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2), folderOut = paste0("BGData_", sub("\\.[[:alnum:]]+$", "", basename(fileIn))), outputType = "char", verbose = FALSE) {
 
     if (file.exists(folderOut)) {
         stop(paste("Output folder", folderOut, "already exists. Please move it or pick a different one."))
@@ -537,7 +537,7 @@ mergeAlternatePhenotypes <- function(pheno, alternatePhenotypes) {
 #' [data.table::fread()] call (if data.table package is installed) call to
 #' parse the alternate pheno file.
 #' @return A [BGData-class] object.
-#' @seealso [readPED()] to convert text files to [BGData-class] objects.
+#' @seealso [readRAW()] to convert text files to [BGData-class] objects.
 #' @example man/examples/as.BGData.R
 #' @export
 as.BGData <- function(x, alternatePhenotypeFile = NULL, ...) {
