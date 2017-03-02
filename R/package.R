@@ -63,6 +63,20 @@
 #' recommended to set `nCores` and `nTasks` to `1` as nodes are often cheaper
 #' than cores.
 #'
+#' @section Example dataset:
+#' The `extdata` folder contains example files that were generated from the
+#' 250k SNP and phenotype data in [Atwell et al.
+#' (2010)](http://www.nature.com/nature/journal/v465/n7298/full/nature08800.html).
+#' Only the first 300 SNPs of chromosome 1, 2, and 3 were included to keep the
+#' size of the example dataset small.
+#' [PLINK](https://www.cog-genomics.org/plink2) was used to convert the data to
+#' [.bed](https://www.cog-genomics.org/plink2/input#bed) and
+#' [.raw](https://www.cog-genomics.org/plink2/input#raw) files. `FT10` has been
+#' chosen as a phenotype and is provided as an [alternate phenotype
+#' file](https://www.cog-genomics.org/plink2/input#pheno). The file is
+#' intentionally shuffled to demonstrate that the additional phenotypes are put
+#' in the same order as the rest of the phenotypes.
+#'
 #' @seealso [BEDMatrix::BEDMatrix-package],
 #' [LinkedMatrix::LinkedMatrix-package], and [symDMatrix::symDMatrix-package]
 #' for an introduction to the respective packages.
