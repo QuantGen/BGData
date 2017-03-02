@@ -81,7 +81,7 @@ for (nCores in seq_len(2)) {
 
     })
 
-    test_that(paste("getG.symDMatrix", "on", nCores, "cores"), {
+    test_that(paste("getG_symDMatrix", "on", nCores, "cores"), {
 
         hasCores(nCores)
 
@@ -90,7 +90,7 @@ for (nCores in seq_len(2)) {
         G1 <- G1 / mean(diag(G1))
 
         for (nTasks in c(1, 3)) {
-            G2 <- getG.symDMatrix(X = W, nBlocks = 3, folder = paste0(testPath, "test-", randomString()), nTasks = nTasks, nCores = nCores, verbose = FALSE)
+            G2 <- getG_symDMatrix(X = W, nBlocks = 3, folder = paste0(testPath, "test-", randomString()), nTasks = nTasks, nCores = nCores, verbose = FALSE)
             expect_equal(G2[], G1)
         }
 
