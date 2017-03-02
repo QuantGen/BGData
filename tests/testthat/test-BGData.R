@@ -88,93 +88,93 @@ test_that("it reads .raw files into BGData objects", {
 })
 
 
-context("readRAW.matrix")
+context("readRAW_matrix")
 
 test_that("it reads a .raw file into a matrix object", {
 
     # With minimum number of parameters (with exception of folderOut)
-    BGData <- readRAW.matrix(fileIn = pedPath)
+    BGData <- readRAW_matrix(fileIn = pedPath)
     expect_equal(BGData@pheno, phenotypes)
     expect_equal(BGData@geno[], genotypes)
 
     # With n
-    BGData <- readRAW.matrix(fileIn = pedPath, n = nRows)
+    BGData <- readRAW_matrix(fileIn = pedPath, n = nRows)
     expect_equal(BGData@pheno, phenotypes)
     expect_equal(BGData@geno[], genotypes)
 
     # With p
-    BGData <- readRAW.matrix(fileIn = pedPath, p = nCols)
+    BGData <- readRAW_matrix(fileIn = pedPath, p = nCols)
     expect_equal(BGData@pheno, phenotypes)
     expect_equal(BGData@geno[], genotypes)
 
     # With both n and p
-    BGData <- readRAW.matrix(fileIn = pedPath, n = nRows, p = nCols)
+    BGData <- readRAW_matrix(fileIn = pedPath, n = nRows, p = nCols)
     expect_equal(BGData@pheno, phenotypes)
     expect_equal(BGData@geno[], genotypes)
 
     # As integer
     class(genotypes) <- "integer"
-    BGData <- readRAW.matrix(fileIn = pedPath, dataType = integer())
+    BGData <- readRAW_matrix(fileIn = pedPath, dataType = integer())
     expect_equal(BGData@geno[], genotypes)
-    BGData <- readRAW.matrix(fileIn = pedPath, dataType = "integer")
+    BGData <- readRAW_matrix(fileIn = pedPath, dataType = "integer")
     expect_equal(BGData@geno[], genotypes)
     genotypes <- restoreGenotypes()
 
     # As double
     class(genotypes) <- "double"
-    BGData <- readRAW.matrix(fileIn = pedPath, dataType = double())
+    BGData <- readRAW_matrix(fileIn = pedPath, dataType = double())
     expect_equal(BGData@geno[], genotypes)
-    BGData <- readRAW.matrix(fileIn = pedPath, dataType = "double")
+    BGData <- readRAW_matrix(fileIn = pedPath, dataType = "double")
     expect_equal(BGData@geno[], genotypes)
     genotypes <- restoreGenotypes()
 
     # As character
     class(genotypes) <- "character"
-    BGData <- readRAW.matrix(fileIn = pedPath, dataType = character())
+    BGData <- readRAW_matrix(fileIn = pedPath, dataType = character())
     expect_equal(BGData@geno[], genotypes)
-    BGData <- readRAW.matrix(fileIn = pedPath, dataType = "character")
+    BGData <- readRAW_matrix(fileIn = pedPath, dataType = "character")
     expect_equal(BGData@geno[], genotypes)
     genotypes <- restoreGenotypes()
 
 })
 
-context("readRAW.big.matrix")
+context("readRAW_big.matrix")
 
 test_that("it reads a .raw file into a big.matrix object", {
 
     # With minimum number of parameters (with exception of folderOut)
-    BGData <- readRAW.big.matrix(fileIn = pedPath, folderOut = paste0(testPath, "test-", randomString()))
+    BGData <- readRAW_big.matrix(fileIn = pedPath, folderOut = paste0(testPath, "test-", randomString()))
     expect_equal(BGData@pheno, phenotypes)
     expect_equal(BGData@geno[], genotypes)
 
     # With n
-    BGData <- readRAW.big.matrix(fileIn = pedPath, n = nRows, folderOut = paste0(testPath, "test-", randomString()))
+    BGData <- readRAW_big.matrix(fileIn = pedPath, n = nRows, folderOut = paste0(testPath, "test-", randomString()))
     expect_equal(BGData@pheno, phenotypes)
     expect_equal(BGData@geno[], genotypes)
 
     # With p
-    BGData <- readRAW.big.matrix(fileIn = pedPath, p = nCols, folderOut = paste0(testPath, "test-", randomString()))
+    BGData <- readRAW_big.matrix(fileIn = pedPath, p = nCols, folderOut = paste0(testPath, "test-", randomString()))
     expect_equal(BGData@pheno, phenotypes)
     expect_equal(BGData@geno[], genotypes)
 
     # With both n and p
-    BGData <- readRAW.big.matrix(fileIn = pedPath, n = nRows, p = nCols, folderOut = paste0(testPath, "test-", randomString()))
+    BGData <- readRAW_big.matrix(fileIn = pedPath, n = nRows, p = nCols, folderOut = paste0(testPath, "test-", randomString()))
     expect_equal(BGData@pheno, phenotypes)
     expect_equal(BGData@geno[], genotypes)
 
     # As integer
     class(genotypes) <- "integer"
-    BGData <- readRAW.big.matrix(fileIn = pedPath, dataType = integer(), folderOut = paste0(testPath, "test-", randomString()))
+    BGData <- readRAW_big.matrix(fileIn = pedPath, dataType = integer(), folderOut = paste0(testPath, "test-", randomString()))
     expect_equal(BGData@geno[], genotypes)
-    BGData <- readRAW.big.matrix(fileIn = pedPath, dataType = "integer", folderOut = paste0(testPath, "test-", randomString()))
+    BGData <- readRAW_big.matrix(fileIn = pedPath, dataType = "integer", folderOut = paste0(testPath, "test-", randomString()))
     expect_equal(BGData@geno[], genotypes)
     genotypes <- restoreGenotypes()
 
     # As double
     class(genotypes) <- "double"
-    BGData <- readRAW.big.matrix(fileIn = pedPath, dataType = double(), folderOut = paste0(testPath, "test-", randomString()))
+    BGData <- readRAW_big.matrix(fileIn = pedPath, dataType = double(), folderOut = paste0(testPath, "test-", randomString()))
     expect_equal(BGData@geno[], genotypes)
-    BGData <- readRAW.big.matrix(fileIn = pedPath, dataType = "double", folderOut = paste0(testPath, "test-", randomString()))
+    BGData <- readRAW_big.matrix(fileIn = pedPath, dataType = "double", folderOut = paste0(testPath, "test-", randomString()))
     expect_equal(BGData@geno[], genotypes)
     genotypes <- restoreGenotypes()
 
@@ -206,12 +206,12 @@ test_that("it loads BGData objects created by readRAW", {
 
 })
 
-test_that("it loads BGData objects created by readRAW.matrix", {
+test_that("it loads BGData objects created by readRAW_matrix", {
 
     # Create dummy BGData object
     path <- paste0(testPath, "test-", randomString(), "/", "BGData.RData")
     dir.create(dirname(path))
-    BGData <- readRAW.matrix(fileIn = pedPath)
+    BGData <- readRAW_matrix(fileIn = pedPath)
     save(BGData, file = path)
     rm(BGData)
     expect_true(!("BGData" %in% ls()))
@@ -223,11 +223,11 @@ test_that("it loads BGData objects created by readRAW.matrix", {
 
 })
 
-test_that("it loads BGData objects created by readRAW.big.matrix", {
+test_that("it loads BGData objects created by readRAW_big.matrix", {
 
     # Create dummy BGData object
     path <- paste0(testPath, "test-", randomString())
-    readRAW.big.matrix(fileIn = pedPath, dataType = integer(), folderOut = path)
+    readRAW_big.matrix(fileIn = pedPath, dataType = integer(), folderOut = path)
     expect_true(!("BGData" %in% ls()))
 
     # Append BGData.RData to path

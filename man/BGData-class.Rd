@@ -22,7 +22,7 @@ There are several ways to create an instance of this class:
 \item from multiple files (even a mixture of different file types) using
 \link[LinkedMatrix:LinkedMatrix-class]{LinkedMatrix::LinkedMatrix}.
 \item from a .raw file (or a .ped-like file) using \code{\link[=readRAW]{readRAW()}},
-\code{\link[=readRAW.matrix]{readRAW.matrix()}}, or \code{\link[=readRAW.big.matrix]{readRAW.big.matrix()}}.
+\code{\link[=readRAW_matrix]{readRAW_matrix()}}, or \code{\link[=readRAW_big.matrix]{readRAW_big.matrix()}}.
 }
 
 A .ped file can be recoded to a .raw file in

@@ -31,7 +31,7 @@ setClassUnion("geno", c("LinkedMatrix", "BEDMatrix", "big.matrix", "ff_matrix", 
 #' * from multiple files (even a mixture of different file types) using
 #' [LinkedMatrix::LinkedMatrix-class].
 #' * from a .raw file (or a .ped-like file) using [readRAW()],
-#' [readRAW.matrix()], or [readRAW.big.matrix()].
+#' [readRAW_matrix()], or [readRAW_big.matrix()].
 #'
 #' A .ped file can be recoded to a .raw file in
 #' [PLINK](https://www.cog-genomics.org/plink2) using `plink --file myfile
@@ -162,7 +162,7 @@ parseRAW <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1
 #' names for `@@pheno` and `@@geno`.
 #'
 #' `@@geno` can take several forms, depending on the function that is called
-#' (`readRAW`, `readRAW.matrix`, or `readRAW.big.matrix`). The following
+#' (`readRAW`, `readRAW_matrix`, or `readRAW_big.matrix`). The following
 #' sections illustrate each function in detail.
 #'
 #' @section readRAW:
@@ -181,11 +181,11 @@ parseRAW <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1
 #' contains the binary flat files (named `geno_*.bin`) and an external
 #' representation of the [BGData-class] object in `BGData.RData` is created.
 #'
-#' @section readRAW.matrix:
+#' @section readRAW_matrix:
 #' Genotypes are stored in a regular `matrix` object. Therefore, this function
 #' will only work if the .raw file is small enough to fit into memory.
 #'
-#' @section readRAW.big.matrix:
+#' @section readRAW_big.matrix:
 #' Genotypes are stored in a filebacked [bigmemory::big.matrix-class] object.
 #' A folder (see `folderOut`) that contains the binary flat file (named
 #' `BGData.bin`), a descriptor file (named `BGData.desc`), and an external
@@ -201,7 +201,7 @@ parseRAW <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1
 #' @param header Whether `fileIn` contains a header. Defaults to `TRUE`.
 #' @param dataType The coding type of genotypes in `fileIn`. Use `integer()` or
 #' `double()` for numeric coding. Alpha-numeric coding is currently not
-#' supported for [readRAW()] and [readRAW.big.matrix()]: use the `--recodeA`
+#' supported for [readRAW()] and [readRAW_big.matrix()]: use the `--recodeA`
 #' option of PLINK to convert the .ped file into a .raw file. Defaults to
 #' `integer()`.
 #' @param n The number of individuals. Auto-detect if `NULL`. Defaults to
@@ -308,7 +308,7 @@ readRAW <- function(fileIn, header = TRUE, dataType = integer(), n = NULL, p = N
 
 #' @rdname readRAW
 #' @export
-readRAW.matrix <- function(fileIn, header = TRUE, dataType = integer(), n = NULL, p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2), verbose = FALSE) {
+readRAW_matrix <- function(fileIn, header = TRUE, dataType = integer(), n = NULL, p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2), verbose = FALSE) {
 
     dims <- pedDims(fileIn = fileIn, header = header, n = n, p = p, sep = sep, nColSkip = nColSkip)
 
@@ -332,7 +332,7 @@ readRAW.matrix <- function(fileIn, header = TRUE, dataType = integer(), n = NULL
 
 #' @rdname readRAW
 #' @export
-readRAW.big.matrix <- function(fileIn, header = TRUE, dataType = integer(), n = NULL, p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2), folderOut = paste0("BGData_", sub("\\.[[:alnum:]]+$", "", basename(fileIn))), outputType = "char", verbose = FALSE) {
+readRAW_big.matrix <- function(fileIn, header = TRUE, dataType = integer(), n = NULL, p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2), folderOut = paste0("BGData_", sub("\\.[[:alnum:]]+$", "", basename(fileIn))), outputType = "char", verbose = FALSE) {
 
     if (file.exists(folderOut)) {
         stop(paste("Output folder", folderOut, "already exists. Please move it or pick a different one."))

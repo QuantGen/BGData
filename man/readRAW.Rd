@@ -2,8 +2,8 @@
 % Please edit documentation in R/BGData.R
 \name{readRAW}
 \alias{readRAW}
-\alias{readRAW.matrix}
-\alias{readRAW.big.matrix}
+\alias{readRAW_matrix}
+\alias{readRAW_big.matrix}
 \title{Creates a BGData Object From a .raw File or a .ped-Like File.}
 \usage{
 readRAW(fileIn, header = TRUE, dataType = integer(), n = NULL, p = NULL,
@@ -12,11 +12,11 @@ readRAW(fileIn, header = TRUE, dataType = integer(), n = NULL, p = NULL,
   sub("\\\\.[[:alnum:]]+$", "", basename(fileIn))), outputType = "byte",
   dimorder = if (linked.by == "rows") 2:1 else 1:2, verbose = FALSE)
 
-readRAW.matrix(fileIn, header = TRUE, dataType = integer(), n = NULL,
+readRAW_matrix(fileIn, header = TRUE, dataType = integer(), n = NULL,
   p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1,
   2), verbose = FALSE)
 
-readRAW.big.matrix(fileIn, header = TRUE, dataType = integer(), n = NULL,
+readRAW_big.matrix(fileIn, header = TRUE, dataType = integer(), n = NULL,
   p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1,
   2), folderOut = paste0("BGData_", sub("\\\\.[[:alnum:]]+$", "",
   basename(fileIn))), outputType = "char", verbose = FALSE)
@@ -28,7 +28,7 @@ readRAW.big.matrix(fileIn, header = TRUE, dataType = integer(), n = NULL,
 
 \item{dataType}{The coding type of genotypes in \code{fileIn}. Use \code{integer()} or
 \code{double()} for numeric coding. Alpha-numeric coding is currently not
-supported for \code{\link[=readRAW]{readRAW()}} and \code{\link[=readRAW.big.matrix]{readRAW.big.matrix()}}: use the \code{--recodeA}
+supported for \code{\link[=readRAW]{readRAW()}} and \code{\link[=readRAW_big.matrix]{readRAW_big.matrix()}}: use the \code{--recodeA}
 option of PLINK to convert the .ped file into a .raw file. Defaults to
 \code{integer()}.}
 
@@ -88,7 +88,7 @@ header (\code{header = TRUE}), data in this row is used to determine the column
 names for \code{@pheno} and \code{@geno}.
 
 \code{@geno} can take several forms, depending on the function that is called
-(\code{readRAW}, \code{readRAW.matrix}, or \code{readRAW.big.matrix}). The following
+(\code{readRAW}, \code{readRAW_matrix}, or \code{readRAW_big.matrix}). The following
 sections illustrate each function in detail.
 }
 \section{readRAW}{
@@ -109,13 +109,13 @@ contains the binary flat files (named \code{geno_*.bin}) and an external
 representation of the \linkS4class{BGData} object in \code{BGData.RData} is created.
 }
 
-\section{readRAW.matrix}{
+\section{readRAW_matrix}{
 
 Genotypes are stored in a regular \code{matrix} object. Therefore, this function
 will only work if the .raw file is small enough to fit into memory.
 }
 
-\section{readRAW.big.matrix}{
+\section{readRAW_big.matrix}{
 
 Genotypes are stored in a filebacked \link[bigmemory:big.matrix-class]{bigmemory::big.matrix} object.
 A folder (see \code{folderOut}) that contains the binary flat file (named
