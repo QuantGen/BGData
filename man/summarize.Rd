@@ -52,7 +52,7 @@ functions will load chunks of the memory-mapped matrix into memory and
 perform the operations on one chunk at a time. The size of the chunks is
 determined by the \code{bufferSize} parameter, or indirectly by the \code{nBuffers}
 parameter. Care must be taken to not set \code{bufferSize} too high to avoid
-memory shortage.
+memory shortage, particularly when combined with parallel computing.
 }
 
 \section{Multi-level parallelism}{
