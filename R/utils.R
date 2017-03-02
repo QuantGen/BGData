@@ -498,11 +498,7 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
             G[] <- G + G_chunk
 
             if (hasY && scaleG) {
-                if (is.logical(scale) && scale == FALSE) {
-                    K <- K + sum(scale.chunk^2)
-                } else {
-                    K <- K + ncol(X1)
-                }
+                K <- K + ncol(X1)
             }
 
         }
