@@ -895,7 +895,7 @@ getCoefficients.lmerMod <- function(x) {
 #' standard deviations.
 #' @example man/examples/summarize.R
 #' @export
-summarize <- function(X, i = seq_len(nrow(X)), j = seq_len(ncol(X)), bufferSize = 5000, nTasks = nCores, nBuffers = NULL, nCores = getOption("mc.cores", 2L), verbose = FALSE) {
+summarize <- function(X, i = seq_len(nrow(X)), j = seq_len(ncol(X)), bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE) {
     # Convert index types
     if (is.logical(i)) {
         i <- which(i)

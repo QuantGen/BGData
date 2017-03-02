@@ -5,7 +5,7 @@
 \title{Generates Various Summary Statistics.}
 \usage{
 summarize(X, i = seq_len(nrow(X)), j = seq_len(ncol(X)),
-  bufferSize = 5000, nTasks = nCores, nBuffers = NULL,
+  bufferSize = 5000, nBuffers = NULL, nTasks = nCores,
   nCores = getOption("mc.cores", 2L), verbose = FALSE)
 }
 \arguments{
@@ -22,12 +22,12 @@ boolean, or character. By default, all columns are used.}
 processing. Overwrites \code{nBuffers}. If both parameters are \code{NULL}, all
 elements in \code{j} are used. Defaults to 5000.}
 
-\item{nTasks}{The number of tasks the problem should be broken into to be
-distributed among \code{nCores} cores. Defaults to \code{nCores}.}
-
 \item{nBuffers}{The number of partitions of the columns of \code{X} that are
 brought into RAM for processing. Is overwritten by \code{bufferSize}. If both
 parameters are \code{NULL}, all elements in \code{j} are used. Defaults to \code{NULL}.}
+
+\item{nTasks}{The number of tasks the problem should be broken into to be
+distributed among \code{nCores} cores. Defaults to \code{nCores}.}
 
 \item{nCores}{The number of cores (passed to \code{\link[parallel:mclapply]{parallel::mclapply()}}).
 Defaults to the number of cores as detected by \code{\link[parallel:detectCores]{parallel::detectCores()}}.}
