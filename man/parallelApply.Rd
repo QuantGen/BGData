@@ -30,17 +30,35 @@ parallel.  The input matrix \code{X} is broken into \code{nTasks} chunks and pas
 of each chunk.
 }
 \details{
-\code{nTasks} has to be chosen carefully to avoid running out of memory. As a
-rule of thumb, at least around \code{object_size(X) + (nCores *
-(object_size(X) / nTasks)) + object_size(result)} MB of total memory will be
-needed, not including potential copies of your data that might be created
-(for example \code{\link[stats:lsfit]{stats::lsfit()}} runs \code{cbind(1, X)}). Therefore, for 20 nodes
-and 20 tasks you will need at least \code{2 * object_size(X)} MB, for 20 nodes
-and 40 tasks \code{1.5 * object_size(X)} MB, etc.
-
 If \code{nTasks} is \code{1}, \code{\link[base:apply]{base::apply()}} will be called directly without
 parallelism.
 }
+\section{Multi-level parallelism}{
+
+Functions with the \code{nCores}, \code{nTasks}, \code{i}, and \code{j} parameters provide
+capabilities for both parallel and distributed computing.
+
+For parallel computing, \code{nCores} determines the number of cores the code is
+run on, and \code{nTasks} determines into how many tasks the problem is divided
+into. \code{nTasks} should be at least as high as \code{nCores} to keep all cores
+busy. Memory usage can be an issue for higher values of \code{nCores} and
+\code{nTasks} as R is not particularly memory-efficient. As a rule of thumb, at
+least around \code{object_size(X) + (nCores * (object_size(X) / nTasks)) + object_size(result)} MB of total memory will be needed for operations on
+memory-mapped matrices, not including potential copies of your data that
+might be created (for example \code{\link[stats:lsfit]{stats::lsfit()}} runs \code{cbind(1, X)}). \code{i} and
+\code{j} can be used to include or exclude certain rows or columns. Internally,
+the \code{\link[parallel:mclapply]{parallel::mclapply()}} function is used and therefore parallel computing
+will not work on Windows machines.
+
+For distributed computing, \code{i} and \code{j} determine the subset of the input
+matrix that the code runs on. In an HPC environment, this can be used not
+just to include or exclude certain rows or columns, but also to partition
+the task among many nodes rather than cores. Scheduler-specific code and
+code to aggregate the results need to be written by the user. It is
+recommended to set \code{nCores} and \code{nTasks} to \code{1} as nodes are often cheaper
+than cores.
+}
+
 \examples{
 # Load example data
 bg <- BGData:::loadExample()

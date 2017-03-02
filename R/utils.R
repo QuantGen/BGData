@@ -76,17 +76,10 @@ apply2 <- function(X, MARGIN, FUN, ...) {
 #' [parallel::mclapply()] which applies `FUN` on either the rows or the columns
 #' of each chunk.
 #'
-#' `nTasks` has to be chosen carefully to avoid running out of memory. As a
-#' rule of thumb, at least around \code{object_size(X) + (nCores *
-#' (object_size(X) / nTasks)) + object_size(result)} MB of total memory will be
-#' needed, not including potential copies of your data that might be created
-#' (for example [stats::lsfit()] runs `cbind(1, X)`). Therefore, for 20 nodes
-#' and 20 tasks you will need at least `2 * object_size(X)` MB, for 20 nodes
-#' and 40 tasks `1.5 * object_size(X)` MB, etc.
-#'
 #' If `nTasks` is `1`, [base::apply()] will be called directly without
 #' parallelism.
 #'
+#' @inheritSection BGData-package Multi-level parallelism
 #' @param X A matrix or matrix-like object.
 #' @param MARGIN The subscripts which the function will be applied over. `1`
 #' indicates rows, `2` indicates columns.
@@ -135,15 +128,8 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = nCores, nCores = getOption("m
 #' [parallelApply()]. This function is only useful for memory-mapped files. For
 #' data that is already in memory, use [parallelApply()] directly.
 #'
-#' `bufferSize` and `nTasks` have to be chosen carefully to avoid running out
-#' of memory. As a rule of thumb, at least around \code{object_size(buffer) +
-#' (nCores * (object_size(buffer) / nTasks)) + object_size(result)} MB of total
-#' memory will be needed, not including potential copies of your data that
-#' might be created (for example [stats::lsfit()] runs `cbind(1, X)`).
-#' Therefore, for 20 nodes and 20 tasks you will need at least `2 *
-#' object_size(buffer)` MB, for 20 nodes and 40 tasks `1.5 *
-#' object_size(buffer)` MB, etc.
-#'
+#' @inheritSection BGData-package Memory-mapping
+#' @inheritSection BGData-package Multi-level parallelism
 #' @param X A matrix-like object, typically `@@geno` of a [BGData-class]
 #' object.
 #' @param MARGIN The subscripts which the function will be applied over. 1
@@ -281,6 +267,7 @@ crossprods <- function(x, y = NULL, use_tcrossprod = FALSE, nTasks = nCores, nCo
 #' If `nTasks` is `1`, [base::crossprod()] or [base::tcrossprod()] will be
 #' called directly without parallelism.
 #'
+#' @inheritSection BGData-package Multi-level parallelism
 #' @param x A matrix-like object, typically `@@geno` of a [BGData-class]
 #' object.
 #' @param y vector or matrix-like object. `NULL` by default.
@@ -314,6 +301,8 @@ tcrossprod_parallel <- function(x, y = NULL, nTasks = nCores, nCores = getOption
 #' If `center = FALSE`, `scale = FALSE` and `scaleG = FALSE`, [getG()] produces
 #' the same outcome than [base::tcrossprod()].
 #'
+#' @inheritSection BGData-package Memory-mapping
+#' @inheritSection BGData-package Multi-level parallelism
 #' @param X A matrix-like object, typically `@@geno` of a [BGData-class]
 #' object.
 #' @param center Either a logical value or a numeric vector of length equal to
@@ -525,6 +514,7 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
 #' Offers options for centering and scaling the columns of x before computing
 #' xx'.
 #'
+#' @inheritSection BGData-package Multi-level parallelism
 #' @param X A matrix-like object, typically `@@geno` of a [BGData-class]
 #' object.
 #' @param nBlocks The number of blocks.
@@ -706,6 +696,8 @@ getG.symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, sc
 #' of `@@geno` at a time. The data from the association tests is obtained from
 #' a [BGData-class] object.
 #'
+#' @inheritSection BGData-package Memory-mapping
+#' @inheritSection BGData-package Multi-level parallelism
 #' @param formula The formula for the GWAS model without including the marker,
 #' e.g. `y ~ 1` or `y ~ factor(sex) + age`. The variables included in the
 #' formula must be in the `@@pheno` object of the [BGData-class].
@@ -879,6 +871,8 @@ getCoefficients.lmerMod <- function(x) {
 #' Computes the frequency of missing values, the (minor) allele frequency, and
 #' standard deviation of each column of `X`.
 #'
+#' @inheritSection BGData-package Memory-mapping
+#' @inheritSection BGData-package Multi-level parallelism
 #' @param X A matrix-like object, typically `@@geno` of a [BGData-class]
 #' object.
 #' @param i Indicates which rows of `X` should be used. Can be integer,

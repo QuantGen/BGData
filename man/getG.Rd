@@ -65,6 +65,44 @@ offering options for centering and scaling the columns of \code{X} beforehand.
 If \code{center = FALSE}, \code{scale = FALSE} and \code{scaleG = FALSE}, \code{\link[=getG]{getG()}} produces
 the same outcome than \code{\link[base:tcrossprod]{base::tcrossprod()}}.
 }
+\section{Memory-mapping}{
+
+Functions with the \code{bufferSize} and \code{nBuffers} parameters work best with
+memory-mapped matrices such as \link[BEDMatrix:BEDMatrix-class]{BEDMatrix::BEDMatrix} objects. To
+avoid loading the whole, potentially very large matrix into memory, these
+functions will load chunks of the memory-mapped matrix into memory and
+perform the operations on one chunk at a time. The size of the chunks is
+determined by the \code{bufferSize} parameter, or indirectly by the \code{nBuffers}
+parameter. Care must be taken to not set \code{bufferSize} too high to avoid
+memory shortage.
+}
+
+\section{Multi-level parallelism}{
+
+Functions with the \code{nCores}, \code{nTasks}, \code{i}, and \code{j} parameters provide
+capabilities for both parallel and distributed computing.
+
+For parallel computing, \code{nCores} determines the number of cores the code is
+run on, and \code{nTasks} determines into how many tasks the problem is divided
+into. \code{nTasks} should be at least as high as \code{nCores} to keep all cores
+busy. Memory usage can be an issue for higher values of \code{nCores} and
+\code{nTasks} as R is not particularly memory-efficient. As a rule of thumb, at
+least around \code{object_size(X) + (nCores * (object_size(X) / nTasks)) + object_size(result)} MB of total memory will be needed for operations on
+memory-mapped matrices, not including potential copies of your data that
+might be created (for example \code{\link[stats:lsfit]{stats::lsfit()}} runs \code{cbind(1, X)}). \code{i} and
+\code{j} can be used to include or exclude certain rows or columns. Internally,
+the \code{\link[parallel:mclapply]{parallel::mclapply()}} function is used and therefore parallel computing
+will not work on Windows machines.
+
+For distributed computing, \code{i} and \code{j} determine the subset of the input
+matrix that the code runs on. In an HPC environment, this can be used not
+just to include or exclude certain rows or columns, but also to partition
+the task among many nodes rather than cores. Scheduler-specific code and
+code to aggregate the results need to be written by the user. It is
+recommended to set \code{nCores} and \code{nTasks} to \code{1} as nodes are often cheaper
+than cores.
+}
+
 \examples{
 # Load example data
 bg <- BGData:::loadExample()
