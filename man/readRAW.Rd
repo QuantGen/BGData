@@ -4,7 +4,7 @@
 \alias{readRAW}
 \alias{readRAW.matrix}
 \alias{readRAW.big.matrix}
-\title{Creates a BGData Object From a Raw PED File or a PED-Like File.}
+\title{Creates a BGData Object From a .raw File or a .ped-Like File.}
 \usage{
 readRAW(fileIn, header = TRUE, dataType = integer(), n = NULL, p = NULL,
   sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2),
@@ -29,7 +29,7 @@ readRAW.big.matrix(fileIn, header = TRUE, dataType = integer(), n = NULL,
 \item{dataType}{The coding type of genotypes in \code{fileIn}. Use \code{integer()} or
 \code{double()} for numeric coding. Alpha-numeric coding is currently not
 supported for \code{\link[=readRAW]{readRAW()}} and \code{\link[=readRAW.big.matrix]{readRAW.big.matrix()}}: use the \code{--recodeA}
-option of PLINK to convert the PED file into a raw file. Defaults to
+option of PLINK to convert the .ped file into a .raw file. Defaults to
 \code{integer()}.}
 
 \item{n}{The number of individuals. Auto-detect if \code{NULL}. Defaults to
@@ -74,11 +74,11 @@ node.}
 \item{verbose}{Whether progress updates will be posted. Defaults to \code{FALSE}.}
 }
 \description{
-Creates a \linkS4class{BGData} object from a raw PED file (generated with
-\code{--recodeA} in \href{https://www.cog-genomics.org/plink2}{PLINK}). Other
-text-based file formats are supported as well by tweaking some of the
-parameters as long as the records of individuals are in rows, and
-phenotypes, covariates and markers are in columns.
+Creates a \linkS4class{BGData} object from a .raw file (generated with \code{--recodeA}
+in \href{https://www.cog-genomics.org/plink2}{PLINK}). Other text-based file
+formats are supported as well by tweaking some of the parameters as long as
+the records of individuals are in rows, and phenotypes, covariates and
+markers are in columns.
 }
 \details{
 The data included in the first couple of columns (up to \code{nColSkip}) is used
@@ -112,7 +112,7 @@ representation of the \linkS4class{BGData} object in \code{BGData.RData} is crea
 \section{readRAW.matrix}{
 
 Genotypes are stored in a regular \code{matrix} object. Therefore, this function
-will only work if the raw PED file is small enough to fit into memory.
+will only work if the .raw file is small enough to fit into memory.
 }
 
 \section{readRAW.big.matrix}{

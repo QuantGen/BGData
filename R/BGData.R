@@ -16,8 +16,8 @@ setClassUnion("geno", c("LinkedMatrix", "BEDMatrix", "big.matrix", "ff_matrix", 
 
 #' An S4 Class to Represent Phenotype and Genotype Data.
 #'
-#' This class is inspired by the phenotype/genotype file format PED and its
-#' binary companion (also known as BED) of
+#' This class is inspired by the phenotype/genotype file format .raw and its
+#' binary companion (also known as .bed) of
 #' [PLINK](https://www.cog-genomics.org/plink2). It is used by several
 #' functions of this package such as [GWAS()] for performing a Genome Wide
 #' Association Study or [getG()] for calculating a genomic relationship matrix.
@@ -30,15 +30,15 @@ setClassUnion("geno", c("LinkedMatrix", "BEDMatrix", "big.matrix", "ff_matrix", 
 #' * from a previously saved [BGData-class] object using [load.BGData()].
 #' * from multiple files (even a mixture of different file types) using
 #' [LinkedMatrix::LinkedMatrix-class].
-#' * from a raw PED file (or a PED-like file) using [readRAW()],
+#' * from a .raw file (or a .ped-like file) using [readRAW()],
 #' [readRAW.matrix()], or [readRAW.big.matrix()].
 #'
-#' A PED file can be recoded to a raw PED in
+#' A .ped file can be recoded to a .raw file in
 #' [PLINK](https://www.cog-genomics.org/plink2) using `plink --file myfile
 #' --recodeA`, or converted to a BED file using `plink --file myfile
-#' --make-bed`. Conversely, a BED file can be transformed back to a PED file
-#' using `plink --bfile myfile --recode` or to a raw PED file using `plink
-#' --bfile myfile --recodeA` without losing information.
+#' --make-bed`. Conversely, a BED file can be transformed back to a .ped file
+#' using `plink --bfile myfile --recode` or to a .raw file using `plink --bfile
+#' myfile --recodeA` without losing information.
 #'
 #' @slot geno A [geno-class] object that contains genotypes. [geno-class] is a
 #' class union of several matrix-like types, many of them suitable for very
@@ -110,7 +110,7 @@ pedDims <- function(fileIn, header, n, p, sep = "", nColSkip = 6) {
 }
 
 
-parsePED <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1, 2), sep = "", na.strings = "NA", verbose = FALSE, ...) {
+parseRAW <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1, 2), sep = "", na.strings = "NA", verbose = FALSE, ...) {
 
     p <- ncol(BGData@geno)
     pedFile <- file(fileIn, open = "r")
@@ -147,13 +147,13 @@ parsePED <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1
 }
 
 
-#' Creates a BGData Object From a Raw PED File or a PED-Like File.
+#' Creates a BGData Object From a .raw File or a .ped-Like File.
 #'
-#' Creates a [BGData-class] object from a raw PED file (generated with
-#' `--recodeA` in [PLINK](https://www.cog-genomics.org/plink2)). Other
-#' text-based file formats are supported as well by tweaking some of the
-#' parameters as long as the records of individuals are in rows, and
-#' phenotypes, covariates and markers are in columns.
+#' Creates a [BGData-class] object from a .raw file (generated with `--recodeA`
+#' in [PLINK](https://www.cog-genomics.org/plink2)). Other text-based file
+#' formats are supported as well by tweaking some of the parameters as long as
+#' the records of individuals are in rows, and phenotypes, covariates and
+#' markers are in columns.
 #'
 #' The data included in the first couple of columns (up to `nColSkip`) is used
 #' to populate the `@@pheno` slot of a [BGData-class] object, and the remaining
@@ -183,7 +183,7 @@ parsePED <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1
 #'
 #' @section readRAW.matrix:
 #' Genotypes are stored in a regular `matrix` object. Therefore, this function
-#' will only work if the raw PED file is small enough to fit into memory.
+#' will only work if the .raw file is small enough to fit into memory.
 #'
 #' @section readRAW.big.matrix:
 #' Genotypes are stored in a filebacked [bigmemory::big.matrix-class] object.
@@ -202,7 +202,7 @@ parsePED <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1
 #' @param dataType The coding type of genotypes in `fileIn`. Use `integer()` or
 #' `double()` for numeric coding. Alpha-numeric coding is currently not
 #' supported for [readRAW()] and [readRAW.big.matrix()]: use the `--recodeA`
-#' option of PLINK to convert the PED file into a raw file. Defaults to
+#' option of PLINK to convert the .ped file into a .raw file. Defaults to
 #' `integer()`.
 #' @param n The number of individuals. Auto-detect if `NULL`. Defaults to
 #' `NULL`.
@@ -294,8 +294,8 @@ readRAW <- function(fileIn, header = TRUE, dataType = integer(), n = NULL, p = N
     # Construct BGData object
     BGData <- new("BGData", geno = geno, pheno = pheno)
 
-    # Parse PED file
-    BGData <- parsePED(BGData = BGData, fileIn = fileIn, header = header, dataType = dataType, nColSkip = nColSkip, idCol = idCol, sep = sep, na.strings = na.strings, nodes = nodes, index = index, verbose = verbose)
+    # Parse .raw file
+    BGData <- parseRAW(BGData = BGData, fileIn = fileIn, header = header, dataType = dataType, nColSkip = nColSkip, idCol = idCol, sep = sep, na.strings = na.strings, nodes = nodes, index = index, verbose = verbose)
 
     # Save BGData object
     attr(BGData, "origFile") <- list(path = fileIn, dataType = typeof(dataType))
@@ -323,8 +323,8 @@ readRAW.matrix <- function(fileIn, header = TRUE, dataType = integer(), n = NULL
     # Construct BGData object
     BGData <- new("BGData", geno = geno, pheno = pheno)
 
-    # Parse PED file
-    BGData <- parsePED(BGData = BGData, fileIn = fileIn, header = header, dataType = dataType, nColSkip = nColSkip, idCol = idCol, sep = sep, na.strings = na.strings, verbose = verbose)
+    # Parse .raw file
+    BGData <- parseRAW(BGData = BGData, fileIn = fileIn, header = header, dataType = dataType, nColSkip = nColSkip, idCol = idCol, sep = sep, na.strings = na.strings, verbose = verbose)
 
     return(BGData)
 }
@@ -360,8 +360,8 @@ readRAW.big.matrix <- function(fileIn, header = TRUE, dataType = integer(), n = 
     # Construct BGData object
     BGData <- new("BGData", geno = geno, pheno = pheno)
 
-    # Parse PED file
-    BGData <- parsePED(BGData = BGData, fileIn = fileIn, header = header, dataType = dataType, nColSkip = nColSkip, idCol = idCol, sep = sep, na.strings = na.strings, verbose = verbose)
+    # Parse .raw file
+    BGData <- parseRAW(BGData = BGData, fileIn = fileIn, header = header, dataType = dataType, nColSkip = nColSkip, idCol = idCol, sep = sep, na.strings = na.strings, verbose = verbose)
 
     # Save BGData object
     attr(BGData, "origFile") <- list(path = fileIn, dataType = typeof(dataType))
@@ -376,7 +376,7 @@ loadFamFile <- function(path) {
     if (!file.exists(path)) {
         stop(path, " not found")
     }
-    message("Extracting phenotypes from FAM file...")
+    message("Extracting phenotypes from .fam file...")
     if (requireNamespace("data.table", quietly = TRUE)) {
         pheno <- data.table::fread(path, col.names = c(
             "FID",
@@ -403,7 +403,7 @@ loadFamFile <- function(path) {
 generatePheno <- function(x) {
     # Extract path to BED file
     bedPath <- attr(x, "path")
-    # Try to load FAM file, generate pheno otherwise
+    # Try to load .fam file, generate pheno otherwise
     ex <- try({
         pheno <- loadFamFile(sub(".bed", ".fam", bedPath))
     }, silent = TRUE)
@@ -419,7 +419,7 @@ loadBimFile <- function(path) {
     if (!file.exists(path)) {
         stop(path, " not found")
     }
-    message("Extracting map from BIM file...")
+    message("Extracting map from .bim file...")
     if (requireNamespace("data.table", quietly = TRUE)) {
         map <- data.table::fread(path, col.names = c(
             "chromosome",
@@ -446,7 +446,7 @@ loadBimFile <- function(path) {
 generateMap <- function(x) {
     # Extract path to BED file
     bedPath <- attr(x, "path")
-    # Try to load FAM file, generate pheno otherwise
+    # Try to load .fam file, generate pheno otherwise
     ex <- try({
         map <- loadBimFile(sub(".bed", ".bim", bedPath))
     }, silent = TRUE)
@@ -509,24 +509,24 @@ mergeAlternatePhenotypes <- function(pheno, alternatePhenotypes) {
 #' [BEDMatrix::BEDMatrix-class] objects, plain or nested in
 #' [LinkedMatrix::ColumnLinkedMatrix-class] objects.
 #'
-#' The PED format only allows for a single phenotype. If more phenotypes are
-#' required it is possible to store them in an [alternate phenotype
-#' file](https://www.cog-genomics.org/plink2/input#pheno). The path to such a
-#' file can be provided with `alternatePhenotypeFile` and will be merged with
-#' the data in the `@@pheno` slot.
+#' The .ped and .raw formats only allows for a single phenotype. If more
+#' phenotypes are required it is possible to store them in an [alternate
+#' phenotype file](https://www.cog-genomics.org/plink2/input#pheno). The path
+#' to such a file can be provided with `alternatePhenotypeFile` and will be
+#' merged with the data in the `@@pheno` slot.
 #'
-#' For [BEDMatrix::BEDMatrix-class] objects: If a FAM file (which corresponds
-#' to the first six columns of a PED file) of the same name and in the same
-#' directory as the BED file exists, the `@@pheno` slot will be populated with
-#' the data stored in that file.  Otherwise a stub that only contains an `IID`
-#' column populated with the rownames of `@@geno` will be generated. The same
-#' will happen for a BIM file for the `@@map` slot.
+#' For [BEDMatrix::BEDMatrix-class] objects: If a .fam file (which corresponds
+#' to the first six columns of a .ped or .raw file) of the same name and in the
+#' same directory as the BED file exists, the `@@pheno` slot will be populated
+#' with the data stored in that file.  Otherwise a stub that only contains an
+#' `IID` column populated with the rownames of `@@geno` will be generated. The
+#' same will happen for a .bim file for the `@@map` slot.
 #'
 #' For [LinkedMatrix::ColumnLinkedMatrix-class] objects: See the case for
-#' [BEDMatrix::BEDMatrix-class] objects, but only the FAM file of the first
+#' [BEDMatrix::BEDMatrix-class] objects, but only the .fam file of the first
 #' node of the [LinkedMatrix::LinkedMatrix-class] will be read and used for the
-#' `@@pheno` slot, and the BIM files of all nodes will be combined and used for
-#' the `@@map` slot.
+#' `@@pheno` slot, and the .bim files of all nodes will be combined and used
+#' for the `@@map` slot.
 #'
 #' @param x An object. Currently supported are [BEDMatrix::BEDMatrix-class]
 #' objects, plain or nested in [LinkedMatrix::ColumnLinkedMatrix-class]
@@ -570,10 +570,10 @@ as.BGData.ColumnLinkedMatrix <- function(x, alternatePhenotypeFile = NULL, ...) 
         stop("Only BEDMatrix instances are supported as elements of the LinkedMatrix right now.")
     }
     # Read in the fam file of the first node
-    message("Extracting phenotypes from FAM file, assuming that the FAM file of the first BEDMatrix instance is representative of all the other nodes...")
+    message("Extracting phenotypes from .fam file, assuming that the .fam file of the first BEDMatrix instance is representative of all the other nodes...")
     fam <- suppressMessages(generatePheno(x[[1]]))
     # Read in map files
-    message("Extracting map from BIM files...")
+    message("Extracting map from .bim files...")
     map <- do.call("rbind", lapply(x, function(node) {
         suppressMessages(generateMap(node))
     }))

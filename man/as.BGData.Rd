@@ -34,23 +34,23 @@ phenotypes and map files referenced by the object to be used for the
 \link[LinkedMatrix:ColumnLinkedMatrix-class]{LinkedMatrix::ColumnLinkedMatrix} objects.
 }
 \details{
-The PED format only allows for a single phenotype. If more phenotypes are
-required it is possible to store them in an \href{https://www.cog-genomics.org/plink2/input#pheno}{alternate phenotypefile}. The path to such a
-file can be provided with \code{alternatePhenotypeFile} and will be merged with
-the data in the \code{@pheno} slot.
+The .ped and .raw formats only allows for a single phenotype. If more
+phenotypes are required it is possible to store them in an \href{https://www.cog-genomics.org/plink2/input#pheno}{alternatephenotype file}. The path
+to such a file can be provided with \code{alternatePhenotypeFile} and will be
+merged with the data in the \code{@pheno} slot.
 
-For \link[BEDMatrix:BEDMatrix-class]{BEDMatrix::BEDMatrix} objects: If a FAM file (which corresponds
-to the first six columns of a PED file) of the same name and in the same
-directory as the BED file exists, the \code{@pheno} slot will be populated with
-the data stored in that file.  Otherwise a stub that only contains an \code{IID}
-column populated with the rownames of \code{@geno} will be generated. The same
-will happen for a BIM file for the \code{@map} slot.
+For \link[BEDMatrix:BEDMatrix-class]{BEDMatrix::BEDMatrix} objects: If a .fam file (which corresponds
+to the first six columns of a .ped or .raw file) of the same name and in the
+same directory as the BED file exists, the \code{@pheno} slot will be populated
+with the data stored in that file.  Otherwise a stub that only contains an
+\code{IID} column populated with the rownames of \code{@geno} will be generated. The
+same will happen for a .bim file for the \code{@map} slot.
 
 For \link[LinkedMatrix:ColumnLinkedMatrix-class]{LinkedMatrix::ColumnLinkedMatrix} objects: See the case for
-\link[BEDMatrix:BEDMatrix-class]{BEDMatrix::BEDMatrix} objects, but only the FAM file of the first
+\link[BEDMatrix:BEDMatrix-class]{BEDMatrix::BEDMatrix} objects, but only the .fam file of the first
 node of the \link[LinkedMatrix:LinkedMatrix-class]{LinkedMatrix::LinkedMatrix} will be read and used for the
-\code{@pheno} slot, and the BIM files of all nodes will be combined and used for
-the \code{@map} slot.
+\code{@pheno} slot, and the .bim files of all nodes will be combined and used
+for the \code{@map} slot.
 }
 \examples{
 # Path to example data

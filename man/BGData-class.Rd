@@ -6,8 +6,8 @@
 \alias{BGData}
 \title{An S4 Class to Represent Phenotype and Genotype Data.}
 \description{
-This class is inspired by the phenotype/genotype file format PED and its
-binary companion (also known as BED) of
+This class is inspired by the phenotype/genotype file format .raw and its
+binary companion (also known as .bed) of
 \href{https://www.cog-genomics.org/plink2}{PLINK}. It is used by several
 functions of this package such as \code{\link[=GWAS]{GWAS()}} for performing a Genome Wide
 Association Study or \code{\link[=getG]{getG()}} for calculating a genomic relationship matrix.
@@ -21,13 +21,13 @@ There are several ways to create an instance of this class:
 \item from a previously saved \linkS4class{BGData} object using \code{\link[=load.BGData]{load.BGData()}}.
 \item from multiple files (even a mixture of different file types) using
 \link[LinkedMatrix:LinkedMatrix-class]{LinkedMatrix::LinkedMatrix}.
-\item from a raw PED file (or a PED-like file) using \code{\link[=readRAW]{readRAW()}},
+\item from a .raw file (or a .ped-like file) using \code{\link[=readRAW]{readRAW()}},
 \code{\link[=readRAW.matrix]{readRAW.matrix()}}, or \code{\link[=readRAW.big.matrix]{readRAW.big.matrix()}}.
 }
 
-A PED file can be recoded to a raw PED in
-\href{https://www.cog-genomics.org/plink2}{PLINK} using \code{plink --file myfile --recodeA}, or converted to a BED file using \code{plink --file myfile --make-bed}. Conversely, a BED file can be transformed back to a PED file
-using \code{plink --bfile myfile --recode} or to a raw PED file using \code{plink --bfile myfile --recodeA} without losing information.
+A .ped file can be recoded to a .raw file in
+\href{https://www.cog-genomics.org/plink2}{PLINK} using \code{plink --file myfile --recodeA}, or converted to a BED file using \code{plink --file myfile --make-bed}. Conversely, a BED file can be transformed back to a .ped file
+using \code{plink --bfile myfile --recode} or to a .raw file using \code{plink --bfile myfile --recodeA} without losing information.
 }
 \section{Slots}{
 

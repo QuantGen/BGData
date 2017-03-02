@@ -11,7 +11,7 @@ restoreGenotypes <- function() {
     return(genotypes)
 }
 
-# Create example PED files
+# Create example .raw files
 pedPath <- paste0(testPath, "ped-", BGData:::randomString(), ".txt")
 nRows <- 3
 nCols <- 3
@@ -43,7 +43,7 @@ test_that("it complains if folderOut already exists", {
 })
 
 
-test_that("it reads PED files into BGData objects", {
+test_that("it reads .raw files into BGData objects", {
 
     # With minimum number of parameters (with exception of folderOut)
     BGData <- readRAW(fileIn = pedPath, folderOut = paste0(testPath, "test-", randomString()))
@@ -90,7 +90,7 @@ test_that("it reads PED files into BGData objects", {
 
 context("readRAW.matrix")
 
-test_that("it reads a PED file into a matrix object", {
+test_that("it reads a .raw file into a matrix object", {
 
     # With minimum number of parameters (with exception of folderOut)
     BGData <- readRAW.matrix(fileIn = pedPath)
@@ -140,7 +140,7 @@ test_that("it reads a PED file into a matrix object", {
 
 context("readRAW.big.matrix")
 
-test_that("it reads a PED file into a big.matrix object", {
+test_that("it reads a .raw file into a big.matrix object", {
 
     # With minimum number of parameters (with exception of folderOut)
     BGData <- readRAW.big.matrix(fileIn = pedPath, folderOut = paste0(testPath, "test-", randomString()))
