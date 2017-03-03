@@ -47,6 +47,7 @@ setClassUnion("geno", c("LinkedMatrix", "BEDMatrix", "big.matrix", "ff_matrix", 
 #' and `matrix`.
 #' @slot pheno A `data.frame` that contains phenotypes.
 #' @slot map A `data.frame` that contains a genetic map.
+#' @example man/examples/BGData.R
 #' @export BGData
 #' @exportClass BGData
 BGData <- setClass("BGData", slots = c(geno = "geno", pheno = "data.frame", map = "data.frame"))
