@@ -523,12 +523,12 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
 #' [symDMatrix::symDMatrix-class] object. Is overwritten by `blockSize`. If
 #' both parameters are `NULL`, a single block of the size of the same length as
 #' `i` will be created. Defaults to `NULL`.
-#' @param centers Precomputed centers.
-#' @param scales Precomputed scales.
-#' @param centerCol TRUE/FALSE whether columns must be centered before
-#' computing xx'.
-#' @param scaleCol TRUE/FALSE whether columns must be scaled before computing
-#' xx'.
+#' @param center Either a logical value or a numeric vector of length equal to
+#' the number of columns of `X`. If `FALSE`, no centering is done. Defaults to
+#' `TRUE`.
+#' @param scale Either a logical value or a numeric vector of length equal to
+#' the number of columns of `X`. If `FALSE`, no scaling is done.  Defaults to
+#' `TRUE`.
 #' @param scaleG TRUE/FALSE whether xx' must be scaled.
 #' @param folderOut The path to the folder where to save the
 #' [symDMatrix::symDMatrix-class] object. Defaults to a random string prefixed
@@ -545,7 +545,7 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
 #' @param verbose Whether progress updates will be posted. Defaults to `TRUE`.
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @export
-getG_symDMatrix <- function(X, blockSize = 5000, nBlocks = NULL, centers = NULL, scales = NULL, centerCol = TRUE, scaleCol = TRUE, scaleG = TRUE, folderOut = paste0("symDMatrix_", randomString()), vmode = "double", i = seq_len(nrow(X)), j = seq_len(ncol(X)), nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = TRUE) {
+getG_symDMatrix <- function(X, blockSize = 5000, nBlocks = NULL, center = TRUE, scale = TRUE, scaleG = TRUE, folderOut = paste0("symDMatrix_", randomString()), vmode = "double", i = seq_len(nrow(X)), j = seq_len(ncol(X)), nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = TRUE) {
 
     # Convert index types
     if (is.logical(i)) {
@@ -581,37 +581,27 @@ getG_symDMatrix <- function(X, blockSize = 5000, nBlocks = NULL, centers = NULL,
         nBlocks <- ceiling(n / blockSize)
     }
 
-    if ((centerCol || scaleCol) && (is.null(centers) || is.null(scales))) {
-        if (is.null(centers) && is.null(scales)) {
-            centers <- vector(mode = "double", length = p)
-            scales <- vector(mode = "double", length = p)
-            for (k in seq_len(p)) {
-                xi <- X[i, j[k]]
-                scales[k] <- stats::sd(xi, na.rm = TRUE) * sqrt((nX - 1) / nX)
-                centers[k] <- mean(xi, na.rm = TRUE)
-            }
-        } else if ((!is.null(centers)) && (is.null(scales))) {
-            scales <- vector(mode = "double", length = p)
-            for (k in seq_len(p)) {
-                xi <- X[i, j[k]]
-                scales[k] <- stats::sd(xi, na.rm = TRUE) * sqrt((nX - 1) / nX)
-            }
-        } else if ((is.null(centers)) && (!is.null(scales))) {
-            centers <- vector(mode = "double", length = p)
-            for (k in seq_len(p)) {
-                xi <- X[i, j[k]]
-                centers[k] <- mean(xi, na.rm = TRUE)
-            }
+    blockIndex <- cbind(i, ceiling(seq_len(n) / blockSize))
+
+    if (is.logical(center) && center == TRUE) {
+        center <- vector(mode = "double", length = p)
+        for (k in seq_len(p)) {
+            xi <- X[i, j[k]]
+            center[k] <- mean(xi, na.rm = TRUE)
         }
-    }
-    if (!centerCol) {
-        centers <- rep(0, p)
-    }
-    if (!scaleCol) {
-        scales <- rep(1, p)
+    } else if (is.logical(center) && center == FALSE) {
+        center <- rep(0, p)
     }
 
-    blockIndex <- cbind(i, ceiling(seq_len(n) / blockSize))
+    if (is.logical(scale) && scale == TRUE) {
+        scale <- vector(mode = "double", length = p)
+        for (k in seq_len(p)) {
+            xi <- X[i, j[k]]
+            scale[k] <- stats::sd(xi, na.rm = TRUE) * sqrt((nX - 1) / nX)
+        }
+    } else if (is.logical(scale) && scale == FALSE) {
+        scale <- rep(1, p)
+    }
 
     nFiles <- nBlocks * (nBlocks + 1) / 2
     DATA <- vector(mode = "list", length = nBlocks)
@@ -634,7 +624,7 @@ getG_symDMatrix <- function(X, blockSize = 5000, nBlocks = NULL, centers = NULL,
         # centering/scaling
         for (k in seq_len(p)) {
             xik <- Xi[, k]
-            xik <- (xik - centers[j[k]]) / scales[j[k]]
+            xik <- (xik - center[j[k]]) / scale[j[k]]
             xik[is.na(xik)] <- 0
             Xi[, k] <- xik
         }
@@ -651,7 +641,7 @@ getG_symDMatrix <- function(X, blockSize = 5000, nBlocks = NULL, centers = NULL,
             # centering/scaling
             for (k in seq_len(p)) {
                 xjk <- Xj[, k]
-                xjk <- (xjk - centers[j[k]]) / scales[j[k]]
+                xjk <- (xjk - center[j[k]]) / scale[j[k]]
                 xjk[is.na(xjk)] <- 0
                 Xj[, k] <- xjk
             }
@@ -673,10 +663,10 @@ getG_symDMatrix <- function(X, blockSize = 5000, nBlocks = NULL, centers = NULL,
         }
     }
 
-    names(centers) <- colnames(X)[j]
-    names(scales) <- colnames(X)[j]
+    names(center) <- colnames(X)[j]
+    names(scale) <- colnames(X)[j]
 
-    G <- new("symDMatrix", data = DATA, centers = centers, scales = scales)
+    G <- new("symDMatrix", data = DATA, centers = center, scales = scale)
 
     if (scaleG) {
         K <- mean(diag(G))
