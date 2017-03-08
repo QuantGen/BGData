@@ -382,14 +382,14 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
     nX <- nrow(X)
     pX <- ncol(X)
 
-    if ((min(i) < 1) || (max(i) > nX)) {
+    if (min(i) < 1 || max(i) > nX) {
         stop("Index out of bounds")
     }
-    if ((min(j) < 1) || (max(j) > pX)) {
+    if (min(j) < 1 || max(j) > pX) {
         stop("Index out of bounds")
     }
     if (hasY) {
-        if ((min(i2) < 1) || (max(i2) > nX)) {
+        if (min(i2) < 1 || max(i2) > nX) {
             stop("Index out of bounds")
         }
     }
@@ -563,10 +563,10 @@ getG_symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, sc
     n <- length(i)
     p <- length(j)
 
-    if ((min(i) < 1) || (max(i) > nX)) {
+    if (min(i) < 1 || max(i) > nX) {
         stop("Index out of bounds")
     }
-    if ((min(j) < 1) || (max(j) > pX)) {
+    if (min(j) < 1 || max(j) > pX) {
         stop("Index out of bounds")
     }
 
