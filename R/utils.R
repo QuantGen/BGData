@@ -351,15 +351,6 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
         }
     }
 
-    if (is.null(bufferSize) && is.null(nBuffers)) {
-        bufferSize <- length(j)
-        nBuffers <- 1
-    } else if (is.null(bufferSize) && !is.null(nBuffers)) {
-        bufferSize <- ceiling(length(j) / nBuffers)
-    } else {
-        nBuffers <- ceiling(length(j) / bufferSize)
-    }
-
     # Convert index types
     if (is.logical(i)) {
         i <- which(i)
@@ -398,6 +389,15 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
     p <- length(j)
     if (hasY) {
         n2 <- length(i2)
+    }
+
+    if (is.null(bufferSize) && is.null(nBuffers)) {
+        bufferSize <- length(j)
+        nBuffers <- 1
+    } else if (is.null(bufferSize) && !is.null(nBuffers)) {
+        bufferSize <- ceiling(length(j) / nBuffers)
+    } else {
+        nBuffers <- ceiling(length(j) / bufferSize)
     }
 
     if (!hasY) {
