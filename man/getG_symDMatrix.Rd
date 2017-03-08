@@ -8,8 +8,8 @@ by Creating a symDMatrix.}
 getG_symDMatrix(X, nBlocks = 5, blockSize = NULL, centers = NULL,
   scales = NULL, centerCol = TRUE, scaleCol = TRUE, scaleG = TRUE,
   folderOut = paste0("symDMatrix_", randomString()), vmode = "double",
-  saveRData = TRUE, i = seq_len(nrow(X)), j = seq_len(ncol(X)),
-  nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = TRUE)
+  i = seq_len(nrow(X)), j = seq_len(ncol(X)), nTasks = nCores,
+  nCores = getOption("mc.cores", 2L), verbose = TRUE)
 }
 \arguments{
 \item{X}{A matrix-like object, typically \code{@geno} of a \linkS4class{BGData}
@@ -36,9 +36,6 @@ xx'.}
 with "symDMatrix_".}
 
 \item{vmode}{vmode of \code{ff} objects.}
-
-\item{saveRData}{Whether to save an RData file to easily reload the
-\link[symDMatrix:symDMatrix-class]{symDMatrix::symDMatrix} object.}
 
 \item{i}{Indicates which rows of \code{X} should be used. Can be integer,
 boolean, or character. By default, all rows are used.}
