@@ -180,7 +180,6 @@ chunkedApply <- function(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(
     } else {
         nBuffers <- ceiling(d[MARGIN] / bufferSize)
     }
-    nBuffers <- ceiling(d[MARGIN] / bufferSize)
     ranges <- LinkedMatrix:::chunkRanges(d[MARGIN], nBuffers)
     res <- lapply(seq_len(nBuffers), function(k) {
         if (verbose) {
