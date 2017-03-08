@@ -5,7 +5,7 @@
 \title{Computes a Genomic Relationship Matrix G=xx' without Ever Loading G in RAM
 by Creating a symDMatrix.}
 \usage{
-getG_symDMatrix(X, nBlocks = 5, blockSize = NULL, centers = NULL,
+getG_symDMatrix(X, blockSize = 5000, nBlocks = NULL, centers = NULL,
   scales = NULL, centerCol = TRUE, scaleCol = TRUE, scaleG = TRUE,
   folderOut = paste0("symDMatrix_", randomString()), vmode = "double",
   i = seq_len(nrow(X)), j = seq_len(ncol(X)), nTasks = nCores,
@@ -15,9 +15,14 @@ getG_symDMatrix(X, nBlocks = 5, blockSize = NULL, centers = NULL,
 \item{X}{A matrix-like object, typically \code{@geno} of a \linkS4class{BGData}
 object.}
 
-\item{nBlocks}{The number of blocks.}
+\item{blockSize}{The number of rows and columns of each block. Overwrites
+\code{nBlocks}. If both parameters are \code{NULL}, a single block of the same length
+as \code{i} will be created.  Defaults to 5000.}
 
-\item{blockSize}{The number of columns of a block (if NULL inferred from block).}
+\item{nBlocks}{The number of blocks in the first row of the
+\link[symDMatrix:symDMatrix-class]{symDMatrix::symDMatrix} object. Is overwritten by \code{blockSize}. If
+both parameters are \code{NULL}, a single block of the size of the same length as
+\code{i} will be created. Defaults to \code{NULL}.}
 
 \item{centers}{Precomputed centers.}
 

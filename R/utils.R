@@ -516,8 +516,13 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
 #' @inheritSection BGData-package Multi-level parallelism
 #' @param X A matrix-like object, typically `@@geno` of a [BGData-class]
 #' object.
-#' @param nBlocks The number of blocks.
-#' @param blockSize The number of columns of a block (if NULL inferred from block).
+#' @param blockSize The number of rows and columns of each block. Overwrites
+#' `nBlocks`. If both parameters are `NULL`, a single block of the same length
+#' as `i` will be created.  Defaults to 5000.
+#' @param nBlocks The number of blocks in the first row of the
+#' [symDMatrix::symDMatrix-class] object. Is overwritten by `blockSize`. If
+#' both parameters are `NULL`, a single block of the size of the same length as
+#' `i` will be created. Defaults to `NULL`.
 #' @param centers Precomputed centers.
 #' @param scales Precomputed scales.
 #' @param centerCol TRUE/FALSE whether columns must be centered before
@@ -540,10 +545,7 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
 #' @param verbose Whether progress updates will be posted. Defaults to `TRUE`.
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @export
-getG_symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, scales = NULL, centerCol = TRUE, scaleCol = TRUE, scaleG = TRUE, folderOut = paste0("symDMatrix_", randomString()), vmode = "double", i = seq_len(nrow(X)), j = seq_len(ncol(X)), nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = TRUE) {
-
-    nX <- nrow(X)
-    pX <- ncol(X)
+getG_symDMatrix <- function(X, blockSize = 5000, nBlocks = NULL, centers = NULL, scales = NULL, centerCol = TRUE, scaleCol = TRUE, scaleG = TRUE, folderOut = paste0("symDMatrix_", randomString()), vmode = "double", i = seq_len(nrow(X)), j = seq_len(ncol(X)), nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = TRUE) {
 
     # Convert index types
     if (is.logical(i)) {
@@ -557,14 +559,26 @@ getG_symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, sc
         j <- match(j, colnames(X))
     }
 
-    n <- length(i)
-    p <- length(j)
+    nX <- nrow(X)
+    pX <- ncol(X)
 
     if (min(i) < 1 || max(i) > nX) {
         stop("Index out of bounds")
     }
     if (min(j) < 1 || max(j) > pX) {
         stop("Index out of bounds")
+    }
+
+    n <- length(i)
+    p <- length(j)
+
+    if (is.null(blockSize) && is.null(nBlocks)) {
+        blockSize <- n
+        nBlocks <- 1
+    } else if (is.null(blockSize) && !is.null(nBlocks)) {
+        blockSize <- ceiling(n / nBlocks)
+    } else {
+        nBlocks <- ceiling(n / blockSize)
     }
 
     if ((centerCol || scaleCol) && (is.null(centers) || is.null(scales))) {
@@ -597,9 +611,6 @@ getG_symDMatrix <- function(X, nBlocks = 5, blockSize = NULL, centers = NULL, sc
         scales <- rep(1, p)
     }
 
-    if (is.null(blockSize)) {
-        blockSize <- ceiling(n / nBlocks)
-    }
     blockIndex <- cbind(i, ceiling(seq_len(n) / blockSize))
 
     nFiles <- nBlocks * (nBlocks + 1) / 2
