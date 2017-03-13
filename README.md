@@ -69,13 +69,14 @@ Load the .bed file for chromosome 1 (chr1.bed) using the [BEDMatrix](https://git
 #### Linking multiple BEDMatrix objects together
 
 Load the other two .bed files:
-
+```R
     > chr2 <- BEDMatrix(paste0(path, "/chr2.bed"))
     Extracting number of individuals and rownames from .fam file...
     Extracting number of markers and colnames from .bim file...
     > chr3 <- BEDMatrix(paste0(path, "/chr3.bed"))
     Extracting number of individuals and rownames from .fam file...
     Extracting number of markers and colnames from .bim file...
+```
 
 Combine the BEDMatrix objects by columns using the [LinkedMatrix](https://github.com/QuantGen/LinkedMatrix) to avoid the inconvenience of having three separate matrices:
 
