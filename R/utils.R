@@ -799,7 +799,7 @@ GWAS.rayOLS <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len
     y=y-mean(y)
     res <- chunkedApply(X = data@geno, MARGIN = 2, FUN =rayOLS, y=y , i = i, j = j, bufferSize = bufferSize, nBuffers = nBuffers, nTasks = nTasks, nCores = nCores, verbose = verbose, ...)
     
-    return(res)
+    return(t(res))
 }
 
 GWAS.lsfit <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
