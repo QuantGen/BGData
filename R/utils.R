@@ -780,6 +780,7 @@ rayOLS <- function(y, x, n = length(y)){
     tmp <- !(is.na(x) | is.na(y))
     x <- x[tmp]
     y <- y[tmp]
+    x=x-mean(x)
     rhs <- sum(x * y)
     XtX <- sum(x^2)
     sol <- rhs / XtX
