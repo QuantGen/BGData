@@ -744,11 +744,11 @@ GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)), 
 
     if (method == "lsfit") {
         OUT <- GWAS.lsfit(formula = formula, data = data, i = i, j = j, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = verbose, ...)
-    } else if (method=="rayOLS"){
+    }else if (method=="rayOLS"){
         if( length(attr(terms(formula),"term.labels"))>0){
             stop(" method rayOLS can only be used with y~1 formula, if you want to add covariats pre-adjust your phenotype.")
         }
-        OUT=GWAS.rayOLS(formula=formula,data=data = i, j = j, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = verbose, ...)
+        OUT=GWAS.rayOLS(formula=formula,data=data,i= i, j = j, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = verbose, ...)
      }else if (method == "SKAT") {
         OUT <- GWAS.SKAT(formula = formula, data = data, i = i, j = j, verbose = verbose, ...)
     } else {
