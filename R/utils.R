@@ -726,7 +726,7 @@ GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)), 
         stop("data must BGData")
     }
 
-    if (!method %in% c("lm", "lm.fit", "lsfit", "glm", "lmer", "SKAT")) {
+    if (!method %in% c("lm", "lm.fit", "lsfit", "glm", "lmer", "SKAT","rayOLS")) {
         stop("Only lm, lm.fit, lsfit, glm, lmer and SKAT have been implemented so far.")
     }
 
