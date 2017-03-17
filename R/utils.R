@@ -726,8 +726,8 @@ GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)), 
         stop("data must BGData")
     }
 
-    if (!method %in% c("lm", "lm.fit", "lsfit", "glm", "lmer", "SKAT","rayOLS")) {
-        stop("Only lm, lm.fit, lsfit, glm, lmer and SKAT have been implemented so far.")
+    if (!method %in% c("lm", "lm.fit", "lsfit", "glm", "lmer", "SKAT", "rayOLS")) {
+        stop("Only lm, lm.fit, lsfit, glm, lmer, SKAT, and rayOLS have been implemented so far.")
     }
 
     # Convert index types
@@ -744,12 +744,12 @@ GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)), 
 
     if (method == "lsfit") {
         OUT <- GWAS.lsfit(formula = formula, data = data, i = i, j = j, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = verbose, ...)
-    }else if (method=="rayOLS"){
-        if( length(attr(terms(formula),"term.labels"))>0){
-            stop(" method rayOLS can only be used with y~1 formula, if you want to add covariats pre-adjust your phenotype.")
+    } else if (method == "rayOLS") {
+        if (length(attr(stats::terms(formula), "term.labels")) > 0) {
+            stop("method rayOLS can only be used with y~1 formula, if you want to add covariates pre-adjust your phenotype.")
         }
-        OUT=GWAS.rayOLS(formula=formula,data=data,i= i, j = j, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = verbose, ...)
-     }else if (method == "SKAT") {
+        OUT <- GWAS.rayOLS(formula = formula, data = data, i = i, j = j, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = verbose, ...)
+    } else if (method == "SKAT") {
         OUT <- GWAS.SKAT(formula = formula, data = data, i = i, j = j, verbose = verbose, ...)
     } else {
         if (method == "lmer") {
@@ -780,7 +780,7 @@ rayOLS <- function(y, x, n = length(y)){
     tmp <- !(is.na(x) | is.na(y))
     x <- x[tmp]
     y <- y[tmp]
-    x=x-mean(x)
+    x <- x - mean(x)
     rhs <- sum(x * y)
     XtX <- sum(x^2)
     sol <- rhs / XtX
@@ -791,17 +791,15 @@ rayOLS <- function(y, x, n = length(y)){
     return(c(sol, SE, z_stat, stats::pt(q = abs(z_stat), df = n - 1, lower.tail = FALSE) * 2))
 }
 
-# the GWAS method for rayOLS
-GWAS.rayOLS <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), 
-                        bufferSize = 5000, nBuffers = NULL, nTasks = nCores, 
-                        nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
 
+# the GWAS method for rayOLS
+GWAS.rayOLS <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
     y <- data@pheno[i, as.character(stats::terms(formula)[[2]]), drop = TRUE]
-    y=y-mean(y)
-    res <- chunkedApply(X = data@geno, MARGIN = 2, FUN =rayOLS, y=y , i = i, j = j, bufferSize = bufferSize, nBuffers = nBuffers, nTasks = nTasks, nCores = nCores, verbose = verbose, ...)
-    
+    y <- y - mean(y)
+    res <- chunkedApply(X = data@geno, MARGIN = 2, FUN = rayOLS, y = y , i = i, j = j, bufferSize = bufferSize, nBuffers = nBuffers, nTasks = nTasks, nCores = nCores, verbose = verbose, ...)
     return(t(res))
 }
+
 
 GWAS.lsfit <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
 
