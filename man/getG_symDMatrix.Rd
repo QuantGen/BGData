@@ -5,7 +5,7 @@
 \title{Computes a Genomic Relationship Matrix G=xx' without Ever Loading G in RAM
 by Creating a symDMatrix.}
 \usage{
-getG_symDMatrix(X, blockSize = 5000, nBlocks = NULL, center = TRUE,
+getG_symDMatrix(X, blockSize = 5000L, nBlocks = NULL, center = TRUE,
   scale = TRUE, scaleG = TRUE, folderOut = paste0("symDMatrix_",
   randomString()), vmode = "double", i = seq_len(nrow(X)),
   j = seq_len(ncol(X)), nTasks = nCores, nCores = getOption("mc.cores",

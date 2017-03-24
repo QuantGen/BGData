@@ -6,7 +6,7 @@
 \usage{
 getG(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05,
   i = seq_len(nrow(X)), j = seq_len(ncol(X)), i2 = NULL,
-  bufferSize = 5000, nBuffers = NULL, nTasks = nCores,
+  bufferSize = 5000L, nBuffers = NULL, nTasks = nCores,
   nCores = getOption("mc.cores", 2L), verbose = TRUE)
 }
 \arguments{

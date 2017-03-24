@@ -3,10 +3,10 @@
 # apply always makes a copy of the data.
 apply2 <- function(X, MARGIN, FUN, ...) {
     d <- dim(X)
-    if (MARGIN == 1) {
-        subset <- X[1, ]
+    if (MARGIN == 1L) {
+        subset <- X[1L, ]
     } else {
-        subset <- X[, 1]
+        subset <- X[, 1L]
     }
     sample <- FUN(subset, ...)
     if (is.table(sample)) {
@@ -15,10 +15,10 @@ apply2 <- function(X, MARGIN, FUN, ...) {
         # List
         OUT <- vector(mode = "list", length = d[MARGIN])
         names(OUT) <- dimnames(X)[[MARGIN]]
-        OUT[[1]] <- sample
-        if (d[MARGIN] > 1) {
-            for (i in seq(2, d[MARGIN])) {
-                if (MARGIN == 1) {
+        OUT[[1L]] <- sample
+        if (d[MARGIN] > 1L) {
+            for (i in seq(2L, d[MARGIN])) {
+                if (MARGIN == 1L) {
                     subset <- X[i, ]
                 } else {
                     subset <- X[, i]
@@ -27,20 +27,20 @@ apply2 <- function(X, MARGIN, FUN, ...) {
             }
         }
     } else {
-        if (length(sample) > 1) {
+        if (length(sample) > 1L) {
             # Matrix or atomic vector of length > 1
             OUT <- matrix(data = normalizeType(typeof(sample)), nrow = length(sample), ncol = d[MARGIN])
             if (!is.matrix(sample) && !is.null(names(sample))) {
-                if (MARGIN == 1) {
+                if (MARGIN == 1L) {
                     dimnames(OUT) <- list(NULL, names(sample))
                 } else {
                     dimnames(OUT) <- list(names(sample), NULL)
                 }
             }
-            OUT[, 1] <- sample
-            if (d[MARGIN] > 1) {
-                for (i in seq(2, d[MARGIN])) {
-                    if (MARGIN == 1) {
+            OUT[, 1L] <- sample
+            if (d[MARGIN] > 1L) {
+                for (i in seq(2L, d[MARGIN])) {
+                    if (MARGIN == 1L) {
                         subset <- X[i, ]
                     } else {
                         subset <- X[, i]
@@ -52,10 +52,10 @@ apply2 <- function(X, MARGIN, FUN, ...) {
             # Atomic vector of length 1
             OUT <- vector(mode = typeof(sample), length = d[MARGIN])
             names(OUT) <- dimnames(X)[[MARGIN]]
-            OUT[1] <- sample
-            if (d[MARGIN] > 1) {
-                for (i in seq(2, d[MARGIN])) {
-                    if (MARGIN == 1) {
+            OUT[1L] <- sample
+            if (d[MARGIN] > 1L) {
+                for (i in seq(2L, d[MARGIN])) {
+                    if (MARGIN == 1L) {
                         subset <- X[i, ]
                     } else {
                         subset <- X[, i]
@@ -99,18 +99,18 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = nCores, nCores = getOption("m
         stop("dim(X) must have a positive length")
     }
     nTasks <- as.integer(nTasks)
-    if (is.na(nTasks) || nTasks < 1) {
+    if (is.na(nTasks) || nTasks < 1L) {
         stop("nTasks has to be greater than 0")
     }
-    if (nTasks == 1) {
+    if (nTasks == 1L) {
         apply2(X = X, MARGIN = MARGIN, FUN = FUN, ...)
     } else {
         res <- parallel::mclapply(X = seq_len(nTasks), FUN = function(i, ...) {
             range <- LinkedMatrix:::chunkRanges(d[MARGIN], nTasks, i)
-            if (MARGIN == 2) {
-                subset <- X[, seq(range[1], range[2]), drop = FALSE]
+            if (MARGIN == 2L) {
+                subset <- X[, seq(range[1L], range[2L]), drop = FALSE]
             } else {
-                subset <- X[seq(range[1], range[2]), , drop = FALSE]
+                subset <- X[seq(range[1L], range[2L]), , drop = FALSE]
             }
             apply2(X = subset, MARGIN = MARGIN, FUN = FUN, ...)
         }, ..., mc.preschedule = FALSE, mc.cores = nCores)
@@ -156,7 +156,7 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = nCores, nCores = getOption("m
 #' held in memory.
 #' @example man/examples/chunkedApply.R
 #' @export
-chunkedApply <- function(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(X)), bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
+chunkedApply <- function(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(X)), bufferSize = 5000L, nBuffers = NULL, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
     if (!length(dim(X))) {
         stop("dim(X) must have a positive length")
     }
@@ -174,7 +174,7 @@ chunkedApply <- function(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(
     d <- c(length(i), length(j))
     if (is.null(bufferSize) && is.null(nBuffers)) {
         bufferSize <- d[MARGIN]
-        nBuffers <- 1
+        nBuffers <- 1L
     } else if (is.null(bufferSize) && !is.null(nBuffers)) {
         bufferSize <- ceiling(d[MARGIN] / nBuffers)
     } else {
@@ -183,12 +183,12 @@ chunkedApply <- function(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(
     ranges <- LinkedMatrix:::chunkRanges(d[MARGIN], nBuffers)
     res <- lapply(seq_len(nBuffers), function(k) {
         if (verbose) {
-            message("Processing chunk ", k, " of ", nBuffers, " (", round(k / nBuffers * 100, 3), "%) ...")
+            message("Processing chunk ", k, " of ", nBuffers, " (", round(k / nBuffers * 100L, 3L), "%) ...")
         }
-        if (MARGIN == 2) {
-            subset <- X[i, j[seq(ranges[1, k], ranges[2, k])], drop = FALSE]
+        if (MARGIN == 2L) {
+            subset <- X[i, j[seq(ranges[1L, k], ranges[2L, k])], drop = FALSE]
         } else {
-            subset <- X[i[seq(ranges[1, k], ranges[2, k])], j, drop = FALSE]
+            subset <- X[i[seq(ranges[1L, k], ranges[2L, k])], j, drop = FALSE]
         }
         parallelApply(X = subset, MARGIN = MARGIN, FUN = FUN, nTasks = nTasks, nCores = nCores, ...)
     })
@@ -202,51 +202,51 @@ crossprods <- function(x, y = NULL, use_tcrossprod = FALSE, nTasks = nCores, nCo
         y <- as.matrix(y)
         dy <- dim(y)
         if (use_tcrossprod) {
-            if (dx[2] != ncol(y)) {
+            if (dx[2L] != ncol(y)) {
                 stop("Error in tcrossprod_parallel: non-conformable arguments.")
             }
         } else {
-            if (dx[1] != dy[1]) {
+            if (dx[1L] != dy[1L]) {
                 stop("Error in crossprod_parallel: non-conformable arguments.")
             }
         }
     }
-    if (nTasks == 1) {
+    if (nTasks == 1L) {
         if (use_tcrossprod) {
             Xy <- tcrossprod(x, y)
         } else {
             Xy <- crossprod(x, y)
         }
     } else {
-        nX <- ifelse(use_tcrossprod, dx[2], dx[1])
+        nX <- ifelse(use_tcrossprod, dx[2L], dx[1L])
         if (!is.null(y)) {
-            nY <- ifelse(use_tcrossprod, dy[2], dy[1])
+            nY <- ifelse(use_tcrossprod, dy[2L], dy[1L])
         }
         chunks <- parallel::mclapply(X = seq_len(nTasks), FUN = function(i, ...) {
             if (!is.null(y)) {
                 ranges <- LinkedMatrix:::chunkRanges(nY, nTasks, i)
                 if (use_tcrossprod) {
-                    Y <- y[, seq(ranges[1], ranges[2]), drop = FALSE]
+                    Y <- y[, seq(ranges[1L], ranges[2L]), drop = FALSE]
                 } else {
-                    Y <- y[seq(ranges[1], ranges[2]), , drop = FALSE]
+                    Y <- y[seq(ranges[1L], ranges[2L]), , drop = FALSE]
                 }
             } else {
                 Y <- NULL
             }
             ranges <- LinkedMatrix:::chunkRanges(nX, nTasks, i)
             if (use_tcrossprod) {
-                X <- x[, seq(ranges[1], ranges[2]), drop = FALSE]
+                X <- x[, seq(ranges[1L], ranges[2L]), drop = FALSE]
                 Xy <- tcrossprod(X, Y)
             } else {
-                X <- x[seq(ranges[1], ranges[2]), , drop = FALSE]
+                X <- x[seq(ranges[1L], ranges[2L]), , drop = FALSE]
                 Xy <- crossprod(X, Y)
             }
             return(Xy)
         }, mc.preschedule = FALSE, mc.cores = nCores)
         # We now need to add up chunks sequentially
-        Xy <- chunks[[1]]
-        if (length(chunks) > 1) {
-            for (i in 2:length(chunks)) {
+        Xy <- chunks[[1L]]
+        if (length(chunks) > 1L) {
+            for (i in 2L:length(chunks)) {
                 Xy <- Xy + chunks[[i]]
             }
         }
@@ -336,7 +336,7 @@ tcrossprod_parallel <- function(x, y = NULL, nTasks = nCores, nCores = getOption
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @example man/examples/getG.R
 #' @export
-getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, i = seq_len(nrow(X)), j = seq_len(ncol(X)), i2 = NULL, bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = TRUE) {
+getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, i = seq_len(nrow(X)), j = seq_len(ncol(X)), i2 = NULL, bufferSize = 5000L, nBuffers = NULL, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = TRUE) {
 
     # compute XY' rather than XX'
     hasY <- !is.null(i2)
@@ -372,14 +372,14 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
     nX <- nrow(X)
     pX <- ncol(X)
 
-    if (min(i) < 1 || max(i) > nX) {
+    if (min(i) < 1L || max(i) > nX) {
         stop("Index out of bounds")
     }
-    if (min(j) < 1 || max(j) > pX) {
+    if (min(j) < 1L || max(j) > pX) {
         stop("Index out of bounds")
     }
     if (hasY) {
-        if (min(i2) < 1 || max(i2) > nX) {
+        if (min(i2) < 1L || max(i2) > nX) {
             stop("Index out of bounds")
         }
     }
@@ -392,7 +392,7 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
 
     if (is.null(bufferSize) && is.null(nBuffers)) {
         bufferSize <- p
-        nBuffers <- 1
+        nBuffers <- 1L
     } else if (is.null(bufferSize) && !is.null(nBuffers)) {
         bufferSize <- ceiling(p / nBuffers)
     } else {
@@ -400,19 +400,19 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
     }
 
     if (!hasY) {
-        G <- matrix(data = 0, nrow = n, ncol = n, dimnames = list(rownames(X)[i], rownames(X)[i]))
+        G <- matrix(data = 0.0, nrow = n, ncol = n, dimnames = list(rownames(X)[i], rownames(X)[i]))
     } else {
-        G <- matrix(data = 0, nrow = n, ncol = n2, dimnames = list(rownames(X)[i], rownames(X)[i2]))
-        K <- 0
+        G <- matrix(data = 0.0, nrow = n, ncol = n2, dimnames = list(rownames(X)[i], rownames(X)[i2]))
+        K <- 0.0
     }
 
-    end <- 0
+    end <- 0L
     for (k in seq_len(nBuffers)) {
-        ini <- end + 1
-        end <- min(p, ini + bufferSize - 1)
+        ini <- end + 1L
+        end <- min(p, ini + bufferSize - 1L)
 
         if (verbose) {
-            message("Chunk: ", k, " (markers ", ini, ":", end, " ~", round(100 * end / p, 1), "% done)")
+            message("Chunk: ", k, " (markers ", ini, ":", end, " ~", round(100L * end / p, 1L), "% done)")
             message("  => Acquiring genotypes...")
         }
 
@@ -434,7 +434,7 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
 
         # compute scales
         if (is.logical(scale) && scale == TRUE) {
-            scale.chunk <- apply(X = X1, MARGIN = 2, FUN = stats::sd, na.rm = TRUE)
+            scale.chunk <- apply(X = X1, MARGIN = 2L, FUN = stats::sd, na.rm = TRUE)
         } else if (is.numeric(scale)) {
             scale.chunk <- scale[localColIndex]
         } else {
@@ -444,7 +444,7 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
         # remove constant columns
         if (!(is.logical(scale) && scale == FALSE)) {
             removeCols <- which(scale.chunk < minVar)
-            if (length(removeCols) > 0) {
+            if (length(removeCols) > 0L) {
                 X1 <- X1[, -removeCols]
                 if (hasY) {
                     X2 <- X2[, -removeCols]
@@ -455,7 +455,7 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
         }
 
         # compute XX'
-        if (ncol(X1) > 0) {
+        if (ncol(X1) > 0L) {
 
             if (verbose) {
               message("  => Computing...")
@@ -463,13 +463,13 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
 
             # scale and impute X
             X1 <- scale(X1, center = center.chunk, scale = scale.chunk)
-            X1[is.na(X1)] <- 0
+            X1[is.na(X1)] <- 0L
             if (hasY) {
                 X2 <- scale(X2, center = center.chunk, scale = scale.chunk)
-                X2[is.na(X2)] <- 0
+                X2[is.na(X2)] <- 0L
             }
 
-            if (nTasks > 1) {
+            if (nTasks > 1L) {
                 if (!hasY) {
                     G_chunk <- crossprods(x = X1, use_tcrossprod = TRUE, nTasks = nTasks, nCores = nCores)
                 } else {
@@ -495,7 +495,7 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
 
     if (!hasY && scaleG) {
         # Use seq instead of diag to avoid copy as it does not increase ref count
-        K <- mean(G[seq(from = 1, to = n * n, by = n + 1)])
+        K <- mean(G[seq(from = 1L, to = n * n, by = n + 1L)])
     }
 
     if (scaleG) {
@@ -545,7 +545,7 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
 #' @param verbose Whether progress updates will be posted. Defaults to `TRUE`.
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @export
-getG_symDMatrix <- function(X, blockSize = 5000, nBlocks = NULL, center = TRUE, scale = TRUE, scaleG = TRUE, folderOut = paste0("symDMatrix_", randomString()), vmode = "double", i = seq_len(nrow(X)), j = seq_len(ncol(X)), nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = TRUE) {
+getG_symDMatrix <- function(X, blockSize = 5000L, nBlocks = NULL, center = TRUE, scale = TRUE, scaleG = TRUE, folderOut = paste0("symDMatrix_", randomString()), vmode = "double", i = seq_len(nrow(X)), j = seq_len(ncol(X)), nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = TRUE) {
 
     # Convert index types
     if (is.logical(i)) {
@@ -562,10 +562,10 @@ getG_symDMatrix <- function(X, blockSize = 5000, nBlocks = NULL, center = TRUE, 
     nX <- nrow(X)
     pX <- ncol(X)
 
-    if (min(i) < 1 || max(i) > nX) {
+    if (min(i) < 1L || max(i) > nX) {
         stop("Index out of bounds")
     }
-    if (min(j) < 1 || max(j) > pX) {
+    if (min(j) < 1L || max(j) > pX) {
         stop("Index out of bounds")
     }
 
@@ -574,7 +574,7 @@ getG_symDMatrix <- function(X, blockSize = 5000, nBlocks = NULL, center = TRUE, 
 
     if (is.null(blockSize) && is.null(nBlocks)) {
         blockSize <- n
-        nBlocks <- 1
+        nBlocks <- 1L
     } else if (is.null(blockSize) && !is.null(nBlocks)) {
         blockSize <- ceiling(n / nBlocks)
     } else {
@@ -582,17 +582,17 @@ getG_symDMatrix <- function(X, blockSize = 5000, nBlocks = NULL, center = TRUE, 
     }
 
     if (is.logical(center) && center == TRUE) {
-        center <- chunkedApply(X, 2, mean, i = i, j = j, bufferSize = blockSize, nBuffers = nBlocks, nTasks = nTasks, nCores = nCores, verbose = FALSE, na.rm = TRUE)
+        center <- chunkedApply(X, 2L, mean, i = i, j = j, bufferSize = blockSize, nBuffers = nBlocks, nTasks = nTasks, nCores = nCores, verbose = FALSE, na.rm = TRUE)
     } else if (is.logical(center) && center == FALSE) {
-        center <- rep(0, p)
+        center <- rep(0L, p)
     }
     names(center) <- colnames(X)[j]
 
     if (is.logical(scale) && scale == TRUE) {
-        scale <- chunkedApply(X, 2, sd, i = i, j = j, bufferSize = blockSize, nBuffers = nBlocks, nTasks = nTasks, nCores = nCores, verbose = FALSE, na.rm = TRUE)
-        scale <- scale * sqrt((nX - 1) / nX)
+        scale <- chunkedApply(X, 2L, sd, i = i, j = j, bufferSize = blockSize, nBuffers = nBlocks, nTasks = nTasks, nCores = nCores, verbose = FALSE, na.rm = TRUE)
+        scale <- scale * sqrt((nX - 1L) / nX)
     } else if (is.logical(scale) && scale == FALSE) {
-        scale <- rep(1, p)
+        scale <- rep(1L, p)
     }
     names(scale) <- colnames(X)[j]
 
@@ -603,19 +603,19 @@ getG_symDMatrix <- function(X, blockSize = 5000, nBlocks = NULL, center = TRUE, 
 
     blockIndices <- split(i, ceiling(i / blockSize))
     blocks <- vector(mode = "list", length = nBlocks)
-    counter <- 1
-    for (r in 1:nBlocks) {
-        blocks[[r]] <- vector(mode = "list", length = nBlocks - r + 1)
+    counter <- 1L
+    for (r in 1L:nBlocks) {
+        blocks[[r]] <- vector(mode = "list", length = nBlocks - r + 1L)
         for (s in r:nBlocks) {
             if (verbose) {
-                message("Working on block ", r, "-", s, " (", round(100 * counter / (nBlocks * (nBlocks + 1) / 2)), "%)")
+                message("Working on block ", r, "-", s, " (", round(100L * counter / (nBlocks * (nBlocks + 1L) / 2L)), "%)")
             }
             blockName <- paste0("data_", padDigits(r, nBlocks), "_", padDigits(s, nBlocks), ".ff")
             block <- ff::as.ff(getG(X, center = center, scale = scale, scaleG = FALSE, i = blockIndices[[r]], j = j, i2 = blockIndices[[s]], bufferSize = blockSize, nBuffers = nBlocks, nTasks = nTasks, nCores = nCores, verbose = FALSE), filename = paste0(folderOut, "/", blockName), vmode = vmode)
             # Change ff path to a relative one
             bit::physical(block)$filename <- blockName
-            blocks[[r]][[s - r + 1]] <- block
-            counter <- counter + 1
+            blocks[[r]][[s - r + 1L]] <- block
+            counter <- counter + 1L
             if (verbose) {
                 message("  => Done")
             }
@@ -675,7 +675,7 @@ getG_symDMatrix <- function(X, blockSize = 5000, nBlocks = NULL, center = TRUE, 
 #' @return The same matrix that would be returned by `coef(summary(model))`.
 #' @example man/examples/GWAS.R
 #' @export
-GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
+GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), bufferSize = 5000L, nBuffers = NULL, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
 
     if (class(data) != "BGData") {
         stop("data must BGData")
@@ -700,7 +700,7 @@ GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)), 
     if (method == "lsfit") {
         OUT <- GWAS.lsfit(formula = formula, data = data, i = i, j = j, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = verbose, ...)
     } else if (method == "rayOLS") {
-        if (length(attr(stats::terms(formula), "term.labels")) > 0) {
+        if (length(attr(stats::terms(formula), "term.labels")) > 0L) {
             stop("method rayOLS can only be used with y~1 formula, if you want to add covariates pre-adjust your phenotype.")
         }
         OUT <- GWAS.rayOLS(formula = formula, data = data, i = i, j = j, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = verbose, ...)
@@ -717,7 +717,7 @@ GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)), 
         }
         pheno <- data@pheno
         GWAS.model <- stats::update(stats::as.formula(formula), ".~z+.")
-        OUT <- chunkedApply(X = data@geno, MARGIN = 2, FUN = function(col, ...) {
+        OUT <- chunkedApply(X = data@geno, MARGIN = 2L, FUN = function(col, ...) {
             pheno$z <- col
             fm <- FUN(GWAS.model, data = pheno, ...)
             getCoefficients(fm)
@@ -737,38 +737,38 @@ rayOLS <- function(y, x, n = length(y)){
     y <- y[tmp]
     x <- x - mean(x)
     rhs <- sum(x * y)
-    XtX <- sum(x^2)
+    XtX <- sum(x^2L)
     sol <- rhs / XtX
     error <- y - x * sol
-    vE <- sum(error^2) / (n - 1)
+    vE <- sum(error^2L) / (n - 1L)
     SE <- sqrt(vE / XtX)
     z_stat <- sol / SE
-    return(c(sol, SE, z_stat, stats::pt(q = abs(z_stat), df = n - 1, lower.tail = FALSE) * 2))
+    return(c(sol, SE, z_stat, stats::pt(q = abs(z_stat), df = n - 1L, lower.tail = FALSE) * 2L))
 }
 
 
 # the GWAS method for rayOLS
-GWAS.rayOLS <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
-    y <- data@pheno[i, as.character(stats::terms(formula)[[2]]), drop = TRUE]
+GWAS.rayOLS <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), bufferSize = 5000L, nBuffers = NULL, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
+    y <- data@pheno[i, as.character(stats::terms(formula)[[2L]]), drop = TRUE]
     y <- y - mean(y)
-    res <- chunkedApply(X = data@geno, MARGIN = 2, FUN = rayOLS, y = y , i = i, j = j, bufferSize = bufferSize, nBuffers = nBuffers, nTasks = nTasks, nCores = nCores, verbose = verbose, ...)
+    res <- chunkedApply(X = data@geno, MARGIN = 2L, FUN = rayOLS, y = y , i = i, j = j, bufferSize = bufferSize, nBuffers = nBuffers, nTasks = nTasks, nCores = nCores, verbose = verbose, ...)
     return(t(res))
 }
 
 
-GWAS.lsfit <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
+GWAS.lsfit <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), bufferSize = 5000L, nBuffers = NULL, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
 
     # subset of model.frame has bizarre scoping issues
     frame <- stats::model.frame(formula = formula, data = data@pheno)[i, , drop = FALSE]
     model <- stats::model.matrix(formula, frame)
-    model <- cbind(1, model) # Reserve space for marker column
+    model <- cbind(1L, model) # Reserve space for marker column
 
-    y <- data@pheno[i, as.character(stats::terms(formula)[[2]]), drop = TRUE]
+    y <- data@pheno[i, as.character(stats::terms(formula)[[2L]]), drop = TRUE]
 
-    res <- chunkedApply(X = data@geno, MARGIN = 2, FUN = function(col, ...) {
-        model[, 1] <- col
+    res <- chunkedApply(X = data@geno, MARGIN = 2L, FUN = function(col, ...) {
+        model[, 1L] <- col
         fm <- stats::lsfit(x = model, y = y, intercept = FALSE)
-        stats::ls.print(fm, print.it = FALSE)$coef.table[[1]][1, ]
+        stats::ls.print(fm, print.it = FALSE)$coef.table[[1L]][1L, ]
     }, i = i, j = j, bufferSize = bufferSize, nBuffers = nBuffers, nTasks = nTasks, nCores = nCores, verbose = verbose, ...)
     colnames(res) <- colnames(data@geno)[j]
     res <- t(res)
@@ -791,7 +791,7 @@ GWAS.SKAT <- function(formula, data, groups, i = seq_len(nrow(data@geno)), j = s
 
     uniqueGroups <- unique(groups)
 
-    OUT <- matrix(data = double(), nrow = length(uniqueGroups), ncol = 2)
+    OUT <- matrix(data = double(), nrow = length(uniqueGroups), ncol = 2L)
     colnames(OUT) <- c("nMrk", "p-value")
     rownames(OUT) <- uniqueGroups
 
@@ -802,7 +802,7 @@ GWAS.SKAT <- function(formula, data, groups, i = seq_len(nrow(data@geno)), j = s
         fm <- SKAT::SKAT(Z = Z, obj = H0, ...)
         OUT[group, ] <- c(ncol(Z), fm$p.value)
         if (verbose) {
-            message("Group ", group, " of ", length(uniqueGroups), " (", round(group / length(uniqueGroups) * 100, 3), "% done)")
+            message("Group ", group, " of ", length(uniqueGroups), " (", round(group / length(uniqueGroups) * 100L, 3L), "% done)")
         }
     }
 
@@ -816,18 +816,18 @@ getCoefficients <- function(x) {
 
 
 getCoefficients.lm <- function(x) {
-    summary(x)$coef[2, ]
+    summary(x)$coef[2L, ]
 }
 
 
 getCoefficients.glm <- function(x) {
-    summary(x)$coef[2, ]
+    summary(x)$coef[2L, ]
 }
 
 
 getCoefficients.lmerMod <- function(x) {
-    ans <- summary(x)$coef[2, ]
-    ans <- c(ans, c(1 - stats::pnorm(ans[3])))
+    ans <- summary(x)$coef[2L, ]
+    ans <- c(ans, c(1L - stats::pnorm(ans[3L])))
     return(ans)
 }
 
@@ -861,7 +861,7 @@ getCoefficients.lmerMod <- function(x) {
 #' standard deviations.
 #' @example man/examples/summarize.R
 #' @export
-summarize <- function(X, i = seq_len(nrow(X)), j = seq_len(ncol(X)), bufferSize = 5000, nBuffers = NULL, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE) {
+summarize <- function(X, i = seq_len(nrow(X)), j = seq_len(ncol(X)), bufferSize = 5000L, nBuffers = NULL, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE) {
     # Convert index types
     if (is.logical(i)) {
         i <- which(i)
@@ -873,16 +873,16 @@ summarize <- function(X, i = seq_len(nrow(X)), j = seq_len(ncol(X)), bufferSize 
     } else if (is.character(j)) {
         j <- match(j, colnames(X))
     }
-    m <- chunkedApply(X = X, MARGIN = 2, FUN = function(col) {
+    m <- chunkedApply(X = X, MARGIN = 2L, FUN = function(col) {
         freqNA <- mean(is.na(col))
-        alleleFreq <- mean(col, na.rm = TRUE) / 2
+        alleleFreq <- mean(col, na.rm = TRUE) / 2L
         sd <- stats::sd(col, na.rm = TRUE)
         cbind(freqNA, alleleFreq, sd)
     }, i = i, j = j, bufferSize = bufferSize, nBuffers = nBuffers, nTasks = nTasks, nCores = nCores, verbose = verbose)
     df <- data.frame(
-        freq_na = m[1, ],
-        allele_freq = m[2, ],
-        sd = m[3, ],
+        freq_na = m[1L, ],
+        allele_freq = m[2L, ],
+        sd = m[3L, ],
         stringsAsFactors = FALSE
     )
     rownames(df) <- colnames(X)[j]
@@ -892,12 +892,12 @@ summarize <- function(X, i = seq_len(nrow(X)), j = seq_len(ncol(X)), bufferSize 
 
 getLineCount <- function(path, header) {
     file <- file(path, open = "r")
-    n <- 0
-    while (length(readLines(file, n = 1)) > 0) {
-        n <- n + 1
+    n <- 0L
+    while (length(readLines(file, n = 1L)) > 0L) {
+        n <- n + 1L
     }
     if (header) {
-        n <- n - 1
+        n <- n - 1L
     }
     close(file)
     return(n)
@@ -906,7 +906,7 @@ getLineCount <- function(path, header) {
 
 getFileHeader <- function(path, sep = "") {
     file <- file(path, open = "r")
-    header <- scan(file, nlines = 1, what = character(), sep = sep, quiet = TRUE)
+    header <- scan(file, nlines = 1L, what = character(), sep = sep, quiet = TRUE)
     close(file)
     return(header)
 }
@@ -920,14 +920,14 @@ getColumnCount <- function(path, sep = "") {
 
 
 randomString <- function() {
-    paste(sample(c(0:9, letters, LETTERS), size = 5, replace = TRUE), collapse = "")
+    paste(sample(c(0L:9L, letters, LETTERS), size = 5L, replace = TRUE), collapse = "")
 }
 
 
 normalizeType <- function(val) {
     type <- typeof(val)
     # detect strings
-    if (type == "character" && length(val) > 0) {
+    if (type == "character" && length(val) > 0L) {
         # convert to type if type and value match
         convert <- try(vector(mode = val), silent = TRUE)
         if (class(convert) == "try-error") {
@@ -946,7 +946,7 @@ normalizeType <- function(val) {
 
 
 simplifyList <- function(x) {
-    sample <- x[[1]]
+    sample <- x[[1L]]
     if (is.matrix(sample)) {
         x <- matrix(data = unlist(x), nrow = nrow(sample), byrow = FALSE)
         rownames(x) <- rownames(sample)
@@ -958,7 +958,7 @@ simplifyList <- function(x) {
 
 
 padDigits <- function(x, total) {
-    formatC(x, width = as.integer(log10(total) + 1), format = "d", flag = "0")
+    formatC(x, width = as.integer(log10(total) + 1L), format = "d", flag = "0")
 }
 
 

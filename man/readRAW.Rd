@@ -7,18 +7,18 @@
 \title{Creates a BGData Object From a .raw File or a .ped-Like File.}
 \usage{
 readRAW(fileIn, header = TRUE, dataType = integer(), n = NULL, p = NULL,
-  sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2),
+  sep = "", na.strings = "NA", nColSkip = 6L, idCol = c(1L, 2L),
   nNodes = NULL, linked.by = "rows", folderOut = paste0("BGData_",
   sub("\\\\.[[:alnum:]]+$", "", basename(fileIn))), outputType = "byte",
-  dimorder = if (linked.by == "rows") 2:1 else 1:2, verbose = FALSE)
+  dimorder = if (linked.by == "rows") 2L:1L else 1L:2L, verbose = FALSE)
 
 readRAW_matrix(fileIn, header = TRUE, dataType = integer(), n = NULL,
-  p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1,
-  2), verbose = FALSE)
+  p = NULL, sep = "", na.strings = "NA", nColSkip = 6L, idCol = c(1L,
+  2L), verbose = FALSE)
 
 readRAW_big.matrix(fileIn, header = TRUE, dataType = integer(), n = NULL,
-  p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1,
-  2), folderOut = paste0("BGData_", sub("\\\\.[[:alnum:]]+$", "",
+  p = NULL, sep = "", na.strings = "NA", nColSkip = 6L, idCol = c(1L,
+  2L), folderOut = paste0("BGData_", sub("\\\\.[[:alnum:]]+$", "",
   basename(fileIn))), outputType = "char", verbose = FALSE)
 }
 \arguments{

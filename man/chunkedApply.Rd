@@ -6,7 +6,7 @@
 Function on Each Row or Column of a Matrix in Parallel.}
 \usage{
 chunkedApply(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(X)),
-  bufferSize = 5000, nBuffers = NULL, nTasks = nCores,
+  bufferSize = 5000L, nBuffers = NULL, nTasks = nCores,
   nCores = getOption("mc.cores", 2L), verbose = FALSE, ...)
 }
 \arguments{

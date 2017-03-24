@@ -95,7 +95,7 @@ setMethod("initialize", "BGData", function(.Object, geno, pheno, map) {
 })
 
 
-pedDims <- function(fileIn, header, n, p, sep = "", nColSkip = 6) {
+pedDims <- function(fileIn, header, n, p, sep = "", nColSkip = 6L) {
     if (is.null(n)) {
         n <- getLineCount(fileIn, header)
     }
@@ -111,14 +111,14 @@ pedDims <- function(fileIn, header, n, p, sep = "", nColSkip = 6) {
 }
 
 
-parseRAW <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1, 2), sep = "", na.strings = "NA", verbose = FALSE, ...) {
+parseRAW <- function(BGData, fileIn, header, dataType, nColSkip = 6L, idCol = c(1L, 2L), sep = "", na.strings = "NA", verbose = FALSE, ...) {
 
     p <- ncol(BGData@geno)
     pedFile <- file(fileIn, open = "r")
 
     # Update colnames
     if (header) {
-        headerLine <- scan(pedFile, nlines = 1, what = character(), sep = sep, quiet = TRUE)
+        headerLine <- scan(pedFile, nlines = 1L, what = character(), sep = sep, quiet = TRUE)
         colnames(BGData@pheno) <- headerLine[seq_len(nColSkip)]
         colnames(BGData@geno) <- headerLine[-(seq_len(nColSkip))]
     }
@@ -137,7 +137,7 @@ parseRAW <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1
     close(pedFile)
 
     # Update rownames
-    IDs <- apply(BGData@pheno[, idCol, drop = FALSE], 1, paste, collapse = "_")
+    IDs <- apply(BGData@pheno[, idCol, drop = FALSE], 1L, paste, collapse = "_")
     rownames(BGData@pheno) <- IDs
     rownames(BGData@geno) <- IDs
 
@@ -239,7 +239,7 @@ parseRAW <- function(BGData, fileIn, header, dataType, nColSkip = 6, idCol = c(1
 #' files).
 #' @example man/examples/readRAW.R
 #' @export
-readRAW <- function(fileIn, header = TRUE, dataType = integer(), n = NULL, p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2), nNodes = NULL, linked.by = "rows", folderOut = paste0("BGData_", sub("\\.[[:alnum:]]+$", "", basename(fileIn))), outputType = "byte", dimorder = if (linked.by == "rows") 2:1 else 1:2, verbose = FALSE) {
+readRAW <- function(fileIn, header = TRUE, dataType = integer(), n = NULL, p = NULL, sep = "", na.strings = "NA", nColSkip = 6L, idCol = c(1L, 2L), nNodes = NULL, linked.by = "rows", folderOut = paste0("BGData_", sub("\\.[[:alnum:]]+$", "", basename(fileIn))), outputType = "byte", dimorder = if (linked.by == "rows") 2L:1L else 1L:2L, verbose = FALSE) {
 
     # Create output directory
     if (file.exists(folderOut)) {
@@ -309,7 +309,7 @@ readRAW <- function(fileIn, header = TRUE, dataType = integer(), n = NULL, p = N
 
 #' @rdname readRAW
 #' @export
-readRAW_matrix <- function(fileIn, header = TRUE, dataType = integer(), n = NULL, p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2), verbose = FALSE) {
+readRAW_matrix <- function(fileIn, header = TRUE, dataType = integer(), n = NULL, p = NULL, sep = "", na.strings = "NA", nColSkip = 6L, idCol = c(1L, 2L), verbose = FALSE) {
 
     dims <- pedDims(fileIn = fileIn, header = header, n = n, p = p, sep = sep, nColSkip = nColSkip)
 
@@ -333,7 +333,7 @@ readRAW_matrix <- function(fileIn, header = TRUE, dataType = integer(), n = NULL
 
 #' @rdname readRAW
 #' @export
-readRAW_big.matrix <- function(fileIn, header = TRUE, dataType = integer(), n = NULL, p = NULL, sep = "", na.strings = "NA", nColSkip = 6, idCol = c(1, 2), folderOut = paste0("BGData_", sub("\\.[[:alnum:]]+$", "", basename(fileIn))), outputType = "char", verbose = FALSE) {
+readRAW_big.matrix <- function(fileIn, header = TRUE, dataType = integer(), n = NULL, p = NULL, sep = "", na.strings = "NA", nColSkip = 6L, idCol = c(1L, 2L), folderOut = paste0("BGData_", sub("\\.[[:alnum:]]+$", "", basename(fileIn))), outputType = "char", verbose = FALSE) {
 
     if (file.exists(folderOut)) {
         stop(paste("Output folder", folderOut, "already exists. Please move it or pick a different one."))
@@ -410,7 +410,7 @@ generatePheno <- function(x) {
     }, silent = TRUE)
     if (class(ex) == "try-error") {
         splits <- strsplit(rownames(x), "_")
-        pheno <- data.frame(FID = sapply(splits, "[", 1), IID = sapply(splits, "[", 2), stringsAsFactors = FALSE)
+        pheno <- data.frame(FID = sapply(splits, "[", 1L), IID = sapply(splits, "[", 2L), stringsAsFactors = FALSE)
     }
     return(pheno)
 }
@@ -455,7 +455,7 @@ generateMap <- function(x) {
         splits <- strsplit(colnames(x), "_")
         map <- data.frame(
             snp_id = sapply(splits, function(x) {
-                paste0(x[seq_len(length(x) - 1)], collapse = "_")
+                paste0(x[seq_len(length(x) - 1L)], collapse = "_")
             }),
             allele_1 = sapply(splits, function(x) {
                 x[length(x)]
@@ -478,7 +478,7 @@ loadAlternatePhenotypeFile <- function(path, ...) {
             # Check if the file has a header, i.e. if the first row starts with
             # an FID and an IID entry
             hasHeader = FALSE
-            if (grepl("FID\\s+IID", readLines(path, n = 1))) {
+            if (grepl("FID\\s+IID", readLines(path, n = 1L))) {
                 hasHeader = TRUE
             }
             alternatePhenotypes <- utils::read.table(path, header = hasHeader, stringsAsFactors = FALSE, ...)
@@ -572,7 +572,7 @@ as.BGData.ColumnLinkedMatrix <- function(x, alternatePhenotypeFile = NULL, ...) 
     }
     # Read in the fam file of the first node
     message("Extracting phenotypes from .fam file, assuming that the .fam file of the first BEDMatrix instance is representative of all the other nodes...")
-    fam <- suppressMessages(generatePheno(x[[1]]))
+    fam <- suppressMessages(generatePheno(x[[1L]]))
     # Read in map files
     message("Extracting map from .bim files...")
     map <- do.call("rbind", lapply(x, function(node) {
@@ -653,7 +653,7 @@ loadGeno.BEDMatrix <- function(x, ...) {
     dnames <- attr(x, "dnames")
     dims <- attr(x, "dims")
     path <- attr(x, "path")
-    x <- BEDMatrix::BEDMatrix(path = path, n = dims[1], p = dims[2])
+    x <- BEDMatrix::BEDMatrix(path = path, n = dims[1L], p = dims[2L])
     dimnames(x) <- dnames
     return(x)
 }
