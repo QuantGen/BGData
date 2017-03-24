@@ -581,91 +581,48 @@ getG_symDMatrix <- function(X, blockSize = 5000, nBlocks = NULL, center = TRUE, 
         nBlocks <- ceiling(n / blockSize)
     }
 
-    blockIndex <- cbind(i, ceiling(seq_len(n) / blockSize))
-
     if (is.logical(center) && center == TRUE) {
-        center <- vector(mode = "double", length = p)
-        for (k in seq_len(p)) {
-            xi <- X[i, j[k]]
-            center[k] <- mean(xi, na.rm = TRUE)
-        }
+        center <- chunkedApply(X, 2, mean, i = i, j = j, bufferSize = blockSize, nBuffers = nBlocks, nTasks = nTasks, nCores = nCores, verbose = FALSE, na.rm = TRUE)
     } else if (is.logical(center) && center == FALSE) {
         center <- rep(0, p)
     }
+    names(center) <- colnames(X)[j]
 
     if (is.logical(scale) && scale == TRUE) {
-        scale <- vector(mode = "double", length = p)
-        for (k in seq_len(p)) {
-            xi <- X[i, j[k]]
-            scale[k] <- stats::sd(xi, na.rm = TRUE) * sqrt((nX - 1) / nX)
-        }
+        scale <- chunkedApply(X, 2, sd, i = i, j = j, bufferSize = blockSize, nBuffers = nBlocks, nTasks = nTasks, nCores = nCores, verbose = FALSE, na.rm = TRUE)
+        scale <- scale * sqrt((nX - 1) / nX)
     } else if (is.logical(scale) && scale == FALSE) {
         scale <- rep(1, p)
     }
-
-    nFiles <- nBlocks * (nBlocks + 1) / 2
-    DATA <- vector(mode = "list", length = nBlocks)
+    names(scale) <- colnames(X)[j]
 
     if (file.exists(folderOut)) {
         stop(folderOut, " already exists")
     }
-    curDir <- getwd()
     dir.create(folderOut)
-    setwd(folderOut)
 
+    blockIndices <- split(i, ceiling(i / blockSize))
+    blocks <- vector(mode = "list", length = nBlocks)
     counter <- 1
-    for (r in seq_len(nBlocks)) {
-
-        DATA[[r]] <- vector(mode = "list", length = nBlocks - r)
-
-        rowIndex_r <- blockIndex[which(blockIndex[, 2] == r), 1]
-        Xi <- X[rowIndex_r, j, drop = FALSE]
-
-        # centering/scaling
-        for (k in seq_len(p)) {
-            xik <- Xi[, k]
-            xik <- (xik - center[j[k]]) / scale[j[k]]
-            xik[is.na(xik)] <- 0
-            Xi[, k] <- xik
-        }
-
+    for (r in 1:nBlocks) {
+        blocks[[r]] <- vector(mode = "list", length = nBlocks - r + 1)
         for (s in r:nBlocks) {
-
             if (verbose) {
                 message("Working on block ", r, "-", s, " (", round(100 * counter / (nBlocks * (nBlocks + 1) / 2)), "%)")
             }
-
-            rowIndex_s <- blockIndex[which(blockIndex[, 2] == s), 1]
-            Xj <- X[rowIndex_s, j, drop = FALSE]
-
-            # centering/scaling
-            for (k in seq_len(p)) {
-                xjk <- Xj[, k]
-                xjk <- (xjk - center[j[k]]) / scale[j[k]]
-                xjk[is.na(xjk)] <- 0
-                Xj[, k] <- xjk
-            }
-
-            Gij <- tcrossprod_parallel(x = Xi, y = Xj, nTasks = nTasks, nCores = nCores)
-
-            blockName <- paste0("data_", padDigits(r, nBlocks), "_", padDigits(s, nBlocks), ".bin")
-            block <- ff::ff(dim = dim(Gij), vmode = vmode, initdata = as.vector(Gij), filename = blockName, dimnames = list(rownames(X)[rowIndex_r], rownames(X)[rowIndex_s]))
+            blockName <- paste0("data_", padDigits(r, nBlocks), "_", padDigits(s, nBlocks), ".ff")
+            block <- ff::as.ff(getG(X, center = center, scale = scale, scaleG = FALSE, i = blockIndices[[r]], j = j, i2 = blockIndices[[s]], bufferSize = blockSize, nBuffers = nBlocks, nTasks = nTasks, nCores = nCores, verbose = FALSE), filename = paste0(folderOut, "/", blockName), vmode = vmode)
             # Change ff path to a relative one
             bit::physical(block)$filename <- blockName
-            DATA[[r]][[s - r + 1]] <- block
-
+            blocks[[r]][[s - r + 1]] <- block
             counter <- counter + 1
-
             if (verbose) {
                 message("  => Done")
             }
         }
     }
 
-    names(center) <- colnames(X)[j]
-    names(scale) <- colnames(X)[j]
-
-    G <- new("symDMatrix", data = DATA, centers = center, scales = scale)
+    G <- symDMatrix(blocks, center, scale)
 
     if (scaleG) {
         K <- mean(diag(G))
@@ -676,11 +633,10 @@ getG_symDMatrix <- function(X, blockSize = 5000, nBlocks = NULL, center = TRUE, 
         }
     }
 
-    save(G, file = "G.RData")
-
-    setwd(curDir)
+    save(G, file = paste0(folderOut, "/G.RData"))
 
     return(G)
+
 }
 
 
