@@ -651,7 +651,6 @@ getG_symDMatrix <- function(X, blockSize = 5000, nBlocks = NULL, center = TRUE, 
             blockName <- paste0("data_", padDigits(r, nBlocks), "_", padDigits(s, nBlocks), ".bin")
             block <- ff::ff(dim = dim(Gij), vmode = vmode, initdata = as.vector(Gij), filename = blockName, dimnames = list(rownames(X)[rowIndex_r], rownames(X)[rowIndex_s]))
             # Change ff path to a relative one
-            bit::physical(block)$pattern <- "ff"
             bit::physical(block)$filename <- blockName
             DATA[[r]][[s - r + 1]] <- block
 
