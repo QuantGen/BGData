@@ -391,12 +391,12 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
     }
 
     if (is.null(bufferSize) && is.null(nBuffers)) {
-        bufferSize <- length(j)
+        bufferSize <- p
         nBuffers <- 1
     } else if (is.null(bufferSize) && !is.null(nBuffers)) {
-        bufferSize <- ceiling(length(j) / nBuffers)
+        bufferSize <- ceiling(p / nBuffers)
     } else {
-        nBuffers <- ceiling(length(j) / bufferSize)
+        nBuffers <- ceiling(p / bufferSize)
     }
 
     if (!hasY) {
