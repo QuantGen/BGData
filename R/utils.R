@@ -507,22 +507,20 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
 }
 
 
-#' Computes a Genomic Relationship Matrix G=xx' without Ever Loading G in RAM
-#' by Creating a symDMatrix.
+#' Computes a Very Large Genomic Relationship Matrix.
 #'
-#' Offers options for centering and scaling the columns of x before computing
-#' xx'.
+#' Computes a positive semi-definite symmetric genomic relation matrix G=XX'
+#' offering options for centering and scaling the columns of `X` beforehand.
+#'
+#' Even very large genomic relationship matrices are supported by partitioning
+#' `X` into blocks and calling [getG()] on these blocks. This function performs
+#' the block computations sequentially, which may be slow. In an HPC
+#' environment, performance can be improved by manually distributing these
+#' operations to different nodes.
 #'
 #' @inheritSection BGData-package Multi-level parallelism
 #' @param X A matrix-like object, typically `@@geno` of a [BGData-class]
 #' object.
-#' @param blockSize The number of rows and columns of each block. Overwrites
-#' `nBlocks`. If both parameters are `NULL`, a single block of the same length
-#' as `i` will be created.  Defaults to 5000.
-#' @param nBlocks The number of blocks in the first row of the
-#' [symDMatrix::symDMatrix-class] object. Is overwritten by `blockSize`. If
-#' both parameters are `NULL`, a single block of the size of the same length as
-#' `i` will be created. Defaults to `NULL`.
 #' @param center Either a logical value or a numeric vector of length equal to
 #' the number of columns of `X`. If `FALSE`, no centering is done. Defaults to
 #' `TRUE`.
@@ -538,14 +536,21 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
 #' boolean, or character. By default, all rows are used.
 #' @param j Indicates which columns of `X` should be used. Can be integer,
 #' boolean, or character. By default, all columns are used.
+#' @param blockSize The number of rows and columns of each block. Overwrites
+#' `nBlocks`. If both parameters are `NULL`, a single block of the same length
+#' as `i` will be created.  Defaults to 5000.
+#' @param nBlocks The number of blocks in the first row of the
+#' [symDMatrix::symDMatrix-class] object. Is overwritten by `blockSize`. If
+#' both parameters are `NULL`, a single block of the size of the same length as
+#' `i` will be created. Defaults to `NULL`.
 #' @param nTasks The number of tasks the problem should be broken into to be
 #' distributed among `nCores` cores. Defaults to `nCores`.
 #' @param nCores The number of cores (passed to [parallel::mclapply()]).
 #' Defaults to the number of cores as detected by [parallel::detectCores()].
 #' @param verbose Whether progress updates will be posted. Defaults to `TRUE`.
-#' @return A positive semi-definite symmetric numeric matrix.
+#' @return A [symDMatrix::symDMatrix-class] object.
 #' @export
-getG_symDMatrix <- function(X, blockSize = 5000L, nBlocks = NULL, center = TRUE, scale = TRUE, scaleG = TRUE, folderOut = paste0("symDMatrix_", randomString()), vmode = "double", i = seq_len(nrow(X)), j = seq_len(ncol(X)), nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = TRUE) {
+getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, folderOut = paste0("symDMatrix_", randomString()), vmode = "double", i = seq_len(nrow(X)), j = seq_len(ncol(X)), blockSize = 5000L, nBlocks = NULL, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = TRUE) {
 
     # Convert index types
     if (is.logical(i)) {
