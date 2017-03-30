@@ -563,8 +563,8 @@ getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, folde
     names(center) <- colnames(X)[j]
 
     if (is.logical(scale) && scale == TRUE) {
-        scale <- chunkedApply(X, 2L, sd, i = i, j = j, bufferSize = blockSize, nBuffers = nBlocks, nTasks = nTasks, nCores = nCores, verbose = FALSE, na.rm = TRUE)
-        scale <- scale * sqrt((nX - 1L) / nX)
+        scale <- chunkedApply(X, 2L, stats::sd, i = i, j = j, bufferSize = blockSize, nBuffers = nBlocks, nTasks = nTasks, nCores = nCores, verbose = FALSE, na.rm = TRUE)
+        scale <- scale * sqrt((nX - 1L) / nX) # to avoid NaN
     } else if (is.logical(scale) && scale == FALSE) {
         scale <- rep(1L, p)
     }
@@ -596,7 +596,7 @@ getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, folde
         }
     }
 
-    G <- symDMatrix(blocks, center, scale)
+    G <- symDMatrix::symDMatrix(blocks, center, scale)
 
     if (scaleG) {
         K <- mean(diag(G))
