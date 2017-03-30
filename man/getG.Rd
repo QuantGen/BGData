@@ -7,7 +7,7 @@
 getG(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05,
   i = seq_len(nrow(X)), j = seq_len(ncol(X)), i2 = NULL,
   bufferSize = 5000L, nBuffers = NULL, nTasks = nCores,
-  nCores = getOption("mc.cores", 2L), verbose = TRUE)
+  nCores = getOption("mc.cores", 2L), verbose = FALSE)
 }
 \arguments{
 \item{X}{A matrix-like object, typically \code{@geno} of a \linkS4class{BGData}
@@ -52,7 +52,7 @@ distributed among \code{nCores} cores. Defaults to \code{nCores}.}
 \item{nCores}{The number of cores (passed to \code{\link[parallel:mclapply]{parallel::mclapply()}}).
 Defaults to the number of cores as detected by \code{\link[parallel:detectCores]{parallel::detectCores()}}.}
 
-\item{verbose}{Whether progress updates will be posted. Defaults to \code{TRUE}.}
+\item{verbose}{Whether progress updates will be posted. Defaults to \code{FALSE}.}
 }
 \value{
 A positive semi-definite symmetric numeric matrix.

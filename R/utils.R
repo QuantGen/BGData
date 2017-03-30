@@ -301,11 +301,11 @@ tcrossprod_parallel <- function(x, y = NULL, nTasks = nCores, nCores = getOption
 #' distributed among `nCores` cores. Defaults to `nCores`.
 #' @param nCores The number of cores (passed to [parallel::mclapply()]).
 #' Defaults to the number of cores as detected by [parallel::detectCores()].
-#' @param verbose Whether progress updates will be posted. Defaults to `TRUE`.
+#' @param verbose Whether progress updates will be posted. Defaults to `FALSE`.
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @example man/examples/getG.R
 #' @export
-getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, i = seq_len(nrow(X)), j = seq_len(ncol(X)), i2 = NULL, bufferSize = 5000L, nBuffers = NULL, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = TRUE) {
+getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, i = seq_len(nrow(X)), j = seq_len(ncol(X)), i2 = NULL, bufferSize = 5000L, nBuffers = NULL, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE) {
 
     # compute XY' rather than XX'
     hasY <- !is.null(i2)
@@ -516,10 +516,10 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
 #' distributed among `nCores` cores. Defaults to `nCores`.
 #' @param nCores The number of cores (passed to [parallel::mclapply()]).
 #' Defaults to the number of cores as detected by [parallel::detectCores()].
-#' @param verbose Whether progress updates will be posted. Defaults to `TRUE`.
+#' @param verbose Whether progress updates will be posted. Defaults to `FALSE`.
 #' @return A [symDMatrix::symDMatrix-class] object.
 #' @export
-getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, folderOut = paste0("symDMatrix_", randomString()), vmode = "double", i = seq_len(nrow(X)), j = seq_len(ncol(X)), blockSize = 5000L, nBlocks = NULL, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = TRUE) {
+getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, folderOut = paste0("symDMatrix_", randomString()), vmode = "double", i = seq_len(nrow(X)), j = seq_len(ncol(X)), blockSize = 5000L, nBlocks = NULL, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE) {
 
     # Convert index types
     if (is.logical(i)) {
