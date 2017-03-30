@@ -12,10 +12,10 @@ hasCores <- function(numCores) {
     }
 }
 
-test_that("parallelApply fails if nTasks is illegal", {
+test_that("chunkedApply fails if nTasks is illegal", {
     X <- matrix(data = 1, nrow = 1, ncol = 1)
     for (nTasks in c(0, -1, "a")) {
-        expect_error(suppressWarnings(parallelApply(X = X, MARGIN = 1, FUN = sum, bufferSize = 1, nTasks = nTasks)))
+        expect_error(suppressWarnings(chunkedApply(X = X, MARGIN = 1, FUN = sum, nTasks = nTasks)))
     }
 })
 

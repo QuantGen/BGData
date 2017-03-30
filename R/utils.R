@@ -69,69 +69,21 @@ apply2 <- function(X, MARGIN, FUN, ...) {
 }
 
 
-#' Applies a Function on Each Row or Column of a Matrix in Parallel.
+#' Applies a Function on Each Row or Column of a Memory-Mapped Matrix-Like
+#' Object.
 #'
-#' Similar to [base::apply()], but designed to carry out operations in
-#' parallel.  The input matrix `X` is broken into `nTasks` chunks and passed to
-#' [parallel::mclapply()] which applies `FUN` on either the rows or the columns
-#' of each chunk.
-#'
-#' If `nTasks` is `1`, [base::apply()] will be called directly without
-#' parallelism.
-#'
-#' @inheritSection BGData-package Multi-level parallelism
-#' @param X A matrix or matrix-like object.
-#' @param MARGIN The subscripts which the function will be applied over. `1`
-#' indicates rows, `2` indicates columns.
-#' @param FUN The function to be applied.
-#' @param nTasks The number of tasks the problem should be broken into to be
-#' distributed among `nCores` cores. Defaults to `nCores`.
-#' @param nCores The number of cores (passed to [parallel::mclapply()]).
-#' Defaults to the number of cores as detected by [parallel::detectCores()].
-#' @param ... Additional arguments to be passed to [base::apply()].
-#' @seealso [chunkedApply()] if `X` is a memory-mapped matrix and too large to
-#' hold in memory.
-#' @example man/examples/parallelApply.R
-#' @export
-parallelApply <- function(X, MARGIN, FUN, nTasks = nCores, nCores = getOption("mc.cores", 2L), ...) {
-    d <- dim(X)
-    if (!length(d)) {
-        stop("dim(X) must have a positive length")
-    }
-    nTasks <- as.integer(nTasks)
-    if (is.na(nTasks) || nTasks < 1L) {
-        stop("nTasks has to be greater than 0")
-    }
-    if (nTasks == 1L) {
-        apply2(X = X, MARGIN = MARGIN, FUN = FUN, ...)
-    } else {
-        res <- parallel::mclapply(X = seq_len(nTasks), FUN = function(i, ...) {
-            range <- LinkedMatrix:::chunkRanges(d[MARGIN], nTasks, i)
-            if (MARGIN == 2L) {
-                subset <- X[, seq(range[1L], range[2L]), drop = FALSE]
-            } else {
-                subset <- X[seq(range[1L], range[2L]), , drop = FALSE]
-            }
-            apply2(X = subset, MARGIN = MARGIN, FUN = FUN, ...)
-        }, ..., mc.preschedule = FALSE, mc.cores = nCores)
-        simplifyList(res)
-    }
-}
-
-
-#' Reads Chunks of Data from a Memory-Mapped File into Memory and Applies a
-#' Function on Each Row or Column of a Matrix in Parallel.
-#'
-#' Similar to [base::apply()], but designed to bring chunks of data into memory
-#' and carry out operations on them in parallel. `nBufferSize` rows or columns
-#' of the input matrix `X` are read into memory and handed over to
-#' [parallelApply()]. This function is only useful for memory-mapped files. For
-#' data that is already in memory, use [parallelApply()] directly.
+#' Similar to [base::apply()], but designed for memory-mapped matrix-like
+#' objects. The function brings chunks of an object into physical memory by
+#' taking subsets, and applies a function on either the rows or the columns of
+#' the chunks using an optimized version of [base::apply()]. If `nTasks` is
+#' greater than 1, the function will be applied in parallel using
+#' [parallel::mclapply()]. In that case the subsets of the object are taken on
+#' the slaves.
 #'
 #' @inheritSection BGData-package Memory-mapping
 #' @inheritSection BGData-package Multi-level parallelism
-#' @param X A matrix-like object, typically `@@geno` of a [BGData-class]
-#' object.
+#' @param X A memory-mapped matrix-like object, typically `@@geno` of a
+#' [BGData-class] object.
 #' @param MARGIN The subscripts which the function will be applied over. 1
 #' indicates rows, 2 indicates columns.
 #' @param FUN The function to be applied.
@@ -151,14 +103,17 @@ parallelApply <- function(X, MARGIN, FUN, nTasks = nCores, nCores = getOption("m
 #' @param nCores The number of cores (passed to [parallel::mclapply()]).
 #' Defaults to the number of cores as detected by [parallel::detectCores()].
 #' @param verbose Whether progress updates will be posted. Defaults to `FALSE`.
-#' @param ... Additional arguments to be passed to [parallelApply()].
-#' @seealso [parallelApply()] if `X` is not a memory-mapped matrix or can be
-#' held in memory.
+#' @param ... Additional arguments to be passed to the [base::apply()] like
+#' function.
 #' @example man/examples/chunkedApply.R
 #' @export
 chunkedApply <- function(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(X)), bufferSize = 5000L, nBuffers = NULL, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
     if (!length(dim(X))) {
         stop("dim(X) must have a positive length")
+    }
+    nTasks <- as.integer(nTasks)
+    if (is.na(nTasks) || nTasks < 1L) {
+        stop("nTasks has to be greater than 0")
     }
     # Convert index types
     if (is.logical(i)) {
@@ -171,26 +126,40 @@ chunkedApply <- function(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(
     } else if (is.character(j)) {
         j <- match(j, colnames(X))
     }
-    d <- c(length(i), length(j))
+    dimX <- c(length(i), length(j))
     if (is.null(bufferSize) && is.null(nBuffers)) {
-        bufferSize <- d[MARGIN]
+        bufferSize <- dimX[MARGIN]
         nBuffers <- 1L
     } else if (is.null(bufferSize) && !is.null(nBuffers)) {
-        bufferSize <- ceiling(d[MARGIN] / nBuffers)
+        bufferSize <- ceiling(dimX[MARGIN] / nBuffers)
     } else {
-        nBuffers <- ceiling(d[MARGIN] / bufferSize)
+        nBuffers <- ceiling(dimX[MARGIN] / bufferSize)
     }
-    ranges <- LinkedMatrix:::chunkRanges(d[MARGIN], nBuffers)
-    res <- lapply(seq_len(nBuffers), function(k) {
+    bufferRanges <- LinkedMatrix:::chunkRanges(dimX[MARGIN], nBuffers)
+    res <- lapply(seq_len(nBuffers), function(whichBuffer) {
         if (verbose) {
-            message("Processing chunk ", k, " of ", nBuffers, " (", round(k / nBuffers * 100L, 3L), "%) ...")
+            message("Processing buffer ", whichBuffer, " of ", nBuffers, " (", round(whichBuffer / nBuffers * 100L, 3L), "%) ...")
         }
-        if (MARGIN == 2L) {
-            subset <- X[i, j[seq(ranges[1L, k], ranges[2L, k])], drop = FALSE]
+        if (nTasks == 1L) {
+            if (MARGIN == 2L) {
+                subset <- X[i, j[seq(bufferRanges[1L, whichBuffer], bufferRanges[2L, whichBuffer])], drop = FALSE]
+            } else {
+                subset <- X[i[seq(bufferRanges[1L, whichBuffer], bufferRanges[2L, whichBuffer])], j, drop = FALSE]
+            }
+            apply2(X = subset, MARGIN = MARGIN, FUN = FUN, ...)
         } else {
-            subset <- X[i[seq(ranges[1L, k], ranges[2L, k])], j, drop = FALSE]
+            bufferIndex <- seq(bufferRanges[1L, whichBuffer], bufferRanges[2L, whichBuffer])
+            res <- parallel::mclapply(X = seq_len(nTasks), FUN = function(whichTask, ...) {
+                taskIndex <- bufferIndex[cut(bufferIndex, breaks = nTasks, labels = FALSE) == whichTask]
+                if (MARGIN == 2L) {
+                    subset <- X[i, j[taskIndex], drop = FALSE]
+                } else {
+                    subset <- X[i[taskIndex], j, drop = FALSE]
+                }
+                apply2(X = subset, MARGIN = MARGIN, FUN = FUN, ...)
+            }, ..., mc.preschedule = FALSE, mc.cores = nCores)
+            simplifyList(res)
         }
-        parallelApply(X = subset, MARGIN = MARGIN, FUN = FUN, nTasks = nTasks, nCores = nCores, ...)
     })
     simplifyList(res)
 }

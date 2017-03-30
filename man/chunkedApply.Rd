@@ -2,16 +2,16 @@
 % Please edit documentation in R/utils.R
 \name{chunkedApply}
 \alias{chunkedApply}
-\title{Reads Chunks of Data from a Memory-Mapped File into Memory and Applies a
-Function on Each Row or Column of a Matrix in Parallel.}
+\title{Applies a Function on Each Row or Column of a Memory-Mapped Matrix-Like
+Object.}
 \usage{
 chunkedApply(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(X)),
   bufferSize = 5000L, nBuffers = NULL, nTasks = nCores,
   nCores = getOption("mc.cores", 2L), verbose = FALSE, ...)
 }
 \arguments{
-\item{X}{A matrix-like object, typically \code{@geno} of a \linkS4class{BGData}
-object.}
+\item{X}{A memory-mapped matrix-like object, typically \code{@geno} of a
+\linkS4class{BGData} object.}
 
 \item{MARGIN}{The subscripts which the function will be applied over. 1
 indicates rows, 2 indicates columns.}
@@ -41,14 +41,17 @@ Defaults to the number of cores as detected by \code{\link[parallel:detectCores]
 
 \item{verbose}{Whether progress updates will be posted. Defaults to \code{FALSE}.}
 
-\item{...}{Additional arguments to be passed to \code{\link[=parallelApply]{parallelApply()}}.}
+\item{...}{Additional arguments to be passed to the \code{\link[base:apply]{base::apply()}} like
+function.}
 }
 \description{
-Similar to \code{\link[base:apply]{base::apply()}}, but designed to bring chunks of data into memory
-and carry out operations on them in parallel. \code{nBufferSize} rows or columns
-of the input matrix \code{X} are read into memory and handed over to
-\code{\link[=parallelApply]{parallelApply()}}. This function is only useful for memory-mapped files. For
-data that is already in memory, use \code{\link[=parallelApply]{parallelApply()}} directly.
+Similar to \code{\link[base:apply]{base::apply()}}, but designed for memory-mapped matrix-like
+objects. The function brings chunks of an object into physical memory by
+taking subsets, and applies a function on either the rows or the columns of
+the chunks using an optimized version of \code{\link[base:apply]{base::apply()}}. If \code{nTasks} is
+greater than 1, the function will be applied in parallel using
+\code{\link[parallel:mclapply]{parallel::mclapply()}}. In that case the subsets of the object are taken on
+the slaves.
 }
 \section{Memory-mapping}{
 
@@ -94,8 +97,4 @@ bg <- BGData:::loadExample()
 
 # Compute standard deviation of columns
 chunkedApply(X = bg@geno, MARGIN = 2, FUN = sd)
-}
-\seealso{
-\code{\link[=parallelApply]{parallelApply()}} if \code{X} is not a memory-mapped matrix or can be
-held in memory.
 }
