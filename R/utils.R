@@ -138,7 +138,7 @@ chunkedApply <- function(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(
     bufferRanges <- LinkedMatrix:::chunkRanges(dimX[MARGIN], nBuffers)
     res <- lapply(seq_len(nBuffers), function(whichBuffer) {
         if (verbose) {
-            message("Processing buffer ", whichBuffer, " of ", nBuffers, " (", round(whichBuffer / nBuffers * 100L, 3L), "%) ...")
+            message("Buffer ", whichBuffer, " of ", nBuffers, " ...")
         }
         if (nTasks == 1L) {
             if (MARGIN == 2L) {
@@ -376,13 +376,12 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
     }
 
     end <- 0L
-    for (k in seq_len(nBuffers)) {
+    for (whichBuffer in seq_len(nBuffers)) {
         ini <- end + 1L
         end <- min(p, ini + bufferSize - 1L)
 
         if (verbose) {
-            message("Chunk: ", k, " (markers ", ini, ":", end, " ~", round(100L * end / p, 1L), "% done)")
-            message("  => Acquiring genotypes...")
+            message("Buffer ", whichBuffer, " of ", nBuffers, " ...")
         }
 
         # subset
@@ -425,10 +424,6 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
 
         # compute XX'
         if (ncol(X1) > 0L) {
-
-            if (verbose) {
-              message("  => Computing...")
-            }
 
             # scale and impute X
             X1 <- scale(X1, center = center.chunk, scale = scale.chunk)
@@ -582,7 +577,7 @@ getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, folde
         blocks[[r]] <- vector(mode = "list", length = nBlocks - r + 1L)
         for (s in r:nBlocks) {
             if (verbose) {
-                message("Working on block ", r, "-", s, " (", round(100L * counter / (nBlocks * (nBlocks + 1L) / 2L)), "%)")
+                message("Block ", r, "-", s, " ...")
             }
             blockName <- paste0("data_", padDigits(r, nBlocks), "_", padDigits(s, nBlocks), ".ff")
             block <- ff::as.ff(getG(X, center = center, scale = scale, scaleG = FALSE, i = blockIndices[[r]], j = j, i2 = blockIndices[[s]], bufferSize = blockSize, nBuffers = nBlocks, nTasks = nTasks, nCores = nCores, verbose = FALSE), filename = paste0(folderOut, "/", blockName), vmode = vmode)
@@ -590,9 +585,6 @@ getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, folde
             bit::physical(block)$filename <- blockName
             blocks[[r]][[s - r + 1L]] <- block
             counter <- counter + 1L
-            if (verbose) {
-                message("  => Done")
-            }
         }
     }
 
@@ -776,7 +768,7 @@ GWAS.SKAT <- function(formula, data, groups, i = seq_len(nrow(data@geno)), j = s
         fm <- SKAT::SKAT(Z = Z, obj = H0, ...)
         OUT[group, ] <- c(ncol(Z), fm$p.value)
         if (verbose) {
-            message("Group ", group, " of ", length(uniqueGroups), " (", round(group / length(uniqueGroups) * 100L, 3L), "% done)")
+            message("Group ", group, " of ", length(uniqueGroups), " ...")
         }
     }
 
