@@ -587,6 +587,31 @@ as.BGData.ColumnLinkedMatrix <- function(x, alternatePhenotypeFile = NULL, ...) 
 }
 
 
+#' @rdname as.BGData
+#' @export
+as.BGData.RowLinkedMatrix <- function(x, alternatePhenotypeFile = NULL, ...) {
+    n <- LinkedMatrix::nNodes(x)
+    # For now, all elements have to be of type BEDMatrix
+    if (!all(sapply(x, function(node) class(node)) == "BEDMatrix")) {
+        stop("Only BEDMatrix instances are supported as elements of the LinkedMatrix right now.")
+    }
+    # Read in the fam files
+    message("Extracting phenotypes from .fam files...")
+    fam <- do.call("rbind", lapply(x, function(node) {
+        suppressMessages(generatePheno(node))
+    }))
+    # Read in the map file of the first node
+    message("Extracting map from .bim file, assuming that the .bim file of the first BEDMatrix instance is representative of all the other nodes...")
+    map <- suppressMessages(generateMap(x[[1L]]))
+    # Load and merge alternate phenotype file
+    if (!is.null(alternatePhenotypeFile)) {
+        alternatePhenotypes <- loadAlternatePhenotypeFile(alternatePhenotypeFile, ...)
+        fam <- mergeAlternatePhenotypes(fam, alternatePhenotypes)
+    }
+    BGData(geno = x, pheno = fam, map = map)
+}
+
+
 #' Loads BGData (and Other) Objects from .RData Files.
 #'
 #' This function is similar to [base::load()], but also initializes the

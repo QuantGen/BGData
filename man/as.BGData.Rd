@@ -4,6 +4,7 @@
 \alias{as.BGData}
 \alias{as.BGData.BEDMatrix}
 \alias{as.BGData.ColumnLinkedMatrix}
+\alias{as.BGData.RowLinkedMatrix}
 \title{Convert Other Objects to BGData Objects.}
 \usage{
 as.BGData(x, alternatePhenotypeFile = NULL, ...)
@@ -11,6 +12,8 @@ as.BGData(x, alternatePhenotypeFile = NULL, ...)
 \method{as.BGData}{BEDMatrix}(x, alternatePhenotypeFile = NULL, ...)
 
 \method{as.BGData}{ColumnLinkedMatrix}(x, alternatePhenotypeFile = NULL, ...)
+
+\method{as.BGData}{RowLinkedMatrix}(x, alternatePhenotypeFile = NULL, ...)
 }
 \arguments{
 \item{x}{An object. Currently supported are \link[BEDMatrix:BEDMatrix-class]{BEDMatrix::BEDMatrix}

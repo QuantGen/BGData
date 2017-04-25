@@ -2,6 +2,7 @@
 
 S3method(as.BGData,BEDMatrix)
 S3method(as.BGData,ColumnLinkedMatrix)
+S3method(as.BGData,RowLinkedMatrix)
 export(BGData)
 export(GWAS)
 export(as.BGData)
