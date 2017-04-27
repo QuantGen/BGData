@@ -488,13 +488,8 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
 #' boolean, or character. By default, all rows are used.
 #' @param j Indicates which columns of `X` should be used. Can be integer,
 #' boolean, or character. By default, all columns are used.
-#' @param blockSize The number of rows and columns of each block. Overwrites
-#' `nBlocks`. If both parameters are `NULL`, a single block of the same length
-#' as `i` will be created.  Defaults to 5000.
-#' @param nBlocks The number of blocks in the first row of the
-#' [symDMatrix::symDMatrix-class] object. Is overwritten by `blockSize`. If
-#' both parameters are `NULL`, a single block of the size of the same length as
-#' `i` will be created. Defaults to `NULL`.
+#' @param blockSize The number of rows and columns of each block. If `NULL`, a
+#' single block of the same length as `i` will be created. Defaults to 5000.
 #' @param nTasks The number of tasks the problem should be broken into to be
 #' distributed among `nCores` cores. Defaults to `nCores`.
 #' @param nCores The number of cores (passed to [parallel::mclapply()]).
@@ -502,7 +497,7 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
 #' @param verbose Whether progress updates will be posted. Defaults to `FALSE`.
 #' @return A [symDMatrix::symDMatrix-class] object.
 #' @export
-getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, folderOut = paste0("symDMatrix_", randomString()), vmode = "double", i = seq_len(nrow(X)), j = seq_len(ncol(X)), blockSize = 5000L, nBlocks = NULL, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE) {
+getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, folderOut = paste0("symDMatrix_", randomString()), vmode = "double", i = seq_len(nrow(X)), j = seq_len(ncol(X)), blockSize = 5000L, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE) {
 
     # Convert index types
     if (is.logical(i)) {
@@ -529,11 +524,9 @@ getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, folde
     n <- length(i)
     p <- length(j)
 
-    if (is.null(blockSize) && is.null(nBlocks)) {
+    if (is.null(blockSize)) {
         blockSize <- n
         nBlocks <- 1L
-    } else if (is.null(blockSize) && !is.null(nBlocks)) {
-        blockSize <- ceiling(n / nBlocks)
     } else {
         nBlocks <- ceiling(n / blockSize)
     }

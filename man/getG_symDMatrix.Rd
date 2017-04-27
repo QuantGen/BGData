@@ -7,8 +7,7 @@
 getG_symDMatrix(X, center = TRUE, scale = TRUE, scaleG = TRUE,
   folderOut = paste0("symDMatrix_", randomString()), vmode = "double",
   i = seq_len(nrow(X)), j = seq_len(ncol(X)), blockSize = 5000L,
-  nBlocks = NULL, nTasks = nCores, nCores = getOption("mc.cores", 2L),
-  verbose = FALSE)
+  nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE)
 }
 \arguments{
 \item{X}{A matrix-like object, typically \code{@geno} of a \linkS4class{BGData}
@@ -36,14 +35,8 @@ boolean, or character. By default, all rows are used.}
 \item{j}{Indicates which columns of \code{X} should be used. Can be integer,
 boolean, or character. By default, all columns are used.}
 
-\item{blockSize}{The number of rows and columns of each block. Overwrites
-\code{nBlocks}. If both parameters are \code{NULL}, a single block of the same length
-as \code{i} will be created.  Defaults to 5000.}
-
-\item{nBlocks}{The number of blocks in the first row of the
-\link[symDMatrix:symDMatrix-class]{symDMatrix::symDMatrix} object. Is overwritten by \code{blockSize}. If
-both parameters are \code{NULL}, a single block of the size of the same length as
-\code{i} will be created. Defaults to \code{NULL}.}
+\item{blockSize}{The number of rows and columns of each block. If \code{NULL}, a
+single block of the same length as \code{i} will be created. Defaults to 5000.}
 
 \item{nTasks}{The number of tasks the problem should be broken into to be
 distributed among \code{nCores} cores. Defaults to \code{nCores}.}
