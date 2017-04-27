@@ -92,12 +92,8 @@ apply2 <- function(X, MARGIN, FUN, ...) {
 #' @param j Indicates which columns of `X` should be used. Can be integer,
 #' boolean, or character. By default, all columns are used.
 #' @param bufferSize The number of rows or columns of `X` that are brought into
-#' RAM for processing. Overwrites `nBuffers`. If both parameters are `NULL`,
-#' all elements in `i` or `j` are used. Defaults to 5000.
-#' @param nBuffers The number of partitions of the rows or columns of `X` that
-#' are brought into RAM for processing. Is overwritten by `bufferSize`. If both
-#' parameters are `NULL`, all elements in `i` or `j` are used. Defaults to
-#' `NULL`.
+#' RAM for processing. If `NULL`, all elements in `i` or `j` are used. Defaults
+#' to 5000.
 #' @param nTasks The number of tasks the problem should be broken into to be
 #' distributed among `nCores` cores. Defaults to `nCores`.
 #' @param nCores The number of cores (passed to [parallel::mclapply()]).
@@ -107,7 +103,7 @@ apply2 <- function(X, MARGIN, FUN, ...) {
 #' function.
 #' @example man/examples/chunkedApply.R
 #' @export
-chunkedApply <- function(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(X)), bufferSize = 5000L, nBuffers = NULL, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
+chunkedApply <- function(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(X)), bufferSize = 5000L, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
     if (!length(dim(X))) {
         stop("dim(X) must have a positive length")
     }
@@ -127,11 +123,9 @@ chunkedApply <- function(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(
         j <- match(j, colnames(X))
     }
     dimX <- c(length(i), length(j))
-    if (is.null(bufferSize) && is.null(nBuffers)) {
+    if (is.null(bufferSize)) {
         bufferSize <- dimX[MARGIN]
         nBuffers <- 1L
-    } else if (is.null(bufferSize) && !is.null(nBuffers)) {
-        bufferSize <- ceiling(dimX[MARGIN] / nBuffers)
     } else {
         nBuffers <- ceiling(dimX[MARGIN] / bufferSize)
     }
@@ -292,11 +286,7 @@ tcrossprod_parallel <- function(x, y = NULL, nTasks = nCores, nCores = getOption
 #' `NULL`, the whole genomic relationship matrix XX' is computed.  Defaults to
 #' `NULL`.
 #' @param bufferSize The number of columns of `X` that are brought into RAM for
-#' processing. Overwrites `nBuffers`. If both parameters are `NULL`, all
-#' columns of `X` are used. Defaults to 5000.
-#' @param nBuffers The number of partitions of the columns of `X` that are
-#' brought into RAM for processing. Is overwritten by `bufferSize`. If both
-#' parameters are `NULL`, all columns of `X` are used. Defaults to `NULL`.
+#' processing. If `NULL`, all columns of `X` are used. Defaults to 5000.
 #' @param nTasks The number of tasks the problem should be broken into to be
 #' distributed among `nCores` cores. Defaults to `nCores`.
 #' @param nCores The number of cores (passed to [parallel::mclapply()]).
@@ -305,7 +295,7 @@ tcrossprod_parallel <- function(x, y = NULL, nTasks = nCores, nCores = getOption
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @example man/examples/getG.R
 #' @export
-getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, i = seq_len(nrow(X)), j = seq_len(ncol(X)), i2 = NULL, bufferSize = 5000L, nBuffers = NULL, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE) {
+getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, i = seq_len(nrow(X)), j = seq_len(ncol(X)), i2 = NULL, bufferSize = 5000L, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE) {
 
     # compute XY' rather than XX'
     hasY <- !is.null(i2)
@@ -359,11 +349,9 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
         n2 <- length(i2)
     }
 
-    if (is.null(bufferSize) && is.null(nBuffers)) {
+    if (is.null(bufferSize)) {
         bufferSize <- p
         nBuffers <- 1L
-    } else if (is.null(bufferSize) && !is.null(nBuffers)) {
-        bufferSize <- ceiling(p / nBuffers)
     } else {
         nBuffers <- ceiling(p / bufferSize)
     }
@@ -551,14 +539,14 @@ getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, folde
     }
 
     if (is.logical(center) && center == TRUE) {
-        center <- chunkedApply(X, 2L, mean, i = i, j = j, bufferSize = blockSize, nBuffers = nBlocks, nTasks = nTasks, nCores = nCores, verbose = FALSE, na.rm = TRUE)
+        center <- chunkedApply(X, 2L, mean, i = i, j = j, bufferSize = blockSize, nTasks = nTasks, nCores = nCores, verbose = FALSE, na.rm = TRUE)
     } else if (is.logical(center) && center == FALSE) {
         center <- rep(0L, p)
     }
     names(center) <- colnames(X)[j]
 
     if (is.logical(scale) && scale == TRUE) {
-        scale <- chunkedApply(X, 2L, stats::sd, i = i, j = j, bufferSize = blockSize, nBuffers = nBlocks, nTasks = nTasks, nCores = nCores, verbose = FALSE, na.rm = TRUE)
+        scale <- chunkedApply(X, 2L, stats::sd, i = i, j = j, bufferSize = blockSize, nTasks = nTasks, nCores = nCores, verbose = FALSE, na.rm = TRUE)
         scale <- scale * sqrt((nX - 1L) / nX) # to avoid NaN
     } else if (is.logical(scale) && scale == FALSE) {
         scale <- rep(1L, p)
@@ -580,7 +568,7 @@ getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, folde
                 message("Block ", r, "-", s, " ...")
             }
             blockName <- paste0("data_", padDigits(r, nBlocks), "_", padDigits(s, nBlocks), ".ff")
-            block <- ff::as.ff(getG(X, center = center, scale = scale, scaleG = FALSE, i = blockIndices[[r]], j = j, i2 = blockIndices[[s]], bufferSize = blockSize, nBuffers = nBlocks, nTasks = nTasks, nCores = nCores, verbose = FALSE), filename = paste0(folderOut, "/", blockName), vmode = vmode)
+            block <- ff::as.ff(getG(X, center = center, scale = scale, scaleG = FALSE, i = blockIndices[[r]], j = j, i2 = blockIndices[[s]], bufferSize = blockSize, nTasks = nTasks, nCores = nCores, verbose = FALSE), filename = paste0(folderOut, "/", blockName), vmode = vmode)
             # Change ff path to a relative one
             bit::physical(block)$filename <- blockName
             blocks[[r]][[s - r + 1L]] <- block
@@ -627,11 +615,8 @@ getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, folde
 #' @param j Indicates which columns of `@@geno` should be used. Can be integer,
 #' boolean, or character. By default, all columns are used.
 #' @param bufferSize The number of columns of `@@geno` that are brought into
-#' RAM for processing. Overwrites `nBuffers`. If both parameters are `NULL`,
-#' all elements in `j` are used. Defaults to 5000.
-#' @param nBuffers The number of partitions of the columns of `@@geno` that are
-#' brought into RAM for processing. Is overwritten by `bufferSize`. If both
-#' parameters are `NULL`, all elements in `j` are used. Defaults to `NULL`.
+#' RAM for processing. If `NULL`, all elements in `j` are used. Defaults to
+#' 5000.
 #' @param nTasks The number of tasks the problem should be broken into to be
 #' distributed among `nCores` cores. Defaults to `nCores`.
 #' @param nCores The number of cores (passed to [parallel::mclapply()]).
@@ -641,7 +626,7 @@ getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, folde
 #' @return The same matrix that would be returned by `coef(summary(model))`.
 #' @example man/examples/GWAS.R
 #' @export
-GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), bufferSize = 5000L, nBuffers = NULL, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
+GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), bufferSize = 5000L, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
 
     if (class(data) != "BGData") {
         stop("data must BGData")
@@ -687,7 +672,7 @@ GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)), 
             pheno$z <- col
             fm <- FUN(GWAS.model, data = pheno, ...)
             getCoefficients(fm)
-        }, i = i, j = j, bufferSize = bufferSize, nBuffers = nBuffers, nTasks = nTasks, nCores = nCores, verbose = verbose, ...)
+        }, i = i, j = j, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = verbose, ...)
         colnames(OUT) <- colnames(data@geno)[j]
         OUT <- t(OUT)
     }
@@ -714,15 +699,15 @@ rayOLS <- function(y, x, n = length(y)){
 
 
 # the GWAS method for rayOLS
-GWAS.rayOLS <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), bufferSize = 5000L, nBuffers = NULL, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
+GWAS.rayOLS <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), bufferSize = 5000L, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
     y <- data@pheno[i, as.character(stats::terms(formula)[[2L]]), drop = TRUE]
     y <- y - mean(y)
-    res <- chunkedApply(X = data@geno, MARGIN = 2L, FUN = rayOLS, y = y , i = i, j = j, bufferSize = bufferSize, nBuffers = nBuffers, nTasks = nTasks, nCores = nCores, verbose = verbose, ...)
+    res <- chunkedApply(X = data@geno, MARGIN = 2L, FUN = rayOLS, y = y , i = i, j = j, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = verbose, ...)
     return(t(res))
 }
 
 
-GWAS.lsfit <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), bufferSize = 5000L, nBuffers = NULL, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
+GWAS.lsfit <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), bufferSize = 5000L, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
 
     # subset of model.frame has bizarre scoping issues
     frame <- stats::model.frame(formula = formula, data = data@pheno)[i, , drop = FALSE]
@@ -735,7 +720,7 @@ GWAS.lsfit <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(
         model[, 1L] <- col
         fm <- stats::lsfit(x = model, y = y, intercept = FALSE)
         stats::ls.print(fm, print.it = FALSE)$coef.table[[1L]][1L, ]
-    }, i = i, j = j, bufferSize = bufferSize, nBuffers = nBuffers, nTasks = nTasks, nCores = nCores, verbose = verbose, ...)
+    }, i = i, j = j, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = verbose, ...)
     colnames(res) <- colnames(data@geno)[j]
     res <- t(res)
 
@@ -812,11 +797,7 @@ getCoefficients.lmerMod <- function(x) {
 #' @param j Indicates which columns of `X` should be used. Can be integer,
 #' boolean, or character. By default, all columns are used.
 #' @param bufferSize The number of columns of `X` that are brought into RAM for
-#' processing. Overwrites `nBuffers`. If both parameters are `NULL`, all
-#' elements in `j` are used. Defaults to 5000.
-#' @param nBuffers The number of partitions of the columns of `X` that are
-#' brought into RAM for processing. Is overwritten by `bufferSize`. If both
-#' parameters are `NULL`, all elements in `j` are used. Defaults to `NULL`.
+#' processing. If `NULL`, all elements in `j` are used. Defaults to 5000.
 #' @param nTasks The number of tasks the problem should be broken into to be
 #' distributed among `nCores` cores. Defaults to `nCores`.
 #' @param nCores The number of cores (passed to [parallel::mclapply()]).
@@ -827,7 +808,7 @@ getCoefficients.lmerMod <- function(x) {
 #' standard deviations.
 #' @example man/examples/summarize.R
 #' @export
-summarize <- function(X, i = seq_len(nrow(X)), j = seq_len(ncol(X)), bufferSize = 5000L, nBuffers = NULL, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE) {
+summarize <- function(X, i = seq_len(nrow(X)), j = seq_len(ncol(X)), bufferSize = 5000L, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE) {
     # Convert index types
     if (is.logical(i)) {
         i <- which(i)
@@ -844,7 +825,7 @@ summarize <- function(X, i = seq_len(nrow(X)), j = seq_len(ncol(X)), bufferSize 
         alleleFreq <- mean(col, na.rm = TRUE) / 2L
         sd <- stats::sd(col, na.rm = TRUE)
         cbind(freqNA, alleleFreq, sd)
-    }, i = i, j = j, bufferSize = bufferSize, nBuffers = nBuffers, nTasks = nTasks, nCores = nCores, verbose = verbose)
+    }, i = i, j = j, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = verbose)
     df <- data.frame(
         freq_na = m[1L, ],
         allele_freq = m[2L, ],

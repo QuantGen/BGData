@@ -6,8 +6,8 @@
 Object.}
 \usage{
 chunkedApply(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(X)),
-  bufferSize = 5000L, nBuffers = NULL, nTasks = nCores,
-  nCores = getOption("mc.cores", 2L), verbose = FALSE, ...)
+  bufferSize = 5000L, nTasks = nCores, nCores = getOption("mc.cores", 2L),
+  verbose = FALSE, ...)
 }
 \arguments{
 \item{X}{A memory-mapped matrix-like object, typically \code{@geno} of a
@@ -25,13 +25,8 @@ boolean, or character. By default, all rows are used.}
 boolean, or character. By default, all columns are used.}
 
 \item{bufferSize}{The number of rows or columns of \code{X} that are brought into
-RAM for processing. Overwrites \code{nBuffers}. If both parameters are \code{NULL},
-all elements in \code{i} or \code{j} are used. Defaults to 5000.}
-
-\item{nBuffers}{The number of partitions of the rows or columns of \code{X} that
-are brought into RAM for processing. Is overwritten by \code{bufferSize}. If both
-parameters are \code{NULL}, all elements in \code{i} or \code{j} are used. Defaults to
-\code{NULL}.}
+RAM for processing. If \code{NULL}, all elements in \code{i} or \code{j} are used. Defaults
+to 5000.}
 
 \item{nTasks}{The number of tasks the problem should be broken into to be
 distributed among \code{nCores} cores. Defaults to \code{nCores}.}
@@ -55,14 +50,14 @@ the slaves.
 }
 \section{Memory-mapping}{
 
-Functions with the \code{bufferSize} and \code{nBuffers} parameters work best with
-memory-mapped matrices such as \link[BEDMatrix:BEDMatrix-class]{BEDMatrix::BEDMatrix} objects. To
-avoid loading the whole, potentially very large matrix into memory, these
-functions will load chunks of the memory-mapped matrix into memory and
-perform the operations on one chunk at a time. The size of the chunks is
-determined by the \code{bufferSize} parameter, or indirectly by the \code{nBuffers}
-parameter. Care must be taken to not set \code{bufferSize} too high to avoid
-memory shortage, particularly when combined with parallel computing.
+Functions with the \code{bufferSize} parameter work best with memory-mapped
+matrices such as \link[BEDMatrix:BEDMatrix-class]{BEDMatrix::BEDMatrix} objects. To avoid loading the
+whole, potentially very large matrix into memory, these functions will load
+chunks of the memory-mapped matrix into memory and perform the operations on
+one chunk at a time. The size of the chunks is determined by the
+\code{bufferSize} parameter. Care must be taken to not set \code{bufferSize} too high
+to avoid memory shortage, particularly when combined with parallel
+computing.
 }
 
 \section{Multi-level parallelism}{

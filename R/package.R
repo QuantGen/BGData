@@ -29,14 +29,14 @@
 #' additional information in the `@@map` slot.
 #'
 #' @section Memory-mapping:
-#' Functions with the `bufferSize` and `nBuffers` parameters work best with
-#' memory-mapped matrices such as [BEDMatrix::BEDMatrix-class] objects. To
-#' avoid loading the whole, potentially very large matrix into memory, these
-#' functions will load chunks of the memory-mapped matrix into memory and
-#' perform the operations on one chunk at a time. The size of the chunks is
-#' determined by the `bufferSize` parameter, or indirectly by the `nBuffers`
-#' parameter. Care must be taken to not set `bufferSize` too high to avoid
-#' memory shortage, particularly when combined with parallel computing.
+#' Functions with the `bufferSize` parameter work best with memory-mapped
+#' matrices such as [BEDMatrix::BEDMatrix-class] objects. To avoid loading the
+#' whole, potentially very large matrix into memory, these functions will load
+#' chunks of the memory-mapped matrix into memory and perform the operations on
+#' one chunk at a time. The size of the chunks is determined by the
+#' `bufferSize` parameter. Care must be taken to not set `bufferSize` too high
+#' to avoid memory shortage, particularly when combined with parallel
+#' computing.
 #'
 #' @section Multi-level parallelism:
 #' Functions with the `nCores`, `nTasks`, `i`, and `j` parameters provide

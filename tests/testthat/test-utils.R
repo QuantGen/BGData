@@ -104,35 +104,35 @@ for (nCores in seq_len(2)) {
         p <- 100
         X <- matrix(data = rnorm(n * p), nrow = n, ncol = p)
 
-        for (nBuffers in c(1, 3)) {
+        for (bufferSize in c(NULL, p, ceiling(p / 3))) {
             for (nTasks in c(1, 3)) {
 
                 # both scalings
                 G <- tcrossprod(scale(X))
                 G <- G / mean(diag(G))
-                G2 <- getG(X = X, scale = TRUE, scaleG = TRUE, nBuffers = nBuffers, nTasks = nTasks, nCores = nCores, verbose = FALSE)
+                G2 <- getG(X = X, scale = TRUE, scaleG = TRUE, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = FALSE)
                 expect_equal(G, G2, check.attributes = FALSE)
 
                 # without scaling to average diagonal = 1 (scaleG)
                 G <- tcrossprod(scale(X))
-                G2 <- getG(X = X, scale = TRUE, scaleG = FALSE, nBuffers = nBuffers, nTasks = nTasks, nCores = nCores, verbose = FALSE)
+                G2 <- getG(X = X, scale = TRUE, scaleG = FALSE, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = FALSE)
                 expect_equal(G, G2, check.attributes = FALSE)
 
                 # without scaling columns, but scaling average diagonal = 1 (scaleG)
                 G <- tcrossprod(scale(X, center = TRUE, scale = FALSE))
                 G <- G / mean(diag(G))
-                G2 <- getG(X = X, scale = FALSE, scaleG = TRUE, nBuffers = nBuffers, nTasks = nTasks, nCores = nCores, verbose = FALSE)
+                G2 <- getG(X = X, scale = FALSE, scaleG = TRUE, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = FALSE)
 
                 expect_equal(G, G2, check.attributes = FALSE)
 
                 # no scaling at all
                 G <- tcrossprod(scale(X, center = TRUE, scale = FALSE))
-                G2 <- getG(X = X, scale = FALSE, scaleG = FALSE, nBuffers = nBuffers, nTasks = nTasks, nCores = nCores, verbose = FALSE)
+                G2 <- getG(X = X, scale = FALSE, scaleG = FALSE, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = FALSE)
                 expect_equal(G, G2, check.attributes = FALSE)
 
                 # neither scaling nor centering
                 G <- tcrossprod(X)
-                G2 <- getG(X = X, center = FALSE, scale = FALSE, scaleG = FALSE, nBuffers = nBuffers, nTasks = nTasks, nCores = nCores, verbose = FALSE)
+                G2 <- getG(X = X, center = FALSE, scale = FALSE, scaleG = FALSE, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = FALSE)
                 expect_equal(G, G2, check.attributes = FALSE)
 
             }
@@ -153,7 +153,7 @@ for (nCores in seq_len(2)) {
         p <- 100
         X <- matrix(data = rnorm(n * p), nrow = n, ncol = p)
 
-        for (nBuffers in c(1, 3)) {
+        for (bufferSize in c(NULL, p, ceiling(p / 3))) {
             for (nTasks in c(1, 3)) {
 
                 i <- sample(1:nrow(X), size = 3)
@@ -165,18 +165,18 @@ for (nCores in seq_len(2)) {
                 # all scalings
                 G <- tcrossprod(scale(X))
                 G <- G / mean(diag(G))
-                G_12 <- getG(X = X, center = centers, scale = scales, scaleG = TRUE, i = i, i2 = i2, nBuffers = nBuffers, nTasks = nTasks, nCores = nCores, verbose = FALSE)
+                G_12 <- getG(X = X, center = centers, scale = scales, scaleG = TRUE, i = i, i2 = i2, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = FALSE)
                 expect_equal(G[i, i2], G_12, check.attributes = FALSE)
 
-                G_12 <- getG(X = X, center = centers, scale = scales, scaleG = TRUE, i = i, i2 = i, nBuffers = nBuffers, nTasks = nTasks, nCores = nCores, verbose = FALSE)
+                G_12 <- getG(X = X, center = centers, scale = scales, scaleG = TRUE, i = i, i2 = i, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = FALSE)
                 expect_equal(G[i, i], G_12, check.attributes = FALSE)
 
                 # without scaling to average diagonal = 1
                 G <- tcrossprod(scale(X) * sqrt(n/(n - 1)))
-                G_12 <- getG(X = X, center = centers, scale = scales, scaleG = FALSE, i = i, i2 = i2, nBuffers = nBuffers, nTasks = nTasks, nCores = nCores, verbose = FALSE)
+                G_12 <- getG(X = X, center = centers, scale = scales, scaleG = FALSE, i = i, i2 = i2, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = FALSE)
                 expect_equal(G[i, i2], G_12, check.attributes = FALSE)
 
-                G_12 <- getG(X = X, center = centers, scale = scales, scaleG = FALSE, i = i, i2 = i, nBuffers = nBuffers, nTasks = nTasks, nCores = nCores, verbose = FALSE)
+                G_12 <- getG(X = X, center = centers, scale = scales, scaleG = FALSE, i = i, i2 = i, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = FALSE)
                 expect_equal(G[i, i], G_12, check.attributes = FALSE)
 
                 # without scaling columns, but scaling average diagonal = 1
@@ -184,18 +184,18 @@ for (nCores in seq_len(2)) {
 
                 G <- tcrossprod(scale(X, center = TRUE, scale = FALSE))
                 G <- G / ncol(X)
-                G_12 <- getG(X = X, center = centers, scale = scales, scaleG = TRUE, i = i, i2 = i2, nBuffers = nBuffers, nTasks = nTasks, nCores = nCores, verbose = FALSE)
+                G_12 <- getG(X = X, center = centers, scale = scales, scaleG = TRUE, i = i, i2 = i2, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = FALSE)
                 expect_equal(G[i, i2], G_12, check.attributes = FALSE)
 
-                G_12 <- getG(X = X, center = centers, scale = scales, scaleG = TRUE, i = i, i2 = i, nBuffers = nBuffers, nTasks = nTasks, nCores = nCores, verbose = FALSE)
+                G_12 <- getG(X = X, center = centers, scale = scales, scaleG = TRUE, i = i, i2 = i, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = FALSE)
                 expect_equal(G[i, i], G_12, check.attributes = FALSE)
 
                 # no scaling at all
                 G <- tcrossprod(scale(X, center = TRUE, scale = FALSE))
-                G_12 <- getG(X = X, center = centers, scale = scales, scaleG = FALSE, i = i, i2 = i2, nBuffers = nBuffers, nTasks = nTasks, nCores = nCores, verbose = FALSE)
+                G_12 <- getG(X = X, center = centers, scale = scales, scaleG = FALSE, i = i, i2 = i2, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = FALSE)
                 expect_equal(G[i, i2], G_12, check.attributes = FALSE)
 
-                G_12 <- getG(X = X, center = centers, scale = scales, scaleG = FALSE, i = i, i2 = i, nBuffers = nBuffers, nTasks = nTasks, nCores = nCores, verbose = FALSE)
+                G_12 <- getG(X = X, center = centers, scale = scales, scaleG = FALSE, i = i, i2 = i, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = FALSE)
                 expect_equal(G[i, i], G_12, check.attributes = FALSE)
 
             }

@@ -6,8 +6,8 @@
 \usage{
 getG(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05,
   i = seq_len(nrow(X)), j = seq_len(ncol(X)), i2 = NULL,
-  bufferSize = 5000L, nBuffers = NULL, nTasks = nCores,
-  nCores = getOption("mc.cores", 2L), verbose = FALSE)
+  bufferSize = 5000L, nTasks = nCores, nCores = getOption("mc.cores", 2L),
+  verbose = FALSE)
 }
 \arguments{
 \item{X}{A matrix-like object, typically \code{@geno} of a \linkS4class{BGData}
@@ -39,12 +39,7 @@ and \code{j} and Y by \code{i2} and \code{j}. Can be integer, boolean, or charac
 \code{NULL}.}
 
 \item{bufferSize}{The number of columns of \code{X} that are brought into RAM for
-processing. Overwrites \code{nBuffers}. If both parameters are \code{NULL}, all
-columns of \code{X} are used. Defaults to 5000.}
-
-\item{nBuffers}{The number of partitions of the columns of \code{X} that are
-brought into RAM for processing. Is overwritten by \code{bufferSize}. If both
-parameters are \code{NULL}, all columns of \code{X} are used. Defaults to \code{NULL}.}
+processing. If \code{NULL}, all columns of \code{X} are used. Defaults to 5000.}
 
 \item{nTasks}{The number of tasks the problem should be broken into to be
 distributed among \code{nCores} cores. Defaults to \code{nCores}.}
@@ -67,14 +62,14 @@ the same outcome than \code{\link[base:tcrossprod]{base::tcrossprod()}}.
 }
 \section{Memory-mapping}{
 
-Functions with the \code{bufferSize} and \code{nBuffers} parameters work best with
-memory-mapped matrices such as \link[BEDMatrix:BEDMatrix-class]{BEDMatrix::BEDMatrix} objects. To
-avoid loading the whole, potentially very large matrix into memory, these
-functions will load chunks of the memory-mapped matrix into memory and
-perform the operations on one chunk at a time. The size of the chunks is
-determined by the \code{bufferSize} parameter, or indirectly by the \code{nBuffers}
-parameter. Care must be taken to not set \code{bufferSize} too high to avoid
-memory shortage, particularly when combined with parallel computing.
+Functions with the \code{bufferSize} parameter work best with memory-mapped
+matrices such as \link[BEDMatrix:BEDMatrix-class]{BEDMatrix::BEDMatrix} objects. To avoid loading the
+whole, potentially very large matrix into memory, these functions will load
+chunks of the memory-mapped matrix into memory and perform the operations on
+one chunk at a time. The size of the chunks is determined by the
+\code{bufferSize} parameter. Care must be taken to not set \code{bufferSize} too high
+to avoid memory shortage, particularly when combined with parallel
+computing.
 }
 
 \section{Multi-level parallelism}{

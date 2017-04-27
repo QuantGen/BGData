@@ -38,14 +38,14 @@ additional information in the \code{@map} slot.
 }
 \section{Memory-mapping}{
 
-Functions with the \code{bufferSize} and \code{nBuffers} parameters work best with
-memory-mapped matrices such as \link[BEDMatrix:BEDMatrix-class]{BEDMatrix::BEDMatrix} objects. To
-avoid loading the whole, potentially very large matrix into memory, these
-functions will load chunks of the memory-mapped matrix into memory and
-perform the operations on one chunk at a time. The size of the chunks is
-determined by the \code{bufferSize} parameter, or indirectly by the \code{nBuffers}
-parameter. Care must be taken to not set \code{bufferSize} too high to avoid
-memory shortage, particularly when combined with parallel computing.
+Functions with the \code{bufferSize} parameter work best with memory-mapped
+matrices such as \link[BEDMatrix:BEDMatrix-class]{BEDMatrix::BEDMatrix} objects. To avoid loading the
+whole, potentially very large matrix into memory, these functions will load
+chunks of the memory-mapped matrix into memory and perform the operations on
+one chunk at a time. The size of the chunks is determined by the
+\code{bufferSize} parameter. Care must be taken to not set \code{bufferSize} too high
+to avoid memory shortage, particularly when combined with parallel
+computing.
 }
 
 \section{Multi-level parallelism}{
