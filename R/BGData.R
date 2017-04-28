@@ -670,7 +670,7 @@ loadGeno.ff_matrix <- function(x, path, ...) {
 
 
 loadGeno.big.matrix <- function(x, path, ...) {
-    return(bigmemory::attach.big.matrix(paste0(path, .Platform$file.sep, "BGData.desc")))
+    return(bigmemory::attach.big.matrix(paste0(path, "/BGData.desc")))
 }
 
 
@@ -691,7 +691,7 @@ loadGeno.default <- function(x, ...) {
 
 ffNodeInitializer <- function(nodeIndex, nrow, ncol, vmode, folderOut, ...) {
     filename <- paste0("geno_", nodeIndex, ".bin")
-    node <- ff::ff(dim = c(nrow, ncol), vmode = vmode, filename = paste0(folderOut, .Platform$file.sep, filename), ...)
+    node <- ff::ff(dim = c(nrow, ncol), vmode = vmode, filename = paste0(folderOut, "/", filename), ...)
     # Change ff path to a relative one
     bit::physical(node)$filename <- filename
     return(node)
