@@ -631,9 +631,9 @@ load.BGData <- function(file, envir = parent.frame()) {
     names <- ls(envir = loadingEnv)
     for (name in names) {
         object <- get(name, envir = loadingEnv)
-        # Load genotypes of BGData objects
+        # Initialize genotypes of BGData objects
         if (class(object) == "BGData") {
-            object@geno <- loadGeno(object@geno, path = dirname(file))
+            object@geno <- initializeGeno(object@geno, path = dirname(file))
         }
         # Assign object to envir
         assign(name, object, envir = envir)
@@ -642,14 +642,14 @@ load.BGData <- function(file, envir = parent.frame()) {
 }
 
 
-loadGeno <- function(x, ...) {
-    UseMethod("loadGeno")
+initializeGeno <- function(x, ...) {
+    UseMethod("initializeGeno")
 }
 
 
-loadGeno.LinkedMatrix <- function(x, path, ...) {
+initializeGeno.LinkedMatrix <- function(x, path, ...) {
     for (i in seq_len(LinkedMatrix::nNodes(x))) {
-        x[[i]] <- loadGeno(x[[i]], path = path)
+        x[[i]] <- initializeGeno(x[[i]], path = path)
     }
     return(x)
 }
@@ -657,7 +657,7 @@ loadGeno.LinkedMatrix <- function(x, path, ...) {
 
 # Absolute paths to ff files are not stored, so the ff objects have to be
 # loaded from the same directory as the RData file.
-loadGeno.ff_matrix <- function(x, path, ...) {
+initializeGeno.ff_matrix <- function(x, path, ...) {
     # Store current working directory and set working directory to path
     cwd <- getwd()
     setwd(path)
@@ -669,12 +669,12 @@ loadGeno.ff_matrix <- function(x, path, ...) {
 }
 
 
-loadGeno.big.matrix <- function(x, path, ...) {
+initializeGeno.big.matrix <- function(x, path, ...) {
     return(bigmemory::attach.big.matrix(paste0(path, "/BGData.desc")))
 }
 
 
-loadGeno.BEDMatrix <- function(x, ...) {
+initializeGeno.BEDMatrix <- function(x, ...) {
     dnames <- attr(x, "dnames")
     dims <- attr(x, "dims")
     path <- attr(x, "path")
@@ -684,7 +684,7 @@ loadGeno.BEDMatrix <- function(x, ...) {
 }
 
 
-loadGeno.default <- function(x, ...) {
+initializeGeno.default <- function(x, ...) {
     return(x)
 }
 
