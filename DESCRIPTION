@@ -28,8 +28,7 @@ Suggests:
     data.table,
     lme4,
     SKAT,
-    testthat,
-    roxygen2
+    testthat
 Remotes:
     QuantGen/BEDMatrix,
     QuantGen/symDMatrix
