@@ -45,7 +45,7 @@ merged with the data in the \code{@pheno} slot.
 For \link[BEDMatrix:BEDMatrix-class]{BEDMatrix::BEDMatrix} objects: If a .fam file (which corresponds
 to the first six columns of a .ped or .raw file) of the same name and in the
 same directory as the BED file exists, the \code{@pheno} slot will be populated
-with the data stored in that file.  Otherwise a stub that only contains an
+with the data stored in that file. Otherwise a stub that only contains an
 \code{IID} column populated with the rownames of \code{@geno} will be generated. The
 same will happen for a .bim file for the \code{@map} slot.
 

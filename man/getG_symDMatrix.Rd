@@ -18,7 +18,7 @@ the number of columns of \code{X}. If \code{FALSE}, no centering is done. Defaul
 \code{TRUE}.}
 
 \item{scale}{Either a logical value or a numeric vector of length equal to
-the number of columns of \code{X}. If \code{FALSE}, no scaling is done.  Defaults to
+the number of columns of \code{X}. If \code{FALSE}, no scaling is done. Defaults to
 \code{TRUE}.}
 
 \item{scaleG}{TRUE/FALSE whether xx' must be scaled.}

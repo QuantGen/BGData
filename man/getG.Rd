@@ -19,7 +19,7 @@ the number of columns of \code{X}. Numeric vector required if \code{i2} is used.
 
 \item{scale}{Either a logical value or a numeric vector of length equal to
 the number of columns of \code{X}. Numeric vector required if \code{i2} is used. If
-\code{FALSE}, no scaling is done.  Defaults to \code{TRUE}.}
+\code{FALSE}, no scaling is done. Defaults to \code{TRUE}.}
 
 \item{scaleG}{Whether XX' should be scaled. Defaults to \code{TRUE}.}
 
@@ -35,7 +35,7 @@ boolean, or character. By default, all columns are used.}
 \item{i2}{Indicates which rows should be used to compute a block of the
 genomic relationship matrix. Will compute XY' where X is determined by \code{i}
 and \code{j} and Y by \code{i2} and \code{j}. Can be integer, boolean, or character. If
-\code{NULL}, the whole genomic relationship matrix XX' is computed.  Defaults to
+\code{NULL}, the whole genomic relationship matrix XX' is computed. Defaults to
 \code{NULL}.}
 
 \item{bufferSize}{The number of columns of \code{X} that are brought into RAM for

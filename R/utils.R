@@ -272,7 +272,7 @@ tcrossprod_parallel <- function(x, y = NULL, nTasks = nCores, nCores = getOption
 #' `FALSE`, no centering is done. Defaults to `TRUE`.
 #' @param scale Either a logical value or a numeric vector of length equal to
 #' the number of columns of `X`. Numeric vector required if `i2` is used. If
-#' `FALSE`, no scaling is done.  Defaults to `TRUE`.
+#' `FALSE`, no scaling is done. Defaults to `TRUE`.
 #' @param scaleG Whether XX' should be scaled. Defaults to `TRUE`.
 #' @param minVar Columns with variance lower than this value will not be used
 #' in the computation (only if `scale` is not `FALSE`).
@@ -283,7 +283,7 @@ tcrossprod_parallel <- function(x, y = NULL, nTasks = nCores, nCores = getOption
 #' @param i2 Indicates which rows should be used to compute a block of the
 #' genomic relationship matrix. Will compute XY' where X is determined by `i`
 #' and `j` and Y by `i2` and `j`. Can be integer, boolean, or character. If
-#' `NULL`, the whole genomic relationship matrix XX' is computed.  Defaults to
+#' `NULL`, the whole genomic relationship matrix XX' is computed. Defaults to
 #' `NULL`.
 #' @param bufferSize The number of columns of `X` that are brought into RAM for
 #' processing. If `NULL`, all columns of `X` are used. Defaults to 5000.
@@ -477,7 +477,7 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
 #' the number of columns of `X`. If `FALSE`, no centering is done. Defaults to
 #' `TRUE`.
 #' @param scale Either a logical value or a numeric vector of length equal to
-#' the number of columns of `X`. If `FALSE`, no scaling is done.  Defaults to
+#' the number of columns of `X`. If `FALSE`, no scaling is done. Defaults to
 #' `TRUE`.
 #' @param scaleG TRUE/FALSE whether xx' must be scaled.
 #' @param folderOut The path to the folder where to save the
