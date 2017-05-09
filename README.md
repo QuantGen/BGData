@@ -2,7 +2,7 @@ BGData: A Suite of Packages for Analysis of Big Genomic Data
 ============================================================
 
 [![Travis-CI Build Status](https://travis-ci.org/QuantGen/BGData.svg?branch=master)](https://travis-ci.org/QuantGen/BGData)
-[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/BGData)](https://cran.r-project.org/package=BGData)
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/BGData)](https://CRAN.R-project.org/package=BGData)
 [![Rdoc](http://www.rdocumentation.org/badges/version/BGData)](http://www.rdocumentation.org/packages/BGData)
 
 **Contact**: gruenebe@msu.edu gustavoc@msu.edu
