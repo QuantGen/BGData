@@ -195,7 +195,13 @@ G <- getG(bg@geno)
 Installation
 ------------
 
-The BGData package is not available on [CRAN](http://cran.r-project.org/) yet, but it can be installed directly from GitHub using the [devtools](https://github.com/hadley/devtools) package:
+To get the current released version from CRAN:
+
+```R
+install.packages("BGData")
+```
+
+To get the current development version from GitHub:
 
 ```R
 # install.packages("devtools")
