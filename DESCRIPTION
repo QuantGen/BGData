@@ -29,8 +29,5 @@ Suggests:
     lme4,
     SKAT,
     testthat
-Remotes:
-    QuantGen/BEDMatrix,
-    QuantGen/symDMatrix
 RoxygenNote: 6.0.1
 Roxygen: list(markdown = TRUE)
