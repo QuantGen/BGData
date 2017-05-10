@@ -34,10 +34,10 @@ for (nCores in seq_len(2)) {
 
         for (bufferSize in c(5, 10)) {
             for (nTasks in c(1, 3)) {
-                expect_equal(chunkedApply(X = X, MARGIN = 1, FUN = sum, bufferSize = bufferSize, nTasks = nTasks), rowSums(X))
-                expect_equal(chunkedApply(X = X, MARGIN = 2, FUN = sum, bufferSize = bufferSize, nTasks = nTasks), colSums(X))
-                expect_equal(chunkedApply(X = X, MARGIN = 1, FUN = sum, bufferSize = bufferSize, nTasks = nTasks), apply(X, 1, sum))
-                expect_equal(chunkedApply(X = X, MARGIN = 2, FUN = sum, bufferSize = bufferSize, nTasks = nTasks), apply(X, 2, sum))
+                expect_equal(chunkedApply(X = X, MARGIN = 1, FUN = sum, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores), rowSums(X))
+                expect_equal(chunkedApply(X = X, MARGIN = 2, FUN = sum, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores), colSums(X))
+                expect_equal(chunkedApply(X = X, MARGIN = 1, FUN = sum, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores), apply(X, 1, sum))
+                expect_equal(chunkedApply(X = X, MARGIN = 2, FUN = sum, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores), apply(X, 2, sum))
             }
         }
 
@@ -144,7 +144,7 @@ for (nCores in seq_len(2)) {
         }
 
         X[sample(1:length(X), size = 20)] <- NA
-        G <- getG(X, verbose = FALSE)
+        G <- getG(X, nCores = nCores, verbose = FALSE)
         expect_true(!any(is.na(G)))
 
     })
