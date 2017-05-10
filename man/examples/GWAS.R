@@ -20,6 +20,6 @@ y <- bg@pheno$FT10
 bg@pheno$FT10.01 <- y > quantile(y, 0.8, na.rm = TRUE)
 res3 <- GWAS(formula = FT10.01 ~ 1, data = bg, method = "glm")
 
-# Perform a single marker regression on the first 1000 markers (useful for
+# Perform a single marker regression on the first 50 markers (useful for
 # distributed computing)
-res4 <- GWAS(formula = FT10 ~ 1, data = bg, j = 1:100)
+res4 <- GWAS(formula = FT10 ~ 1, data = bg, j = 1:50)
