@@ -175,6 +175,10 @@ crossprods <- function(x, y = NULL, use_tcrossprod = FALSE, nTasks = nCores, nCo
         }
     }
     if (nTasks == 1L) {
+        x <- as.matrix(x)
+        if (!is.null(y)) {
+            y <- as.matrix(y)
+        }
         if (use_tcrossprod) {
             Xy <- tcrossprod(x, y)
         } else {
