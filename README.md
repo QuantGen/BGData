@@ -9,7 +9,7 @@ BGData: A Suite of Packages for Analysis of Big Genomic Data
 
 Modern genomic datasets are big (large *n*), high-dimensional (large *p*), and multi-layered. The challenges that need to be addressed are memory requirements and computational demands. Our goal is to develop software that will enable researchers to carry out analyses with big genomic data within the R environment.
 
-We have identified several approaches to tackle those challanges within R:
+We have identified several approaches to tackle those challenges within R:
 
 - Memory mapping: The data is stored in on the hard drive and users can read in smaller chunks when they are needed.
 - Linked arrays: For very large datasets a single memory-mapped array may not be enough or convenient. A linked array is an array whose content is distributed over multiple memory-mapped nodes.
