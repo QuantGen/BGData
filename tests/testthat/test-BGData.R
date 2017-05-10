@@ -1,7 +1,7 @@
 context("BGData")
 
 # Create dummy path
-testPath <- paste0("/tmp/BGData-", BGData:::randomString(), "/")
+testPath <- paste0(tempdir(), "/BGData-", BGData:::randomString(), "/")
 dir.create(testPath)
 
 restoreGenotypes <- function() {
