@@ -4,8 +4,8 @@ License: MIT + file LICENSE
 Title: A Suite of Packages for Analysis of Big Genomic Data
 Description: An umbrella package providing a phenotype/genotype data structure
     and scalable and efficient computational methods for large genomic datasets
-    in combination with several other packages: BEDMatrix, LinkedMatrix, and
-    symDMatrix.
+    in combination with several other packages: 'BEDMatrix', 'LinkedMatrix',
+    and 'symDMatrix'.
 Authors@R: c(
     person("Gustavo", "de los Campos", email = "gustavoc@msu.edu", role = c("aut")),
     person("Alexander", "Grueneberg", email = "alexander.grueneberg@googlemail.com", role = c("aut", "cre")),

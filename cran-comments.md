@@ -1,3 +1,10 @@
+## Resubmission
+
+This is a resubmission. In this version I have:
+
+- Single quoted the package names in the Description: of the DESCRIPTION file.
+
+
 ## Test environments
 
 * Local Arch Linux install, R 3.4.0
