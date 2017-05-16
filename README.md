@@ -192,10 +192,10 @@ G <- getG(bg@geno)
 ```
 
 
-Installation
-------------
+Installation Instructions
+-------------------------
 
-To get the current released version from CRAN:
+To get the current stable version from CRAN:
 
 ```R
 install.packages("BGData")
