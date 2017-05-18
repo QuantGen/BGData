@@ -207,6 +207,13 @@ devtools::install_github("QuantGen/BGData")
 ```
 
 
+Contribute
+----------
+
+- Issue Tracker: https://github.com/QuantGen/BGData/issues
+- Source Code: https://github.com/QuantGen/BGData
+
+
 Documentation
 -------------
 
