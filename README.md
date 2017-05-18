@@ -5,8 +5,6 @@ BGData: A Suite of Packages for Analysis of Big Genomic Data
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/BGData)](https://CRAN.R-project.org/package=BGData)
 [![Rdoc](http://www.rdocumentation.org/badges/version/BGData)](http://www.rdocumentation.org/packages/BGData)
 
-**Contact**: gruenebe@msu.edu gustavoc@msu.edu
-
 Modern genomic datasets are big (large *n*), high-dimensional (large *p*), and multi-layered. The challenges that need to be addressed are memory requirements and computational demands. Our goal is to develop software that will enable researchers to carry out analyses with big genomic data within the R environment.
 
 We have identified several approaches to tackle those challenges within R:
