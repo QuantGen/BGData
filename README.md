@@ -207,3 +207,9 @@ To get the current development version from GitHub:
 # install.packages("devtools")
 devtools::install_github("QuantGen/BGData")
 ```
+
+
+Documentation
+-------------
+
+Further documentation can be found on [RDocumentation](http://www.rdocumentation.org/packages/BGData).
