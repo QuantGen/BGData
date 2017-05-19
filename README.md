@@ -5,6 +5,8 @@ BGData: A Suite of Packages for Analysis of Big Genomic Data
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/BGData)](https://CRAN.R-project.org/package=BGData)
 [![Rdoc](http://www.rdocumentation.org/badges/version/BGData)](http://www.rdocumentation.org/packages/BGData)
 
+BGData is an R package that provides scalable and efficient computational methods for large genomic datasets, e.g., genome-wide association studies (GWAS) or genomic relationship matrices (G matrices). It also contains a data structure called `BGData` that holds genotypes in the `@geno` slot, phenotypes in the `@pheno` slot, and additional information in the `@map` slot.
+
 Modern genomic datasets are big (large *n*), high-dimensional (large *p*), and multi-layered. The challenges that need to be addressed are memory requirements and computational demands. Our goal is to develop software that will enable researchers to carry out analyses with big genomic data within the R environment.
 
 We have identified several approaches to tackle those challenges within R:
@@ -15,7 +17,7 @@ We have identified several approaches to tackle those challenges within R:
 - Multi-level parallelism: Exploit multi-core and multi-node computing.
 - Inputs: Users can create these arrays from standard formats (e.g., PLINK .bed).
 
-The BGData package is an umbrella package that comprises several packages: [BEDMatrix](https://CRAN.R-project.org/package=BEDMatrix), [LinkedMatrix](https://CRAN.R-project.org/package=LinkedMatrix), and [symDMatrix](https://CRAN.R-project.org/package=symDMatrix). It features scalable and efficient computational methods for large genomic datasets such as genome-wide association studies (GWAS) or genomic relationship matrices (G matrix). It also contains a data structure called `BGData` that holds genotypes in the `@geno` slot, phenotypes in the `@pheno` slot, and additional information in the `@map` slot.
+The BGData package is an umbrella package that comprises several packages: [BEDMatrix](https://CRAN.R-project.org/package=BEDMatrix), [LinkedMatrix](https://CRAN.R-project.org/package=LinkedMatrix), and [symDMatrix](https://CRAN.R-project.org/package=symDMatrix).
 
 
 Examples
