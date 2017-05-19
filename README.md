@@ -15,7 +15,7 @@ We have identified several approaches to tackle those challenges within R:
 - Multi-level parallelism: Exploit multi-core and multi-node computing.
 - Inputs: Users can create these arrays from standard formats (e.g., PLINK .bed).
 
-The BGData package is an umbrella package that comprises several packages: [BEDMatrix](https://github.com/QuantGen/BEDMatrix), [LinkedMatrix](https://github.com/QuantGen/LinkedMatrix), and [symDMatrix](https://github.com/QuantGen/symDMatrix). It features scalable and efficient computational methods for large genomic datasets such as genome-wide association studies (GWAS) or genomic relationship matrices (G matrix). It also contains a data structure called `BGData` that holds genotypes in the `@geno` slot, phenotypes in the `@pheno` slot, and additional information in the `@map` slot.
+The BGData package is an umbrella package that comprises several packages: [BEDMatrix](https://CRAN.R-project.org/package=BEDMatrix), [LinkedMatrix](https://CRAN.R-project.org/package=LinkedMatrix), and [symDMatrix](https://CRAN.R-project.org/package=symDMatrix). It features scalable and efficient computational methods for large genomic datasets such as genome-wide association studies (GWAS) or genomic relationship matrices (G matrix). It also contains a data structure called `BGData` that holds genotypes in the `@geno` slot, phenotypes in the `@pheno` slot, and additional information in the `@map` slot.
 
 
 Examples
@@ -45,7 +45,7 @@ The `inst/extdata` folder contains example files that were generated from the 25
 
 #### Loading individual PLINK .bed files
 
-Load the .bed file for chromosome 1 (chr1.bed) using the [BEDMatrix](https://github.com/QuantGen/BEDMatrix) package:
+Load the .bed file for chromosome 1 (chr1.bed) using the [BEDMatrix](https://CRAN.R-project.org/package=BEDMatrix) package:
 
 ```R
 > chr1 <- BEDMatrix(paste0(path, "/chr1.bed"))
@@ -85,7 +85,7 @@ Extracting number of individuals and rownames from .fam file...
 Extracting number of markers and colnames from .bim file...
 ```
 
-Combine the BEDMatrix objects by columns using the [LinkedMatrix](https://github.com/QuantGen/LinkedMatrix) to avoid the inconvenience of having three separate matrices:
+Combine the BEDMatrix objects by columns using the [LinkedMatrix](https://CRAN.R-project.org/package=LinkedMatrix) to avoid the inconvenience of having three separate matrices:
 
 ```R
 > wg <- ColumnLinkedMatrix(chr1, chr2, chr3)
