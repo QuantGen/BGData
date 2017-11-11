@@ -14,7 +14,7 @@ Authors@R: c(
 URL: https://github.com/QuantGen/BGData
 BugReports: https://github.com/QuantGen/BGData/issues
 Depends:
-    R (>= 3.0.0),
+    R (>= 3.0.2),
     BEDMatrix,
     LinkedMatrix,
     symDMatrix
