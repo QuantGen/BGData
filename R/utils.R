@@ -295,11 +295,21 @@ tcrossprod_parallel <- function(x, y = NULL, nTasks = nCores, nCores = getOption
 #' distributed among `nCores` cores. Defaults to `nCores`.
 #' @param nCores The number of cores (passed to [parallel::mclapply()]).
 #' Defaults to the number of cores as detected by [parallel::detectCores()].
+#' @param gpu Whether to use the GPU to perform the computations. By setting
+#' this parameter, `nCores` and `nTasks` will be set to 1.
 #' @param verbose Whether progress updates will be posted. Defaults to `FALSE`.
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @example man/examples/getG.R
 #' @export
-getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, i = seq_len(nrow(X)), j = seq_len(ncol(X)), i2 = NULL, bufferSize = 5000L, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE) {
+getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, i = seq_len(nrow(X)), j = seq_len(ncol(X)), i2 = NULL, bufferSize = 5000L, nTasks = nCores, nCores = getOption("mc.cores", 2L), gpu = FALSE, verbose = FALSE) {
+
+    if (gpu) {
+        if (!requireNamespace("gpuR", quietly = TRUE)) {
+            stop("gpuR needed for this function to work. Please install it.", call. = FALSE)
+        }
+        nCores <- 1L
+        nTasks <- 1L
+    }
 
     # compute XY' rather than XX'
     hasY <- !is.null(i2)
@@ -432,10 +442,23 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
                     G_chunk <- crossprods(x = X1, y = X2, use_tcrossprod = TRUE, nTasks = nTasks, nCores = nCores)
                 }
             } else {
-                if (!hasY) {
-                    G_chunk <- tcrossprod(X1)
+                if (gpu) {
+                    # Currently, subsets have to be converted to double as gpuR
+                    # does not support integer matrices
+                    storage.mode(X1) <- "double"
+                    if (!hasY) {
+                        G_chunk <- gpuR::tcrossprod(gpuR::gpuMatrix(X1))
+                    } else {
+                        storage.mode(X2) <- "double"
+                        G_chunk <- gpuR::tcrossprod(x = gpuR::gpuMatrix(X1), y = gpuR::gpuMatrix(X2))
+                    }
+                    G_chunk <- as.matrix(G_chunk)
                 } else {
-                    G_chunk <- tcrossprod(x = X1, y = X2)
+                    if (!hasY) {
+                        G_chunk <- tcrossprod(X1)
+                    } else {
+                        G_chunk <- tcrossprod(x = X1, y = X2)
+                    }
                 }
             }
 
@@ -498,10 +521,20 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
 #' distributed among `nCores` cores. Defaults to `nCores`.
 #' @param nCores The number of cores (passed to [parallel::mclapply()]).
 #' Defaults to the number of cores as detected by [parallel::detectCores()].
+#' @param gpu Whether to use the GPU to perform the computations. By setting
+#' this parameter, `nCores` and `nTasks` will be set to 1.
 #' @param verbose Whether progress updates will be posted. Defaults to `FALSE`.
 #' @return A [symDMatrix::symDMatrix-class] object.
 #' @export
-getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, folderOut = paste0("symDMatrix_", randomString()), vmode = "double", i = seq_len(nrow(X)), j = seq_len(ncol(X)), blockSize = 5000L, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE) {
+getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, folderOut = paste0("symDMatrix_", randomString()), vmode = "double", i = seq_len(nrow(X)), j = seq_len(ncol(X)), blockSize = 5000L, nTasks = nCores, nCores = getOption("mc.cores", 2L), gpu = FALSE, verbose = FALSE) {
+
+    if (gpu) {
+        if (!requireNamespace("gpuR", quietly = TRUE)) {
+            stop("gpuR needed for this function to work. Please install it.", call. = FALSE)
+        }
+        nCores <- 1L
+        nTasks <- 1L
+    }
 
     # Convert index types
     if (is.logical(i)) {
@@ -565,7 +598,7 @@ getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, folde
                 message("Block ", r, "-", s, " ...")
             }
             blockName <- paste0("data_", padDigits(r, nBlocks), "_", padDigits(s, nBlocks), ".bin")
-            block <- ff::as.ff(getG(X, center = center, scale = scale, scaleG = FALSE, i = blockIndices[[r]], j = j, i2 = blockIndices[[s]], bufferSize = blockSize, nTasks = nTasks, nCores = nCores, verbose = FALSE), filename = paste0(folderOut, "/", blockName), vmode = vmode)
+            block <- ff::as.ff(getG(X, center = center, scale = scale, scaleG = FALSE, i = blockIndices[[r]], j = j, i2 = blockIndices[[s]], bufferSize = blockSize, nTasks = nTasks, nCores = nCores, gpu = gpu, verbose = FALSE), filename = paste0(folderOut, "/", blockName), vmode = vmode)
             # Change ff path to a relative one
             bit::physical(block)$filename <- blockName
             blocks[[r]][[s - r + 1L]] <- block
