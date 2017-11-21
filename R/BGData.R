@@ -488,17 +488,29 @@ loadAlternatePhenotypeFile <- function(path, ...) {
 }
 
 
-mergeAlternatePhenotypes <- function(pheno, alternatePhenotypes) {
+#' Merge Two Data Frames Keeping the Order of the First
+#'
+#' This is a simplified version of [base::merge()] useful for merging
+#' additional data into a [BGData-class] object while keeping the order of the
+#' data in the [BGData-class] object.
+#'
+#' @param x, y Data frames
+#' @param by Specifications of the columns used for merging. Defaults to the
+#' first two columns of the data frame, which traditionally has the family ID
+#' and the individual ID.
+#' @return Merged data frame
+#' @export
+orderedMerge <- function(x, y, by = c(1L, 2L)) {
     # Add artificial sort column to preserve order after merging
     # (merge's `sort = FALSE` order is unspecified)
-    pheno$.sortColumn <- seq_len(nrow(pheno))
+    x$.sortColumn <- seq_len(nrow(x))
     # Merge phenotypes and alternate phenotypes
-    pheno <- merge(pheno, alternatePhenotypes, by = c(1L, 2L), all.x = TRUE)
+    x <- merge(x, y, by = by, all.x = TRUE)
     # Reorder phenotypes to match original order and delete artificial
     # column
-    pheno <- pheno[order(pheno$.sortColumn), ]
-    pheno <- pheno[, names(pheno) != ".sortColumn"]
-    return(pheno)
+    x <- x[order(x$.sortColumn), ]
+    x <- x[, names(x) != ".sortColumn"]
+    return(x)
 }
 
 
@@ -556,7 +568,7 @@ as.BGData.BEDMatrix <- function(x, alternatePhenotypeFile = NULL, ...) {
     # Load and merge alternate phenotype file
     if (!is.null(alternatePhenotypeFile)) {
         alternatePhenotypes <- loadAlternatePhenotypeFile(alternatePhenotypeFile, ...)
-        fam <- mergeAlternatePhenotypes(fam, alternatePhenotypes)
+        fam <- orderedMerge(fam, alternatePhenotypes)
     }
     BGData(geno = x, pheno = fam, map = map)
 }
@@ -581,7 +593,7 @@ as.BGData.ColumnLinkedMatrix <- function(x, alternatePhenotypeFile = NULL, ...) 
     # Load and merge alternate phenotype file
     if (!is.null(alternatePhenotypeFile)) {
         alternatePhenotypes <- loadAlternatePhenotypeFile(alternatePhenotypeFile, ...)
-        fam <- mergeAlternatePhenotypes(fam, alternatePhenotypes)
+        fam <- orderedMerge(fam, alternatePhenotypes)
     }
     BGData(geno = x, pheno = fam, map = map)
 }
@@ -606,7 +618,7 @@ as.BGData.RowLinkedMatrix <- function(x, alternatePhenotypeFile = NULL, ...) {
     # Load and merge alternate phenotype file
     if (!is.null(alternatePhenotypeFile)) {
         alternatePhenotypes <- loadAlternatePhenotypeFile(alternatePhenotypeFile, ...)
-        fam <- mergeAlternatePhenotypes(fam, alternatePhenotypes)
+        fam <- orderedMerge(fam, alternatePhenotypes)
     }
     BGData(geno = x, pheno = fam, map = map)
 }
