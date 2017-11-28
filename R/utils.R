@@ -111,17 +111,8 @@ chunkedApply <- function(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(
     if (is.na(nTasks) || nTasks < 1L) {
         stop("nTasks has to be greater than 0")
     }
-    # Convert index types
-    if (is.logical(i)) {
-        i <- which(i)
-    } else if (is.character(i)) {
-        i <- match(i, rownames(X))
-    }
-    if (is.logical(j)) {
-        j <- which(j)
-    } else if (is.character(j)) {
-        j <- match(j, colnames(X))
-    }
+    i <- convertIndexTypes(i, rownames(X))
+    j <- convertIndexTypes(j, colnames(X))
     dimX <- c(length(i), length(j))
     if (is.null(bufferSize)) {
         bufferSize <- dimX[MARGIN]
@@ -323,23 +314,10 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
         }
     }
 
-    # Convert index types
-    if (is.logical(i)) {
-        i <- which(i)
-    } else if (is.character(i)) {
-        i <- match(i, rownames(X))
-    }
-    if (is.logical(j)) {
-        j <- which(j)
-    } else if (is.character(j)) {
-        j <- match(j, colnames(X))
-    }
+    i <- convertIndexTypes(i, rownames(X))
+    j <- convertIndexTypes(j, colnames(X))
     if (hasY) {
-        if (is.logical(i2)) {
-            i2 <- which(i2)
-        } else if (is.character(i2)) {
-            i2 <- match(i2, rownames(X))
-        }
+        i2 <- convertIndexTypes(i2, rownames(X))
     }
 
     nX <- nrow(X)
@@ -536,17 +514,8 @@ getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, folde
         nTasks <- 1L
     }
 
-    # Convert index types
-    if (is.logical(i)) {
-        i <- which(i)
-    } else if (is.character(i)) {
-        i <- match(i, rownames(X))
-    }
-    if (is.logical(j)) {
-        j <- which(j)
-    } else if (is.character(j)) {
-        j <- match(j, colnames(X))
-    }
+    i <- convertIndexTypes(i, rownames(X))
+    j <- convertIndexTypes(j, colnames(X))
 
     nX <- nrow(X)
     pX <- ncol(X)
@@ -666,17 +635,8 @@ GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)), 
         stop("Only lm, lm.fit, lsfit, glm, lmer, SKAT, and rayOLS have been implemented so far.")
     }
 
-    # Convert index types
-    if (is.logical(i)) {
-        i <- which(i)
-    } else if (is.character(i)) {
-        i <- match(i, rownames(data@geno))
-    }
-    if (is.logical(j)) {
-        j <- which(j)
-    } else if (is.character(j)) {
-        j <- match(j, colnames(data@geno))
-    }
+    i <- convertIndexTypes(i, rownames(data@geno))
+    j <- convertIndexTypes(j, colnames(data@geno))
 
     if (method == "lsfit") {
         OUT <- GWAS.lsfit(formula = formula, data = data, i = i, j = j, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = verbose, ...)
@@ -839,17 +799,8 @@ getCoefficients.lmerMod <- function(x) {
 #' @example man/examples/summarize.R
 #' @export
 summarize <- function(X, i = seq_len(nrow(X)), j = seq_len(ncol(X)), bufferSize = 5000L, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE) {
-    # Convert index types
-    if (is.logical(i)) {
-        i <- which(i)
-    } else if (is.character(i)) {
-        i <- match(i, rownames(X))
-    }
-    if (is.logical(j)) {
-        j <- which(j)
-    } else if (is.character(j)) {
-        j <- match(j, colnames(X))
-    }
+    i <- convertIndexTypes(i, rownames(X))
+    j <- convertIndexTypes(j, colnames(X))
     m <- chunkedApply(X = X, MARGIN = 2L, FUN = function(col) {
         freqNA <- mean(is.na(col))
         alleleFreq <- mean(col, na.rm = TRUE) / 2L
@@ -946,4 +897,14 @@ loadExample <- function() {
         suppressMessages(BEDMatrix::BEDMatrix(paste0(path, "/", chr)))
     }))
     as.BGData(m, alternatePhenotypeFile = paste0(path, "/pheno.txt"))
+}
+
+
+convertIndexTypes <- function(index, names) {
+    if (is.logical(index)) {
+        index <- which(index)
+    } else if (is.character(index)) {
+        index <- match(index, names)
+    }
+    return(index)
 }
