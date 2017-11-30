@@ -672,19 +672,21 @@ GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)), 
 
 
 # OLS for the regression y=xb+e (data is assumed to be pre-adjusted by non-genetic effects
-rayOLS <- function(y, x, n = length(y)){
+ rayOLS <- function(y, x){
     tmp <- !(is.na(x) | is.na(y))
     x <- x[tmp]
     y <- y[tmp]
     x <- x - mean(x)
+    n <- length(y)
     rhs <- sum(x * y)
     XtX <- sum(x^2L)
     sol <- rhs / XtX
     error <- y - x * sol
-    vE <- sum(error^2L) / (n - 1L)
+    vE <- sum(error^2L) / (n - 2L)
     SE <- sqrt(vE / XtX)
     z_stat <- sol / SE
-    return(c(sol, SE, z_stat, stats::pt(q = abs(z_stat), df = n - 1L, lower.tail = FALSE) * 2L))
+    p_val<-stats::pt(q = abs(z_stat), df = n - 2L, lower.tail = FALSE) * 2L
+    return(c(sol, SE, z_stat, p_val))
 }
 
 
