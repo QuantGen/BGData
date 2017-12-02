@@ -689,6 +689,33 @@ GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)), 
     return(c(sol, SE, z_stat, p_val))
 }
 
+## An alternative that is faster than rayOLS
+rayOLS2 <- function(y, x,SSy,Int,n,isNAY){
+	isNAX<-which(is.na(x))
+    isNAXY<-unique(c(isNAX,isNAY))
+    SSy<-SSy-sum(y[isNAX]^2,na.rm=T)
+    
+    if(length(isNAXY)>0){
+      y[isNAXY]=0
+      x[isNAXY]=0  
+    }
+    n<- n-length(isNAXY)
+     
+    # crossprodUCTS
+    sX<-crossprod(Int,x)
+    sY<-crossprod(Int,y)
+    XX<-crossprod(x)-sX*sX/n
+    Xy<-crossprod(x,y)-sX*sY/n 
+    
+    # solution and SE
+    sol <- Xy/XX
+    RSS<-(SSy)-XX*(sol^2)
+    SE <- sqrt(RSS/(n-2L)/ XX)
+    z_stat <- sol / SE
+    p_val<-stats::pt(q = abs(z_stat), df = n - 2L, lower.tail = FALSE) * 2L
+    return(c(sol, SE, z_stat, p_val))
+}
+
 
 # the GWAS method for rayOLS
 GWAS.rayOLS <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), bufferSize = 5000L, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
