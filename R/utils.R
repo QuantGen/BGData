@@ -672,26 +672,27 @@ GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)), 
 
 
 # OLS for the regression y=xb+e (data is assumed to be pre-adjusted by non-genetic effects
- rayOLS <- function(y, x){
-    tmp <- !(is.na(x) | is.na(y))
-    x <- x[tmp]
-    y <- y[tmp]
-    x <- x - mean(x)
-    n <- length(y)
-    rhs <- sum(x * y)
-    XtX <- sum(x^2L)
-    sol <- rhs / XtX
-    error <- y - x * sol
-    vE <- sum(error^2L) / (n - 2L)
-    SE <- sqrt(vE / XtX)
-    z_stat <- sol / SE
-    p_val<-stats::pt(q = abs(z_stat), df = n - 2L, lower.tail = FALSE) * 2L
-    return(c(sol, SE, z_stat, p_val))
-}
+# rayOLS <- function(y, x){
+#    tmp <- !(is.na(x) | is.na(y))
+#    x <- x[tmp]
+#    y <- y[tmp]
+#    x <- x - mean(x)
+#    n <- length(y)
+#    rhs <- sum(x * y)
+#    XtX <- sum(x^2L)
+#    sol <- rhs / XtX
+#    error <- y - x * sol
+#    vE <- sum(error^2L) / (n - 2L)
+#    SE <- sqrt(vE / XtX)
+#    z_stat <- sol / SE
+#    p_val<-stats::pt(q = abs(z_stat), df = n - 2L, lower.tail = FALSE) * 2L
+#    return(c(sol, SE, z_stat, p_val))
+#}
 
 ## An alternative that is faster than rayOLS
-rayOLS2 <- function(y, x,SSy,Int,n,isNAY){
-	isNAX<-which(is.na(x))
+rayOLS <- function(y, x,SSy,Int,n,isNAY){
+	
+    isNAX<-which(is.na(x))
     isNAXY<-unique(c(isNAX,isNAY))
     SSy<-SSy-sum(y[isNAX]^2,na.rm=T)
     
@@ -720,8 +721,13 @@ rayOLS2 <- function(y, x,SSy,Int,n,isNAY){
 # the GWAS method for rayOLS
 GWAS.rayOLS <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), bufferSize = 5000L, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
     y <- data@pheno[i, as.character(stats::terms(formula)[[2L]]), drop = TRUE]
-    y <- y - mean(y)
-    res <- chunkedApply(X = data@geno, MARGIN = 2L, FUN = rayOLS, y = y , i = i, j = j, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = verbose, ...)
+    y <- y - mean(y,na.rm=TRUE)
+    n<-length(y)
+    Int<-rep(1,n)
+    SSy<-sum(y^2,na.rm=TRUE)
+    isNAY<-which(is.na(y))
+    res <- chunkedApply(X = data@geno, MARGIN = 2L, FUN = rayOLS, y = y , i = i, j = j,Int=Int,SSy=SSy,n=n,isNAY=isNAY,
+		       bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = verbose, ...)
     return(t(res))
 }
 
