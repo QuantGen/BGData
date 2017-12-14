@@ -17,13 +17,6 @@ hasCores <- function(numCores) {
     }
 }
 
-test_that("chunkedApply fails if nTasks is illegal", {
-    X <- matrix(data = 1, nrow = 1, ncol = 1)
-    for (nTasks in c(0, -1, "a")) {
-        expect_error(suppressWarnings(chunkedApply(X = X, MARGIN = 1, FUN = sum, nTasks = nTasks)))
-    }
-})
-
 for (nCores in seq_len(2)) {
 
     test_that(paste("chunkedApply", "on", nCores, "cores"), {
@@ -33,12 +26,10 @@ for (nCores in seq_len(2)) {
         X <- matrix(data = rnorm(50), nrow = 5, ncol = 10)
 
         for (bufferSize in c(5, 10)) {
-            for (nTasks in c(1, 3)) {
-                expect_equal(chunkedApply(X = X, MARGIN = 1, FUN = sum, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores), rowSums(X))
-                expect_equal(chunkedApply(X = X, MARGIN = 2, FUN = sum, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores), colSums(X))
-                expect_equal(chunkedApply(X = X, MARGIN = 1, FUN = sum, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores), apply(X, 1, sum))
-                expect_equal(chunkedApply(X = X, MARGIN = 2, FUN = sum, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores), apply(X, 2, sum))
-            }
+            expect_equal(chunkedApply(X = X, MARGIN = 1, FUN = sum, bufferSize = bufferSize, nCores = nCores), rowSums(X))
+            expect_equal(chunkedApply(X = X, MARGIN = 2, FUN = sum, bufferSize = bufferSize, nCores = nCores), colSums(X))
+            expect_equal(chunkedApply(X = X, MARGIN = 1, FUN = sum, bufferSize = bufferSize, nCores = nCores), apply(X, 1, sum))
+            expect_equal(chunkedApply(X = X, MARGIN = 2, FUN = sum, bufferSize = bufferSize, nCores = nCores), apply(X, 2, sum))
         }
 
     })
@@ -231,13 +222,11 @@ for (nCores in seq_len(2)) {
         }
 
         for (bufferSize in c(3, 6)) {
-            for (nTasks in c(1, 3)) {
-                expect_equal(summarize(X = genotypes, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores), computeDummy())
-                expect_equal(summarize(X = genotypes, i = c(1, 3), bufferSize = bufferSize, nTasks = nTasks, nCores = nCores), computeDummy(i = c(1, 3)))
-                expect_equal(summarize(X = genotypes, j = c(1, 3, 5), bufferSize = bufferSize, nTasks = nTasks, nCores = nCores), computeDummy(j =  c(1, 3, 5)))
-                expect_equal(summarize(X = genotypes, i = c(1, 3), j = c(1, 3, 5), bufferSize = bufferSize, nTasks = nTasks, nCores = nCores), computeDummy(i = c(1, 3), j = c(1, 3, 5)))
-                expect_equal(summarize(X = genotypes, nCores = nCores), computeDummy())
-            }
+            expect_equal(summarize(X = genotypes, bufferSize = bufferSize, nCores = nCores), computeDummy())
+            expect_equal(summarize(X = genotypes, i = c(1, 3), bufferSize = bufferSize, nCores = nCores), computeDummy(i = c(1, 3)))
+            expect_equal(summarize(X = genotypes, j = c(1, 3, 5), bufferSize = bufferSize, nCores = nCores), computeDummy(j =  c(1, 3, 5)))
+            expect_equal(summarize(X = genotypes, i = c(1, 3), j = c(1, 3, 5), bufferSize = bufferSize, nCores = nCores), computeDummy(i = c(1, 3), j = c(1, 3, 5)))
+            expect_equal(summarize(X = genotypes, nCores = nCores), computeDummy())
         }
 
     })
@@ -260,10 +249,8 @@ for (nCores in seq_len(2)) {
         rownames(comp) <- colnames(DATA@geno)
 
         for (bufferSize in c(3, 6)) {
-            for (nTasks in c(1, 2)) {
-                fm <- GWAS(formula = y ~ 1, data = DATA, method = "lsfit", bufferSize = bufferSize, nTasks = nTasks, nCores = nCores)
-                expect_equal(comp, fm)
-            }
+            fm <- GWAS(formula = y ~ 1, data = DATA, method = "lsfit", bufferSize = bufferSize, nCores = nCores)
+            expect_equal(comp, fm)
         }
 
         # With i
@@ -275,10 +262,8 @@ for (nCores in seq_len(2)) {
         rownames(comp) <- colnames(DATA@geno)
 
         for (bufferSize in c(3, 6)) {
-            for (nTasks in c(1, 2)) {
-                fm <- GWAS(formula = y ~ 1, data = DATA, method = "lsfit", i = i, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores)
-                expect_equal(comp, fm)
-            }
+            fm <- GWAS(formula = y ~ 1, data = DATA, method = "lsfit", i = i, bufferSize = bufferSize, nCores = nCores)
+            expect_equal(comp, fm)
         }
 
         # With j
@@ -290,10 +275,8 @@ for (nCores in seq_len(2)) {
         rownames(comp) <- colnames(DATA@geno)[j]
 
         for (bufferSize in c(3, 6)) {
-            for (nTasks in c(1, 2)) {
-                fm <- GWAS(formula = y ~ 1, data = DATA, method = "lsfit", j = j, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores)
-                expect_equal(comp, fm)
-            }
+            fm <- GWAS(formula = y ~ 1, data = DATA, method = "lsfit", j = j, bufferSize = bufferSize, nCores = nCores)
+            expect_equal(comp, fm)
         }
 
     })

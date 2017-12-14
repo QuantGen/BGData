@@ -5,7 +5,7 @@
 \title{Performs Single Marker Regressions Using BGData Objects.}
 \usage{
 GWAS(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)),
-  j = seq_len(ncol(data@geno)), bufferSize = 5000L, nTasks = nCores,
+  j = seq_len(ncol(data@geno)), bufferSize = 5000L,
   nCores = getOption("mc.cores", 2L), verbose = FALSE, ...)
 }
 \arguments{
@@ -26,11 +26,8 @@ boolean, or character. By default, all rows are used.}
 boolean, or character. By default, all columns are used.}
 
 \item{bufferSize}{The number of columns of \code{@geno} that are brought into
-RAM for processing. If \code{NULL}, all elements in \code{j} are used. Defaults to
-5000.}
-
-\item{nTasks}{The number of tasks the problem should be broken into to be
-distributed among \code{nCores} cores. Defaults to \code{nCores}.}
+physical memory for processing per core. If \code{NULL}, all elements in \code{j} are
+used. Defaults to 5000.}
 
 \item{nCores}{The number of cores (passed to \code{\link[parallel:mclapply]{parallel::mclapply()}}).
 Defaults to the number of cores as detected by \code{\link[parallel:detectCores]{parallel::detectCores()}}.}

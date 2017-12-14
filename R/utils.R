@@ -75,7 +75,7 @@ apply2 <- function(X, MARGIN, FUN, ...) {
 #' Similar to [base::apply()], but designed for memory-mapped matrix-like
 #' objects. The function brings chunks of an object into physical memory by
 #' taking subsets, and applies a function on either the rows or the columns of
-#' the chunks using an optimized version of [base::apply()]. If `nTasks` is
+#' the chunks using an optimized version of [base::apply()]. If `nCores` is
 #' greater than 1, the function will be applied in parallel using
 #' [parallel::mclapply()]. In that case the subsets of the object are taken on
 #' the slaves.
@@ -92,10 +92,8 @@ apply2 <- function(X, MARGIN, FUN, ...) {
 #' @param j Indicates which columns of `X` should be used. Can be integer,
 #' boolean, or character. By default, all columns are used.
 #' @param bufferSize The number of rows or columns of `X` that are brought into
-#' RAM for processing. If `NULL`, all elements in `i` or `j` are used. Defaults
-#' to 5000.
-#' @param nTasks The number of tasks the problem should be broken into to be
-#' distributed among `nCores` cores. Defaults to `nCores`.
+#' physical memory for processing per core. If `NULL`, all elements in `i` or `j` are
+#' used. Defaults to 5000.
 #' @param nCores The number of cores (passed to [parallel::mclapply()]).
 #' Defaults to the number of cores as detected by [parallel::detectCores()].
 #' @param verbose Whether progress updates will be posted. Defaults to `FALSE`.
@@ -103,13 +101,9 @@ apply2 <- function(X, MARGIN, FUN, ...) {
 #' function.
 #' @example man/examples/chunkedApply.R
 #' @export
-chunkedApply <- function(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(X)), bufferSize = 5000L, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
+chunkedApply <- function(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(X)), bufferSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
     if (!length(dim(X))) {
         stop("dim(X) must have a positive length")
-    }
-    nTasks <- as.integer(nTasks)
-    if (is.na(nTasks) || nTasks < 1L) {
-        stop("nTasks has to be greater than 0")
     }
     i <- convertIndexTypes(i, rownames(X))
     j <- convertIndexTypes(j, colnames(X))
@@ -121,31 +115,22 @@ chunkedApply <- function(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(
         nBuffers <- ceiling(dimX[MARGIN] / bufferSize)
     }
     bufferRanges <- LinkedMatrix:::chunkRanges(dimX[MARGIN], nBuffers)
-    res <- lapply(seq_len(nBuffers), function(whichBuffer) {
+    bufferApply <- function(curBuffer, ...) {
         if (verbose) {
-            message("Buffer ", whichBuffer, " of ", nBuffers, " ...")
+            message("Buffer ", curBuffer, " of ", nBuffers, " ...")
         }
-        if (nTasks == 1L) {
-            if (MARGIN == 2L) {
-                subset <- X[i, j[seq(bufferRanges[1L, whichBuffer], bufferRanges[2L, whichBuffer])], drop = FALSE]
-            } else {
-                subset <- X[i[seq(bufferRanges[1L, whichBuffer], bufferRanges[2L, whichBuffer])], j, drop = FALSE]
-            }
-            apply2(X = subset, MARGIN = MARGIN, FUN = FUN, ...)
+        if (MARGIN == 2L) {
+            buffer <- X[i, j[seq(bufferRanges[1L, curBuffer], bufferRanges[2L, curBuffer])], drop = FALSE]
         } else {
-            bufferIndex <- seq(bufferRanges[1L, whichBuffer], bufferRanges[2L, whichBuffer])
-            res <- parallel::mclapply(X = seq_len(nTasks), FUN = function(whichTask, ...) {
-                taskIndex <- bufferIndex[cut(bufferIndex, breaks = nTasks, labels = FALSE) == whichTask]
-                if (MARGIN == 2L) {
-                    subset <- X[i, j[taskIndex], drop = FALSE]
-                } else {
-                    subset <- X[i[taskIndex], j, drop = FALSE]
-                }
-                apply2(X = subset, MARGIN = MARGIN, FUN = FUN, ...)
-            }, ..., mc.preschedule = FALSE, mc.cores = nCores)
-            simplifyList(res)
+            buffer <- X[i[seq(bufferRanges[1L, curBuffer], bufferRanges[2L, curBuffer])], j, drop = FALSE]
         }
-    })
+        apply2(X = buffer, MARGIN = MARGIN, FUN = FUN, ...)
+    }
+    if (nCores == 1L) {
+        res <- lapply(X = seq_len(nBuffers), FUN = bufferApply, ...)
+    } else {
+        res <- parallel::mclapply(X = seq_len(nBuffers), FUN = bufferApply, ..., mc.preschedule = FALSE, mc.cores = nCores)
+    }
     simplifyList(res)
 }
 
@@ -538,14 +523,14 @@ getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, folde
     }
 
     if (is.logical(center) && center == TRUE) {
-        center <- chunkedApply(X, 2L, mean, i = i, j = j, bufferSize = blockSize, nTasks = nTasks, nCores = nCores, verbose = FALSE, na.rm = TRUE)
+        center <- chunkedApply(X = X, MARGIN = 2L, FUN = mean, i = i, j = j, bufferSize = blockSize, nCores = nCores, verbose = FALSE, na.rm = TRUE)
     } else if (is.logical(center) && center == FALSE) {
         center <- rep(0L, p)
     }
     names(center) <- colnames(X)[j]
 
     if (is.logical(scale) && scale == TRUE) {
-        scale <- chunkedApply(X, 2L, stats::sd, i = i, j = j, bufferSize = blockSize, nTasks = nTasks, nCores = nCores, verbose = FALSE, na.rm = TRUE)
+        scale <- chunkedApply(X = X, MARGIN = 2L, FUN  = stats::sd, i = i, j = j, bufferSize = blockSize, nCores = nCores, verbose = FALSE, na.rm = TRUE)
         scale <- scale * sqrt((nX - 1L) / nX) # to avoid NaN
     } else if (is.logical(scale) && scale == FALSE) {
         scale <- rep(1L, p)
@@ -614,10 +599,8 @@ getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, folde
 #' @param j Indicates which columns of `@@geno` should be used. Can be integer,
 #' boolean, or character. By default, all columns are used.
 #' @param bufferSize The number of columns of `@@geno` that are brought into
-#' RAM for processing. If `NULL`, all elements in `j` are used. Defaults to
-#' 5000.
-#' @param nTasks The number of tasks the problem should be broken into to be
-#' distributed among `nCores` cores. Defaults to `nCores`.
+#' physical memory for processing per core. If `NULL`, all elements in `j` are
+#' used. Defaults to 5000.
 #' @param nCores The number of cores (passed to [parallel::mclapply()]).
 #' Defaults to the number of cores as detected by [parallel::detectCores()].
 #' @param verbose Whether progress updates will be posted. Defaults to `FALSE`.
@@ -625,7 +608,7 @@ getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, folde
 #' @return The same matrix that would be returned by `coef(summary(model))`.
 #' @example man/examples/GWAS.R
 #' @export
-GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), bufferSize = 5000L, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
+GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), bufferSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
 
     if (class(data) != "BGData") {
         stop("data must BGData")
@@ -639,12 +622,12 @@ GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)), 
     j <- convertIndexTypes(j, colnames(data@geno))
 
     if (method == "lsfit") {
-        OUT <- GWAS.lsfit(formula = formula, data = data, i = i, j = j, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = verbose, ...)
+        OUT <- GWAS.lsfit(formula = formula, data = data, i = i, j = j, bufferSize = bufferSize, nCores = nCores, verbose = verbose, ...)
     } else if (method == "rayOLS") {
         if (length(attr(stats::terms(formula), "term.labels")) > 0L) {
             stop("method rayOLS can only be used with y~1 formula, if you want to add covariates pre-adjust your phenotype.")
         }
-        OUT <- GWAS.rayOLS(formula = formula, data = data, i = i, j = j, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = verbose, ...)
+        OUT <- GWAS.rayOLS(formula = formula, data = data, i = i, j = j, bufferSize = bufferSize, nCores = nCores, verbose = verbose, ...)
     } else if (method == "SKAT") {
         OUT <- GWAS.SKAT(formula = formula, data = data, i = i, j = j, verbose = verbose, ...)
     } else {
@@ -662,7 +645,7 @@ GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)), 
             pheno$z <- col
             fm <- FUN(GWAS.model, data = pheno, ...)
             getCoefficients(fm)
-        }, i = i, j = j, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = verbose, ...)
+        }, i = i, j = j, bufferSize = bufferSize, nCores = nCores, verbose = verbose, ...)
         colnames(OUT) <- colnames(data@geno)[j]
         OUT <- t(OUT)
     }
@@ -719,7 +702,7 @@ rayOLS <- function(y, x,SSy,Int,n,isNAY){
 
 
 # the GWAS method for rayOLS
-GWAS.rayOLS <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), bufferSize = 5000L, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
+GWAS.rayOLS <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), bufferSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
     y <- data@pheno[i, as.character(stats::terms(formula)[[2L]]), drop = TRUE]
     y <- y - mean(y,na.rm=TRUE)
     n<-length(y)
@@ -732,7 +715,7 @@ GWAS.rayOLS <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len
 }
 
 
-GWAS.lsfit <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), bufferSize = 5000L, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
+GWAS.lsfit <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), bufferSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
 
     # subset of model.frame has bizarre scoping issues
     frame <- stats::model.frame(formula = formula, data = data@pheno)[i, , drop = FALSE]
@@ -745,7 +728,7 @@ GWAS.lsfit <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(
         model[, 1L] <- col
         fm <- stats::lsfit(x = model, y = y, intercept = FALSE)
         stats::ls.print(fm, print.it = FALSE)$coef.table[[1L]][1L, ]
-    }, i = i, j = j, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = verbose, ...)
+    }, i = i, j = j, bufferSize = bufferSize, nCores = nCores, verbose = verbose, ...)
     colnames(res) <- colnames(data@geno)[j]
     res <- t(res)
 
@@ -821,10 +804,9 @@ getCoefficients.lmerMod <- function(x) {
 #' boolean, or character. By default, all rows are used.
 #' @param j Indicates which columns of `X` should be used. Can be integer,
 #' boolean, or character. By default, all columns are used.
-#' @param bufferSize The number of columns of `X` that are brought into RAM for
-#' processing. If `NULL`, all elements in `j` are used. Defaults to 5000.
-#' @param nTasks The number of tasks the problem should be broken into to be
-#' distributed among `nCores` cores. Defaults to `nCores`.
+#' @param bufferSize The number of columns of `X` that are brought into
+#' physical memory for processing per core. If `NULL`, all elements in `j` are
+#' used. Defaults to 5000.
 #' @param nCores The number of cores (passed to [parallel::mclapply()]).
 #' Defaults to the number of cores as detected by [parallel::detectCores()].
 #' @param verbose Whether progress updates will be posted. Defaults to `FALSE`.
@@ -833,7 +815,7 @@ getCoefficients.lmerMod <- function(x) {
 #' standard deviations.
 #' @example man/examples/summarize.R
 #' @export
-summarize <- function(X, i = seq_len(nrow(X)), j = seq_len(ncol(X)), bufferSize = 5000L, nTasks = nCores, nCores = getOption("mc.cores", 2L), verbose = FALSE) {
+summarize <- function(X, i = seq_len(nrow(X)), j = seq_len(ncol(X)), bufferSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE) {
     i <- convertIndexTypes(i, rownames(X))
     j <- convertIndexTypes(j, colnames(X))
     m <- chunkedApply(X = X, MARGIN = 2L, FUN = function(col) {
@@ -841,7 +823,7 @@ summarize <- function(X, i = seq_len(nrow(X)), j = seq_len(ncol(X)), bufferSize 
         alleleFreq <- mean(col, na.rm = TRUE) / 2L
         sd <- stats::sd(col, na.rm = TRUE)
         cbind(freqNA, alleleFreq, sd)
-    }, i = i, j = j, bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = verbose)
+    }, i = i, j = j, bufferSize = bufferSize, nCores = nCores, verbose = verbose)
     df <- data.frame(
         freq_na = m[1L, ],
         allele_freq = m[2L, ],

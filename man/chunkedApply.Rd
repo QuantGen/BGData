@@ -6,8 +6,8 @@
 Object.}
 \usage{
 chunkedApply(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(X)),
-  bufferSize = 5000L, nTasks = nCores, nCores = getOption("mc.cores", 2L),
-  verbose = FALSE, ...)
+  bufferSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE,
+  ...)
 }
 \arguments{
 \item{X}{A memory-mapped matrix-like object, typically \code{@geno} of a
@@ -25,11 +25,8 @@ boolean, or character. By default, all rows are used.}
 boolean, or character. By default, all columns are used.}
 
 \item{bufferSize}{The number of rows or columns of \code{X} that are brought into
-RAM for processing. If \code{NULL}, all elements in \code{i} or \code{j} are used. Defaults
-to 5000.}
-
-\item{nTasks}{The number of tasks the problem should be broken into to be
-distributed among \code{nCores} cores. Defaults to \code{nCores}.}
+physical memory for processing per core. If \code{NULL}, all elements in \code{i} or \code{j} are
+used. Defaults to 5000.}
 
 \item{nCores}{The number of cores (passed to \code{\link[parallel:mclapply]{parallel::mclapply()}}).
 Defaults to the number of cores as detected by \code{\link[parallel:detectCores]{parallel::detectCores()}}.}
@@ -43,7 +40,7 @@ function.}
 Similar to \code{\link[base:apply]{base::apply()}}, but designed for memory-mapped matrix-like
 objects. The function brings chunks of an object into physical memory by
 taking subsets, and applies a function on either the rows or the columns of
-the chunks using an optimized version of \code{\link[base:apply]{base::apply()}}. If \code{nTasks} is
+the chunks using an optimized version of \code{\link[base:apply]{base::apply()}}. If \code{nCores} is
 greater than 1, the function will be applied in parallel using
 \code{\link[parallel:mclapply]{parallel::mclapply()}}. In that case the subsets of the object are taken on
 the slaves.
