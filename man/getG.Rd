@@ -6,8 +6,8 @@
 \usage{
 getG(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05,
   i = seq_len(nrow(X)), j = seq_len(ncol(X)), i2 = NULL,
-  bufferSize = 5000L, nTasks = nCores, nCores = getOption("mc.cores", 2L),
-  gpu = FALSE, verbose = FALSE)
+  bufferSize = 5000L, nCores = getOption("mc.cores", 2L), gpu = FALSE,
+  verbose = FALSE)
 }
 \arguments{
 \item{X}{A matrix-like object, typically \code{@geno} of a \linkS4class{BGData}
@@ -38,17 +38,15 @@ and \code{j} and Y by \code{i2} and \code{j}. Can be integer, boolean, or charac
 \code{NULL}, the whole genomic relationship matrix XX' is computed. Defaults to
 \code{NULL}.}
 
-\item{bufferSize}{The number of columns of \code{X} that are brought into RAM for
-processing. If \code{NULL}, all columns of \code{X} are used. Defaults to 5000.}
-
-\item{nTasks}{The number of tasks the problem should be broken into to be
-distributed among \code{nCores} cores. Defaults to \code{nCores}.}
+\item{bufferSize}{The number of columns of \code{X} that are brought into
+physical memory for processing per core. If \code{NULL}, all columns of \code{X} are
+used. Defaults to 5000.}
 
 \item{nCores}{The number of cores (passed to \code{\link[parallel:mclapply]{parallel::mclapply()}}).
 Defaults to the number of cores as detected by \code{\link[parallel:detectCores]{parallel::detectCores()}}.}
 
 \item{gpu}{Whether to use the GPU to perform the computations. By setting
-this parameter, \code{nCores} and \code{nTasks} will be set to 1.}
+this parameter, \code{nCores} will be set to 1.}
 
 \item{verbose}{Whether progress updates will be posted. Defaults to \code{FALSE}.}
 }

@@ -7,8 +7,7 @@
 getG_symDMatrix(X, center = TRUE, scale = TRUE, scaleG = TRUE,
   folderOut = paste0("symDMatrix_", randomString()), vmode = "double",
   i = seq_len(nrow(X)), j = seq_len(ncol(X)), blockSize = 5000L,
-  nTasks = nCores, nCores = getOption("mc.cores", 2L), gpu = FALSE,
-  verbose = FALSE)
+  nCores = getOption("mc.cores", 2L), gpu = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{X}{A matrix-like object, typically \code{@geno} of a \linkS4class{BGData}
@@ -39,14 +38,11 @@ boolean, or character. By default, all columns are used.}
 \item{blockSize}{The number of rows and columns of each block. If \code{NULL}, a
 single block of the same length as \code{i} will be created. Defaults to 5000.}
 
-\item{nTasks}{The number of tasks the problem should be broken into to be
-distributed among \code{nCores} cores. Defaults to \code{nCores}.}
-
 \item{nCores}{The number of cores (passed to \code{\link[parallel:mclapply]{parallel::mclapply()}}).
 Defaults to the number of cores as detected by \code{\link[parallel:detectCores]{parallel::detectCores()}}.}
 
 \item{gpu}{Whether to use the GPU to perform the computations. By setting
-this parameter, \code{nCores} and \code{nTasks} will be set to 1.}
+this parameter, \code{nCores} will be set to 1.}
 
 \item{verbose}{Whether progress updates will be posted. Defaults to \code{FALSE}.}
 }

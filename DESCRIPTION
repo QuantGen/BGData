@@ -22,6 +22,7 @@ Imports:
     methods,
     parallel,
     bigmemory,
+    synchronicity,
     ff,
     bit
 Suggests:
