@@ -111,7 +111,7 @@ pedDims <- function(fileIn, header, n, p, sep = "", nColSkip = 6L) {
 }
 
 
-parseRAW <- function(BGData, fileIn, header, dataType, nColSkip = 6L, idCol = c(1L, 2L), sep = "", na.strings = "NA", verbose = FALSE, ...) {
+parseRAW <- function(BGData, fileIn, header, dataType, nColSkip = 6L, idCol = c(1L, 2L), sep = "", na.strings = "NA", verbose = FALSE) {
 
     p <- ncol(BGData@geno)
     pedFile <- file(fileIn, open = "r")
@@ -124,12 +124,11 @@ parseRAW <- function(BGData, fileIn, header, dataType, nColSkip = 6L, idCol = c(
     }
 
     # Parse file
-    j <- seq_len(p)
     for (i in seq_len(nrow(BGData@geno))) {
         xSkip <- scan(pedFile, n = nColSkip, what = character(), sep = sep, quiet = TRUE)
         x <- scan(pedFile, n = p, what = dataType, sep = sep, na.strings = na.strings, quiet = TRUE)
         BGData@pheno[i, ] <- xSkip
-        BGData@geno <- `[<-`(BGData@geno, i, j, ..., value = x)
+        BGData@geno[i, ] <- x
         if (verbose) {
             message("Subject ", i, " / ", nrow(BGData@geno))
         }
@@ -283,12 +282,6 @@ readRAW <- function(fileIn, header = TRUE, dataType = integer(), n = NULL, p = N
     # Prepare geno
     geno <- LinkedMatrix::LinkedMatrix(nrow = dims$n, ncol = dims$p, nNodes = nNodes, linkedBy = linked.by, nodeInitializer = ffNodeInitializer, vmode = outputType, folderOut = folderOut, dimorder = dimorder)
 
-    # Generate nodes
-    nodes <- LinkedMatrix::nodes(geno)
-
-    # Generate index
-    index <- LinkedMatrix::index(geno)
-
     # Prepare pheno
     pheno <- as.data.frame(matrix(nrow = dims$n, ncol = nColSkip), stringsAsFactors = FALSE)
 
@@ -296,7 +289,7 @@ readRAW <- function(fileIn, header = TRUE, dataType = integer(), n = NULL, p = N
     BGData <- new("BGData", geno = geno, pheno = pheno)
 
     # Parse .raw file
-    BGData <- parseRAW(BGData = BGData, fileIn = fileIn, header = header, dataType = dataType, nColSkip = nColSkip, idCol = idCol, sep = sep, na.strings = na.strings, nodes = nodes, index = index, verbose = verbose)
+    BGData <- parseRAW(BGData = BGData, fileIn = fileIn, header = header, dataType = dataType, nColSkip = nColSkip, idCol = idCol, sep = sep, na.strings = na.strings, verbose = verbose)
 
     # Save BGData object
     attr(BGData, "origFile") <- list(path = fileIn, dataType = typeof(dataType))
