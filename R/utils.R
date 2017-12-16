@@ -707,7 +707,7 @@ GWAS.rayOLS <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len
     SSy<-sum(y^2,na.rm=TRUE)
     isNAY<-which(is.na(y))
     res <- chunkedApply(X = data@geno, MARGIN = 2L, FUN = rayOLS, y = y , i = i, j = j,Int=Int,SSy=SSy,n=n,isNAY=isNAY,
-		       bufferSize = bufferSize, nTasks = nTasks, nCores = nCores, verbose = verbose, ...)
+		       bufferSize = bufferSize, nCores = nCores, verbose = verbose, ...)
     return(t(res))
 }
 
