@@ -494,7 +494,8 @@ loadAlternatePhenotypeFile <- function(path, ...) {
 #' additional data into a [BGData-class] object while keeping the order of the
 #' data in the [BGData-class] object.
 #'
-#' @param x, y Data frames
+#' @param x Data frame
+#' @param y Data frame
 #' @param by Specifications of the columns used for merging. Defaults to the
 #' first two columns of the data frame, which traditionally has the family ID
 #' and the individual ID.

@@ -7,7 +7,9 @@
 orderedMerge(x, y, by = c(1L, 2L))
 }
 \arguments{
-\item{x, }{y Data frames}
+\item{x}{Data frame}
+
+\item{y}{Data frame}
 
 \item{by}{Specifications of the columns used for merging. Defaults to the
 first two columns of the data frame, which traditionally has the family ID
