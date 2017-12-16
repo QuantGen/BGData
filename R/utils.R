@@ -129,7 +129,7 @@ chunkedApply <- function(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(
     if (nCores == 1L) {
         res <- lapply(X = seq_len(nBuffers), FUN = bufferApply, ...)
     } else {
-        res <- parallel::mclapply(X = seq_len(nBuffers), FUN = bufferApply, ..., mc.preschedule = FALSE, mc.cores = nCores)
+        res <- parallel::mclapply(X = seq_len(nBuffers), FUN = bufferApply, ..., mc.preschedule = TRUE, mc.cores = nCores)
     }
     simplifyList(res)
 }
@@ -185,7 +185,7 @@ crossprods <- function(x, y = NULL, use_tcrossprod = FALSE, nTasks = nCores, nCo
                 Xy <- crossprod(X, Y)
             }
             return(Xy)
-        }, mc.preschedule = FALSE, mc.cores = nCores)
+        }, mc.preschedule = TRUE, mc.cores = nCores)
         # We now need to add up chunks sequentially
         Xy <- chunks[[1L]]
         if (length(chunks) > 1L) {
