@@ -540,30 +540,36 @@ getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, folde
     dir.create(folderOut)
 
     blockIndices <- split(i, ceiling(i / blockSize))
-    blocks <- vector(mode = "list", length = nBlocks)
+    args <- vector(mode = "list", length = nBlocks)
     counter <- 1L
-    for (r in 1L:nBlocks) {
-        blocks[[r]] <- vector(mode = "list", length = nBlocks - r + 1L)
-        for (s in r:nBlocks) {
+    for (rowIndex in 1L:nBlocks) {
+        rowArgs <- vector(mode = "list", length = nBlocks)
+        for (colIndex in 1L:nBlocks) {
             if (verbose) {
-                message("Block ", r, "-", s, " ...")
+                message("Block ", rowIndex, "-", colIndex, " ...")
             }
-            blockName <- paste0("data_", padDigits(r, nBlocks), "_", padDigits(s, nBlocks), ".bin")
-            block <- ff::as.ff(getG(X, center = center, scale = scale, scaleG = FALSE, i = blockIndices[[r]], j = j, i2 = blockIndices[[s]], bufferSize = blockSize, nCores = nCores, gpu = gpu, verbose = FALSE), filename = paste0(folderOut, "/", blockName), vmode = vmode)
-            # Change ff path to a relative one
-            bit::physical(block)$filename <- blockName
-            blocks[[r]][[s - r + 1L]] <- block
-            counter <- counter + 1L
+            if (colIndex >= rowIndex) {
+                blockName <- paste0("data_", padDigits(rowIndex, nBlocks), "_", padDigits(colIndex, nBlocks), ".bin")
+                block <- ff::as.ff(getG(X, center = center, scale = scale, scaleG = FALSE, i = blockIndices[[rowIndex]], j = j, i2 = blockIndices[[colIndex]], bufferSize = blockSize, nCores = nCores, gpu = gpu, verbose = FALSE), filename = paste0(folderOut, "/", blockName), vmode = vmode)
+                # Change ff path to a relative one
+                bit::physical(block)$filename <- blockName
+                rowArgs[[colIndex]] <- block
+                counter <- counter + 1L
+            } else {
+                rowArgs[[colIndex]] <- ff::vt(args[[colIndex]][[rowIndex]])
+            }
         }
+        args[[rowIndex]] <- do.call(LinkedMatrix::ColumnLinkedMatrix, rowArgs)
     }
 
-    G <- symDMatrix::symDMatrix(blocks, center, scale)
+    args <- c(args, list(centers = center, scales = scale))
+    G <- do.call(symDMatrix::symDMatrix, args)
 
     if (scaleG) {
         K <- mean(diag(G))
-        for (r in seq_len(length(G@data))) {
-            for (s in seq_len(length(G@data[[r]]))) {
-                G@data[[r]][[s]][] <- G@data[[r]][[s]][] / K
+        for (rowIndex in seq_len(nBlocks)) {
+            for (colIndex in seq(rowIndex, nBlocks)) {
+                G[[rowIndex]][[colIndex]][] <- G[[rowIndex]][[colIndex]][] / K
             }
         }
     }
