@@ -436,7 +436,7 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
 
     if (scaleG) {
         if (hasY) {
-            K <- do.call("sum", res)
+            K <- do.call(base::sum, res)
         } else {
             # Use seq instead of diag to avoid copy as it does not increase ref count
             K <- mean(G[seq(from = 1L, to = n * n, by = n + 1L)])
@@ -884,7 +884,7 @@ padDigits <- function(x, total) {
 loadExample <- function() {
     path <- system.file("extdata", package = "BGData")
     message("Loading chromosomes as BED files...")
-    m <- do.call("ColumnLinkedMatrix", lapply(c("chr1", "chr2", "chr3"), function(chr) {
+    m <- do.call(LinkedMatrix::ColumnLinkedMatrix, lapply(c("chr1", "chr2", "chr3"), function(chr) {
         suppressMessages(BEDMatrix::BEDMatrix(paste0(path, "/", chr)))
     }))
     as.BGData(m, alternatePhenotypeFile = paste0(path, "/pheno.txt"))
