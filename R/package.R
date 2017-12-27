@@ -39,29 +39,26 @@
 #' computing.
 #'
 #' @section Multi-level parallelism:
-#' Functions with the `nCores`, `nTasks`, `i`, and `j` parameters provide
+#' Functions with the `nCores`, `i`, and `j` parameters provide
 #' capabilities for both parallel and distributed computing.
 #'
 #' For parallel computing, `nCores` determines the number of cores the code is
-#' run on, and `nTasks` determines into how many tasks the problem is divided
-#' into. `nTasks` should be at least as high as `nCores` to keep all cores
-#' busy. Memory usage can be an issue for higher values of `nCores` and
-#' `nTasks` as R is not particularly memory-efficient. As a rule of thumb, at
-#' least around `object_size(X) + (nCores * (object_size(X) / nTasks)) +
-#' object_size(result)` MB of total memory will be needed for operations on
-#' memory-mapped matrices, not including potential copies of your data that
-#' might be created (for example [stats::lsfit()] runs `cbind(1, X)`). `i` and
-#' `j` can be used to include or exclude certain rows or columns. Internally,
-#' the [parallel::mclapply()] function is used and therefore parallel computing
-#' will not work on Windows machines.
+#' run on. Memory usage can be an issue for higher values of `nCores` as R is
+#' not particularly memory-efficient. As a rule of thumb, at least around
+#' `(nCores * object_size(buffer)) + object_size(result)` MB of total memory
+#' will be needed for operations on memory-mapped matrices, not including
+#' potential copies of your data that might be created (for example
+#' [stats::lsfit()] runs `cbind(1, X)`). `i` and `j` can be used to include or
+#' exclude certain rows or columns. Internally, the [parallel::mclapply()]
+#' function is used and therefore parallel computing will not work on Windows
+#' machines.
 #'
 #' For distributed computing, `i` and `j` determine the subset of the input
 #' matrix that the code runs on. In an HPC environment, this can be used not
 #' just to include or exclude certain rows or columns, but also to partition
 #' the task among many nodes rather than cores. Scheduler-specific code and
 #' code to aggregate the results need to be written by the user. It is
-#' recommended to set `nCores` and `nTasks` to `1` as nodes are often cheaper
-#' than cores.
+#' recommended to set `nCores` to `1` as nodes are often cheaper than cores.
 #'
 #' @section Example dataset:
 #' The `extdata` folder contains example files that were generated from the
