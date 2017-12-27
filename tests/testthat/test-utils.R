@@ -34,49 +34,6 @@ for (nCores in seq_len(2)) {
 
     })
 
-    test_that(paste("crossprod_parallel", "on", nCores, "cores"), {
-
-        hasCores(nCores)
-
-        W <- matrix(data = rnorm(200), nrow = 10, ncol = 20)
-        Z <- matrix(data = rnorm(20), nrow = 10, ncol = 2)
-
-        # Testing X'X
-        TMP <- crossprod(W)
-        for (nTasks in c(1, 3)) {
-            expect_equal(crossprod_parallel(x = W, nTasks = nTasks, nCores = nCores), TMP)
-        }
-
-        # Testing X'y
-        TMP <- crossprod(W, y = Z)
-        for (nTasks in c(1, 3)) {
-            expect_equal(crossprod_parallel(x = W, y = Z, nTasks = nTasks, nCores = nCores), TMP)
-        }
-
-    })
-
-
-    test_that(paste("tcrossprod_parallel", "on", nCores, "cores"), {
-
-        hasCores(nCores)
-
-        W <- matrix(data = rnorm(200), nrow = 10, ncol = 20)
-        Z <- matrix(data = rnorm(100), nrow = 5, ncol = 20)
-
-        # Testing XX'
-        TMP <- tcrossprod(W)
-        for (nTasks in c(1, 3)) {
-            expect_equal(tcrossprod_parallel(x = W, nTasks = nTasks, nCores = nCores), TMP)
-        }
-
-        # Testing XY'
-        TMP <- tcrossprod(W, y = Z)
-        for (nTasks in c(1, 3)) {
-            expect_equal(tcrossprod_parallel(x = W, y = Z, nTasks = nTasks, nCores = nCores), TMP)
-        }
-
-    })
-
     test_that(paste("getG_symDMatrix", "on", nCores, "cores"), {
 
         hasCores(nCores)
