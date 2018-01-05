@@ -2,9 +2,9 @@ library(parallel)
 
 context("utils")
 
-# Create dummy path
-testPath <- paste0(tempdir(), "/BGData-", BGData:::randomString(), "/")
-dir.create(testPath)
+testDir <- function() {
+    paste0(tempdir(), "/BGData-", BGData:::randomString(), "/")
+}
 
 hasCores <- function(numCores) {
     # For CRAN
@@ -42,7 +42,7 @@ for (nCores in seq_len(2)) {
         G1 <- tcrossprod(scale(W))
         G1 <- G1 / mean(diag(G1))
 
-        G2 <- getG_symDMatrix(X = W, blockSize = ceiling(nrow(W) / 3), folderOut = paste0(testPath, "test-", randomString()), nCores = nCores)
+        G2 <- getG_symDMatrix(X = W, blockSize = ceiling(nrow(W) / 3), folderOut = testDir(), nCores = nCores)
         expect_equal(G2[], G1)
 
     })
