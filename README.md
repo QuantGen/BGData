@@ -60,10 +60,6 @@ chr1 <- BEDMatrix(paste0(path, "/chr1.bed"))
 ```R
 dim(chr1)
 #> [1] 199 300
-dim(chr2)
-#> [1] 199 300
-dim(chr3)
-#> [1] 199 300
 rownames(chr1)[1:10]
 #> [1] "5837_5837" "6008_6008" "6009_6009" "6016_6016" "6040_6040" "6042_6042"
 #> [7] "6043_6043" "6046_6046" "6064_6064" "6074_6074"
@@ -168,7 +164,7 @@ load.BGData("BGData.RData")
 Use `chunkedApply` to count missing values (among others):
 
 ```R
-countNAs <- chunkedApply(X = bg, MARGIN = 2, FUN = function(x) sum(is.na(x)))
+countNAs <- chunkedApply(X = bg@geno, MARGIN = 2, FUN = function(x) sum(is.na(x)))
 ```
 
 Use the `summarize` function to calculate minor allele frequencies and frequency of missing values:
@@ -182,7 +178,7 @@ summarize(bg@geno)
 A data structure for genomic data is useful when defining methods that act on both phenotype and genotype information. We have implemented a `GWAS` function that supports various regression methods. The formula takes phenotypes from `@pheno` and inserts one marker at a time.
 
 ```R
-fm <- GWAS(formula = FT10 ~ 1, data = bg)
+gwas <- GWAS(formula = FT10 ~ 1, data = bg)
 ```
 
 ### Generating the G Matrix
