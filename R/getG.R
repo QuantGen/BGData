@@ -38,20 +38,11 @@ padDigits <- function(x, total) {
 #' used. Defaults to 5000.
 #' @param nCores The number of cores (passed to [parallel::mclapply()]).
 #' Defaults to the number of cores as detected by [parallel::detectCores()].
-#' @param gpu Whether to use the GPU to perform the computations. By setting
-#' this parameter, `nCores` will be set to 1.
 #' @param verbose Whether progress updates will be posted. Defaults to `FALSE`.
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @example man/examples/getG.R
 #' @export
-getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, i = seq_len(nrow(X)), j = seq_len(ncol(X)), i2 = NULL, bufferSize = 5000L, nCores = getOption("mc.cores", 2L), gpu = FALSE, verbose = FALSE) {
-
-    if (gpu) {
-        if (!requireNamespace("gpuR", quietly = TRUE)) {
-            stop("gpuR needed for this function to work. Please install it.", call. = FALSE)
-        }
-        nCores <- 1L
-    }
+getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, i = seq_len(nrow(X)), j = seq_len(ncol(X)), i2 = NULL, bufferSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE) {
 
     # compute XY' rather than XX'
     hasY <- !is.null(i2)
@@ -165,23 +156,10 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
                 X2[is.na(X2)] <- 0L
             }
 
-            if (gpu) {
-                # Currently, subsets have to be converted to double as gpuR
-                # does not support integer matrices
-                storage.mode(X1) <- "double"
-                if (hasY) {
-                    storage.mode(X2) <- "double"
-                    G_chunk <- gpuR::tcrossprod(x = gpuR::gpuMatrix(X1), y = gpuR::gpuMatrix(X2))
-                } else {
-                    G_chunk <- gpuR::tcrossprod(gpuR::gpuMatrix(X1))
-                }
-                G_chunk <- as.matrix(G_chunk)
+            if (hasY) {
+                G_chunk <- tcrossprod(x = X1, y = X2)
             } else {
-                if (hasY) {
-                    G_chunk <- tcrossprod(x = X1, y = X2)
-                } else {
-                    G_chunk <- tcrossprod(X1)
-                }
+                G_chunk <- tcrossprod(X1)
             }
 
             synchronicity::lock(mutex)
@@ -251,19 +229,10 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
 #' single block of the same length as `i` will be created. Defaults to 5000.
 #' @param nCores The number of cores (passed to [parallel::mclapply()]).
 #' Defaults to the number of cores as detected by [parallel::detectCores()].
-#' @param gpu Whether to use the GPU to perform the computations. By setting
-#' this parameter, `nCores` will be set to 1.
 #' @param verbose Whether progress updates will be posted. Defaults to `FALSE`.
 #' @return A [symDMatrix::symDMatrix-class] object.
 #' @export
-getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, folderOut = paste0("symDMatrix_", randomString()), vmode = "double", i = seq_len(nrow(X)), j = seq_len(ncol(X)), blockSize = 5000L, nCores = getOption("mc.cores", 2L), gpu = FALSE, verbose = FALSE) {
-
-    if (gpu) {
-        if (!requireNamespace("gpuR", quietly = TRUE)) {
-            stop("gpuR needed for this function to work. Please install it.", call. = FALSE)
-        }
-        nCores <- 1L
-    }
+getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, folderOut = paste0("symDMatrix_", randomString()), vmode = "double", i = seq_len(nrow(X)), j = seq_len(ncol(X)), blockSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE) {
 
     i <- convertIndexTypes(i, rownames(X))
     j <- convertIndexTypes(j, colnames(X))
@@ -319,7 +288,7 @@ getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, folde
             }
             if (colIndex >= rowIndex) {
                 blockName <- paste0("data_", padDigits(rowIndex, nBlocks), "_", padDigits(colIndex, nBlocks), ".bin")
-                block <- ff::as.ff(getG(X, center = center, scale = scale, scaleG = FALSE, i = blockIndices[[rowIndex]], j = j, i2 = blockIndices[[colIndex]], bufferSize = blockSize, nCores = nCores, gpu = gpu, verbose = FALSE), filename = paste0(folderOut, "/", blockName), vmode = vmode)
+                block <- ff::as.ff(getG(X, center = center, scale = scale, scaleG = FALSE, i = blockIndices[[rowIndex]], j = j, i2 = blockIndices[[colIndex]], bufferSize = blockSize, nCores = nCores, verbose = FALSE), filename = paste0(folderOut, "/", blockName), vmode = vmode)
                 # Change ff path to a relative one
                 bit::physical(block)$filename <- blockName
                 rowArgs[[colIndex]] <- block
