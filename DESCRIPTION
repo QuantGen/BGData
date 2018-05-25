@@ -29,6 +29,7 @@ Suggests:
     data.table (>= 1.9.6),
     lme4,
     SKAT,
-    testthat
+    testthat,
+    covr
 RoxygenNote: 6.0.1
 Roxygen: list(markdown = TRUE)
