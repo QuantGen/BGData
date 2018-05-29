@@ -16,7 +16,7 @@ BugReports: https://github.com/QuantGen/BGData/issues
 Depends:
     R (>= 3.0.2),
     BEDMatrix (>= 1.4.0),
-    LinkedMatrix,
+    LinkedMatrix (>= 1.3.0),
     symDMatrix
 Imports:
     methods,
