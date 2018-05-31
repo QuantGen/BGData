@@ -43,7 +43,7 @@ for (nCores in seq_len(2)) {
         G1 <- G1 / mean(diag(G1))
 
         G2 <- getG_symDMatrix(X = W, blockSize = ceiling(nrow(W) / 3), folderOut = testDir(), nCores = nCores)
-        expect_equal(G2[], G1)
+        expect_equivalent(G2[], G1) # use equivalent to correct slight difference in NULL dimnames handling
 
     })
 
