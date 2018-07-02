@@ -217,6 +217,8 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
 #' the number of columns of `X`. If `FALSE`, no scaling is done. Defaults to
 #' `TRUE`.
 #' @param scaleG TRUE/FALSE whether xx' must be scaled.
+#' @param minVar Columns with variance lower than this value will not be used
+#' in the computation (only if `scale` is not `FALSE`).
 #' @param folderOut The path to the folder where to save the
 #' [symDMatrix::symDMatrix-class] object. Defaults to a random string prefixed
 #' with "symDMatrix_".
@@ -232,7 +234,7 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
 #' @param verbose Whether progress updates will be posted. Defaults to `FALSE`.
 #' @return A [symDMatrix::symDMatrix-class] object.
 #' @export
-getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, folderOut = paste0("symDMatrix_", randomString()), vmode = "double", i = seq_len(nrow(X)), j = seq_len(ncol(X)), blockSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE) {
+getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, folderOut = paste0("symDMatrix_", randomString()), vmode = "double", i = seq_len(nrow(X)), j = seq_len(ncol(X)), blockSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE) {
 
     i <- convertIndexTypes(i, rownames(X))
     j <- convertIndexTypes(j, colnames(X))
@@ -288,7 +290,7 @@ getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, folde
             }
             if (colIndex >= rowIndex) {
                 blockName <- paste0("data_", padDigits(rowIndex, nBlocks), "_", padDigits(colIndex, nBlocks), ".bin")
-                block <- ff::as.ff(getG(X, center = center, scale = scale, scaleG = FALSE, i = blockIndices[[rowIndex]], j = j, i2 = blockIndices[[colIndex]], bufferSize = blockSize, nCores = nCores, verbose = FALSE), filename = paste0(folderOut, "/", blockName), vmode = vmode)
+                block <- ff::as.ff(getG(X, center = center, scale = scale, scaleG = FALSE, minVar = minVar, i = blockIndices[[rowIndex]], j = j, i2 = blockIndices[[colIndex]], bufferSize = blockSize, nCores = nCores, verbose = FALSE), filename = paste0(folderOut, "/", blockName), vmode = vmode)
                 # Change ff path to a relative one
                 bit::physical(block)$filename <- blockName
                 rowArgs[[colIndex]] <- block

@@ -5,9 +5,9 @@
 \title{Computes a Very Large Genomic Relationship Matrix.}
 \usage{
 getG_symDMatrix(X, center = TRUE, scale = TRUE, scaleG = TRUE,
-  folderOut = paste0("symDMatrix_", randomString()), vmode = "double",
-  i = seq_len(nrow(X)), j = seq_len(ncol(X)), blockSize = 5000L,
-  nCores = getOption("mc.cores", 2L), verbose = FALSE)
+  minVar = 1e-05, folderOut = paste0("symDMatrix_", randomString()),
+  vmode = "double", i = seq_len(nrow(X)), j = seq_len(ncol(X)),
+  blockSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE)
 }
 \arguments{
 \item{X}{A matrix-like object, typically \code{@geno} of a \linkS4class{BGData}
@@ -22,6 +22,9 @@ the number of columns of \code{X}. If \code{FALSE}, no scaling is done. Defaults
 \code{TRUE}.}
 
 \item{scaleG}{TRUE/FALSE whether xx' must be scaled.}
+
+\item{minVar}{Columns with variance lower than this value will not be used
+in the computation (only if \code{scale} is not \code{FALSE}).}
 
 \item{folderOut}{The path to the folder where to save the
 \link[symDMatrix:symDMatrix-class]{symDMatrix::symDMatrix} object. Defaults to a random string prefixed
