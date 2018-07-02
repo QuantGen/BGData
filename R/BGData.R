@@ -520,7 +520,8 @@ orderedMerge <- function(x, y, by = c(1L, 2L)) {
 #' phenotypes are required it is possible to store them in an [alternate
 #' phenotype file](https://www.cog-genomics.org/plink2/input#pheno). The path
 #' to such a file can be provided with `alternatePhenotypeFile` and will be
-#' merged with the data in the `@@pheno` slot.
+#' merged with the data in the `@@pheno` slot. The first and second columns of
+#' that file must contain family and within-family IDs, respectively.
 #'
 #' For [BEDMatrix::BEDMatrix-class] objects: If a .fam file (which corresponds
 #' to the first six columns of a .ped or .raw file) of the same name and in the

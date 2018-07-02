@@ -40,7 +40,8 @@ phenotypes and map files referenced by the object to be used for the
 The .ped and .raw formats only allows for a single phenotype. If more
 phenotypes are required it is possible to store them in an \href{https://www.cog-genomics.org/plink2/input#pheno}{alternatephenotype file}. The path
 to such a file can be provided with \code{alternatePhenotypeFile} and will be
-merged with the data in the \code{@pheno} slot.
+merged with the data in the \code{@pheno} slot. The first and second columns of
+that file must contain family and within-family IDs, respectively.
 
 For \link[BEDMatrix:BEDMatrix-class]{BEDMatrix::BEDMatrix} objects: If a .fam file (which corresponds
 to the first six columns of a .ped or .raw file) of the same name and in the
