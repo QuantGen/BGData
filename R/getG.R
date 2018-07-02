@@ -268,7 +268,6 @@ getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVa
 
     if (is.logical(scale) && scale == TRUE) {
         scale <- chunkedApply(X = X, MARGIN = 2L, FUN  = stats::sd, i = i, j = j, bufferSize = blockSize, nCores = nCores, verbose = FALSE, na.rm = TRUE)
-        scale <- scale * sqrt((nX - 1L) / nX) # to avoid NaN
     } else if (is.logical(scale) && scale == FALSE) {
         scale <- rep(1L, p)
     }
