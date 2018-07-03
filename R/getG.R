@@ -278,7 +278,7 @@ getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVa
     }
     dir.create(folderOut)
 
-    blockIndices <- split(i, ceiling(i / blockSize))
+    blockIndices <- split(i, ceiling(seq_along(i) / blockSize))
     args <- vector(mode = "list", length = nBlocks)
     counter <- 1L
     for (rowIndex in 1L:nBlocks) {

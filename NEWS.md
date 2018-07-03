@@ -5,6 +5,8 @@
   `nTasks` is not necessary anymore and the buffering code is the same for one
   core and for multiple cores.
 - Remove `nTasks` parameter from `chunkedApply()` and methods based on it.
+- getG_symDMatrix: Compute block indices correctly for out-of-order,
+  non-sequential indices.
 
 
 # BGData 1.0.0
