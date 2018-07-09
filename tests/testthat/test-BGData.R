@@ -274,10 +274,8 @@ test_that("it converts a BEDMatrix object to a BGData object", {
     expect_equal(dim(bgData@geno), dim(bedMatrix))
     expect_equal(nrow(bgData@pheno), nrow(bedMatrix))
     expect_equal(rownames(bgData@pheno), rownames(bedMatrix))
-    expect_equal(paste0(bgData@pheno$FID, "_", bgData@pheno$IID), rownames(bedMatrix))
     expect_equal(nrow(bgData@map), ncol(bedMatrix))
     expect_equal(rownames(bgData@map), colnames(bedMatrix))
-    expect_equal(paste0(bgData@map$snp_id, "_", bgData@map$allele_1), colnames(bedMatrix))
 })
 
 test_that("it throws an error if an alternate phenotype file does not exist when converting a BEDMatrix object to a BGData object", {

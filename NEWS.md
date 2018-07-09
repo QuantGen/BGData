@@ -7,8 +7,8 @@
 - Remove `nTasks` parameter from `chunkedApply()` and methods based on it.
 - getG_symDMatrix: Compute block indices correctly for out-of-order,
   non-sequential indices.
-- as.BGData: Generate rownames for pheno and map that match (in structure) the
-  dimnames of a BEDMatrix object (pheno: `FID_IID`, map: `SNPID_ALLELE1`).
+- as.BGData: Use rownames of BEDMatrix object as rownames for pheno, and
+  colnames of BEDMatrix object as rownames for map.
 - orderedMerge: Retain rownames.
 
 
