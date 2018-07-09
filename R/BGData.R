@@ -405,6 +405,7 @@ generatePheno <- function(x) {
         splits <- strsplit(rownames(x), "_")
         pheno <- data.frame(FID = sapply(splits, "[", 1L), IID = sapply(splits, "[", 2L), stringsAsFactors = FALSE)
     }
+    rownames(pheno) <- paste0(pheno$FID, "_", pheno$IID)
     return(pheno)
 }
 
@@ -456,6 +457,7 @@ generateMap <- function(x) {
             stringsAsFactors = FALSE
         )
     }
+    rownames(map) <- paste0(map$snp_id, "_", map$allele_1)
     return(map)
 }
 
