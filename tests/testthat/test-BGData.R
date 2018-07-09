@@ -295,4 +295,6 @@ test_that("it reads an alternate phenotype file when converting a BEDMatrix obje
     expect_equal(bgData@pheno[1, 7], 57.0)
     expect_equal(nrow(bgData@pheno), nrow(bgData@geno))
     expect_true(all(is.na(bgData@pheno[c(178, 180, 189, 190, 196), 7])))
+    # Test if rownames are retained
+    expect_equal(rownames(bgData@pheno), rownames(bedMatrix))
 })

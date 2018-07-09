@@ -501,12 +501,14 @@ orderedMerge <- function(x, y, by = c(1L, 2L)) {
     # (merge's `sort = FALSE` order is unspecified)
     x$.sortColumn <- seq_len(nrow(x))
     # Merge phenotypes and alternate phenotypes
-    x <- merge(x, y, by = by, all.x = TRUE)
+    merged <- merge(x, y, by = by, all.x = TRUE)
     # Reorder phenotypes to match original order and delete artificial
     # column
-    x <- x[order(x$.sortColumn), ]
-    x <- x[, names(x) != ".sortColumn"]
-    return(x)
+    merged <- merged[order(merged$.sortColumn), ]
+    merged <- merged[, names(merged) != ".sortColumn"]
+    # Restore rownames (assuming order is retained and no rows disappear...)
+    rownames(merged) <- rownames(x)
+    return(merged)
 }
 
 

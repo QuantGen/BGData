@@ -9,6 +9,7 @@
   non-sequential indices.
 - as.BGData: Generate rownames for pheno and map that match (in structure) the
   dimnames of a BEDMatrix object (pheno: `FID_IID`, map: `SNPID_ALLELE1`).
+- orderedMerge: Retain rownames.
 
 
 # BGData 1.0.0
