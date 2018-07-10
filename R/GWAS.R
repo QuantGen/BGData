@@ -38,8 +38,8 @@ GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)), 
         stop("Only lm, lm.fit, lsfit, glm, lmer, SKAT, and rayOLS have been implemented so far.")
     }
 
-    i <- convertIndexTypes(i, rownames(data@geno))
-    j <- convertIndexTypes(j, colnames(data@geno))
+    i <- crochet::convertIndex(data@geno, i, "i")
+    j <- crochet::convertIndex(data@geno, j, "j")
 
     if (method == "lsfit") {
         OUT <- GWAS.lsfit(formula = formula, data = data, i = i, j = j, bufferSize = bufferSize, nCores = nCores, verbose = verbose, ...)

@@ -32,8 +32,8 @@ chunkedApply <- function(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(
     if (!length(dim(X))) {
         stop("dim(X) must have a positive length")
     }
-    i <- convertIndexTypes(i, rownames(X))
-    j <- convertIndexTypes(j, colnames(X))
+    i <- crochet::convertIndex(X, i, "i")
+    j <- crochet::convertIndex(X, j, "j")
     dimX <- c(length(i), length(j))
     if (is.null(bufferSize)) {
         bufferSize <- dimX[MARGIN]

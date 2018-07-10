@@ -23,8 +23,8 @@
 #' @example man/examples/summarize.R
 #' @export
 summarize <- function(X, i = seq_len(nrow(X)), j = seq_len(ncol(X)), bufferSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE) {
-    i <- convertIndexTypes(i, rownames(X))
-    j <- convertIndexTypes(j, colnames(X))
+    i <- crochet::convertIndex(X, i, "i")
+    j <- crochet::convertIndex(X, j, "j")
     m <- chunkedApply(X = X, MARGIN = 2L, FUN = function(col) {
         freqNA <- mean(is.na(col))
         alleleFreq <- mean(col, na.rm = TRUE) / 2L

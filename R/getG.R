@@ -56,10 +56,10 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
         }
     }
 
-    i <- convertIndexTypes(i, rownames(X))
-    j <- convertIndexTypes(j, colnames(X))
+    i <- crochet::convertIndex(X, i, "i")
+    j <- crochet::convertIndex(X, j, "j")
     if (hasY) {
-        i2 <- convertIndexTypes(i2, rownames(X))
+        i2 <- crochet::convertIndex(X, i2, "i")
     }
 
     nX <- nrow(X)
@@ -236,8 +236,8 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
 #' @export
 getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, folderOut = paste0("symDMatrix_", randomString()), vmode = "double", i = seq_len(nrow(X)), j = seq_len(ncol(X)), blockSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE) {
 
-    i <- convertIndexTypes(i, rownames(X))
-    j <- convertIndexTypes(j, colnames(X))
+    i <- crochet::convertIndex(X, i, "i")
+    j <- crochet::convertIndex(X, j, "j")
 
     nX <- nrow(X)
     pX <- ncol(X)

@@ -53,16 +53,6 @@ normalizeType <- function(val) {
 }
 
 
-convertIndexTypes <- function(index, names) {
-    if (is.logical(index)) {
-        index <- which(index)
-    } else if (is.character(index)) {
-        index <- match(index, names)
-    }
-    return(index)
-}
-
-
 loadExample <- function() {
     path <- system.file("extdata", package = "BGData")
     message("Loading chromosomes as BED files...")

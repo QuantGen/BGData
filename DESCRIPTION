@@ -21,6 +21,7 @@ Depends:
 Imports:
     methods,
     parallel,
+    crochet,
     bigmemory,
     synchronicity,
     ff,
@@ -32,6 +33,7 @@ Suggests:
     testthat,
     covr
 Remotes:
-    QuantGen/symDMatrix
+    QuantGen/symDMatrix,
+    agrueneberg/crochet
 RoxygenNote: 6.0.1
 Roxygen: list(markdown = TRUE)
