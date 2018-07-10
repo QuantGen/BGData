@@ -5,7 +5,7 @@
 #' of `@@geno` at a time. The data from the association tests is obtained from
 #' a [BGData-class] object.
 #'
-#' @inheritSection BGData-package Memory-mapping
+#' @inheritSection BGData-package File-backed matrices
 #' @inheritSection BGData-package Multi-level parallelism
 #' @param formula The formula for the GWAS model without including the marker,
 #' e.g. `y ~ 1` or `y ~ factor(sex) + age`. The variables included in the

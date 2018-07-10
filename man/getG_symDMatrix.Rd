@@ -69,7 +69,7 @@ For parallel computing, \code{nCores} determines the number of cores the code is
 run on. Memory usage can be an issue for higher values of \code{nCores} as R is
 not particularly memory-efficient. As a rule of thumb, at least around
 \code{(nCores * object_size(buffer)) + object_size(result)} MB of total memory
-will be needed for operations on memory-mapped matrices, not including
+will be needed for operations on file-backed matrices, not including
 potential copies of your data that might be created (for example
 \code{\link[stats:lsfit]{stats::lsfit()}} runs \code{cbind(1, X)}). \code{i} and \code{j} can be used to include or
 exclude certain rows or columns. Internally, the \code{\link[parallel:mclapply]{parallel::mclapply()}}

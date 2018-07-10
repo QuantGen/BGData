@@ -11,7 +11,7 @@ padDigits <- function(x, total) {
 #' If `center = FALSE`, `scale = FALSE` and `scaleG = FALSE`, [getG()] produces
 #' the same outcome than [base::tcrossprod()].
 #'
-#' @inheritSection BGData-package Memory-mapping
+#' @inheritSection BGData-package File-backed matrices
 #' @inheritSection BGData-package Multi-level parallelism
 #' @param X A matrix-like object, typically `@@geno` of a [BGData-class]
 #' object.

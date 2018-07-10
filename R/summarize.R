@@ -3,7 +3,7 @@
 #' Computes the frequency of missing values, the (minor) allele frequency, and
 #' standard deviation of each column of `X`.
 #'
-#' @inheritSection BGData-package Memory-mapping
+#' @inheritSection BGData-package File-backed matrices
 #' @inheritSection BGData-package Multi-level parallelism
 #' @param X A matrix-like object, typically `@@geno` of a [BGData-class]
 #' object.

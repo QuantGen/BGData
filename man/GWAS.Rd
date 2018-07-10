@@ -45,12 +45,12 @@ covariates specified in the right-hand-side of the \code{formula} plus one colum
 of \code{@geno} at a time. The data from the association tests is obtained from
 a \linkS4class{BGData} object.
 }
-\section{Memory-mapping}{
+\section{File-backed matrices}{
 
-Functions with the \code{bufferSize} parameter work best with memory-mapped
+Functions with the \code{bufferSize} parameter work best with file-backed
 matrices such as \link[BEDMatrix:BEDMatrix-class]{BEDMatrix::BEDMatrix} objects. To avoid loading the
 whole, potentially very large matrix into memory, these functions will load
-chunks of the memory-mapped matrix into memory and perform the operations on
+chunks of the file-backed matrix into memory and perform the operations on
 one chunk at a time. The size of the chunks is determined by the
 \code{bufferSize} parameter. Care must be taken to not set \code{bufferSize} too high
 to avoid memory shortage, particularly when combined with parallel
@@ -66,7 +66,7 @@ For parallel computing, \code{nCores} determines the number of cores the code is
 run on. Memory usage can be an issue for higher values of \code{nCores} as R is
 not particularly memory-efficient. As a rule of thumb, at least around
 \code{(nCores * object_size(buffer)) + object_size(result)} MB of total memory
-will be needed for operations on memory-mapped matrices, not including
+will be needed for operations on file-backed matrices, not including
 potential copies of your data that might be created (for example
 \code{\link[stats:lsfit]{stats::lsfit()}} runs \code{cbind(1, X)}). \code{i} and \code{j} can be used to include or
 exclude certain rows or columns. Internally, the \code{\link[parallel:mclapply]{parallel::mclapply()}}

@@ -1,18 +1,16 @@
-#' Applies a Function on Each Row or Column of a Memory-Mapped Matrix-Like
-#' Object.
+#' Applies a Function on Each Row or Column of a File-Backed Matrix.
 #'
-#' Similar to [base::apply()], but designed for memory-mapped matrix-like
-#' objects. The function brings chunks of an object into physical memory by
-#' taking subsets, and applies a function on either the rows or the columns of
-#' the chunks using an optimized version of [base::apply()]. If `nCores` is
-#' greater than 1, the function will be applied in parallel using
-#' [parallel::mclapply()]. In that case the subsets of the object are taken on
-#' the slaves.
+#' Similar to [base::apply()], but designed for file-backed matrices. The
+#' function brings chunks of an object into physical memory by taking subsets,
+#' and applies a function on either the rows or the columns of the chunks using
+#' an optimized version of [base::apply()]. If `nCores` is greater than 1, the
+#' function will be applied in parallel using [parallel::mclapply()]. In that
+#' case the subsets of the object are taken on the slaves.
 #'
-#' @inheritSection BGData-package Memory-mapping
+#' @inheritSection BGData-package File-backed matrices
 #' @inheritSection BGData-package Multi-level parallelism
-#' @param X A memory-mapped matrix-like object, typically `@@geno` of a
-#' [BGData-class] object.
+#' @param X A file-backed matrix, typically `@@geno` of a [BGData-class]
+#' object.
 #' @param MARGIN The subscripts which the function will be applied over. 1
 #' indicates rows, 2 indicates columns.
 #' @param FUN The function to be applied.

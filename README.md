@@ -12,8 +12,8 @@ Modern genomic datasets are big (large *n*), high-dimensional (large *p*), and m
 
 We have identified several approaches to tackle those challenges within R:
 
-- Memory mapping: The data is stored in on the hard drive and users can read in smaller chunks when they are needed.
-- Linked arrays: For very large datasets a single memory-mapped array may not be enough or convenient. A linked array is an array whose content is distributed over multiple memory-mapped nodes.
+- File-backed matrices: The data is stored in on the hard drive and users can read in smaller chunks when they are needed.
+- Linked arrays: For very large datasets a single file-backed array may not be enough or convenient. A linked array is an array whose content is distributed over multiple file-backed nodes.
 - Multiple dispatch: Methods are presented to users so that they can treat these arrays pretty much as if they were RAM arrays.
 - Multi-level parallelism: Exploit multi-core and multi-node computing.
 - Inputs: Users can create these arrays from standard formats (e.g., PLINK .bed).

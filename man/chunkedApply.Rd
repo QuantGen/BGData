@@ -2,16 +2,15 @@
 % Please edit documentation in R/chunkedApply.R
 \name{chunkedApply}
 \alias{chunkedApply}
-\title{Applies a Function on Each Row or Column of a Memory-Mapped Matrix-Like
-Object.}
+\title{Applies a Function on Each Row or Column of a File-Backed Matrix.}
 \usage{
 chunkedApply(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(X)),
   bufferSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE,
   ...)
 }
 \arguments{
-\item{X}{A memory-mapped matrix-like object, typically \code{@geno} of a
-\linkS4class{BGData} object.}
+\item{X}{A file-backed matrix, typically \code{@geno} of a \linkS4class{BGData}
+object.}
 
 \item{MARGIN}{The subscripts which the function will be applied over. 1
 indicates rows, 2 indicates columns.}
@@ -37,20 +36,19 @@ Defaults to the number of cores as detected by \code{\link[parallel:detectCores]
 function.}
 }
 \description{
-Similar to \code{\link[base:apply]{base::apply()}}, but designed for memory-mapped matrix-like
-objects. The function brings chunks of an object into physical memory by
-taking subsets, and applies a function on either the rows or the columns of
-the chunks using an optimized version of \code{\link[base:apply]{base::apply()}}. If \code{nCores} is
-greater than 1, the function will be applied in parallel using
-\code{\link[parallel:mclapply]{parallel::mclapply()}}. In that case the subsets of the object are taken on
-the slaves.
+Similar to \code{\link[base:apply]{base::apply()}}, but designed for file-backed matrices. The
+function brings chunks of an object into physical memory by taking subsets,
+and applies a function on either the rows or the columns of the chunks using
+an optimized version of \code{\link[base:apply]{base::apply()}}. If \code{nCores} is greater than 1, the
+function will be applied in parallel using \code{\link[parallel:mclapply]{parallel::mclapply()}}. In that
+case the subsets of the object are taken on the slaves.
 }
-\section{Memory-mapping}{
+\section{File-backed matrices}{
 
-Functions with the \code{bufferSize} parameter work best with memory-mapped
+Functions with the \code{bufferSize} parameter work best with file-backed
 matrices such as \link[BEDMatrix:BEDMatrix-class]{BEDMatrix::BEDMatrix} objects. To avoid loading the
 whole, potentially very large matrix into memory, these functions will load
-chunks of the memory-mapped matrix into memory and perform the operations on
+chunks of the file-backed matrix into memory and perform the operations on
 one chunk at a time. The size of the chunks is determined by the
 \code{bufferSize} parameter. Care must be taken to not set \code{bufferSize} too high
 to avoid memory shortage, particularly when combined with parallel
@@ -66,7 +64,7 @@ For parallel computing, \code{nCores} determines the number of cores the code is
 run on. Memory usage can be an issue for higher values of \code{nCores} as R is
 not particularly memory-efficient. As a rule of thumb, at least around
 \code{(nCores * object_size(buffer)) + object_size(result)} MB of total memory
-will be needed for operations on memory-mapped matrices, not including
+will be needed for operations on file-backed matrices, not including
 potential copies of your data that might be created (for example
 \code{\link[stats:lsfit]{stats::lsfit()}} runs \code{cbind(1, X)}). \code{i} and \code{j} can be used to include or
 exclude certain rows or columns. Internally, the \code{\link[parallel:mclapply]{parallel::mclapply()}}
