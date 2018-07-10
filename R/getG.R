@@ -102,7 +102,11 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
     bufferApply <- function(curBuffer) {
 
         if (verbose) {
-            message("Buffer ", curBuffer, " of ", nBuffers, " ...")
+            if (nCores > 1) {
+                message("Process ", Sys.getpid(), ": Buffer ", curBuffer, " of ", nBuffers, " ...")
+            } else {
+                message("Buffer ", curBuffer, " of ", nBuffers, " ...")
+            }
         }
 
         # subset

@@ -44,7 +44,11 @@ chunkedApply <- function(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(
     bufferRanges <- LinkedMatrix:::chunkRanges(dimX[MARGIN], nBuffers)
     bufferApply <- function(curBuffer, ...) {
         if (verbose) {
-            message("Buffer ", curBuffer, " of ", nBuffers, " ...")
+            if (nCores > 1) {
+                message("Process ", Sys.getpid(), ": Buffer ", curBuffer, " of ", nBuffers, " ...")
+            } else {
+                message("Buffer ", curBuffer, " of ", nBuffers, " ...")
+            }
         }
         if (MARGIN == 2L) {
             buffer <- X[i, j[seq(bufferRanges[1L, curBuffer], bufferRanges[2L, curBuffer])], drop = FALSE]

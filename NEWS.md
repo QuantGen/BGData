@@ -10,6 +10,7 @@
 - as.BGData: Use rownames of BEDMatrix object as rownames for pheno, and
   colnames of BEDMatrix object as rownames for map.
 - orderedMerge: Retain rownames.
+- Include process ID in verbose output if nCores > 1.
 
 
 # BGData 1.0.0
