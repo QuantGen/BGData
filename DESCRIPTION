@@ -33,6 +33,7 @@ Suggests:
     testthat,
     covr
 Remotes:
+    QuantGen/LinkedMatrix,
     QuantGen/symDMatrix,
     agrueneberg/crochet
 RoxygenNote: 6.0.1
