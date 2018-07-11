@@ -18,7 +18,7 @@
 #' boolean, or character. By default, all rows are used.
 #' @param j Indicates which columns of `@@geno` should be used. Can be integer,
 #' boolean, or character. By default, all columns are used.
-#' @param bufferSize The number of columns of `@@geno` that are brought into
+#' @param chunkSize The number of columns of `@@geno` that are brought into
 #' physical memory for processing per core. If `NULL`, all elements in `j` are
 #' used. Defaults to 5000.
 #' @param nCores The number of cores (passed to [parallel::mclapply()]).
@@ -28,7 +28,7 @@
 #' @return The same matrix that would be returned by `coef(summary(model))`.
 #' @example man/examples/GWAS.R
 #' @export
-GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), bufferSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
+GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), chunkSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
 
     if (class(data) != "BGData") {
         stop("data must BGData")
@@ -42,12 +42,12 @@ GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)), 
     j <- crochet::convertIndex(data@geno, j, "j")
 
     if (method == "lsfit") {
-        OUT <- GWAS.lsfit(formula = formula, data = data, i = i, j = j, bufferSize = bufferSize, nCores = nCores, verbose = verbose, ...)
+        OUT <- GWAS.lsfit(formula = formula, data = data, i = i, j = j, chunkSize = chunkSize, nCores = nCores, verbose = verbose, ...)
     } else if (method == "rayOLS") {
         if (length(attr(stats::terms(formula), "term.labels")) > 0L) {
             stop("method rayOLS can only be used with y~1 formula, if you want to add covariates pre-adjust your phenotype.")
         }
-        OUT <- GWAS.rayOLS(formula = formula, data = data, i = i, j = j, bufferSize = bufferSize, nCores = nCores, verbose = verbose, ...)
+        OUT <- GWAS.rayOLS(formula = formula, data = data, i = i, j = j, chunkSize = chunkSize, nCores = nCores, verbose = verbose, ...)
     } else if (method == "SKAT") {
         OUT <- GWAS.SKAT(formula = formula, data = data, i = i, j = j, verbose = verbose, ...)
     } else {
@@ -65,7 +65,7 @@ GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)), 
             pheno$z <- col
             fm <- FUN(GWAS.model, data = pheno, ...)
             getCoefficients(fm)
-        }, i = i, j = j, bufferSize = bufferSize, nCores = nCores, verbose = verbose, ...)
+        }, i = i, j = j, chunkSize = chunkSize, nCores = nCores, verbose = verbose, ...)
         colnames(OUT) <- colnames(data@geno)[j]
         OUT <- t(OUT)
     }
@@ -75,19 +75,19 @@ GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)), 
 
 
 # the GWAS method for rayOLS
-GWAS.rayOLS <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), bufferSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
+GWAS.rayOLS <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), chunkSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
     y <- data@pheno[i, as.character(stats::terms(formula)[[2L]]), drop = TRUE]
     y <- y - mean(y, na.rm = TRUE)
     n <- length(y)
     Int <- rep(1, n)
     SSy <- sum(y^2, na.rm = TRUE)
     isNAY <- which(is.na(y))
-    res <- chunkedApply(X = data@geno, MARGIN = 2L, FUN = rayOLS, i = i, j = j, bufferSize = bufferSize, nCores = nCores, verbose = verbose, y = y, Int = Int, SSy = SSy, n = n, isNAY = isNAY, ...)
+    res <- chunkedApply(X = data@geno, MARGIN = 2L, FUN = rayOLS, i = i, j = j, chunkSize = chunkSize, nCores = nCores, verbose = verbose, y = y, Int = Int, SSy = SSy, n = n, isNAY = isNAY, ...)
     return(t(res))
 }
 
 
-GWAS.lsfit <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), bufferSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
+GWAS.lsfit <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), chunkSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
 
     # subset of model.frame has bizarre scoping issues
     frame <- stats::model.frame(formula = formula, data = data@pheno)[i, , drop = FALSE]
@@ -100,7 +100,7 @@ GWAS.lsfit <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(
         model[, 1L] <- col
         fm <- stats::lsfit(x = model, y = y, intercept = FALSE)
         stats::ls.print(fm, print.it = FALSE)$coef.table[[1L]][1L, ]
-    }, i = i, j = j, bufferSize = bufferSize, nCores = nCores, verbose = verbose, ...)
+    }, i = i, j = j, chunkSize = chunkSize, nCores = nCores, verbose = verbose, ...)
     colnames(res) <- colnames(data@geno)[j]
     res <- t(res)
 

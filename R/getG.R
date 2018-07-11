@@ -33,16 +33,16 @@ padDigits <- function(x, total) {
 #' and `j` and Y by `i2` and `j`. Can be integer, boolean, or character. If
 #' `NULL`, the whole genomic relationship matrix XX' is computed. Defaults to
 #' `NULL`.
-#' @param bufferSize The number of columns of `X` that are brought into
-#' physical memory for processing per core. If `NULL`, all columns of `X` are
-#' used. Defaults to 5000.
+#' @param chunkSize The number of columns of `X` that are brought into physical
+#' memory for processing per core. If `NULL`, all columns of `X` are used.
+#' Defaults to 5000.
 #' @param nCores The number of cores (passed to [parallel::mclapply()]).
 #' Defaults to the number of cores as detected by [parallel::detectCores()].
 #' @param verbose Whether progress updates will be posted. Defaults to `FALSE`.
 #' @return A positive semi-definite symmetric numeric matrix.
 #' @example man/examples/getG.R
 #' @export
-getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, i = seq_len(nrow(X)), j = seq_len(ncol(X)), i2 = NULL, bufferSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE) {
+getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, i = seq_len(nrow(X)), j = seq_len(ncol(X)), i2 = NULL, chunkSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE) {
 
     # compute XY' rather than XX'
     hasY <- !is.null(i2)
@@ -83,11 +83,11 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
         n2 <- length(i2)
     }
 
-    if (is.null(bufferSize)) {
-        bufferSize <- p
-        nBuffers <- 1L
+    if (is.null(chunkSize)) {
+        chunkSize <- p
+        nChunks <- 1L
     } else {
-        nBuffers <- ceiling(p / bufferSize)
+        nChunks <- ceiling(p / chunkSize)
     }
 
     if (hasY) {
@@ -98,19 +98,19 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
 
     mutex <- synchronicity::boost.mutex()
 
-    bufferRanges <- LinkedMatrix:::chunkRanges(p, nBuffers)
-    bufferApply <- function(curBuffer) {
+    chunkRanges <- LinkedMatrix:::chunkRanges(p, nChunks)
+    chunkApply <- function(chunkNum) {
 
         if (verbose) {
             if (nCores > 1) {
-                message("Process ", Sys.getpid(), ": Buffer ", curBuffer, " of ", nBuffers, " ...")
+                message("Process ", Sys.getpid(), ": Chunk ", chunkNum, " of ", nChunks, " ...")
             } else {
-                message("Buffer ", curBuffer, " of ", nBuffers, " ...")
+                message("Chunk ", chunkNum, " of ", nChunks, " ...")
             }
         }
 
         # subset
-        localColIndex <- j[seq(bufferRanges[1L, curBuffer], bufferRanges[2L, curBuffer])]
+        localColIndex <- j[seq(chunkRanges[1L, chunkNum], chunkRanges[2L, chunkNum])]
         X1 <- X[i, localColIndex, drop = FALSE]
         if (hasY) {
             X2 <- X[i2, localColIndex, drop = FALSE]
@@ -177,9 +177,9 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
     }
 
     if (nCores == 1L) {
-        res <- lapply(X = seq_len(nBuffers), FUN = bufferApply)
+        res <- lapply(X = seq_len(nChunks), FUN = chunkApply)
     } else {
-        res <- parallel::mclapply(seq_len(nBuffers), bufferApply)
+        res <- parallel::mclapply(seq_len(nChunks), chunkApply)
     }
 
     # Convert big.matrix to matrix
@@ -264,14 +264,14 @@ getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVa
     }
 
     if (is.logical(center) && center == TRUE) {
-        center <- chunkedApply(X = X, MARGIN = 2L, FUN = mean, i = i, j = j, bufferSize = blockSize, nCores = nCores, verbose = FALSE, na.rm = TRUE)
+        center <- chunkedApply(X = X, MARGIN = 2L, FUN = mean, i = i, j = j, chunkSize = blockSize, nCores = nCores, verbose = FALSE, na.rm = TRUE)
     } else if (is.logical(center) && center == FALSE) {
         center <- rep(0L, p)
     }
     names(center) <- colnames(X)[j]
 
     if (is.logical(scale) && scale == TRUE) {
-        scale <- chunkedApply(X = X, MARGIN = 2L, FUN  = stats::sd, i = i, j = j, bufferSize = blockSize, nCores = nCores, verbose = FALSE, na.rm = TRUE)
+        scale <- chunkedApply(X = X, MARGIN = 2L, FUN = stats::sd, i = i, j = j, chunkSize = blockSize, nCores = nCores, verbose = FALSE, na.rm = TRUE)
     } else if (is.logical(scale) && scale == FALSE) {
         scale <- rep(1L, p)
     }
@@ -293,7 +293,7 @@ getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVa
             }
             if (colIndex >= rowIndex) {
                 blockName <- paste0("data_", padDigits(rowIndex, nBlocks), "_", padDigits(colIndex, nBlocks), ".bin")
-                block <- ff::as.ff(getG(X, center = center, scale = scale, scaleG = FALSE, minVar = minVar, i = blockIndices[[rowIndex]], j = j, i2 = blockIndices[[colIndex]], bufferSize = blockSize, nCores = nCores, verbose = FALSE), filename = paste0(folderOut, "/", blockName), vmode = vmode)
+                block <- ff::as.ff(getG(X, center = center, scale = scale, scaleG = FALSE, minVar = minVar, i = blockIndices[[rowIndex]], j = j, i2 = blockIndices[[colIndex]], chunkSize = blockSize, nCores = nCores, verbose = FALSE), filename = paste0(folderOut, "/", blockName), vmode = vmode)
                 # Change ff path to a relative one
                 bit::physical(block)$filename <- blockName
                 rowArgs[[colIndex]] <- block

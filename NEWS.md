@@ -1,10 +1,17 @@
 # BGData 1.0.0.9000
 
-- Change buffering strategy to improve parallelism: instead of buffering
-  `bufferSize` in the main process, buffer `bufferSize` in the forks. That way
-  `nTasks` is not necessary anymore and the buffering code is the same for one
-  core and for multiple cores.
-- Remove `nTasks` parameter from `chunkedApply()` and methods based on it.
+## Breaking Changes
+
+- Rename `bufferSize` to `chunkSize`.
+- Remove `nTasks` parameter from `chunkedApply()` and methods based on it (see
+  above).
+
+## Other Changes
+
+- Change chunking strategy to improve parallelism: instead of loading a subset
+  of `chunkSize` in the main process, load a subset of `chunkSize` in the each
+  fork. That way `nTasks` is not necessary anymore and the same code can be
+  used for one core and multiple cores.
 - getG_symDMatrix: Compute block indices correctly for out-of-order,
   non-sequential indices.
 - as.BGData: Use rownames of BEDMatrix object as rownames for pheno, and

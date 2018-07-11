@@ -18,9 +18,9 @@
 #' boolean, or character. By default, all rows are used.
 #' @param j Indicates which columns of `X` should be used. Can be integer,
 #' boolean, or character. By default, all columns are used.
-#' @param bufferSize The number of rows or columns of `X` that are brought into
-#' physical memory for processing per core. If `NULL`, all elements in `i` or `j` are
-#' used. Defaults to 5000.
+#' @param chunkSize The number of rows or columns of `X` that are brought into
+#' physical memory for processing per core. If `NULL`, all elements in `i` or
+#' `j` are used. Defaults to 5000.
 #' @param nCores The number of cores (passed to [parallel::mclapply()]).
 #' Defaults to the number of cores as detected by [parallel::detectCores()].
 #' @param verbose Whether progress updates will be posted. Defaults to `FALSE`.
@@ -28,39 +28,39 @@
 #' function.
 #' @example man/examples/chunkedApply.R
 #' @export
-chunkedApply <- function(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(X)), bufferSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
+chunkedApply <- function(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(X)), chunkSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
     if (!length(dim(X))) {
         stop("dim(X) must have a positive length")
     }
     i <- crochet::convertIndex(X, i, "i")
     j <- crochet::convertIndex(X, j, "j")
     dimX <- c(length(i), length(j))
-    if (is.null(bufferSize)) {
-        bufferSize <- dimX[MARGIN]
-        nBuffers <- 1L
+    if (is.null(chunkSize)) {
+        chunkSize <- dimX[MARGIN]
+        nChunks <- 1L
     } else {
-        nBuffers <- ceiling(dimX[MARGIN] / bufferSize)
+        nChunks <- ceiling(dimX[MARGIN] / chunkSize)
     }
-    bufferRanges <- LinkedMatrix:::chunkRanges(dimX[MARGIN], nBuffers)
-    bufferApply <- function(curBuffer, ...) {
+    chunkRanges <- LinkedMatrix:::chunkRanges(dimX[MARGIN], nChunks)
+    chunkApply <- function(chunkNum, ...) {
         if (verbose) {
             if (nCores > 1) {
-                message("Process ", Sys.getpid(), ": Buffer ", curBuffer, " of ", nBuffers, " ...")
+                message("Process ", Sys.getpid(), ": Chunk ", chunkNum, " of ", nChunks, " ...")
             } else {
-                message("Buffer ", curBuffer, " of ", nBuffers, " ...")
+                message("Chunk ", chunkNum, " of ", nChunks, " ...")
             }
         }
         if (MARGIN == 2L) {
-            buffer <- X[i, j[seq(bufferRanges[1L, curBuffer], bufferRanges[2L, curBuffer])], drop = FALSE]
+            chunk <- X[i, j[seq(chunkRanges[1L, chunkNum], chunkRanges[2L, chunkNum])], drop = FALSE]
         } else {
-            buffer <- X[i[seq(bufferRanges[1L, curBuffer], bufferRanges[2L, curBuffer])], j, drop = FALSE]
+            chunk <- X[i[seq(chunkRanges[1L, chunkNum], chunkRanges[2L, chunkNum])], j, drop = FALSE]
         }
-        apply2(X = buffer, MARGIN = MARGIN, FUN = FUN, ...)
+        apply2(X = chunk, MARGIN = MARGIN, FUN = FUN, ...)
     }
     if (nCores == 1L) {
-        res <- lapply(X = seq_len(nBuffers), FUN = bufferApply, ...)
+        res <- lapply(X = seq_len(nChunks), FUN = chunkApply, ...)
     } else {
-        res <- parallel::mclapply(X = seq_len(nBuffers), FUN = bufferApply, ..., mc.preschedule = TRUE, mc.cores = nCores)
+        res <- parallel::mclapply(X = seq_len(nChunks), FUN = chunkApply, ..., mc.preschedule = TRUE, mc.cores = nCores)
     }
     simplifyList(res)
 }

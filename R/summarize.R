@@ -11,9 +11,9 @@
 #' boolean, or character. By default, all rows are used.
 #' @param j Indicates which columns of `X` should be used. Can be integer,
 #' boolean, or character. By default, all columns are used.
-#' @param bufferSize The number of columns of `X` that are brought into
-#' physical memory for processing per core. If `NULL`, all elements in `j` are
-#' used. Defaults to 5000.
+#' @param chunkSize The number of columns of `X` that are brought into physical
+#' memory for processing per core. If `NULL`, all elements in `j` are used.
+#' Defaults to 5000.
 #' @param nCores The number of cores (passed to [parallel::mclapply()]).
 #' Defaults to the number of cores as detected by [parallel::detectCores()].
 #' @param verbose Whether progress updates will be posted. Defaults to `FALSE`.
@@ -22,7 +22,7 @@
 #' standard deviations.
 #' @example man/examples/summarize.R
 #' @export
-summarize <- function(X, i = seq_len(nrow(X)), j = seq_len(ncol(X)), bufferSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE) {
+summarize <- function(X, i = seq_len(nrow(X)), j = seq_len(ncol(X)), chunkSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE) {
     i <- crochet::convertIndex(X, i, "i")
     j <- crochet::convertIndex(X, j, "j")
     m <- chunkedApply(X = X, MARGIN = 2L, FUN = function(col) {
@@ -30,7 +30,7 @@ summarize <- function(X, i = seq_len(nrow(X)), j = seq_len(ncol(X)), bufferSize 
         alleleFreq <- mean(col, na.rm = TRUE) / 2L
         sd <- stats::sd(col, na.rm = TRUE)
         cbind(freqNA, alleleFreq, sd)
-    }, i = i, j = j, bufferSize = bufferSize, nCores = nCores, verbose = verbose)
+    }, i = i, j = j, chunkSize = chunkSize, nCores = nCores, verbose = verbose)
     df <- data.frame(
         freq_na = m[1L, ],
         allele_freq = m[2L, ],
