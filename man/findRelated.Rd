@@ -2,12 +2,20 @@
 % Please edit documentation in R/findRelated.R
 \name{findRelated}
 \alias{findRelated}
-\title{Find related individuals.}
+\alias{findRelated.matrix}
+\alias{findRelated.symDMatrix}
+\title{Find related individuals in a relationship matrix.}
 \usage{
 findRelated(x, ...)
+
+\method{findRelated}{matrix}(x, cutoff = 0.03, ...)
+
+\method{findRelated}{symDMatrix}(x, cutoff = 0.03, verbose = FALSE, ...)
 }
 \arguments{
-\item{x}{A \linkS4class{symDMatrix} object with dimnames.}
+\item{x}{A matrix-like object with dimnames.}
+
+\item{...}{Additional arguments for methods.}
 
 \item{cutoff}{The cutoff between 0 and 1 for related individuals to be included
 in the output. Defaults to 0.03.}
@@ -18,8 +26,15 @@ in the output. Defaults to 0.03.}
 A vector of names or indices of related individuals.
 }
 \description{
-Find related individuals.
+Find related individuals in a relationship matrix.
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{matrix}: Find related individuals in matrices
+
+\item \code{symDMatrix}: Find related individuals in symDMatrix objects
+}}
+
 \examples{
 # Load example data
 bg <- BGData:::loadExample()

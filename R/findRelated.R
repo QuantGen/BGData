@@ -1,9 +1,10 @@
-#' Find related individuals.
+#' Find related individuals in a relationship matrix.
 #'
-#' @param x A [symDMatrix-class] object with dimnames.
+#' @param x A matrix-like object with dimnames.
 #' @param cutoff The cutoff between 0 and 1 for related individuals to be included
 #' in the output. Defaults to 0.03.
 #' @param verbose Whether progress updates will be posted. Defaults to `FALSE`.
+#' @param ... Additional arguments for methods.
 #' @return A vector of names or indices of related individuals.
 #' @example man/examples/findRelated.R
 #' @export
@@ -12,8 +13,9 @@ findRelated <- function(x, ...) {
 }
 
 
+#' @describeIn findRelated Find related individuals in matrices
 #' @export
-findRelated.matrix <- function(x, cutoff = 0.03, verbose = FALSE) {
+findRelated.matrix <- function(x, cutoff = 0.03, ...) {
     x[lower.tri(x, diag = TRUE)] <- 0
     pairs <- which(x > cutoff, arr.ind = TRUE)
     individuals <- unique(pairs[, 1L])
@@ -21,9 +23,10 @@ findRelated.matrix <- function(x, cutoff = 0.03, verbose = FALSE) {
 }
 
 
+#' @describeIn findRelated Find related individuals in symDMatrix objects
 #' @export
-findRelated.symDMatrix <- function(x, cutoff = 0.03, verbose = FALSE) {
-    n <- nBlocks(x)
+findRelated.symDMatrix <- function(x, cutoff = 0.03, verbose = FALSE, ...) {
+    n <- symDMatrix::nBlocks(x)
     pairs <- lapply(seq_len(n), function(i) {
         lapply(seq(i, n), function(j) {
             if (verbose) {
