@@ -13,6 +13,7 @@
   fork. That way `nTasks` is not necessary anymore and the same code can be
   used for one core and multiple cores.
 - Add `findRelated()` function for use with matrices and symDMatrix objects.
+- getG_symDMatrix: Add chunkSize parameter.
 - getG_symDMatrix: Compute block indices correctly for out-of-order,
   non-sequential indices.
 - as.BGData: Use rownames of BEDMatrix object as rownames for pheno, and

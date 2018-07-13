@@ -223,6 +223,8 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
 #' @param scaleG TRUE/FALSE whether xx' must be scaled.
 #' @param minVar Columns with variance lower than this value will not be used
 #' in the computation (only if `scale` is not `FALSE`).
+#' @param blockSize The number of rows and columns of each block. If `NULL`, a
+#' single block of the same length as `i` will be created. Defaults to 5000.
 #' @param folderOut The path to the folder where to save the
 #' [symDMatrix::symDMatrix-class] object. Defaults to a random string prefixed
 #' with "symDMatrix_".
@@ -231,14 +233,15 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
 #' boolean, or character. By default, all rows are used.
 #' @param j Indicates which columns of `X` should be used. Can be integer,
 #' boolean, or character. By default, all columns are used.
-#' @param blockSize The number of rows and columns of each block. If `NULL`, a
-#' single block of the same length as `i` will be created. Defaults to 5000.
+#' @param chunkSize The number of columns of `X` that are brought into physical
+#' memory for processing per core. If `NULL`, all columns of `X` are used.
+#' Defaults to 5000.
 #' @param nCores The number of cores (passed to [parallel::mclapply()]).
 #' Defaults to the number of cores as detected by [parallel::detectCores()].
 #' @param verbose Whether progress updates will be posted. Defaults to `FALSE`.
 #' @return A [symDMatrix::symDMatrix-class] object.
 #' @export
-getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, folderOut = paste0("symDMatrix_", randomString()), vmode = "double", i = seq_len(nrow(X)), j = seq_len(ncol(X)), blockSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE) {
+getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, blockSize = 5000L, folderOut = paste0("symDMatrix_", randomString()), vmode = "double", i = seq_len(nrow(X)), j = seq_len(ncol(X)), chunkSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE) {
 
     i <- crochet::convertIndex(X, i, "i")
     j <- crochet::convertIndex(X, j, "j")
@@ -256,22 +259,22 @@ getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVa
     n <- length(i)
     p <- length(j)
 
-    if (is.null(blockSize)) {
-        blockSize <- n
-        nBlocks <- 1L
+    if (is.null(chunkSize)) {
+        chunkSize <- p
+        nChunks <- 1L
     } else {
-        nBlocks <- ceiling(n / blockSize)
+        nChunks <- ceiling(p / chunkSize)
     }
 
     if (is.logical(center) && center == TRUE) {
-        center <- chunkedApply(X = X, MARGIN = 2L, FUN = mean, i = i, j = j, chunkSize = blockSize, nCores = nCores, verbose = FALSE, na.rm = TRUE)
+        center <- chunkedApply(X = X, MARGIN = 2L, FUN = mean, i = i, j = j, chunkSize = chunkSize, nCores = nCores, verbose = FALSE, na.rm = TRUE)
     } else if (is.logical(center) && center == FALSE) {
         center <- rep(0L, p)
     }
     names(center) <- colnames(X)[j]
 
     if (is.logical(scale) && scale == TRUE) {
-        scale <- chunkedApply(X = X, MARGIN = 2L, FUN = stats::sd, i = i, j = j, chunkSize = blockSize, nCores = nCores, verbose = FALSE, na.rm = TRUE)
+        scale <- chunkedApply(X = X, MARGIN = 2L, FUN = stats::sd, i = i, j = j, chunkSize = chunkSize, nCores = nCores, verbose = FALSE, na.rm = TRUE)
     } else if (is.logical(scale) && scale == FALSE) {
         scale <- rep(1L, p)
     }
@@ -281,6 +284,13 @@ getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVa
         stop(folderOut, " already exists")
     }
     dir.create(folderOut)
+
+    if (is.null(blockSize)) {
+        blockSize <- n
+        nBlocks <- 1L
+    } else {
+        nBlocks <- ceiling(n / blockSize)
+    }
 
     blockIndices <- split(i, ceiling(seq_along(i) / blockSize))
     args <- vector(mode = "list", length = nBlocks)
@@ -293,7 +303,7 @@ getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVa
             }
             if (colIndex >= rowIndex) {
                 blockName <- paste0("data_", padDigits(rowIndex, nBlocks), "_", padDigits(colIndex, nBlocks), ".bin")
-                block <- ff::as.ff(getG(X, center = center, scale = scale, scaleG = FALSE, minVar = minVar, i = blockIndices[[rowIndex]], j = j, i2 = blockIndices[[colIndex]], chunkSize = blockSize, nCores = nCores, verbose = FALSE), filename = paste0(folderOut, "/", blockName), vmode = vmode)
+                block <- ff::as.ff(getG(X, center = center, scale = scale, scaleG = FALSE, minVar = minVar, i = blockIndices[[rowIndex]], j = j, i2 = blockIndices[[colIndex]], chunkSize = chunkSize, nCores = nCores, verbose = FALSE), filename = paste0(folderOut, "/", blockName), vmode = vmode)
                 # Change ff path to a relative one
                 bit::physical(block)$filename <- blockName
                 rowArgs[[colIndex]] <- block

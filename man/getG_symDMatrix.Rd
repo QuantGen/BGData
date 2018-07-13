@@ -5,9 +5,10 @@
 \title{Computes a Very Large Genomic Relationship Matrix.}
 \usage{
 getG_symDMatrix(X, center = TRUE, scale = TRUE, scaleG = TRUE,
-  minVar = 1e-05, folderOut = paste0("symDMatrix_", randomString()),
-  vmode = "double", i = seq_len(nrow(X)), j = seq_len(ncol(X)),
-  blockSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE)
+  minVar = 1e-05, blockSize = 5000L, folderOut = paste0("symDMatrix_",
+  randomString()), vmode = "double", i = seq_len(nrow(X)),
+  j = seq_len(ncol(X)), chunkSize = 5000L, nCores = getOption("mc.cores",
+  2L), verbose = FALSE)
 }
 \arguments{
 \item{X}{A matrix-like object, typically \code{@geno} of a \linkS4class{BGData}
@@ -26,6 +27,9 @@ the number of columns of \code{X}. If \code{FALSE}, no scaling is done. Defaults
 \item{minVar}{Columns with variance lower than this value will not be used
 in the computation (only if \code{scale} is not \code{FALSE}).}
 
+\item{blockSize}{The number of rows and columns of each block. If \code{NULL}, a
+single block of the same length as \code{i} will be created. Defaults to 5000.}
+
 \item{folderOut}{The path to the folder where to save the
 \link[symDMatrix:symDMatrix-class]{symDMatrix::symDMatrix} object. Defaults to a random string prefixed
 with "symDMatrix_".}
@@ -38,8 +42,9 @@ boolean, or character. By default, all rows are used.}
 \item{j}{Indicates which columns of \code{X} should be used. Can be integer,
 boolean, or character. By default, all columns are used.}
 
-\item{blockSize}{The number of rows and columns of each block. If \code{NULL}, a
-single block of the same length as \code{i} will be created. Defaults to 5000.}
+\item{chunkSize}{The number of columns of \code{X} that are brought into physical
+memory for processing per core. If \code{NULL}, all columns of \code{X} are used.
+Defaults to 5000.}
 
 \item{nCores}{The number of cores (passed to \code{\link[parallel:mclapply]{parallel::mclapply()}}).
 Defaults to the number of cores as detected by \code{\link[parallel:detectCores]{parallel::detectCores()}}.}
