@@ -15,7 +15,7 @@
 getWindows <- function(X, range = 1:100, rSq = 0.1, maxGaps = 2) {
     Xwin <- X[, range]
     win <- lapply(1:ncol(Xwin), function(i) getBlock(Xwin, i, rSq = r2, maxGaps = gaps))
-    names(win) <- colnames(X)
+    names(win) <- colnames(Xwin)
     return(win)
 }
 
