@@ -267,11 +267,15 @@ getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVa
     }
 
     if (is.logical(center) && center == TRUE) {
-        center <- chunkedApply(X = X, MARGIN = 2L, FUN = mean, i = i, j = j, chunkSize = chunkSize, nCores = nCores, verbose = FALSE, na.rm = TRUE)
+        center <- rep(0, pX)
+        names(scale) <- colnames(X)
+        center[j] <- chunkedApply(X = X, MARGIN = 2L, FUN = mean, i = i, j = j, chunkSize = chunkSize, nCores = nCores, verbose = FALSE, na.rm = TRUE)
     }
 
     if (is.logical(scale) && scale == TRUE) {
-        scale <- chunkedApply(X = X, MARGIN = 2L, FUN = stats::sd, i = i, j = j, chunkSize = chunkSize, nCores = nCores, verbose = FALSE, na.rm = TRUE)
+        scale <- rep(1, pX)
+        names(scale) <- colnames(X)
+        scale[j] <- chunkedApply(X = X, MARGIN = 2L, FUN = stats::sd, i = i, j = j, chunkSize = chunkSize, nCores = nCores, verbose = FALSE, na.rm = TRUE)
     }
 
     if (file.exists(folderOut)) {
