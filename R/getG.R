@@ -48,11 +48,11 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
     hasY <- !is.null(i2)
 
     if (hasY) {
-        if (!is.numeric(center)) {
-            stop("center need to be precomputed.")
+        if (is.logical(center) && center == TRUE) {
+            stop("centers need to be precomputed.")
         }
-        if (!is.numeric(scale)) {
-            stop("scale need to be precomputed.")
+        if (is.logical(scale) && scale == TRUE) {
+            stop("scales need to be precomputed.")
         }
     }
 
@@ -135,7 +135,7 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
         }
 
         # remove constant columns
-        if (!(is.logical(scale) && scale == FALSE)) {
+        if (is.numeric(scale.chunk)) {
             removeCols <- which(scale.chunk < minVar)
             if (length(removeCols) > 0L) {
                 X1 <- X1[, -removeCols]
@@ -268,17 +268,11 @@ getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVa
 
     if (is.logical(center) && center == TRUE) {
         center <- chunkedApply(X = X, MARGIN = 2L, FUN = mean, i = i, j = j, chunkSize = chunkSize, nCores = nCores, verbose = FALSE, na.rm = TRUE)
-    } else if (is.logical(center) && center == FALSE) {
-        center <- rep(0L, p)
     }
-    names(center) <- colnames(X)[j]
 
     if (is.logical(scale) && scale == TRUE) {
         scale <- chunkedApply(X = X, MARGIN = 2L, FUN = stats::sd, i = i, j = j, chunkSize = chunkSize, nCores = nCores, verbose = FALSE, na.rm = TRUE)
-    } else if (is.logical(scale) && scale == FALSE) {
-        scale <- rep(1L, p)
     }
-    names(scale) <- colnames(X)[j]
 
     if (file.exists(folderOut)) {
         stop(folderOut, " already exists")
