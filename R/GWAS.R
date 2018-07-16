@@ -128,7 +128,7 @@ GWAS.SKAT <- function(formula, data, groups, i = seq_len(nrow(data@geno)), j = s
 
     H0 <- SKAT::SKAT_Null_Model(formula, data = data@pheno[i, , drop = FALSE], ...)
 
-    for (group in seq_len(length(uniqueGroups))) {
+    for (group in seq_along(uniqueGroups)) {
         Z <- data@geno[i, groups == uniqueGroups[group], drop = FALSE]
         fm <- SKAT::SKAT(Z = Z, obj = H0, ...)
         OUT[group, ] <- c(ncol(Z), fm$p.value)

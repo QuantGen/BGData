@@ -162,7 +162,7 @@ for (nCores in seq_len(2)) {
                 allele_freq = vector(mode = "double", length = length(j)),
                 sd = vector(mode = "double", length = length(j))
             )
-            for (col in seq_len(length(j))) {
+            for (col in seq_along(j)) {
                 Z <- genotypes[i, j[col]]
                 NAs <- sum(is.na(Z))
                 dummy$freq_na[col] <- NAs / length(Z)
