@@ -17,6 +17,8 @@
 - getG_symDMatrix: Fix scaling error when `scale = FALSE`.
 - getG_symDMatrix: Compute block indices correctly for out-of-order,
   non-sequential indices.
+- getG_symDMatrix: Do not include centers and scales in attributes anymore
+  because the influence of `j` and `minVar` is difficult to retain.
 - as.BGData: Use rownames of BEDMatrix object as rownames for pheno, and
   colnames of BEDMatrix object as rownames for map.
 - orderedMerge: Retain rownames.

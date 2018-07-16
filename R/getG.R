@@ -315,10 +315,6 @@ getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVa
 
     G <- do.call(symDMatrix::symDMatrix, args)
 
-    # Keep centers and scales
-    attr(G, "centers") <- center
-    attr(G, "scales") <- scale
-
     if (scaleG) {
         K <- mean(diag(G))
         for (rowIndex in seq_len(nBlocks)) {
