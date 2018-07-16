@@ -14,7 +14,7 @@
 #' @export
 getWindows <- function(X, range = 1:100, rSq = 0.1, maxGaps = 2) {
     Xwin <- X[, range]
-    win <- lapply(1:ncol(Xwin), function(i) getBlock(Xwin, i, rSq = r2, maxGaps = gaps))
+    win <- lapply(1:ncol(Xwin), function(i) getBlock(Xwin, i, rSq = rSq, maxGaps = maxGaps))
     names(win) <- colnames(Xwin)
     return(win)
 }
@@ -42,7 +42,7 @@ getBlock=function(X,center, rSq, maxGaps){
     lag=1
     nGaps=0
     while(!ready){
-        R2=cor(xi,X[,center+lag],use='complete.obs')^2
+        R2=stats::cor(xi,X[,center+lag],use='complete.obs')^2
         if(R2>rSq){
             block$right[[lag]]=center+lag
             nGaps=0
@@ -64,7 +64,7 @@ getBlock=function(X,center, rSq, maxGaps){
     lag=1
     nGaps=0
     while(!ready){
-        R2=cor(xi,X[,center-lag],use='complete.obs')^2
+        R2=stats::cor(xi,X[,center-lag],use='complete.obs')^2
         if(R2>rSq){
             block$left[[lag]]=center-lag
             nGaps=0
