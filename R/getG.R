@@ -179,7 +179,7 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
     if (nCores == 1L) {
         res <- lapply(X = seq_len(nChunks), FUN = chunkApply)
     } else {
-        res <- parallel::mclapply(seq_len(nChunks), chunkApply)
+        res <- parallel::mclapply(X = seq_len(nChunks), FUN = chunkApply, mc.cores = nCores)
     }
 
     # Convert big.matrix to matrix
