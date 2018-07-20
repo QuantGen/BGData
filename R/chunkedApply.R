@@ -60,7 +60,7 @@ chunkedApply <- function(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(
     if (nCores == 1L) {
         res <- lapply(X = seq_len(nChunks), FUN = chunkApply, ...)
     } else {
-        res <- parallel::mclapply(X = seq_len(nChunks), FUN = chunkApply, ..., mc.preschedule = TRUE, mc.cores = nCores)
+        res <- parallel::mclapply(X = seq_len(nChunks), FUN = chunkApply, ..., mc.cores = nCores)
     }
     simplifyList(res)
 }
