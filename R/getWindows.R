@@ -4,24 +4,24 @@
 #'
 #' @param X A matrix-like object, typically `@@geno` of a [BGData-class]
 #' object.
-#' @param range Columns of `X` to compute windows. By default, does not attempt to obtain LD windows surrounding
+#' @param center_snp Columns of `X` to compute windows. By default, does not attempt to obtain LD windows surrounding
 #' each element of `X`.
 #' @param rSq R-squared threshold for determining genotype correlations.
 #' @param maxGaps The number of consequtive SNPs that may fall below `rSq` until LD is considered lost
+#' @param ids Indices of individuals used to compute LD, if not all individuals in X are desired.
 #' @return A list the length of the number of columns of `X` containing sliding LD-based windows. The elements of
 #' the list are named for each "center" SNP used in LD determination. Each element is a vector of SNP names--SNPs
 #' in LD with the "center" SNP.
 #' @export
-getWindows <- function(X, range = 1:100, rSq = 0.1, maxGaps = 2) {
-    Xwin <- X[, range]
-    win <- lapply(1:ncol(Xwin), function(i) getBlock(Xwin, i, rSq = rSq, maxGaps = maxGaps))
-    names(win) <- colnames(Xwin)
+getWindows <- function(X, center_snp = 1:100, rSq = 0.1, maxGaps = 2, ids = 1:nrow(X)) {
+    win <- lapply(center_snp, function(i) getBlock(X, i, rSq = rSq, maxGaps = maxGaps, ids = ids))
+    names(win) <- colnames(X)[center_snp]
     return(win)
 }
 
 
-# Hidden, utility function to be used by getWindows().
-getBlock=function(X,center, rSq, maxGaps){
+# Hidden function used by getWindows().
+getBlock=function(X, center, rSq, maxGaps, ids = 1:nrow(X)){
     p=ncol(X)
     # sanity check
     if(center<=0 | center>p){
@@ -33,7 +33,7 @@ getBlock=function(X,center, rSq, maxGaps){
     block$center=center
     block$right=list()
 
-    xi=X[,center]
+    xi=X[ids,center]
 
     ###########################################################
     ## while loop to the right
@@ -42,7 +42,7 @@ getBlock=function(X,center, rSq, maxGaps){
     lag=1
     nGaps=0
     while(!ready){
-        R2=stats::cor(xi,X[,center+lag],use='complete.obs')^2
+        R2=stats::cor(xi,X[ids,center+lag],use='complete.obs')^2
         if(R2>rSq){
             block$right[[lag]]=center+lag
             nGaps=0
@@ -64,7 +64,7 @@ getBlock=function(X,center, rSq, maxGaps){
     lag=1
     nGaps=0
     while(!ready){
-        R2=stats::cor(xi,X[,center-lag],use='complete.obs')^2
+        R2=stats::cor(xi,X[ids,center-lag],use='complete.obs')^2
         if(R2>rSq){
             block$left[[lag]]=center-lag
             nGaps=0
