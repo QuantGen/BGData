@@ -15,7 +15,7 @@
 #' @export
 getWindows <- function(X, center_snp = 1:100, rSq = 0.1, maxGaps = 2, ids = 1:nrow(X)) {
     win <- lapply(center_snp, function(i) getBlock(X, i, rSq = rSq, maxGaps = maxGaps, ids = ids))
-    names(win) <- colnames(X)[center_snp]
+    names(win) <- center_snp
     return(win)
 }
 
