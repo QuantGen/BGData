@@ -152,12 +152,30 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
         # compute XX'
         if (p > 0L) {
 
-            # scale and impute X
-            X1 <- scale(X1, center = center.chunk, scale = scale.chunk)
-            X1[is.na(X1)] <- 0L
+            # scale and impute without duplications
+            for (nCol in seq_len(ncol(X1))) {
+                col <- X1[, nCol]
+                if (is.numeric(center.chunk)) {
+                    col <- col - center.chunk[nCol]
+                }
+                if (is.numeric(scale.chunk)) {
+                    col <- col / scale.chunk[nCol]
+                }
+                col[is.na(col)] <- 0
+                X1[, nCol] <- col
+            }
             if (hasY) {
-                X2 <- scale(X2, center = center.chunk, scale = scale.chunk)
-                X2[is.na(X2)] <- 0L
+                for (nCol in seq_len(ncol(X2))) {
+                    col <- X2[, nCol]
+                    if (is.numeric(center.chunk)) {
+                        col <- col - center.chunk[nCol]
+                    }
+                    if (is.numeric(scale.chunk)) {
+                        col <- col / scale.chunk[nCol]
+                    }
+                    col[is.na(col)] <- 0
+                    X2[, nCol] <- col
+                }
             }
 
             if (hasY) {
