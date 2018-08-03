@@ -10,7 +10,8 @@ findRelated(x, ...)
 
 \method{findRelated}{matrix}(x, cutoff = 0.03, ...)
 
-\method{findRelated}{symDMatrix}(x, cutoff = 0.03, verbose = FALSE, ...)
+\method{findRelated}{symDMatrix}(x, cutoff = 0.03, verbose = FALSE,
+  ...)
 }
 \arguments{
 \item{x}{A matrix-like object with dimnames.}

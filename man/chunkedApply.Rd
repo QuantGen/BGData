@@ -4,9 +4,9 @@
 \alias{chunkedApply}
 \title{Applies a Function on Each Row or Column of a File-Backed Matrix.}
 \usage{
-chunkedApply(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(X)),
-  chunkSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE,
-  ...)
+chunkedApply(X, MARGIN, FUN, i = seq_len(nrow(X)),
+  j = seq_len(ncol(X)), chunkSize = 5000L,
+  nCores = getOption("mc.cores", 2L), verbose = FALSE, ...)
 }
 \arguments{
 \item{X}{A file-backed matrix, typically \code{@geno} of a \linkS4class{BGData}

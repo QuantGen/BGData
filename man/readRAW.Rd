@@ -6,20 +6,22 @@
 \alias{readRAW_big.matrix}
 \title{Creates a BGData Object From a .raw File or a .ped-Like File.}
 \usage{
-readRAW(fileIn, header = TRUE, dataType = integer(), n = NULL, p = NULL,
-  sep = "", na.strings = "NA", nColSkip = 6L, idCol = c(1L, 2L),
-  nNodes = NULL, linked.by = "rows", folderOut = paste0("BGData_",
-  sub("\\\\.[[:alnum:]]+$", "", basename(fileIn))), outputType = "byte",
-  dimorder = if (linked.by == "rows") 2L:1L else 1L:2L, verbose = FALSE)
+readRAW(fileIn, header = TRUE, dataType = integer(), n = NULL,
+  p = NULL, sep = "", na.strings = "NA", nColSkip = 6L,
+  idCol = c(1L, 2L), nNodes = NULL, linked.by = "rows",
+  folderOut = paste0("BGData_", sub("\\\\.[[:alnum:]]+$", "",
+  basename(fileIn))), outputType = "byte", dimorder = if (linked.by ==
+  "rows") 2L:1L else 1L:2L, verbose = FALSE)
 
 readRAW_matrix(fileIn, header = TRUE, dataType = integer(), n = NULL,
-  p = NULL, sep = "", na.strings = "NA", nColSkip = 6L, idCol = c(1L,
-  2L), verbose = FALSE)
+  p = NULL, sep = "", na.strings = "NA", nColSkip = 6L,
+  idCol = c(1L, 2L), verbose = FALSE)
 
-readRAW_big.matrix(fileIn, header = TRUE, dataType = integer(), n = NULL,
-  p = NULL, sep = "", na.strings = "NA", nColSkip = 6L, idCol = c(1L,
-  2L), folderOut = paste0("BGData_", sub("\\\\.[[:alnum:]]+$", "",
-  basename(fileIn))), outputType = "char", verbose = FALSE)
+readRAW_big.matrix(fileIn, header = TRUE, dataType = integer(),
+  n = NULL, p = NULL, sep = "", na.strings = "NA", nColSkip = 6L,
+  idCol = c(1L, 2L), folderOut = paste0("BGData_",
+  sub("\\\\.[[:alnum:]]+$", "", basename(fileIn))), outputType = "char",
+  verbose = FALSE)
 }
 \arguments{
 \item{fileIn}{The path to the plaintext file.}

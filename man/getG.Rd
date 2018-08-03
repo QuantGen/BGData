@@ -6,7 +6,8 @@
 \usage{
 getG(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05,
   i = seq_len(nrow(X)), j = seq_len(ncol(X)), i2 = NULL,
-  chunkSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE)
+  chunkSize = 5000L, nCores = getOption("mc.cores", 2L),
+  verbose = FALSE)
 }
 \arguments{
 \item{X}{A matrix-like object, typically \code{@geno} of a \linkS4class{BGData}

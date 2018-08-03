@@ -11,16 +11,18 @@ as.BGData(x, alternatePhenotypeFile = NULL, ...)
 
 \method{as.BGData}{BEDMatrix}(x, alternatePhenotypeFile = NULL, ...)
 
-\method{as.BGData}{ColumnLinkedMatrix}(x, alternatePhenotypeFile = NULL, ...)
+\method{as.BGData}{ColumnLinkedMatrix}(x, alternatePhenotypeFile = NULL,
+  ...)
 
-\method{as.BGData}{RowLinkedMatrix}(x, alternatePhenotypeFile = NULL, ...)
+\method{as.BGData}{RowLinkedMatrix}(x, alternatePhenotypeFile = NULL,
+  ...)
 }
 \arguments{
 \item{x}{An object. Currently supported are \link[BEDMatrix:BEDMatrix-class]{BEDMatrix::BEDMatrix}
 objects, plain or nested in \link[LinkedMatrix:ColumnLinkedMatrix-class]{LinkedMatrix::ColumnLinkedMatrix}
 objects.}
 
-\item{alternatePhenotypeFile}{Path to an \href{https://www.cog-genomics.org/plink2/input#pheno}{alternate phenotypefile}.}
+\item{alternatePhenotypeFile}{Path to an \href{https://www.cog-genomics.org/plink2/input#pheno}{alternate phenotype file}.}
 
 \item{...}{Additional arguments to the \code{\link[utils:read.table]{utils::read.table()}} or
 \code{\link[data.table:fread]{data.table::fread()}} call (if data.table package is installed) call to
@@ -38,7 +40,7 @@ phenotypes and map files referenced by the object to be used for the
 }
 \details{
 The .ped and .raw formats only allows for a single phenotype. If more
-phenotypes are required it is possible to store them in an \href{https://www.cog-genomics.org/plink2/input#pheno}{alternatephenotype file}. The path
+phenotypes are required it is possible to store them in an \href{https://www.cog-genomics.org/plink2/input#pheno}{alternate phenotype file}. The path
 to such a file can be provided with \code{alternatePhenotypeFile} and will be
 merged with the data in the \code{@pheno} slot. The first and second columns of
 that file must contain family and within-family IDs, respectively.

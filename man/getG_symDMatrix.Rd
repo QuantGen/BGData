@@ -5,10 +5,10 @@
 \title{Computes a Very Large Genomic Relationship Matrix.}
 \usage{
 getG_symDMatrix(X, center = TRUE, scale = TRUE, scaleG = TRUE,
-  minVar = 1e-05, blockSize = 5000L, folderOut = paste0("symDMatrix_",
-  randomString()), vmode = "double", i = seq_len(nrow(X)),
-  j = seq_len(ncol(X)), chunkSize = 5000L, nCores = getOption("mc.cores",
-  2L), verbose = FALSE)
+  minVar = 1e-05, blockSize = 5000L,
+  folderOut = paste0("symDMatrix_", randomString()), vmode = "double",
+  i = seq_len(nrow(X)), j = seq_len(ncol(X)), chunkSize = 5000L,
+  nCores = getOption("mc.cores", 2L), verbose = FALSE)
 }
 \arguments{
 \item{X}{A matrix-like object, typically \code{@geno} of a \linkS4class{BGData}
