@@ -1,24 +1,16 @@
-## Resubmission
-
-This is a resubmission. In this version I have:
-
-- Single quoted the package names in the Description: of the DESCRIPTION file.
-
-
 ## Test environments
 
-* Local Arch Linux install, R 3.4.0
-* Ubuntu 12.04.05 on Travis CI, R. 3.4.0
-* win-builder, R-release and R-devel
+* Local Arch Linux install: R 3.5.1
+* Travis CI: R 3.5.0
+* Doesn't build on Windows because package 'synchronicity' is required but not
+  available.
 
 
 ## R CMD check results
 
-There were no ERRORs or WARNINGs. There is one NOTE about a (possibly) invalid
-URL to nature.com that seems to return 401, but works fine in my browser
-without redirect.
+There were 0 errors, 0 warnings, and 0 notes.
 
 
-## Downstream dependencies
+## revdep_check results
 
-There are currently no downstream dependencies for this package.
+There were 0 packages with problems.
