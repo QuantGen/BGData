@@ -1,4 +1,4 @@
-# BGData 1.0.0.9000
+# BGData 2.0.0
 
 ## Breaking Changes
 
