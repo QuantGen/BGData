@@ -55,7 +55,10 @@ chunkedApply <- function(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(
         } else {
             chunk <- X[i[seq(chunkRanges[1L, chunkNum], chunkRanges[2L, chunkNum])], j, drop = FALSE]
         }
-        apply2(X = chunk, MARGIN = MARGIN, FUN = FUN, ...)
+        OUT <- apply2(X = chunk, MARGIN = MARGIN, FUN = FUN, ...)
+        rm(chunk)
+        gc()
+        return(OUT)
     }
     if (nCores == 1L) {
         res <- lapply(X = seq_len(nChunks), FUN = chunkApply, ...)

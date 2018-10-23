@@ -150,8 +150,8 @@ rayOLS <- function(y, x, SSy, Int, n, isNAY) {
         y[isNAXY] <- 0
         x[isNAXY] <- 0
     }
-    n<- n-length(isNAXY)
-    # crossprodUCTS
+    n <- n - length(isNAXY)
+    # crossproducts
     sX <- crossprod(Int, x)
     sY <- crossprod(Int, y)
     XX <- crossprod(x) - sX * sX / n
