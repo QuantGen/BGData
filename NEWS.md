@@ -1,3 +1,8 @@
+# BGData 2.1.0
+
+- Add `chunkedMap()` function.
+
+
 # BGData 2.0.0
 
 ## Breaking Changes
