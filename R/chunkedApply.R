@@ -29,8 +29,8 @@
 #' @example man/examples/chunkedApply.R
 #' @export
 chunkedApply <- function(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(X)), chunkSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
-    if (!length(dim(X))) {
-        stop("dim(X) must have a positive length")
+    if (length(dim(X)) != 2L) {
+        stop("X must be a matrix-like object")
     }
     i <- crochet::convertIndex(X, i, "i")
     j <- crochet::convertIndex(X, j, "j")
