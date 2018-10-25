@@ -34,14 +34,14 @@ chunkedApply <- function(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(
     }
     i <- crochet::convertIndex(X, i, "i")
     j <- crochet::convertIndex(X, j, "j")
-    dimX <- c(length(i), length(j))
+    dim <- c(length(i), length(j))
     if (is.null(chunkSize)) {
-        chunkSize <- dimX[MARGIN]
+        chunkSize <- dim[MARGIN]
         nChunks <- 1L
     } else {
-        nChunks <- ceiling(dimX[MARGIN] / chunkSize)
+        nChunks <- ceiling(dim[MARGIN] / chunkSize)
     }
-    chunkRanges <- LinkedMatrix:::chunkRanges(dimX[MARGIN], nChunks)
+    chunkRanges <- LinkedMatrix:::chunkRanges(dim[MARGIN], nChunks)
     chunkApply <- function(chunkNum, ...) {
         if (verbose) {
             if (nCores > 1) {
