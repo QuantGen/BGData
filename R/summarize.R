@@ -25,18 +25,13 @@
 summarize <- function(X, i = seq_len(nrow(X)), j = seq_len(ncol(X)), chunkSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE) {
     i <- crochet::convertIndex(X, i, "i")
     j <- crochet::convertIndex(X, j, "j")
-    m <- chunkedApply(X = X, MARGIN = 2L, FUN = function(col) {
-        freqNA <- mean(is.na(col))
-        alleleFreq <- mean(col, na.rm = TRUE) / 2L
-        sd <- stats::sd(col, na.rm = TRUE)
-        cbind(freqNA, alleleFreq, sd)
+    res <- chunkedMap(X = X, FUN = function(chunk) {
+        data.frame(
+            freq_na = matrixStats::colMeans2(is.na(chunk)),
+            allele_freq = matrixStats::colMeans2(chunk, na.rm = TRUE) / 2,
+            sd = matrixStats::colSds(chunk, na.rm = TRUE),
+            row.names = colnames(chunk)
+        )
     }, i = i, j = j, chunkSize = chunkSize, nCores = nCores, verbose = verbose)
-    df <- data.frame(
-        freq_na = m[1L, ],
-        allele_freq = m[2L, ],
-        sd = m[3L, ],
-        stringsAsFactors = FALSE
-    )
-    rownames(df) <- colnames(X)[j]
-    return(df)
+    do.call("rbind", res)
 }
