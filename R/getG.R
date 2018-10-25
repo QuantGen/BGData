@@ -98,19 +98,22 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
 
     mutex <- synchronicity::boost.mutex()
 
-    chunkRanges <- LinkedMatrix:::chunkRanges(p, nChunks)
-    chunkApply <- function(chunkNum) {
+    chunkApply <- function(curChunk) {
 
         if (verbose) {
             if (nCores > 1) {
-                message("Process ", Sys.getpid(), ": Chunk ", chunkNum, " of ", nChunks, " ...")
+                message("Process ", Sys.getpid(), ": Chunk ", curChunk, " of ", nChunks, " ...")
             } else {
-                message("Chunk ", chunkNum, " of ", nChunks, " ...")
+                message("Chunk ", curChunk, " of ", nChunks, " ...")
             }
         }
 
         # subset
-        localColIndex <- j[seq(chunkRanges[1L, chunkNum], chunkRanges[2L, chunkNum])]
+        range <- seq(
+            ((curChunk - 1L) * chunkSize) + 1L,
+            min(curChunk * chunkSize, p)
+        )
+        localColIndex <- j[range]
         X1 <- X[i, localColIndex, drop = FALSE]
         if (hasY) {
             X2 <- X[i2, localColIndex, drop = FALSE]

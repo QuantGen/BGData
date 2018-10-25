@@ -41,19 +41,22 @@ chunkedApply <- function(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(
     } else {
         nChunks <- ceiling(dim[MARGIN] / chunkSize)
     }
-    chunkRanges <- LinkedMatrix:::chunkRanges(dim[MARGIN], nChunks)
-    chunkApply <- function(chunkNum, ...) {
+    chunkApply <- function(curChunk, ...) {
         if (verbose) {
             if (nCores > 1) {
-                message("Process ", Sys.getpid(), ": Chunk ", chunkNum, " of ", nChunks, " ...")
+                message("Process ", Sys.getpid(), ": Chunk ", curChunk, " of ", nChunks, " ...")
             } else {
-                message("Chunk ", chunkNum, " of ", nChunks, " ...")
+                message("Chunk ", curChunk, " of ", nChunks, " ...")
             }
         }
+        range <- seq(
+            ((curChunk - 1L) * chunkSize) + 1L,
+            min(curChunk * chunkSize, dim[MARGIN])
+        )
         if (MARGIN == 2L) {
-            chunk <- X[i, j[seq(chunkRanges[1L, chunkNum], chunkRanges[2L, chunkNum])], drop = FALSE]
+            chunk <- X[i, j[range], drop = FALSE]
         } else {
-            chunk <- X[i[seq(chunkRanges[1L, chunkNum], chunkRanges[2L, chunkNum])], j, drop = FALSE]
+            chunk <- X[i[range], j, drop = FALSE]
         }
         apply2(X = chunk, MARGIN = MARGIN, FUN = FUN, ...)
     }
