@@ -49,6 +49,9 @@ GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)), 
         }
         OUT <- GWAS.rayOLS(formula = formula, data = data, i = i, j = j, chunkSize = chunkSize, nCores = nCores, verbose = verbose, ...)
     } else if (method == "SKAT") {
+        if (!requireNamespace("SKAT", quietly = TRUE)) {
+            stop("SKAT needed for this function to work. Please install it.", call. = FALSE)
+        }
         OUT <- GWAS.SKAT(formula = formula, data = data, i = i, j = j, verbose = verbose, ...)
     } else {
         if (method == "lmer") {
@@ -115,10 +118,6 @@ GWAS.lsfit <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(
 # groups: a vector mapping markers into groups (can be integer, character or
 # factor)
 GWAS.SKAT <- function(formula, data, groups, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), verbose = FALSE, ...) {
-
-    if (!requireNamespace("SKAT", quietly = TRUE)) {
-        stop("SKAT needed for this function to work. Please install it.", call. = FALSE)
-    }
 
     uniqueGroups <- unique(groups)
 
