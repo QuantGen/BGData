@@ -95,13 +95,11 @@ GWAS.lsfit <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(
     # subset of model.frame has bizarre scoping issues
     frame <- stats::model.frame(formula = formula, data = data@pheno)[i, , drop = FALSE]
     model <- stats::model.matrix(formula, frame)
-    model <- cbind(1L, model) # Reserve space for marker column
 
     y <- data@pheno[i, getResponse(formula), drop = TRUE]
 
     res <- chunkedApply(X = data@geno, MARGIN = 2L, FUN = function(col, ...) {
-        model[, 1L] <- col
-        fm <- stats::lsfit(x = model, y = y, intercept = FALSE)
+        fm <- stats::lsfit(x = cbind(col, model), y = y, intercept = FALSE)
         stats::ls.print(fm, print.it = FALSE)$coef.table[[1L]][1L, ]
     }, i = i, j = j, chunkSize = chunkSize, nCores = nCores, verbose = verbose, ...)
     colnames(res) <- colnames(data@geno)[j]
