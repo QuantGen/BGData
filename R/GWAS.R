@@ -79,7 +79,7 @@ GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)), 
 
 # the GWAS method for rayOLS
 GWAS.rayOLS <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), chunkSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
-    y <- data@pheno[i, as.character(stats::terms(formula)[[2L]]), drop = TRUE]
+    y <- data@pheno[i, getResponse(formula), drop = TRUE]
     y <- y - mean(y, na.rm = TRUE)
     n <- length(y)
     Int <- rep(1, n)
@@ -97,7 +97,7 @@ GWAS.lsfit <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(
     model <- stats::model.matrix(formula, frame)
     model <- cbind(1L, model) # Reserve space for marker column
 
-    y <- data@pheno[i, as.character(stats::terms(formula)[[2L]]), drop = TRUE]
+    y <- data@pheno[i, getResponse(formula), drop = TRUE]
 
     res <- chunkedApply(X = data@geno, MARGIN = 2L, FUN = function(col, ...) {
         model[, 1L] <- col
@@ -184,4 +184,11 @@ getCoefficients.lmerMod <- function(x) {
     ans <- summary(x)$coef[2L, ]
     ans <- c(ans, c(1L - stats::pnorm(ans[3L])))
     return(ans)
+}
+
+getResponse <- function(formula) {
+    # Extract component from parse tree (see https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Language-objects)
+    sym <- formula[[2L]]
+    # Convert symbol to character
+    as.character(sym)
 }
