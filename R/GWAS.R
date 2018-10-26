@@ -44,7 +44,7 @@ GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)), 
     if (method == "lsfit") {
         OUT <- GWAS.lsfit(formula = formula, data = data, i = i, j = j, chunkSize = chunkSize, nCores = nCores, verbose = verbose, ...)
     } else if (method == "rayOLS") {
-        if (length(attr(stats::terms(formula), "term.labels")) > 0L) {
+        if (length(labels(stats::terms(formula))) > 0L) {
             stop("method rayOLS can only be used with y~1 formula, if you want to add covariates pre-adjust your phenotype.")
         }
         OUT <- GWAS.rayOLS(formula = formula, data = data, i = i, j = j, chunkSize = chunkSize, nCores = nCores, verbose = verbose, ...)
