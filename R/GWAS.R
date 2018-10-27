@@ -79,7 +79,7 @@ GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)), 
 
 # the GWAS method for rayOLS
 GWAS.rayOLS <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), chunkSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
-    y <- data@pheno[i, getResponse(formula), drop = TRUE]
+    y <- data@pheno[i, getResponse(formula)]
     y <- y - mean(y, na.rm = TRUE)
     n <- length(y)
     Int <- rep(1, n)
@@ -97,7 +97,7 @@ GWAS.lsfit <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(
     frame <- stats::model.frame(formula = formula, data = data@pheno)[i, , drop = FALSE]
     model <- stats::model.matrix(formula, frame)
 
-    y <- data@pheno[i, getResponse(formula), drop = TRUE]
+    y <- data@pheno[i, getResponse(formula)]
 
     res <- chunkedApply(X = data@geno, MARGIN = 2L, FUN = function(col, ...) {
         fm <- stats::lsfit(x = cbind(col, model), y = y, intercept = FALSE)
