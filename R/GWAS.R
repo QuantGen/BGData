@@ -86,7 +86,10 @@ GWAS.rayOLS <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len
     SSy <- sum(y^2, na.rm = TRUE)
     isNAY <- which(is.na(y))
     res <- chunkedApply(X = data@geno, MARGIN = 2L, FUN = rayOLS, i = i, j = j, chunkSize = chunkSize, nCores = nCores, verbose = verbose, y = y, Int = Int, SSy = SSy, n = n, isNAY = isNAY, ...)
-    return(t(res))
+    res <- t(res)
+    colnames(res) <- c("Estimate", "Std.Err", "t-value", "Pr(>|t|)")
+    rownames(res) <- colnames(data@geno)[j]
+    return(res)
 }
 
 
