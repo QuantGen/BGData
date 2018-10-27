@@ -69,8 +69,8 @@ GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)), 
             fm <- FUN(GWAS.model, data = df, ...)
             getCoefficients(fm)
         }, i = i, j = j, chunkSize = chunkSize, nCores = nCores, verbose = verbose, ...)
-        colnames(OUT) <- colnames(data@geno)[j]
         OUT <- t(OUT)
+        rownames(OUT) <- colnames(data@geno)[j]
     }
 
     return(OUT)
@@ -103,8 +103,8 @@ GWAS.lsfit <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(
         fm <- stats::lsfit(x = cbind(col, model), y = y, intercept = FALSE)
         stats::ls.print(fm, print.it = FALSE)$coef.table[[1L]][1L, ]
     }, i = i, j = j, chunkSize = chunkSize, nCores = nCores, verbose = verbose, ...)
-    colnames(res) <- colnames(data@geno)[j]
     res <- t(res)
+    rownames(res) <- colnames(data@geno)[j]
 
     return(res)
 }
