@@ -1,6 +1,8 @@
 # BGData 2.1.0
 
 - Add `chunkedMap()` function.
+- `GWAS()`: Fix bug when computing p-values for methods other than rayOLS,
+  lsfit, or SKAT when `i` is used to subset samples.
 
 
 # BGData 2.0.0

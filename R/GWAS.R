@@ -62,11 +62,11 @@ GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)), 
         } else {
             FUN <- match.fun(method)
         }
-        pheno <- data@pheno
         GWAS.model <- stats::update(stats::as.formula(formula), ".~z+.")
         OUT <- chunkedApply(X = data@geno, MARGIN = 2L, FUN = function(col, ...) {
-            pheno$z <- col
-            fm <- FUN(GWAS.model, data = pheno, ...)
+            df <- data@pheno[i, , drop = FALSE]
+            df$z <- col
+            fm <- FUN(GWAS.model, data = df, ...)
             getCoefficients(fm)
         }, i = i, j = j, chunkSize = chunkSize, nCores = nCores, verbose = verbose, ...)
         colnames(OUT) <- colnames(data@geno)[j]
