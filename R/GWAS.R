@@ -143,7 +143,7 @@ GWAS.SKAT <- function(formula, data, groups, i = seq_len(nrow(data@geno)), j = s
 
 
 # OLS for the regression y=xb+e (data is assumed to be pre-adjusted by non-genetic effects
-rayOLS <- function(y, x, SSy, Int, n, isNAY) {
+rayOLS <- function(x, y, Int, SSy, n, isNAY) {
     isNAX <- which(is.na(x))
     isNAXY <- unique(c(isNAX, isNAY))
     SSy <- SSy - sum(y[isNAX]^2, na.rm = TRUE)
