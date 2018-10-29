@@ -62,7 +62,17 @@ chunkedMap <- function(X, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(X)), chunk
     if (nCores == 1L) {
         res <- lapply(X = seq_len(nChunks), FUN = chunkApply, ...)
     } else {
-        res <- parallel::mclapply(X = seq_len(nChunks), FUN = chunkApply, ..., mc.cores = nCores)
+        # Suppress warnings because we are handling errors ourselves
+        res <- suppressWarnings(parallel::mclapply(X = seq_len(nChunks), FUN = chunkApply, ..., mc.cores = nCores)) #
+        errors <- which(sapply(res, class) == "try-error")
+        if (length(errors) > 0L) {
+            # With mc.preschedule = TRUE (the default), if a job fails, the
+            # remaining jobs will fail as well with the same error message.
+            # Therefore, the number of errors does not tell how many errors
+            # actually occurred and we forward only the first error message.
+            errorMessage <- attr(res[[errors[1L]]], "condition")$message
+            stop("in chunk ", errors[1L], " (only first error is shown)", ": ", errorMessage, call. = FALSE)
+        }
     }
     return(res)
 }
