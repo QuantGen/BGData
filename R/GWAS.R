@@ -77,16 +77,11 @@ GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)), 
 }
 
 
-# the GWAS method for rayOLS
 GWAS.rayOLS <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), chunkSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
     y <- data@pheno[i, getResponse(formula)]
-    y <- y - mean(y, na.rm = TRUE)
-    n <- length(y)
-    Int <- rep(1, n)
-    SSy <- sum(y^2, na.rm = TRUE)
-    isNAY <- which(is.na(y))
-    res <- chunkedApply(X = data@geno, MARGIN = 2L, FUN = rayOLS, i = i, j = j, chunkSize = chunkSize, nCores = nCores, verbose = verbose, y = y, Int = Int, SSy = SSy, n = n, isNAY = isNAY, ...)
-    res <- t(res)
+    y <- as.numeric(y)
+    res <- chunkedMap(X = data@geno, FUN = rayOLS, i = i, j = j, chunkSize = chunkSize, nCores = nCores, verbose = verbose, y = y, ...)
+    res <- do.call(rbind, res)
     colnames(res) <- c("Estimate", "Std.Err", "t-value", "Pr(>|t|)")
     rownames(res) <- colnames(data@geno)[j]
     return(res)
@@ -142,28 +137,8 @@ GWAS.SKAT <- function(formula, data, groups, i = seq_len(nrow(data@geno)), j = s
 }
 
 
-# OLS for the regression y=xb+e (data is assumed to be pre-adjusted by non-genetic effects
-rayOLS <- function(x, y, Int, SSy, n, isNAY) {
-    isNAX <- which(is.na(x))
-    isNAXY <- unique(c(isNAX, isNAY))
-    SSy <- SSy - sum(y[isNAX]^2, na.rm = TRUE)
-    if (length(isNAXY) > 0) {
-        y[isNAXY] <- 0
-        x[isNAXY] <- 0
-    }
-    n <- n - length(isNAXY)
-    # crossproducts
-    sX <- crossprod(Int, x)
-    sY <- crossprod(Int, y)
-    XX <- crossprod(x) - sX * sX / n
-    Xy <- crossprod(x, y) - sX * sY / n
-    # solution and SE
-    sol <- Xy / XX
-    RSS <- SSy - XX * sol^2
-    SE <- sqrt(RSS / (n - 2L) / XX)
-    z_stat <- sol / SE
-    p_val <- stats::pt(q = abs(z_stat), df = n - 2L, lower.tail = FALSE) * 2L
-    return(c(sol, SE, z_stat, p_val))
+rayOLS <- function(x, y) {
+    .Call(C_rayOLS, x, y)
 }
 
 

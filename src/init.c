@@ -4,9 +4,11 @@
 #include <stdlib.h> // for NULL
 
 extern SEXP summarize(SEXP);
+extern SEXP rayOLS(SEXP, SEXP);
 
 static const R_CallMethodDef callMethods[] = {
     {"C_summarize", (DL_FUNC) &summarize, 1},
+    {"C_rayOLS", (DL_FUNC) &rayOLS, 2},
     {NULL, NULL, 0}
 };
 
