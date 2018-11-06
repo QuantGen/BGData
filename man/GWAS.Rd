@@ -16,8 +16,9 @@ formula must be in the \code{@pheno} object of the \linkS4class{BGData}.}
 \item{data}{A \linkS4class{BGData} object.}
 
 \item{method}{The regression method to be used. Currently, the following
-methods are implemented: \code{\link[stats:lm]{stats::lm()}}, \code{\link[stats:lm.fit]{stats::lm.fit()}}, \code{\link[stats:lsfit]{stats::lsfit()}},
-\code{\link[stats:glm]{stats::glm()}}, \code{\link[lme4:lmer]{lme4::lmer()}}, and \code{\link[SKAT:SKAT]{SKAT::SKAT()}}. Defaults to \code{lsfit}.}
+methods are implemented: \code{rayOLS}, \code{\link[stats:lsfit]{stats::lsfit()}}, \code{\link[stats:lm]{stats::lm()}},
+\code{\link[stats:lm.fit]{stats::lm.fit()}}, \code{\link[stats:glm]{stats::glm()}}, \code{\link[lme4:lmer]{lme4::lmer()}}, and \code{\link[SKAT:SKAT]{SKAT::SKAT()}}.
+Defaults to \code{lsfit}.}
 
 \item{i}{Indicates which rows of \code{@geno} should be used. Can be integer,
 boolean, or character. By default, all rows are used.}

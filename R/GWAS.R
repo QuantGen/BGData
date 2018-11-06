@@ -12,8 +12,9 @@
 #' formula must be in the `@@pheno` object of the [BGData-class].
 #' @param data A [BGData-class] object.
 #' @param method The regression method to be used. Currently, the following
-#' methods are implemented: [stats::lm()], [stats::lm.fit()], [stats::lsfit()],
-#' [stats::glm()], [lme4::lmer()], and [SKAT::SKAT()]. Defaults to `lsfit`.
+#' methods are implemented: `rayOLS`, [stats::lsfit()], [stats::lm()],
+#' [stats::lm.fit()], [stats::glm()], [lme4::lmer()], and [SKAT::SKAT()].
+#' Defaults to `lsfit`.
 #' @param i Indicates which rows of `@@geno` should be used. Can be integer,
 #' boolean, or character. By default, all rows are used.
 #' @param j Indicates which columns of `@@geno` should be used. Can be integer,
@@ -34,20 +35,20 @@ GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)), 
         stop("data must BGData")
     }
 
-    if (!method %in% c("lm", "lm.fit", "lsfit", "glm", "lmer", "SKAT", "rayOLS")) {
-        stop("Only lm, lm.fit, lsfit, glm, lmer, SKAT, and rayOLS have been implemented so far.")
+    if (!method %in% c("rayOLS", "lsfit", "lm", "lm.fit", "glm", "lmer", "SKAT")) {
+        stop("Only rayOLS, lsfit, lm, lm.fit, glm, lmer, and SKAT have been implemented so far.")
     }
 
     i <- crochet::convertIndex(data@geno, i, "i")
     j <- crochet::convertIndex(data@geno, j, "j")
 
-    if (method == "lsfit") {
-        OUT <- GWAS.lsfit(formula = formula, data = data, i = i, j = j, chunkSize = chunkSize, nCores = nCores, verbose = verbose, ...)
-    } else if (method == "rayOLS") {
+    if (method == "rayOLS") {
         if (length(labels(stats::terms(formula))) > 0L) {
             stop("method rayOLS can only be used with y~1 formula, if you want to add covariates pre-adjust your phenotype.")
         }
         OUT <- GWAS.rayOLS(formula = formula, data = data, i = i, j = j, chunkSize = chunkSize, nCores = nCores, verbose = verbose, ...)
+    } else if (method == "lsfit") {
+        OUT <- GWAS.lsfit(formula = formula, data = data, i = i, j = j, chunkSize = chunkSize, nCores = nCores, verbose = verbose, ...)
     } else if (method == "SKAT") {
         if (!requireNamespace("SKAT", quietly = TRUE)) {
             stop("SKAT needed for this function to work. Please install it.", call. = FALSE)
