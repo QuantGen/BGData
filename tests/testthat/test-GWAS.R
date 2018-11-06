@@ -4,7 +4,7 @@ set.seed(1)
 
 nRows <- 5
 nCols <- 10
-nNAs <- 2
+percentNA <- 0.15
 
 lsfit_R <- function(X, y) {
     res <- apply(X, 2, function(x) {
@@ -21,13 +21,15 @@ test_that("lsfit", {
     for (mode in c("integer", "double")) {
 
         X <- matrix(data = rnorm(nRows * nCols, sd = 100), nrow = nRows, ncol = nCols)
-        X[sample(seq_along(X), size = nNAs)] <- NA
+        X[sample(seq_along(X), size = as.integer(length(X) * percentNA))] <- NA
         storage.mode(X) <- mode
 
-        y <- data.frame(y = rnorm(nRows, sd = 100))
-        y$y[sample(seq_along(y$y), size = nNAs)] <- NA
+        y <- rnorm(nRows, sd = 100)
+        y[sample(seq_along(y), size = as.integer(length(y) * percentNA))] <- NA
 
-        DATA <- BGData(geno = X, pheno = y)
+        DATA <- BGData(geno = X, pheno = data.frame(
+            y = y
+        ))
 
         expect_equal(
             GWAS(formula = y ~ 1, data = DATA, method = "lsfit"),

@@ -4,7 +4,7 @@ set.seed(1)
 
 nRows <- 5
 nCols <- 10
-nNAs <- 5
+percentNA <- 0.15
 
 summarize_R <- function(X) {
     res <- data.frame(
@@ -27,10 +27,13 @@ test_that("summarize", {
     for (mode in c("integer", "double")) {
 
         X <- matrix(data = rnorm(nRows * nCols, sd = 100), nrow = nRows, ncol = nCols)
-        X[sample(1:length(X), size = nNAs)] <- NA
+        X[sample(seq_along(X), size = as.integer(length(X) * percentNA))] <- NA
         storage.mode(X) <- mode
 
-        expect_equal(summarize(X), summarize_R(X))
+        expect_equal(
+            summarize(X),
+            summarize_R(X)
+        )
 
     }
 
