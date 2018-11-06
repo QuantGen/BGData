@@ -16,7 +16,7 @@ lsfit_R <- function(X, y) {
     return(res)
 }
 
-test_that("lsfit", {
+test_that("GWAS", {
 
     for (mode in c("integer", "double")) {
 
@@ -31,10 +31,14 @@ test_that("lsfit", {
             y = y
         ))
 
-        expect_equal(
-            GWAS(formula = y ~ 1, data = DATA, method = "lsfit"),
-            suppressWarnings(lsfit_R(DATA@geno, DATA@pheno))
-        )
+        for (method in c("rayOLS", "lsfit")) {
+
+            expect_equal(
+                GWAS(formula = y ~ 1, data = DATA, method = method),
+                suppressWarnings(lsfit_R(DATA@geno, DATA@pheno))
+            )
+
+        }
 
     }
 
