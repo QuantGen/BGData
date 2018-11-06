@@ -22,7 +22,6 @@ Imports:
     methods,
     parallel,
     crochet (>= 2.1.0),
-    matrixStats,
     bigmemory,
     synchronicity,
     ff,

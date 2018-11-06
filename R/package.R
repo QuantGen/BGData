@@ -84,4 +84,5 @@
 #' @importClassesFrom LinkedMatrix LinkedMatrix
 #' @importClassesFrom symDMatrix symDMatrix
 #' @importClassesFrom bigmemory big.matrix
+#' @useDynLib BGData, .registration = TRUE
 NULL

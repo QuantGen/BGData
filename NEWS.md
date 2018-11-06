@@ -2,6 +2,7 @@
 
 - Add `chunkedMap()` function.
 - Improve error handling in `chunkedMap()` and `chunkedApply()`.
+- `summarize()`: Improve performance.
 - `GWAS()`: Fix bug when computing p-values for methods other than rayOLS,
   lsfit, or SKAT when `i` is used to subset samples.
 

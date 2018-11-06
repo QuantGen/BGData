@@ -23,15 +23,12 @@
 #' @example man/examples/summarize.R
 #' @export
 summarize <- function(X, i = seq_len(nrow(X)), j = seq_len(ncol(X)), chunkSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE) {
-    i <- crochet::convertIndex(X, i, "i")
-    j <- crochet::convertIndex(X, j, "j")
     res <- chunkedMap(X = X, FUN = function(chunk) {
-        data.frame(
-            freq_na = matrixStats::colMeans2(is.na(chunk)),
-            allele_freq = matrixStats::colMeans2(chunk, na.rm = TRUE) / 2,
-            sd = matrixStats::colSds(chunk, na.rm = TRUE),
-            row.names = colnames(chunk)
-        )
+        summaries <- .Call(C_summarize, chunk)
+        rownames(summaries) <- colnames(chunk)
+        colnames(summaries) <- c("freq_na", "allele_freq", "sd")
+        return(summaries)
     }, i = i, j = j, chunkSize = chunkSize, nCores = nCores, verbose = verbose)
-    do.call("rbind", res)
+    res <- do.call("rbind", res)
+    as.data.frame(res)
 }
