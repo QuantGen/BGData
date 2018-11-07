@@ -113,17 +113,16 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
             ((curChunk - 1L) * chunkSize) + 1L,
             min(curChunk * chunkSize, p)
         )
-        localColIndex <- j[range]
-        X1 <- X[i, localColIndex, drop = FALSE]
+        X1 <- X[i, j[range], drop = FALSE]
         if (hasY) {
-            X2 <- X[i2, localColIndex, drop = FALSE]
+            X2 <- X[i2, j[range], drop = FALSE]
         }
 
         # compute centers
         if (is.logical(center) && center == TRUE) {
             center.chunk <- colMeans(X1, na.rm = TRUE)
         } else if (is.numeric(center)) {
-            center.chunk <- center[localColIndex]
+            center.chunk <- center[j[range]]
         } else {
             center.chunk = FALSE
         }
@@ -132,7 +131,7 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
         if (is.logical(scale) && scale == TRUE) {
             scale.chunk <- apply(X = X1, MARGIN = 2L, FUN = stats::sd, na.rm = TRUE)
         } else if (is.numeric(scale)) {
-            scale.chunk <- scale[localColIndex]
+            scale.chunk <- scale[j[range]]
         } else {
             scale.chunk <- FALSE
         }
