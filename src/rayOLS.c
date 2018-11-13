@@ -87,7 +87,7 @@ SEXP rayOLS_integer(SEXP X, SEXP y) {
         // Compute sum of squares of x (xtx) for Var(x), and
         // Compute sum of squares of y (yty) for RSS
         int n = 0;
-        long int xt1 = 0;
+        double xt1 = 0;
         double yt1 = 0;
         double xty = 0;
         double xtx = 0;
@@ -105,7 +105,7 @@ SEXP rayOLS_integer(SEXP X, SEXP y) {
         }
         // Center xty, xtx, and yty
         xty -= (xt1 * yt1) / n;
-        xtx -= (xt1 * xt1) / (double) n;
+        xtx -= (xt1 * xt1) / n;
         yty -= (yt1 * yt1) / n;
         // Compute beta_1 as Cov(x, y) / Var(x)
         double beta_1 = xty / xtx;
