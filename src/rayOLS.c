@@ -19,20 +19,20 @@ SEXP rayOLS_real(SEXP X, SEXP y) {
     double *X_data = REAL(X);
     double *y_data = REAL(y);
     // Iterate over columns of X
-    for (int col_idx = 0; col_idx < X_ncol; col_idx++) {
+    for (R_xlen_t col_idx = 0; col_idx < X_ncol; col_idx++) {
         // Compute number of non-missing values in both x and y (n), and
         // Compute sum of x (xt1) for centering x, and
         // Compute sum of y (yt1) for centering y, and
         // Compute sum of products of x and y (xty) for Cov(x, y), and
         // Compute sum of squares of x (xtx) for Var(x), and
         // Compute sum of squares of y (yty) for RSS
-        int n = 0;
+        R_xlen_t n = 0;
         double xt1 = 0;
         double yt1 = 0;
         double xty = 0;
         double xtx = 0;
         double yty = 0;
-        for (int row_idx = 0; row_idx < X_nrow; row_idx++) {
+        for (R_xlen_t row_idx = 0; row_idx < X_nrow; row_idx++) {
             double x_val = X_data[row_idx + (col_idx * X_nrow)];
             if (!(ISNA(x_val) || ISNA(y_data[row_idx]))) {
                 n++;
@@ -80,14 +80,14 @@ SEXP rayOLS_integer(SEXP X, SEXP y) {
     int *X_data = INTEGER(X);
     double *y_data = REAL(y);
     // Iterate over columns of X
-    for (int col_idx = 0; col_idx < X_ncol; col_idx++) {
+    for (R_xlen_t col_idx = 0; col_idx < X_ncol; col_idx++) {
         // Compute number of non-missing values in both x and y (n), and
         // Compute sum of x (xt1) for centering x, and
         // Compute sum of y (yt1) for centering y, and
         // Compute sum of products of x and y (xty) for Cov(x, y), and
         // Compute sum of squares of x (xtx) for Var(x), and
         // Compute sum of squares of y (yty) for RSS
-        int n = 0;
+        R_xlen_t n = 0;
         double xt1 = 0;
         double yt1 = 0;
         double xty = 0;
