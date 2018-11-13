@@ -48,6 +48,7 @@ SEXP rayOLS_real(SEXP X, SEXP y) {
         xtx -= (xt1 * xt1) / n;
         yty -= (yt1 * yt1) / n;
         // Compute beta_1 as Cov(x, y) / Var(x)
+        // For centered data, beta_0 will be 0: mean(y) - beta_1 * mean(x)
         double beta_1 = xty / xtx;
         // Compute remaining statistics
         double rss = yty - (xtx * pow(beta_1, 2));
@@ -108,6 +109,7 @@ SEXP rayOLS_integer(SEXP X, SEXP y) {
         xtx -= (xt1 * xt1) / n;
         yty -= (yt1 * yt1) / n;
         // Compute beta_1 as Cov(x, y) / Var(x)
+        // For centered data, beta_0 will be 0: mean(y) - beta_1 * mean(x)
         double beta_1 = xty / xtx;
         // Compute remaining statistics
         double rss = yty - (xtx * pow(beta_1, 2));
