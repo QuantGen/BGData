@@ -6,6 +6,8 @@
 - `GWAS()`: Improve performance of `rayOLS` method.
 - `GWAS()`: Fix bug when computing p-values for methods other than rayOLS,
   lsfit, or SKAT when `i` is used to subset samples.
+- `as.BGData()`: Fix bug loading .fam and .bim files when path contains the
+  word `bed`.
 
 
 # BGData 2.0.0

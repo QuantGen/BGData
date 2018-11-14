@@ -399,7 +399,7 @@ generatePheno <- function(x) {
     bedPath <- attr(x, "path")
     # Try to load .fam file, generate pheno otherwise
     ex <- try({
-        pheno <- loadFamFile(sub(".bed", ".fam", bedPath))
+        pheno <- loadFamFile(sub("\\.bed", "\\.fam", bedPath))
     }, silent = TRUE)
     if (class(ex) == "try-error") {
         splits <- strsplit(rownames(x), "_")
@@ -443,7 +443,7 @@ generateMap <- function(x) {
     bedPath <- attr(x, "path")
     # Try to load .fam file, generate pheno otherwise
     ex <- try({
-        map <- loadBimFile(sub(".bed", ".bim", bedPath))
+        map <- loadBimFile(sub("\\.bed", "\\.bim", bedPath))
     }, silent = TRUE)
     if (class(ex) == "try-error") {
         splits <- strsplit(colnames(x), "_")
