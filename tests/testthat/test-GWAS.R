@@ -53,10 +53,16 @@ test_that("GWAS without covariates", {
 
         for (method in c("rayOLS", "lsfit", "lm")) {
 
-            GWAS_res <- GWAS(formula = y ~ 1, data = DATA, method = method)
+            for (nCores in seq_len(2)) {
 
-            expect_equivalent(GWAS_res, lsfit_res)
-            expect_equivalent(GWAS_res, lm_res)
+                hasCores(nCores)
+
+                GWAS_res <- suppressWarnings(GWAS(formula = y ~ 1, data = DATA, method = method, nCores = nCores))
+
+                expect_equivalent(GWAS_res, lsfit_res)
+                expect_equivalent(GWAS_res, lm_res)
+
+            }
 
         }
 
@@ -91,10 +97,16 @@ test_that("GWAS with covariates", {
 
         for (method in c("lsfit", "lm")) {
 
-            GWAS_res <- GWAS(formula = y ~ pc1 + pc2, data = DATA, method = method)
+            for (nCores in seq_len(2)) {
 
-            expect_equivalent(GWAS_res, lsfit_res)
-            expect_equivalent(GWAS_res, lm_res)
+                hasCores(nCores)
+
+                GWAS_res <- suppressWarnings(GWAS(formula = y ~ pc1 + pc2, data = DATA, method = method, nCores = nCores))
+
+                expect_equivalent(GWAS_res, lsfit_res)
+                expect_equivalent(GWAS_res, lm_res)
+
+            }
 
         }
 

@@ -6,7 +6,7 @@ nRows <- 5
 nCols <- 10
 percentNA <- 0.15
 
-summarize_R <- function(X) {
+summarize_test <- function(X) {
     res <- data.frame(
         freq_na = vector(mode = "double", length = ncol(X)),
         allele_freq = vector(mode = "double", length = ncol(X)),
@@ -30,10 +30,16 @@ test_that("summarize", {
         X[sample(seq_along(X), size = as.integer(length(X) * percentNA))] <- NA
         storage.mode(X) <- mode
 
-        expect_equal(
-            summarize(X),
-            summarize_R(X)
-        )
+        for (nCores in seq_len(2)) {
+
+            hasCores(nCores)
+
+            expect_equal(
+                summarize(X, nCores = nCores),
+                summarize_test(X)
+            )
+
+        }
 
     }
 
