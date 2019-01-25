@@ -1,9 +1,8 @@
 ## Test environments
 
-* Local Arch Linux install: R 3.5.1
-* Travis CI: R 3.5.0
-* Doesn't build on Windows because package 'synchronicity' is required but not
-  available.
+* Local Arch Linux install: R 3.5.2
+* Travis CI: R 3.5.2
+* win-builder: release and devel
 
 
 ## R CMD check results
