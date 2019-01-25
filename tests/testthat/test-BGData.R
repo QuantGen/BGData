@@ -48,37 +48,37 @@ test_that("it reads .raw files into BGData objects", {
     # With minimum number of parameters (with exception of folderOut)
     BGData <- readRAW(fileIn = pedPath, folderOut = paste0(testPath, "test-", randomString()))
     expect_equal(BGData@pheno, phenotypes)
-    expect_equal(BGData@geno[], genotypes, check.attributes = FALSE)
+    expect_equivalent(BGData@geno[], genotypes)
 
     # With n
     BGData <- readRAW(fileIn = pedPath, n = nRows, folderOut = paste0(testPath, "test-", randomString()))
     expect_equal(BGData@pheno, phenotypes)
-    expect_equal(BGData@geno[], genotypes, check.attributes = FALSE)
+    expect_equivalent(BGData@geno[], genotypes)
 
     # With p
     BGData <- readRAW(fileIn = pedPath, p = nCols, folderOut = paste0(testPath, "test-", randomString()))
     expect_equal(BGData@pheno, phenotypes)
-    expect_equal(BGData@geno[], genotypes, check.attributes = FALSE)
+    expect_equivalent(BGData@geno[], genotypes)
 
     # With both n and p
     BGData <- readRAW(fileIn = pedPath, n = nRows, p = nCols, folderOut = paste0(testPath, "test-", randomString()))
     expect_equal(BGData@pheno, phenotypes)
-    expect_equal(BGData@geno[], genotypes, check.attributes = FALSE)
+    expect_equivalent(BGData@geno[], genotypes)
 
     # As integer
     class(genotypes) <- "integer"
     BGData <- readRAW(fileIn = pedPath, dataType = integer(), folderOut = paste0(testPath, "test-", randomString()))
-    expect_equal(BGData@geno[], genotypes, check.attributes = FALSE)
+    expect_equivalent(BGData@geno[], genotypes)
     BGData <- readRAW(fileIn = pedPath, dataType = "integer", folderOut = paste0(testPath, "test-", randomString()))
-    expect_equal(BGData@geno[], genotypes, check.attributes = FALSE)
+    expect_equivalent(BGData@geno[], genotypes)
     genotypes <- restoreGenotypes()
 
     # As double
     class(genotypes) <- "double"
     BGData <- readRAW(fileIn = pedPath, dataType = double(), folderOut = paste0(testPath, "test-", randomString()))
-    expect_equal(BGData@geno[], genotypes, check.attributes = FALSE)
+    expect_equivalent(BGData@geno[], genotypes)
     BGData <- readRAW(fileIn = pedPath, dataType = "double", folderOut = paste0(testPath, "test-", randomString()))
-    expect_equal(BGData@geno[], genotypes, check.attributes = FALSE)
+    expect_equivalent(BGData@geno[], genotypes)
     genotypes <- restoreGenotypes()
 
     # As character
