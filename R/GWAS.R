@@ -93,7 +93,7 @@ GWAS.lsfit <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(
 
     # The subset argument of model.frame is evaluated in the environment of the
     # formula, therefore subset after building the frame.
-    frame <- stats::model.frame(formula = formula, data = data@pheno, na.action = na.pass)[i, , drop = FALSE]
+    frame <- stats::model.frame(formula = formula, data = data@pheno, na.action = stats::na.pass)[i, , drop = FALSE]
     model <- stats::model.matrix(formula, frame)
 
     y <- data@pheno[i, getResponse(formula)]
