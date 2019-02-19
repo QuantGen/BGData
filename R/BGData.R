@@ -67,24 +67,23 @@ BGData <- setClass("BGData", slots = c(geno = "geno", pheno = "data.frame", map 
 #' [BEDMatrix::BEDMatrix-class], [bigmemory::big.matrix-class], `ff_matrix`,
 #' and `matrix`.
 #' @param pheno A `data.frame` that contains sample information (including
-#' phenotypes). A stub that only contains an `IID` column populated with the
-#' rownames of `@@geno` will be generated if missing.
+#' phenotypes). A stub that only contains an `IID` column populated with either
+#' the rownames of `@@geno` or a sequence will be generated if missing.
 #' @param map A `data.frame` that contains variant information. A stub that
-#' only contains a `mrk` column populated with the colnames of `@@geno` will be
-#' generated if missing.
+#' only contains a `mrk` column populated with either the colnames of `@@geno`
+#' or a sequence will be generated if missing.
 #' @export
 setMethod("initialize", "BGData", function(.Object, geno, pheno, map) {
     if (!is(geno, "geno")) {
         stop("Only LinkedMatrix, BEDMatrix, big.matrix, ff_matrix, or regular matrix objects are allowed for geno.")
     }
-    if (is.null(colnames(geno))) {
-        colnames(geno) <- paste0("mrk_", seq_len(ncol(geno)))
-    }
-    if (is.null(rownames(geno))) {
-        rownames(geno) <- paste0("id_", seq_len(nrow(geno)))
-    }
     if (missing(pheno)) {
-        pheno <- data.frame(IID = rownames(geno), stringsAsFactors = FALSE)
+        if (is.null(rownames(geno))) {
+            sampleIDs <- as.character(1:nrow(geno))
+        } else {
+            sampleIDs <- rownames(geno)
+        }
+        pheno <- data.frame(IID = sampleIDs, row.names = sampleIDs, stringsAsFactors = FALSE)
     } else if (!is.data.frame(pheno)) {
         stop("pheno needs to be a data.frame.")
     }
@@ -92,7 +91,12 @@ setMethod("initialize", "BGData", function(.Object, geno, pheno, map) {
         stop("Number of rows of geno and number of rows of pheno do not match.")
     }
     if (missing(map)) {
-        map <- data.frame(mrk = colnames(geno), stringsAsFactors = FALSE)
+        if (is.null(colnames(geno))) {
+            variantIDs <- as.character(1:ncol(geno))
+        } else {
+            variantIDs <- colnames(geno)
+        }
+        map <- data.frame(mrk = variantIDs, row.names = variantIDs, stringsAsFactors = FALSE)
     } else if (!is.data.frame(map)) {
         stop("map needs to be a data.frame.")
     }

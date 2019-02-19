@@ -4,6 +4,9 @@ When creating a BGData object:
 - Check if `pheno` and `map` are data.frames.
 - Check if number of rows of `geno` matches number of rows of `pheno`.
 - Check if number of columns of `geno` matches number of rows of `map`.
+- Do not create dimnames for `geno` as this object is likely shared.
+- Check if `geno` has row names before creating `pheno` stub.
+- Check if `geno` has column names before creating `map` stub.
 
 
 # BGData 2.1.0
