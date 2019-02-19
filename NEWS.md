@@ -1,6 +1,9 @@
 # BGData dev
 
-- Check if `pheno` and `map` are data.frames when creating a BGData object.
+When creating a BGData object:
+- Check if `pheno` and `map` are data.frames.
+- Check if number of rows of `geno` matches number of rows of `pheno`.
+- Check if number of columns of `geno` matches number of rows of `map`.
 
 
 # BGData 2.1.0

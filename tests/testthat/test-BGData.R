@@ -41,6 +41,15 @@ test_that("it checks if map is a data.frame", {
     expect_error(BGData(geno = genotypes, map = colnames(genotypes)))
 })
 
+test_that("it checks if the number of rows of geno match with the number of rows of pheno", {
+    expect_error(BGData(geno = genotypes, pheno = phenotypes[-1, ]))
+})
+
+test_that("it checks if the number of rows of geno match with the number of rows of pheno", {
+    map <- data.frame(mrk = colnames(genotypes))
+    expect_error(BGData(geno = genotypes, map = map[-1, ]))
+})
+
 
 context("readRAW")
 

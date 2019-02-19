@@ -88,10 +88,16 @@ setMethod("initialize", "BGData", function(.Object, geno, pheno, map) {
     } else if (!is.data.frame(pheno)) {
         stop("pheno needs to be a data.frame.")
     }
+    if (nrow(geno) != nrow(pheno)) {
+        stop("Number of rows of geno and number of rows of pheno do not match.")
+    }
     if (missing(map)) {
         map <- data.frame(mrk = colnames(geno), stringsAsFactors = FALSE)
     } else if (!is.data.frame(map)) {
         stop("map needs to be a data.frame.")
+    }
+    if (ncol(geno) != nrow(map)) {
+        stop("Number of columns of geno and number of rows of map do not match.")
     }
     .Object@geno <- geno
     .Object@pheno <- pheno
