@@ -1,3 +1,8 @@
+# BGData dev
+
+- Check if `pheno` and `map` are data.frames when creating a BGData object.
+
+
 # BGData 2.1.0
 
 - Add `chunkedMap()` function.

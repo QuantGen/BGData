@@ -85,9 +85,13 @@ setMethod("initialize", "BGData", function(.Object, geno, pheno, map) {
     }
     if (missing(pheno)) {
         pheno <- data.frame(IID = rownames(geno), stringsAsFactors = FALSE)
+    } else if (!is.data.frame(pheno)) {
+        stop("pheno needs to be a data.frame.")
     }
     if (missing(map)) {
         map <- data.frame(mrk = colnames(geno), stringsAsFactors = FALSE)
+    } else if (!is.data.frame(map)) {
+        stop("map needs to be a data.frame.")
     }
     .Object@geno <- geno
     .Object@pheno <- pheno

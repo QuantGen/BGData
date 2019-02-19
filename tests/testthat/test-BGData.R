@@ -33,6 +33,14 @@ test_that("it requires at least geno", {
     expect_error(BGData())
 })
 
+test_that("it checks if pheno is a data.frame", {
+    expect_error(BGData(geno = genotypes, pheno = rownames(genotypes)))
+})
+
+test_that("it checks if map is a data.frame", {
+    expect_error(BGData(geno = genotypes, map = colnames(genotypes)))
+})
+
 
 context("readRAW")
 
