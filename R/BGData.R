@@ -45,8 +45,9 @@ setClassUnion("geno", c("LinkedMatrix", "BEDMatrix", "big.matrix", "ff_matrix", 
 #' large datasets. Currently supported are [LinkedMatrix::LinkedMatrix-class],
 #' [BEDMatrix::BEDMatrix-class], [bigmemory::big.matrix-class], `ff_matrix`,
 #' and `matrix`.
-#' @slot pheno A `data.frame` that contains phenotypes.
-#' @slot map A `data.frame` that contains a genetic map.
+#' @slot pheno A `data.frame` that contains sample information (including
+#' phenotypes).
+#' @slot map A `data.frame` that contains variant information.
 #' @example man/examples/BGData.R
 #' @export BGData
 #' @exportClass BGData
@@ -65,11 +66,11 @@ BGData <- setClass("BGData", slots = c(geno = "geno", pheno = "data.frame", map 
 #' large datasets. Currently supported are [LinkedMatrix::LinkedMatrix-class],
 #' [BEDMatrix::BEDMatrix-class], [bigmemory::big.matrix-class], `ff_matrix`,
 #' and `matrix`.
-#' @param pheno A `data.frame` that contains phenotypes. A stub that only
-#' contains an `IID` column populated with the rownames of `@@geno` will be
-#' generated if missing.
-#' @param map A `data.frame` that contains a genetic map. A stub that only
-#' contains a `mrk` column populated with the colnames of `@@geno` will be
+#' @param pheno A `data.frame` that contains sample information (including
+#' phenotypes). A stub that only contains an `IID` column populated with the
+#' rownames of `@@geno` will be generated if missing.
+#' @param map A `data.frame` that contains variant information. A stub that
+#' only contains a `mrk` column populated with the colnames of `@@geno` will be
 #' generated if missing.
 #' @export
 setMethod("initialize", "BGData", function(.Object, geno, pheno, map) {

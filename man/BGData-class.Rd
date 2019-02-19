@@ -38,9 +38,10 @@ large datasets. Currently supported are \link[LinkedMatrix:LinkedMatrix-class]{L
 \link[BEDMatrix:BEDMatrix-class]{BEDMatrix::BEDMatrix}, \link[bigmemory:big.matrix-class]{bigmemory::big.matrix}, \code{ff_matrix},
 and \code{matrix}.}
 
-\item{\code{pheno}}{A \code{data.frame} that contains phenotypes.}
+\item{\code{pheno}}{A \code{data.frame} that contains sample information (including
+phenotypes).}
 
-\item{\code{map}}{A \code{data.frame} that contains a genetic map.}
+\item{\code{map}}{A \code{data.frame} that contains variant information.}
 }}
 
 \examples{

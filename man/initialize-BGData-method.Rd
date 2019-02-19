@@ -17,12 +17,12 @@ large datasets. Currently supported are \link[LinkedMatrix:LinkedMatrix-class]{L
 \link[BEDMatrix:BEDMatrix-class]{BEDMatrix::BEDMatrix}, \link[bigmemory:big.matrix-class]{bigmemory::big.matrix}, \code{ff_matrix},
 and \code{matrix}.}
 
-\item{pheno}{A \code{data.frame} that contains phenotypes. A stub that only
-contains an \code{IID} column populated with the rownames of \code{@geno} will be
-generated if missing.}
+\item{pheno}{A \code{data.frame} that contains sample information (including
+phenotypes). A stub that only contains an \code{IID} column populated with the
+rownames of \code{@geno} will be generated if missing.}
 
-\item{map}{A \code{data.frame} that contains a genetic map. A stub that only
-contains a \code{mrk} column populated with the colnames of \code{@geno} will be
+\item{map}{A \code{data.frame} that contains variant information. A stub that
+only contains a \code{mrk} column populated with the colnames of \code{@geno} will be
 generated if missing.}
 }
 \description{
