@@ -50,6 +50,15 @@ test_that("it checks if the number of rows of geno match with the number of rows
     expect_error(BGData(geno = genotypes, map = map[-1, ]))
 })
 
+test_that("it warns if the row names of pheno do not match the row names of geno", {
+    expect_warning(BGData(geno = genotypes, pheno = phenotypes[nrow(phenotypes):1, ]))
+})
+
+test_that("it warns if the row names of map do not match the columns names of geno", {
+    map <- data.frame(mrk = rev(colnames(genotypes)))
+    expect_warning(BGData(geno = genotypes, map = map))
+})
+
 
 context("readRAW")
 

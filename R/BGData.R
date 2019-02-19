@@ -90,6 +90,11 @@ setMethod("initialize", "BGData", function(.Object, geno, pheno, map) {
     if (nrow(geno) != nrow(pheno)) {
         stop("Number of rows of geno and number of rows of pheno do not match.")
     }
+    # We should not assume that geno has row names, but if it does, it should
+    # match the row names of pheno
+    if (!is.null(rownames(geno)) && any(rownames(geno) != rownames(pheno))) {
+        warning("Row names of geno and row names of pheno do not match.")
+    }
     if (missing(map)) {
         if (is.null(colnames(geno))) {
             variantIDs <- as.character(1:ncol(geno))
@@ -102,6 +107,11 @@ setMethod("initialize", "BGData", function(.Object, geno, pheno, map) {
     }
     if (ncol(geno) != nrow(map)) {
         stop("Number of columns of geno and number of rows of map do not match.")
+    }
+    # We should not assume that geno has column names, but if it does, it should
+    # match the row names of map
+    if (!is.null(colnames(geno)) && any(colnames(geno) != rownames(map))) {
+        warning("Column names of geno and row names of map do not match.")
     }
     .Object@geno <- geno
     .Object@pheno <- pheno
