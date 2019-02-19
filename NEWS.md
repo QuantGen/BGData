@@ -9,6 +9,8 @@ When creating a BGData object:
 - Do not create dimnames for `geno` as this object is likely shared.
 - Check if `geno` has row names before creating `pheno` stub.
 - Check if `geno` has column names before creating `map` stub.
+- Rename `IID` in `pheno` stub to `sample_id`.
+- Rename `mrk` in `map` stub to `variant_id`.
 
 
 # BGData 2.1.0

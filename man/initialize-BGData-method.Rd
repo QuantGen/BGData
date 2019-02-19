@@ -18,12 +18,12 @@ large datasets. Currently supported are \link[LinkedMatrix:LinkedMatrix-class]{L
 and \code{matrix}.}
 
 \item{pheno}{A \code{data.frame} that contains sample information (including
-phenotypes). A stub that only contains an \code{IID} column populated with either
-the rownames of \code{@geno} or a sequence will be generated if missing.}
+phenotypes). A stub that only contains a \code{sample_id} column populated with
+either the rownames of \code{@geno} or a sequence will be generated if missing.}
 
 \item{map}{A \code{data.frame} that contains variant information. A stub that
-only contains a \code{mrk} column populated with either the colnames of \code{@geno}
-or a sequence will be generated if missing.}
+only contains a \code{variant_id} column populated with either the colnames of
+\code{@geno} or a sequence will be generated if missing.}
 }
 \description{
 This method is run when a \linkS4class{BGData} object is created using

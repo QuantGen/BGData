@@ -67,11 +67,11 @@ BGData <- setClass("BGData", slots = c(geno = "geno", pheno = "data.frame", map 
 #' [BEDMatrix::BEDMatrix-class], [bigmemory::big.matrix-class], `ff_matrix`,
 #' and `matrix`.
 #' @param pheno A `data.frame` that contains sample information (including
-#' phenotypes). A stub that only contains an `IID` column populated with either
-#' the rownames of `@@geno` or a sequence will be generated if missing.
+#' phenotypes). A stub that only contains a `sample_id` column populated with
+#' either the rownames of `@@geno` or a sequence will be generated if missing.
 #' @param map A `data.frame` that contains variant information. A stub that
-#' only contains a `mrk` column populated with either the colnames of `@@geno`
-#' or a sequence will be generated if missing.
+#' only contains a `variant_id` column populated with either the colnames of
+#' `@@geno` or a sequence will be generated if missing.
 #' @export
 setMethod("initialize", "BGData", function(.Object, geno, pheno, map) {
     if (!is(geno, "geno")) {
@@ -83,7 +83,7 @@ setMethod("initialize", "BGData", function(.Object, geno, pheno, map) {
         } else {
             sampleIDs <- rownames(geno)
         }
-        pheno <- data.frame(IID = sampleIDs, row.names = sampleIDs, stringsAsFactors = FALSE)
+        pheno <- data.frame(sample_id = sampleIDs, row.names = sampleIDs, stringsAsFactors = FALSE)
     } else if (!is.data.frame(pheno)) {
         stop("pheno needs to be a data.frame.")
     }
@@ -101,7 +101,7 @@ setMethod("initialize", "BGData", function(.Object, geno, pheno, map) {
         } else {
             variantIDs <- colnames(geno)
         }
-        map <- data.frame(mrk = variantIDs, row.names = variantIDs, stringsAsFactors = FALSE)
+        map <- data.frame(variant_id = variantIDs, row.names = variantIDs, stringsAsFactors = FALSE)
     } else if (!is.data.frame(map)) {
         stop("map needs to be a data.frame.")
     }
