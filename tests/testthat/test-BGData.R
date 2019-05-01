@@ -293,7 +293,7 @@ test_that("it loads BGData objects containing a BEDMatrix object", {
 
 context("as.BGData")
 
-test_that("it converts a BEDMatrix object to a BGData object", {
+test_that("it converts a regular BEDMatrix object to a BGData object", {
     bedMatrix <- BEDMatrix::BEDMatrix(system.file("extdata", "chr1.bed", package = "BGData"))
     bgData <- as.BGData(bedMatrix)
     expect_is(bgData, "BGData")
@@ -302,6 +302,35 @@ test_that("it converts a BEDMatrix object to a BGData object", {
     expect_equal(rownames(bgData@pheno), rownames(bedMatrix))
     expect_equal(nrow(bgData@map), ncol(bedMatrix))
     expect_equal(rownames(bgData@map), colnames(bedMatrix))
+})
+
+test_that("it converts a BEDMatrix object created with the n parameter to a BGData object", {
+    bedMatrix <- BEDMatrix::BEDMatrix(system.file("extdata", "chr1.bed", package = "BGData"), n = 199)
+    bgData <- as.BGData(bedMatrix)
+    expect_is(bgData, "BGData")
+    expect_equal(dim(bgData@geno), dim(bedMatrix))
+    expect_equal(nrow(bgData@pheno), nrow(bedMatrix))
+    expect_equal(nrow(bgData@map), ncol(bedMatrix))
+    expect_equal(rownames(bgData@map), colnames(bedMatrix))
+})
+
+test_that("it converts a BEDMatrix object created with the p parameter to a BGData object", {
+    bedMatrix <- BEDMatrix::BEDMatrix(system.file("extdata", "chr1.bed", package = "BGData"), p = 300)
+    bgData <- as.BGData(bedMatrix)
+    expect_is(bgData, "BGData")
+    expect_equal(dim(bgData@geno), dim(bedMatrix))
+    expect_equal(nrow(bgData@pheno), nrow(bedMatrix))
+    expect_equal(rownames(bgData@pheno), rownames(bedMatrix))
+    expect_equal(nrow(bgData@map), ncol(bedMatrix))
+})
+
+test_that("it converts a BEDMatrix object created with the n and p parameters to a BGData object", {
+    bedMatrix <- BEDMatrix::BEDMatrix(system.file("extdata", "chr1.bed", package = "BGData"), n = 199, p = 300)
+    bgData <- as.BGData(bedMatrix)
+    expect_is(bgData, "BGData")
+    expect_equal(dim(bgData@geno), dim(bedMatrix))
+    expect_equal(nrow(bgData@pheno), nrow(bedMatrix))
+    expect_equal(nrow(bgData@map), ncol(bedMatrix))
 })
 
 test_that("it throws an error if an alternate phenotype file does not exist when converting a BEDMatrix object to a BGData object", {
