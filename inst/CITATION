@@ -1,0 +1,16 @@
+citEntry(
+    entry = "Article",
+    textVersion = "Grueneberg, A., and G. de los Campos, 2019 BGData - A Suite of R Packages for Genomic Analysis with Big Data. G3: Genes, Genomes, Genetics 9(5): 1377-1383.",
+    title = "BGData - A Suite of R Packages for Genomic Analysis with Big Data",
+    author = c(
+        person("Alexander", "Grueneberg"),
+        person("Gustavo", "de los Campos")
+    ),
+    journal = "G3: Genes, Genomes, Genetics",
+    year = "2019",
+    volume = "9",
+    number = "5",
+    pages = "1377--1383",
+    doi = "10.1534/g3.119.400018",
+    url = "https://www.g3journal.org/content/9/5/1377"
+)

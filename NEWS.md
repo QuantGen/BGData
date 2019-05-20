@@ -1,16 +1,17 @@
 # BGData 2.1.0.9000
 
-When creating a BGData object:
-- Check if `pheno` and `map` are data.frames.
-- Check if number of rows of `geno` matches number of rows of `pheno`.
-- Check if number of columns of `geno` matches number of rows of `map`.
-- Warn if the row names of `pheno` do not match the row names of `geno`.
-- Warn if the row names of `map` do not match the column names of `geno`.
-- Do not create dimnames for `geno` as this object is likely shared.
-- Check if `geno` has row names before creating `pheno` stub.
-- Check if `geno` has column names before creating `map` stub.
-- Rename `IID` in `pheno` stub to `sample_id`.
-- Rename `mrk` in `map` stub to `variant_id`.
+- When creating a BGData object:
+  - Check if `pheno` and `map` are data.frames.
+  - Check if number of rows of `geno` matches number of rows of `pheno`.
+  - Check if number of columns of `geno` matches number of rows of `map`.
+  - Warn if the row names of `pheno` do not match the row names of `geno`.
+  - Warn if the row names of `map` do not match the column names of `geno`.
+  - Do not create dimnames for `geno` as this object is likely shared.
+  - Check if `geno` has row names before creating `pheno` stub.
+  - Check if `geno` has column names before creating `map` stub.
+  - Rename `IID` in `pheno` stub to `sample_id`.
+  - Rename `mrk` in `map` stub to `variant_id`.
+- Update citation instructions.
 
 
 # BGData 2.1.0
