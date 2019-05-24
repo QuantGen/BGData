@@ -1,4 +1,4 @@
+^\.codecov\.yml$
 ^\.travis\.yml$
 ^revdep$
-^codecov\.yml$
 ^appveyor\.yml$
