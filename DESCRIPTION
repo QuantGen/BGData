@@ -30,8 +30,7 @@ Suggests:
     data.table (>= 1.9.6),
     lme4,
     SKAT,
-    testthat,
-    covr
+    testthat
 RoxygenNote: 6.1.1
 Roxygen: list(markdown = TRUE)
 Encoding: UTF-8

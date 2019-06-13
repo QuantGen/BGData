@@ -4,5 +4,7 @@ cache: packages
 warnings_are_errors: true
 r_binary_packages:
   - devtools
+r_packages:
+  - covr
 after_success:
-  - Rscript -e 'covr::codecov()'
+  - Rscript -e 'library(covr); codecov()'
