@@ -1,4 +1,4 @@
-# BGData dev
+# BGData 2.1.0.9000
 
 When creating a BGData object:
 - Check if `pheno` and `map` are data.frames.
