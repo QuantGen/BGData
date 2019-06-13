@@ -1,7 +1,5 @@
 language: r
 cache: packages
-r_binary_packages:
-  - devtools
 r_packages:
   - covr
 after_success:
