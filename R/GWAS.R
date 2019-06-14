@@ -1,34 +1,3 @@
-#' Performs Single Marker Regressions Using BGData Objects.
-#'
-#' Implements single marker regressions. The regression model includes all the
-#' covariates specified in the right-hand-side of the `formula` plus one column
-#' of `@@geno` at a time. The data from the association tests is obtained from
-#' a [BGData-class] object.
-#'
-#' @inheritSection BGData-package File-backed matrices
-#' @inheritSection BGData-package Multi-level parallelism
-#' @param formula The formula for the GWAS model without including the marker,
-#' e.g. `y ~ 1` or `y ~ factor(sex) + age`. The variables included in the
-#' formula must be in the `@@pheno` object of the [BGData-class].
-#' @param data A [BGData-class] object.
-#' @param method The regression method to be used. Currently, the following
-#' methods are implemented: `rayOLS`, [stats::lsfit()], [stats::lm()],
-#' [stats::lm.fit()], [stats::glm()], [lme4::lmer()], and [SKAT::SKAT()].
-#' Defaults to `lsfit`.
-#' @param i Indicates which rows of `@@geno` should be used. Can be integer,
-#' boolean, or character. By default, all rows are used.
-#' @param j Indicates which columns of `@@geno` should be used. Can be integer,
-#' boolean, or character. By default, all columns are used.
-#' @param chunkSize The number of columns of `@@geno` that are brought into
-#' physical memory for processing per core. If `NULL`, all elements in `j` are
-#' used. Defaults to 5000.
-#' @param nCores The number of cores (passed to [parallel::mclapply()]).
-#' Defaults to the number of cores as detected by [parallel::detectCores()].
-#' @param verbose Whether progress updates will be posted. Defaults to `FALSE`.
-#' @param ... Additional arguments for chunkedApply and regression method.
-#' @return The same matrix that would be returned by `coef(summary(model))`.
-#' @example man/examples/GWAS.R
-#' @export
 GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), chunkSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
 
     if (class(data) != "BGData") {
@@ -77,7 +46,6 @@ GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)), 
     return(OUT)
 }
 
-
 GWAS.rayOLS <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), chunkSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
     y <- data@pheno[i, getResponse(formula)]
     y <- as.numeric(y)
@@ -87,7 +55,6 @@ GWAS.rayOLS <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len
     rownames(res) <- colnames(data@geno)[j]
     return(res)
 }
-
 
 GWAS.lsfit <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(ncol(data@geno)), chunkSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
 
@@ -107,7 +74,6 @@ GWAS.lsfit <- function(formula, data, i = seq_len(nrow(data@geno)), j = seq_len(
 
     return(res)
 }
-
 
 # formula: the formula for the GWAS model without including the markers, e.g.
 # y~1 or y~factor(sex)+age
@@ -137,26 +103,21 @@ GWAS.SKAT <- function(formula, data, groups, i = seq_len(nrow(data@geno)), j = s
     return(OUT)
 }
 
-
 rayOLS <- function(x, y) {
     .Call(C_rayOLS, x, y)
 }
-
 
 getCoefficients <- function(x) {
     UseMethod("getCoefficients")
 }
 
-
 getCoefficients.lm <- function(x) {
     summary(x)$coef[2L, ]
 }
 
-
 getCoefficients.glm <- function(x) {
     summary(x)$coef[2L, ]
 }
-
 
 getCoefficients.lmerMod <- function(x) {
     ans <- summary(x)$coef[2L, ]

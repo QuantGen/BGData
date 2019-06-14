@@ -11,7 +11,6 @@ getLineCount <- function(path, header) {
     return(n)
 }
 
-
 getFileHeader <- function(path, sep = "") {
     file <- file(path, open = "r")
     header <- scan(file, nlines = 1L, what = character(), sep = sep, quiet = TRUE)
@@ -19,18 +18,15 @@ getFileHeader <- function(path, sep = "") {
     return(header)
 }
 
-
 getColumnCount <- function(path, sep = "") {
     header <- getFileHeader(path, sep)
     p <- length(header)
     return(p)
 }
 
-
 randomString <- function() {
     paste(sample(c(0L:9L, letters, LETTERS), size = 5L, replace = TRUE), collapse = "")
 }
-
 
 normalizeType <- function(val) {
     type <- typeof(val)
@@ -51,7 +47,6 @@ normalizeType <- function(val) {
         val
     }
 }
-
 
 loadExample <- function() {
     path <- system.file("extdata", package = "BGData")

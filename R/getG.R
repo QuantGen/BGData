@@ -2,46 +2,6 @@ padDigits <- function(x, total) {
     formatC(x, width = as.integer(log10(total) + 1L), format = "d", flag = "0")
 }
 
-
-#' Computes a Genomic Relationship Matrix.
-#'
-#' Computes a positive semi-definite symmetric genomic relation matrix G=XX'
-#' offering options for centering and scaling the columns of `X` beforehand.
-#'
-#' If `center = FALSE`, `scale = FALSE` and `scaleG = FALSE`, [getG()] produces
-#' the same outcome than [base::tcrossprod()].
-#'
-#' @inheritSection BGData-package File-backed matrices
-#' @inheritSection BGData-package Multi-level parallelism
-#' @param X A matrix-like object, typically `@@geno` of a [BGData-class]
-#' object.
-#' @param center Either a logical value or a numeric vector of length equal to
-#' the number of columns of `X`. Numeric vector required if `i2` is used. If
-#' `FALSE`, no centering is done. Defaults to `TRUE`.
-#' @param scale Either a logical value or a numeric vector of length equal to
-#' the number of columns of `X`. Numeric vector required if `i2` is used. If
-#' `FALSE`, no scaling is done. Defaults to `TRUE`.
-#' @param scaleG Whether XX' should be scaled. Defaults to `TRUE`.
-#' @param minVar Columns with variance lower than this value will not be used
-#' in the computation (only if `scale` is not `FALSE`).
-#' @param i Indicates which rows of `X` should be used. Can be integer,
-#' boolean, or character. By default, all rows are used.
-#' @param j Indicates which columns of `X` should be used. Can be integer,
-#' boolean, or character. By default, all columns are used.
-#' @param i2 Indicates which rows should be used to compute a block of the
-#' genomic relationship matrix. Will compute XY' where X is determined by `i`
-#' and `j` and Y by `i2` and `j`. Can be integer, boolean, or character. If
-#' `NULL`, the whole genomic relationship matrix XX' is computed. Defaults to
-#' `NULL`.
-#' @param chunkSize The number of columns of `X` that are brought into physical
-#' memory for processing per core. If `NULL`, all columns of `X` are used.
-#' Defaults to 5000.
-#' @param nCores The number of cores (passed to [parallel::mclapply()]).
-#' Defaults to the number of cores as detected by [parallel::detectCores()].
-#' @param verbose Whether progress updates will be posted. Defaults to `FALSE`.
-#' @return A positive semi-definite symmetric numeric matrix.
-#' @example man/examples/getG.R
-#' @export
 getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, i = seq_len(nrow(X)), j = seq_len(ncol(X)), i2 = NULL, chunkSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE) {
 
     # compute XY' rather than XX'
@@ -219,48 +179,6 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
 
 }
 
-
-#' Computes a Very Large Genomic Relationship Matrix.
-#'
-#' Computes a positive semi-definite symmetric genomic relation matrix G=XX'
-#' offering options for centering and scaling the columns of `X` beforehand.
-#'
-#' Even very large genomic relationship matrices are supported by partitioning
-#' `X` into blocks and calling [getG()] on these blocks. This function performs
-#' the block computations sequentially, which may be slow. In an HPC
-#' environment, performance can be improved by manually distributing these
-#' operations to different nodes.
-#'
-#' @inheritSection BGData-package Multi-level parallelism
-#' @param X A matrix-like object, typically `@@geno` of a [BGData-class]
-#' object.
-#' @param center Either a logical value or a numeric vector of length equal to
-#' the number of columns of `X`. If `FALSE`, no centering is done. Defaults to
-#' `TRUE`.
-#' @param scale Either a logical value or a numeric vector of length equal to
-#' the number of columns of `X`. If `FALSE`, no scaling is done. Defaults to
-#' `TRUE`.
-#' @param scaleG TRUE/FALSE whether xx' must be scaled.
-#' @param minVar Columns with variance lower than this value will not be used
-#' in the computation (only if `scale` is not `FALSE`).
-#' @param blockSize The number of rows and columns of each block. If `NULL`, a
-#' single block of the same length as `i` will be created. Defaults to 5000.
-#' @param folderOut The path to the folder where to save the
-#' [symDMatrix::symDMatrix-class] object. Defaults to a random string prefixed
-#' with "symDMatrix_".
-#' @param vmode vmode of `ff` objects.
-#' @param i Indicates which rows of `X` should be used. Can be integer,
-#' boolean, or character. By default, all rows are used.
-#' @param j Indicates which columns of `X` should be used. Can be integer,
-#' boolean, or character. By default, all columns are used.
-#' @param chunkSize The number of columns of `X` that are brought into physical
-#' memory for processing per core. If `NULL`, all columns of `X` are used.
-#' Defaults to 5000.
-#' @param nCores The number of cores (passed to [parallel::mclapply()]).
-#' Defaults to the number of cores as detected by [parallel::detectCores()].
-#' @param verbose Whether progress updates will be posted. Defaults to `FALSE`.
-#' @return A [symDMatrix::symDMatrix-class] object.
-#' @export
 getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, blockSize = 5000L, folderOut = paste0("symDMatrix_", randomString()), vmode = "double", i = seq_len(nrow(X)), j = seq_len(ncol(X)), chunkSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE) {
 
     i <- crochet::convertIndex(X, i, "i")

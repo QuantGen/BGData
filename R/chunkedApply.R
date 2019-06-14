@@ -1,32 +1,3 @@
-#' Applies a Function on Each Chunk of a File-Backed Matrix.
-#'
-#' Similar to [base::lapply()], but designed for file-backed matrices. The
-#' function brings chunks of an object into physical memory by taking subsets,
-#' and applies a function on them. If `nCores` is greater than 1, the function
-#' will be applied in parallel using [parallel::mclapply()]. In that case the
-#' subsets of the object are taken on the slaves.
-#'
-#' @inheritSection BGData-package File-backed matrices
-#' @inheritSection BGData-package Multi-level parallelism
-#' @param X A file-backed matrix, typically `@@geno` of a [BGData-class]
-#' object.
-#' @param FUN The function to be applied on each chunk.
-#' @param i Indicates which rows of `X` should be used. Can be integer,
-#' boolean, or character. By default, all rows are used.
-#' @param j Indicates which columns of `X` should be used. Can be integer,
-#' boolean, or character. By default, all columns are used.
-#' @param chunkBy Whether to extract chunks by rows (1) or by columns (2).
-#' Defaults to columns (2).
-#' @param chunkSize The number of rows or columns of `X` that are brought into
-#' physical memory for processing per core. If `NULL`, all elements in `i` or
-#' `j` are used. Defaults to 5000.
-#' @param nCores The number of cores (passed to [parallel::mclapply()]).
-#' Defaults to the number of cores as detected by [parallel::detectCores()].
-#' @param verbose Whether progress updates will be posted. Defaults to `FALSE`.
-#' @param ... Additional arguments to be passed to the [base::apply()] like
-#' function.
-#' @example man/examples/chunkedMap.R
-#' @export
 chunkedMap <- function(X, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(X)), chunkBy = 2L, chunkSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
     if (length(dim(X)) != 2L) {
         stop("X must be a matrix-like object")
@@ -77,44 +48,12 @@ chunkedMap <- function(X, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(X)), chunk
     return(res)
 }
 
-
-#' Applies a Function on Each Row or Column of a File-Backed Matrix.
-#'
-#' Similar to [base::apply()], but designed for file-backed matrices. The
-#' function brings chunks of an object into physical memory by taking subsets,
-#' and applies a function on either the rows or the columns of the chunks using
-#' an optimized version of [base::apply()]. If `nCores` is greater than 1, the
-#' function will be applied in parallel using [parallel::mclapply()]. In that
-#' case the subsets of the object are taken on the slaves.
-#'
-#' @inheritSection BGData-package File-backed matrices
-#' @inheritSection BGData-package Multi-level parallelism
-#' @param X A file-backed matrix, typically `@@geno` of a [BGData-class]
-#' object.
-#' @param MARGIN The subscripts which the function will be applied over. 1
-#' indicates rows, 2 indicates columns.
-#' @param FUN The function to be applied.
-#' @param i Indicates which rows of `X` should be used. Can be integer,
-#' boolean, or character. By default, all rows are used.
-#' @param j Indicates which columns of `X` should be used. Can be integer,
-#' boolean, or character. By default, all columns are used.
-#' @param chunkSize The number of rows or columns of `X` that are brought into
-#' physical memory for processing per core. If `NULL`, all elements in `i` or
-#' `j` are used. Defaults to 5000.
-#' @param nCores The number of cores (passed to [parallel::mclapply()]).
-#' Defaults to the number of cores as detected by [parallel::detectCores()].
-#' @param verbose Whether progress updates will be posted. Defaults to `FALSE`.
-#' @param ... Additional arguments to be passed to the [base::apply()] like
-#' function.
-#' @example man/examples/chunkedApply.R
-#' @export
 chunkedApply <- function(X, MARGIN, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(X)), chunkSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
     res <- chunkedMap(X = X, FUN = function(chunk, ...) {
         apply2(X = chunk, MARGIN = MARGIN, FUN = FUN, ...)
     }, i = i, j = j, chunkBy = MARGIN, chunkSize = chunkSize, nCores = nCores, verbose = verbose, ...)
     simplifyList(res)
 }
-
 
 # A more memory-efficient version of apply.
 #
@@ -185,7 +124,6 @@ apply2 <- function(X, MARGIN, FUN, ...) {
     }
     return(OUT)
 }
-
 
 simplifyList <- function(x) {
     sample <- x[[1L]]
