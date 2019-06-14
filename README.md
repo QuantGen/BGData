@@ -207,14 +207,14 @@ remotes::install_github("QuantGen/BGData")
 ```
 
 
-Contribute
-----------
-
-- Issue Tracker: https://github.com/QuantGen/BGData/issues
-- Source Code: https://github.com/QuantGen/BGData
-
-
 Documentation
 -------------
 
 Further documentation can be found on [RDocumentation](http://www.rdocumentation.org/packages/BGData).
+
+
+Contributing
+------------
+
+- Issue Tracker: https://github.com/QuantGen/BGData/issues
+- Source Code: https://github.com/QuantGen/BGData
