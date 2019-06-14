@@ -1,7 +1,7 @@
 \docType{methods}
 \name{initialize,BGData-method}
 \alias{initialize,BGData-method}
-\title{Creates a New BGData Instance.}
+\title{Creates a New BGData Instance}
 \usage{
 \S4method{initialize}{BGData}(.Object, geno, pheno, map)
 }

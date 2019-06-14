@@ -1,6 +1,6 @@
 \name{GWAS}
 \alias{GWAS}
-\title{Performs Single Marker Regressions Using BGData Objects.}
+\title{Performs Single Marker Regressions Using BGData Objects}
 \usage{
 GWAS(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)),
   j = seq_len(ncol(data@geno)), chunkSize = 5000L,

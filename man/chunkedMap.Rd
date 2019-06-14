@@ -1,6 +1,6 @@
 \name{chunkedMap}
 \alias{chunkedMap}
-\title{Applies a Function on Each Chunk of a File-Backed Matrix.}
+\title{Applies a Function on Each Chunk of a File-Backed Matrix}
 \usage{
 chunkedMap(X, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(X)),
   chunkBy = 2L, chunkSize = 5000L, nCores = getOption("mc.cores",

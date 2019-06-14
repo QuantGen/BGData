@@ -1,6 +1,6 @@
 \name{summarize}
 \alias{summarize}
-\title{Generates Various Summary Statistics.}
+\title{Generates Various Summary Statistics}
 \usage{
 summarize(X, i = seq_len(nrow(X)), j = seq_len(ncol(X)),
   chunkSize = 5000L, nCores = getOption("mc.cores", 2L),

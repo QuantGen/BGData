@@ -2,7 +2,7 @@
 \alias{readRAW}
 \alias{readRAW_matrix}
 \alias{readRAW_big.matrix}
-\title{Creates a BGData Object From a .raw File or a .ped-Like File.}
+\title{Creates a BGData Object From a .raw File or a .ped-Like File}
 \usage{
 readRAW(fileIn, header = TRUE, dataType = integer(), n = NULL,
   p = NULL, sep = "", na.strings = "NA", nColSkip = 6L,

@@ -1,6 +1,6 @@
 \name{getG}
 \alias{getG}
-\title{Computes a Genomic Relationship Matrix.}
+\title{Computes a Genomic Relationship Matrix}
 \usage{
 getG(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05,
   i = seq_len(nrow(X)), j = seq_len(ncol(X)), i2 = NULL,

@@ -2,7 +2,7 @@
 \name{BGData-class}
 \alias{BGData-class}
 \alias{BGData}
-\title{An S4 Class to Represent Phenotype and Genotype Data.}
+\title{An S4 Class to Represent Phenotype and Genotype Data}
 \description{
 This class is inspired by the phenotype/genotype file format .raw and its
 binary companion (also known as .bed) of

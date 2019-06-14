@@ -2,7 +2,7 @@
 \alias{findRelated}
 \alias{findRelated.matrix}
 \alias{findRelated.symDMatrix}
-\title{Find related individuals in a relationship matrix.}
+\title{Find related individuals in a relationship matrix}
 \usage{
 findRelated(x, ...)
 

@@ -3,7 +3,7 @@
 \alias{as.BGData.BEDMatrix}
 \alias{as.BGData.ColumnLinkedMatrix}
 \alias{as.BGData.RowLinkedMatrix}
-\title{Convert Other Objects to BGData Objects.}
+\title{Convert Other Objects to BGData Objects}
 \usage{
 as.BGData(x, alternatePhenotypeFile = NULL, ...)
 

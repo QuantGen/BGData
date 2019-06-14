@@ -1,6 +1,6 @@
 \name{getG_symDMatrix}
 \alias{getG_symDMatrix}
-\title{Computes a Very Large Genomic Relationship Matrix.}
+\title{Computes a Very Large Genomic Relationship Matrix}
 \usage{
 getG_symDMatrix(X, center = TRUE, scale = TRUE, scaleG = TRUE,
   minVar = 1e-05, blockSize = 5000L,

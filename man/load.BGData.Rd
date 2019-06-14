@@ -1,6 +1,6 @@
 \name{load.BGData}
 \alias{load.BGData}
-\title{Loads BGData (and Other) Objects from .RData Files.}
+\title{Loads BGData (and Other) Objects from .RData Files}
 \usage{
 load.BGData(file, envir = parent.frame())
 }

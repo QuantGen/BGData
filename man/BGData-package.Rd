@@ -1,7 +1,7 @@
 \docType{package}
 \name{BGData-package}
 \alias{BGData-package}
-\title{A Suite of Packages for Analysis of Big Genomic Data.}
+\title{A Suite of Packages for Analysis of Big Genomic Data}
 \description{
 Modern genomic datasets are big (large \emph{n}), high-dimensional (large \emph{p}),
 and multi-layered. The challenges that need to be addressed are memory
