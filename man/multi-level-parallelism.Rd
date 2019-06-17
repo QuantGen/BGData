@@ -11,11 +11,10 @@
     thumb, at least around \code{(nCores * object_size(chunk)) +
     object_size(result)} MB of total memory will be needed for operations
     on file-backed matrices, not including potential copies of your data that
-    might be created (for example \code{\link[stats:lsfit]{stats::lsfit()}}
-    runs \code{cbind(1, X)}). \code{i} and \code{j} can be used to include or
-    exclude certain rows or columns. Internally, the
-    \code{\link[parallel:mclapply]{parallel::mclapply()}} function is used and
-    therefore parallel computing will not work on Windows machines.
+    might be created (for example \code{lsfit} runs \code{cbind(1, X)}).
+    \code{i} and \code{j} can be used to include or exclude certain rows or
+    columns. Internally, the \code{mclapply} function is used and therefore
+    parallel computing will not work on Windows machines.
 
     For distributed computing, \code{i} and \code{j} determine the subset of
     the input matrix that the code runs on. In an HPC environment, this can be
@@ -24,4 +23,9 @@
     code and code to aggregate the results need to be written by the user. It
     is recommended to set \code{nCores} to \code{1} as nodes are often cheaper
     than cores.
+}
+\seealso{
+    \code{\link[parallel]{mclapply}} to learn more about the function used to
+    implement parallel computing. \code{\link[parallel]{detectCores}} to detect
+    the number of available cores.
 }

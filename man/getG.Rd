@@ -14,8 +14,7 @@ getG(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05,
 }
 \arguments{
     \item{X}{
-        A matrix-like object, typically \code{@geno} of a \linkS4class{BGData}
-        object.
+        A matrix-like object, typically \code{@geno} of a \code{BGData} object.
     }
     \item{center}{
         Either a logical value or a numeric vector of length equal to the
@@ -52,13 +51,11 @@ getG(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05,
     \item{chunkSize}{
         The number of columns of \code{X} that are brought into physical memory
         for processing per core. If \code{NULL}, all columns of \code{X} are
-        used.  Defaults to 5000.
+        used. Defaults to 5000.
     }
     \item{nCores}{
-        The number of cores (passed to
-        \code{\link[parallel:mclapply]{parallel::mclapply()}}).  Defaults to
-        the number of cores as detected by
-        \code{\link[parallel:detectCores]{parallel::detectCores()}}.
+        The number of cores (passed to \code{mclapply}). Defaults to the number
+        of cores as detected by \code{detectCores}.
     }
     \item{verbose}{
         Whether progress updates will be posted. Defaults to \code{FALSE}.
@@ -66,8 +63,7 @@ getG(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05,
 }
 \details{
     If \code{center = FALSE}, \code{scale = FALSE} and \code{scaleG = FALSE},
-    \code{\link[=getG]{getG()}} produces the same outcome than
-    \code{\link[base:tcrossprod]{base::tcrossprod()}}.
+    \code{getG} produces the same outcome than \code{tcrossprod}.
 }
 \value{
     A positive semi-definite symmetric numeric matrix.
@@ -75,7 +71,8 @@ getG(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05,
 \seealso{
     \code{\link{file-backed-matrices}} for more information on file-backed
     matrices. \code{\link{multi-level-parallelism}} for more information on
-    multi-level parallelism.
+    multi-level parallelism. \code{\link{BGData-class}} for more information on
+    the \code{BGData} class.
 }
 \examples{
 # Restrict number of cores to 1 on Windows

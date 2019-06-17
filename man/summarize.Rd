@@ -12,8 +12,7 @@ summarize(X, i = seq_len(nrow(X)), j = seq_len(ncol(X)),
 }
 \arguments{
     \item{X}{
-        A matrix-like object, typically \code{@geno} of a \linkS4class{BGData}
-        object.
+        A matrix-like object, typically \code{@geno} of a \code{BGData} object.
     }
     \item{i}{
         Indicates which rows of \code{X} should be used. Can be integer,
@@ -26,13 +25,11 @@ summarize(X, i = seq_len(nrow(X)), j = seq_len(ncol(X)),
     \item{chunkSize}{
         The number of columns of \code{X} that are brought into physical memory
         for processing per core. If \code{NULL}, all elements in \code{j} are
-        used.  Defaults to 5000.
+        used. Defaults to 5000.
     }
     \item{nCores}{
-        The number of cores (passed to
-        \code{\link[parallel:mclapply]{parallel::mclapply()}}).  Defaults to
-        the number of cores as detected by
-        \code{\link[parallel:detectCores]{parallel::detectCores()}}.
+        The number of cores (passed to \code{mclapply}). Defaults to the
+        number of cores as detected by \code{detectCores}.
     }
     \item{verbose}{
         Whether progress updates will be posted. Defaults to \code{FALSE}.
@@ -46,7 +43,8 @@ summarize(X, i = seq_len(nrow(X)), j = seq_len(ncol(X)),
 \seealso{
     \code{\link{file-backed-matrices}} for more information on file-backed
     matrices. \code{\link{multi-level-parallelism}} for more information on
-    multi-level parallelism.
+    multi-level parallelism. \code{\link{BGData-class}} for more information on
+    the \code{BGData} class.
 }
 \examples{
 # Restrict number of cores to 1 on Windows

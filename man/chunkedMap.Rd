@@ -2,12 +2,11 @@
 \alias{chunkedMap}
 \title{Applies a Function on Each Chunk of a File-Backed Matrix}
 \description{
-    Similar to \code{\link[base:lapply]{base::lapply()}}, but designed for
-    file-backed matrices. The function brings chunks of an object into physical
-    memory by taking subsets, and applies a function on them. If \code{nCores}
-    is greater than 1, the function will be applied in parallel using
-    \code{\link[parallel:mclapply]{parallel::mclapply()}}. In that case the
-    subsets of the object are taken on the slaves.
+    Similar to \code{lapply}, but designed for file-backed matrices. The
+    function brings chunks of an object into physical memory by taking subsets,
+    and applies a function on them. If \code{nCores} is greater than 1, the
+    function will be applied in parallel using \code{mclapply}. In that case
+    the subsets of the object are taken on the slaves.
 }
 \usage{
 chunkedMap(X, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(X)),
@@ -16,7 +15,7 @@ chunkedMap(X, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(X)),
 }
 \arguments{
     \item{X}{
-        A file-backed matrix, typically \code{@geno} of a \linkS4class{BGData}
+        A file-backed matrix, typically \code{@geno} of a \code{BGData}
         object.
     }
     \item{FUN}{
@@ -31,7 +30,7 @@ chunkedMap(X, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(X)),
         boolean, or character. By default, all columns are used.
     }
     \item{chunkBy}{
-        Whether to extract chunks by rows (1) or by columns (2).  Defaults to
+        Whether to extract chunks by rows (1) or by columns (2). Defaults to
         columns (2).
     }
     \item{chunkSize}{
@@ -40,23 +39,22 @@ chunkedMap(X, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(X)),
         in \code{i} or \code{j} are used. Defaults to 5000.
     }
     \item{nCores}{
-        The number of cores (passed to
-        \code{\link[parallel:mclapply]{parallel::mclapply()}}).  Defaults to
-        the number of cores as detected by
-        \code{\link[parallel:detectCores]{parallel::detectCores()}}.
+        The number of cores (passed to \code{mclapply}). Defaults to the number
+        of cores as detected by \code{detectCores}.
     }
     \item{verbose}{
         Whether progress updates will be posted. Defaults to \code{FALSE}.
     }
     \item{...}{
         Additional arguments to be passed to the
-        \code{\link[base:apply]{base::apply()}} like function.
+        \code{apply} like function.
     }
 }
 \seealso{
     \code{\link{file-backed-matrices}} for more information on file-backed
     matrices. \code{\link{multi-level-parallelism}} for more information on
-    multi-level parallelism.
+    multi-level parallelism. \code{\link{BGData-class}} for more information on
+    the \code{BGData} class.
 }
 \examples{
 # Restrict number of cores to 1 on Windows

@@ -3,7 +3,7 @@
 \alias{initialize,BGData-method}
 \title{Creates a New BGData Instance}
 \description{
-    This method is run when a \linkS4class{BGData} object is created using
+    This method is run when a \code{BGData} object is created using
     \code{BGData(...)} or \code{new("BGData", ...)}.
 }
 \usage{
@@ -11,16 +11,11 @@
 }
 \arguments{
     \item{.Object}{
-        The \linkS4class{BGData} instance to be initialized. This argument is passed in by R and can be ignored, but still needs to be documented.
+        The \code{BGData} instance to be initialized. This argument is passed
+        in by R and can be ignored, but still needs to be documented.
     }
     \item{geno}{
-        A \linkS4class{geno} object that contains genotypes. \linkS4class{geno}
-        is a class union of several matrix-like types, many of them suitable
-        for very large datasets. Currently supported are
-        \link[LinkedMatrix:LinkedMatrix-class]{LinkedMatrix::LinkedMatrix},
-        \link[BEDMatrix:BEDMatrix-class]{BEDMatrix::BEDMatrix},
-        \link[bigmemory:big.matrix-class]{bigmemory::big.matrix},
-        \code{ff_matrix}, and \code{matrix}.
+        A \code{geno} object that contains genotypes.
     }
     \item{pheno}{
         A \code{data.frame} that contains sample information (including
@@ -33,4 +28,8 @@
         contains a \code{variant_id} column populated with either the colnames
         of \code{@geno} or a sequence will be generated if missing.
     }
+}
+\seealso{
+     \code{\link{BGData-class}} and \code{\link{geno-class}} for more
+     information on the above mentioned classes.
 }

@@ -15,8 +15,7 @@ getG_symDMatrix(X, center = TRUE, scale = TRUE, scaleG = TRUE,
 }
 \arguments{
     \item{X}{
-        A matrix-like object, typically \code{@geno} of a \linkS4class{BGData}
-        object.
+        A matrix-like object, typically \code{@geno} of a \code{BGData} object.
     }
     \item{center}{
         Either a logical value or a numeric vector of length equal to the
@@ -40,8 +39,7 @@ getG_symDMatrix(X, center = TRUE, scale = TRUE, scaleG = TRUE,
         block of the same length as \code{i} will be created. Defaults to 5000.
     }
     \item{folderOut}{
-        The path to the folder where to save the
-        \link[symDMatrix:symDMatrix-class]{symDMatrix::symDMatrix} object.
+        The path to the folder where to save the \code{symDMatrix} object.
         Defaults to a random string prefixed with "symDMatrix_".
     }
     \item{vmode}{
@@ -58,13 +56,11 @@ getG_symDMatrix(X, center = TRUE, scale = TRUE, scaleG = TRUE,
     \item{chunkSize}{
         The number of columns of \code{X} that are brought into physical memory
         for processing per core. If \code{NULL}, all columns of \code{X} are
-        used.  Defaults to 5000.
+        used. Defaults to 5000.
     }
     \item{nCores}{
-        The number of cores (passed to
-        \code{\link[parallel:mclapply]{parallel::mclapply()}}).  Defaults to
-        the number of cores as detected by
-        \code{\link[parallel:detectCores]{parallel::detectCores()}}.
+        The number of cores (passed to \code{mclapply}). Defaults to the number
+        of cores as detected by \code{detectCores}.
     }
     \item{verbose}{
         Whether progress updates will be posted. Defaults to \code{FALSE}.
@@ -72,15 +68,17 @@ getG_symDMatrix(X, center = TRUE, scale = TRUE, scaleG = TRUE,
 }
 \details{
     Even very large genomic relationship matrices are supported by partitioning
-    \code{X} into blocks and calling \code{\link[=getG]{getG()}} on these
-    blocks. This function performs the block computations sequentially, which
-    may be slow. In an HPC environment, performance can be improved by manually
-    distributing these operations to different nodes.
+    \code{X} into blocks and calling \code{getG} on these blocks. This function
+    performs the block computations sequentially, which may be slow. In an HPC
+    environment, performance can be improved by manually distributing these
+    operations to different nodes.
 }
 \value{
-    A \link[symDMatrix:symDMatrix-class]{symDMatrix::symDMatrix} object.
+    A \code{symDMatrix} object.
 }
 \seealso{
     \code{\link{multi-level-parallelism}} for more information on multi-level
-    parallelism.
+    parallelism. \code{\link[symDMatrix]{symDMatrix-class}} and
+    \code{\link{BGData-class}} for more information on the \code{BGData} class.
+    \code{\link{getG}} to learn more about the underlying method.
 }

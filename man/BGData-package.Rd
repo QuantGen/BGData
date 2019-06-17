@@ -26,21 +26,19 @@
             (e.g., PLINK .bed).
     }
 
-    The BGData package is an umbrella package that comprises several packages:
-    \link[BEDMatrix:BEDMatrix-package]{BEDMatrix},
-    \link[LinkedMatrix:LinkedMatrix-package]{LinkedMatrix}, and
-    \link[symDMatrix:symDMatrix-package]{symDMatrix}. It features scalable and
-    efficient computational methods for large genomic datasets such as
-    genome-wide association studies (GWAS) or genomic relationship matrices (G
-    matrix). It also contains a data structure called \code{BGData} that holds
-    genotypes in the \code{@geno} slot, phenotypes in the \code{@pheno} slot,
-    and additional information in the \code{@map} slot.
+    The \code{BGData} package is an umbrella package that comprises several
+    packages: \code{BEDMatrix}, \code{LinkedMatrix}, and \code{symDMatrix}. It
+    features scalable and efficient computational methods for large genomic
+    datasets such as genome-wide association studies (GWAS) or genomic
+    relationship matrices (G matrix). It also contains a data structure called
+    \code{BGData} that holds genotypes in the \code{@geno} slot, phenotypes in
+    the \code{@pheno} slot, and additional information in the \code{@map} slot.
 }
 \section{Example dataset}{
     The \code{extdata} folder contains example files that were generated from
     the 250k SNP and phenotype data in
     \href{http://www.nature.com/nature/journal/v465/n7298/full/nature08800.html}{Atwell
-    et al. (2010)}.  Only the first 300 SNPs of chromosome 1, 2, and 3 were
+    et al. (2010)}. Only the first 300 SNPs of chromosome 1, 2, and 3 were
     included to keep the size of the example dataset small.
     \href{https://www.cog-genomics.org/plink2}{PLINK} was used to convert the
     data to \href{https://www.cog-genomics.org/plink2/input#bed}{.bed} and
@@ -52,10 +50,10 @@
     phenotypes.
 }
 \seealso{
-    \link[BEDMatrix:BEDMatrix-package]{BEDMatrix::BEDMatrix-package},
-    \link[LinkedMatrix:LinkedMatrix-package]{LinkedMatrix::LinkedMatrix-package},
-    and \link[symDMatrix:symDMatrix-package]{symDMatrix::symDMatrix-package}
-    for an introduction to the respective packages.
+    \code{\link[BEDMatrix]{BEDMatrix-package}},
+    \code{\link[LinkedMatrix]{LinkedMatrix-package}}, and
+    \code{\link[symDMatrix]{symDMatrix-package}} for an introduction to the
+    respective packages.
 
     \code{\link{file-backed-matrices}} for more information on file-backed
     matrices. \code{\link{multi-level-parallelism}} for more information on

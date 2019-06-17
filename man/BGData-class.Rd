@@ -7,9 +7,9 @@
     This class is inspired by the phenotype/genotype file format .raw and its
     binary companion (also known as .bed) of
     \href{https://www.cog-genomics.org/plink2}{PLINK}. It is used by several
-    functions of this package such as \code{\link[=GWAS]{GWAS()}} for
-    performing a Genome Wide Association Study or \code{\link[=getG]{getG()}}
-    for calculating a genomic relationship matrix.
+    functions of this package such as \code{GWAS} for performing a Genome Wide
+    Association Study or \code{getG} for calculating a genomic relationship
+    matrix.
 }
 \details{
     There are several ways to create an instance of this class:
@@ -18,16 +18,14 @@
         \item from arbitrary phenotype/genotype data using one of the
             constructors \code{[BGData(...)][initialize,BGData-method]} or
             \code{[new("BGData", ...)][initialize,BGData-method]}.
-        \item from a BED file using \code{\link[=as.BGData]{as.BGData()}}.
-        \item from a previously saved \linkS4class{BGData} object using
-            \code{\link[=load.BGData]{load.BGData()}}.
+        \item from a BED file using \code{as.BGData} and \code{BEDMatrix}.
+        \item from a previously saved \code{BGData} object using
+            \code{load.BGData}.
         \item from multiple files (even a mixture of different file types)
-            using
-            \link[LinkedMatrix:LinkedMatrix-class]{LinkedMatrix::LinkedMatrix}.
+            using \code{LinkedMatrix}.
         \item from a .raw file (or a .ped-like file) using
-            \code{\link[=readRAW]{readRAW()}},
-            \code{\link[=readRAW_matrix]{readRAW_matrix()}}, or
-            \code{\link[=readRAW_big.matrix]{readRAW_big.matrix()}}.
+            \code{readRAW}, \code{readRAW_matrix}, or
+            \code{readRAW_big.matrix}.
     }
 
     A .ped file can be recoded to a .raw file in
@@ -40,14 +38,7 @@
 \section{Slots}{
     \describe{
         \item{\code{geno}}{
-            A \linkS4class{geno} object that contains genotypes.
-            \linkS4class{geno} is a class union of several matrix-like types,
-            many of them suitable for very large datasets. Currently supported
-            are
-            \link[LinkedMatrix:LinkedMatrix-class]{LinkedMatrix::LinkedMatrix},
-            \link[BEDMatrix:BEDMatrix-class]{BEDMatrix::BEDMatrix},
-            \link[bigmemory:big.matrix-class]{bigmemory::big.matrix},
-            \code{ff_matrix}, and \code{matrix}.
+            A \code{geno} object that contains genotypes.
         }
         \item{\code{pheno}}{
             A \code{data.frame} that contains sample information (including
@@ -56,8 +47,17 @@
         \item{\code{map}}{
             A \code{data.frame} that contains variant information.
         }
-    }}
+    }
+}
+\seealso{
+    \code{\link{initialize,BGData-method}}, \code{\link{as.BGData}},
+    \code{\link{load.BGData}}, \code{\link{readRAW}} to create \code{BGData}
+    objects.
 
+    \code{\link[LinkedMatrix]{LinkedMatrix-class}} and
+    \code{\link[BEDMatrix]{BEDMatrix-class}} for more information on the above
+    mentioned classes.
+}
 \examples{
 X <- matrix(data = rnorm(100), nrow = 10, ncol = 10)
 Y <- data.frame(y = runif(10))

@@ -2,9 +2,9 @@
 \alias{orderedMerge}
 \title{Merge Two Data Frames Keeping the Order of the First}
 \description{
-    This is a simplified version of \code{\link[base:merge]{base::merge()}}
-    useful for merging additional data into a \linkS4class{BGData} object while
-    keeping the order of the data in the \linkS4class{BGData} object.
+    This is a simplified version of \code{merge} useful for merging additional
+    data into a \code{BGData} object while keeping the order of the data in the
+    \code{BGData} object.
 }
 \usage{
 orderedMerge(x, y, by = c(1L, 2L))
@@ -24,4 +24,7 @@ orderedMerge(x, y, by = c(1L, 2L))
 }
 \value{
     Merged data frame
+}
+\seealso{
+    \code{\link{BGData-class}} for more information on the \code{BGData} class.
 }

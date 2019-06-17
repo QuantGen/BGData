@@ -5,13 +5,12 @@
 \alias{as.BGData.RowLinkedMatrix}
 \title{Convert Other Objects to BGData Objects}
 \description{
-    Converts other objects to \linkS4class{BGData} objects by loading
-    supplementary phenotypes and map files referenced by the object to be used
-    for the \code{@pheno} and \code{@map} slot, respectively. Currently
-    supported are \link[BEDMatrix:BEDMatrix-class]{BEDMatrix::BEDMatrix}
-    objects, plain or nested in
-    \link[LinkedMatrix:ColumnLinkedMatrix-class]{LinkedMatrix::ColumnLinkedMatrix}
-    objects.
+    Converts other objects to \code{BGData} objects by loading supplementary
+    phenotypes and map files referenced by the object to be used for the
+    \code{@pheno} and \code{@map} slot, respectively.
+
+    Currently supported are \code{BEDMatrix} objects, plain or nested in
+    \code{ColumnLinkedMatrix} objects.
 }
 \usage{
 as.BGData(x, alternatePhenotypeFile = NULL, ...)
@@ -26,11 +25,8 @@ as.BGData(x, alternatePhenotypeFile = NULL, ...)
 }
 \arguments{
     \item{x}{
-        An object. Currently supported are
-        \link[BEDMatrix:BEDMatrix-class]{BEDMatrix::BEDMatrix} objects, plain
-        or nested in
-        \link[LinkedMatrix:ColumnLinkedMatrix-class]{LinkedMatrix::ColumnLinkedMatrix}
-        objects.
+        An object. Currently supported are \code{BEDMatrix} objects, plain or
+        nested in \code{ColumnLinkedMatrix} objects.
     }
     \item{alternatePhenotypeFile}{
         Path to an
@@ -38,10 +34,9 @@ as.BGData(x, alternatePhenotypeFile = NULL, ...)
         phenotype file}.
     }
     \item{...}{
-        Additional arguments to the
-        \code{\link[utils:read.table]{utils::read.table()}} or
-        \code{\link[data.table:fread]{data.table::fread()}} call (if data.table
-        package is installed) call to parse the alternate pheno file.
+        Additional arguments to the \code{read.table} or \code{fread} call (if
+        data.table package is installed) call to parse the alternate pheno
+        file.
     }
 }
 \details{
@@ -53,29 +48,30 @@ as.BGData(x, alternatePhenotypeFile = NULL, ...)
     \code{@pheno} slot. The first and second columns of that file must contain
     family and within-family IDs, respectively.
 
-    For \link[BEDMatrix:BEDMatrix-class]{BEDMatrix::BEDMatrix} objects: If a
-    .fam file (which corresponds to the first six columns of a .ped or .raw
-    file) of the same name and in the same directory as the BED file exists,
-    the \code{@pheno} slot will be populated with the data stored in that file.
-    Otherwise a stub that only contains an \code{IID} column populated with the
-    rownames of \code{@geno} will be generated. The same will happen for a .bim
-    file for the \code{@map} slot.
+    For \code{BEDMatrix} objects: If a .fam file (which corresponds to the
+    first six columns of a .ped or .raw file) of the same name and in the same
+    directory as the BED file exists, the \code{@pheno} slot will be populated
+    with the data stored in that file. Otherwise a stub that only contains an
+    \code{IID} column populated with the rownames of \code{@geno} will be
+    generated. The same will happen for a .bim file for the \code{@map} slot.
 
-    For
-    \link[LinkedMatrix:ColumnLinkedMatrix-class]{LinkedMatrix::ColumnLinkedMatrix}
-    objects: See the case for
-    \link[BEDMatrix:BEDMatrix-class]{BEDMatrix::BEDMatrix} objects, but only
-    the .fam file of the first node of the
-    \link[LinkedMatrix:LinkedMatrix-class]{LinkedMatrix::LinkedMatrix} will be
-    read and used for the \code{@pheno} slot, and the .bim files of all nodes
-    will be combined and used for the \code{@map} slot.
+    For \code{ColumnLinkedMatrix} objects: See the case for \code{BEDMatrix}
+    objects, but only the .fam file of the first node of the
+    \code{LinkedMatrix} will be read and used for the \code{@pheno} slot, and
+    the .bim files of all nodes will be combined and used for the \code{@map}
+    slot.
 }
 \value{
-    A \linkS4class{BGData} object.
+    A \code{BGData} object.
 }
 \seealso{
-    \code{\link[=readRAW]{readRAW()}} to convert text files to
-    \linkS4class{BGData} objects.
+    \code{\link[=readRAW]{readRAW()}} to convert text files to \code{BGData}
+    objects. \code{\link{BGData-class}},
+    \code{\link[BEDMatrix]{BEDMatrix-class}},
+    \code{\link[LinkedMatrix]{ColumnLinkedMatrix-class}} for more information
+    on the above mentioned classes. \code{\link[utils]{read.table}} and
+    \code{\link[data.table]{fread}} to learn more about extra arguments that
+    can be passed via \code{...}.
 }
 \examples{
 # Path to example data

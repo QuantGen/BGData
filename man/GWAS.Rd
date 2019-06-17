@@ -5,7 +5,7 @@
     Implements single marker regressions. The regression model includes all the
     covariates specified in the right-hand-side of the \code{formula} plus one
     column of \code{@geno} at a time. The data from the association tests is
-    obtained from a \linkS4class{BGData} object.
+    obtained from a \code{BGData} object.
 }
 \usage{
 GWAS(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)),
@@ -16,20 +16,15 @@ GWAS(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)),
     \item{formula}{
         The formula for the GWAS model without including the marker, e.g.
         \code{y ~ 1} or \code{y ~ factor(sex) + age}. The variables included in
-        the formula must be in the \code{@pheno} object of the
-        \linkS4class{BGData}.
+        the formula must be in the \code{@pheno} object of the \code{BGData}.
     }
     \item{data}{
-        A \linkS4class{BGData} object.
+        A \code{BGData} object.
     }
     \item{method}{
         The regression method to be used. Currently, the following methods are
-        implemented: \code{rayOLS}, \code{\link[stats:lsfit]{stats::lsfit()}},
-        \code{\link[stats:lm]{stats::lm()}},
-        \code{\link[stats:lm.fit]{stats::lm.fit()}},
-        \code{\link[stats:glm]{stats::glm()}},
-        \code{\link[lme4:lmer]{lme4::lmer()}}, and
-        \code{\link[SKAT:SKAT]{SKAT::SKAT()}}. Defaults to \code{lsfit}.
+        implemented: \code{rayOLS}, \code{lsfit}, \code{lm}, \code{lm.fit},
+        \code{glm}, \code{lmer}, and \code{SKAT}. Defaults to \code{lsfit}.
     }
     \item{i}{
         Indicates which rows of \code{@geno} should be used. Can be integer,
@@ -45,10 +40,8 @@ GWAS(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)),
         \code{j} are used. Defaults to 5000.
     }
     \item{nCores}{
-        The number of cores (passed to
-        \code{\link[parallel:mclapply]{parallel::mclapply()}}).  Defaults to
-        the number of cores as detected by
-        \code{\link[parallel:detectCores]{parallel::detectCores()}}.
+        The number of cores (passed to \code{mclapply}). Defaults to the number
+        of cores as detected by \code{detectCores}.
     }
     \item{verbose}{
         Whether progress updates will be posted. Defaults to \code{FALSE}.
@@ -63,7 +56,11 @@ GWAS(formula, data, method = "lsfit", i = seq_len(nrow(data@geno)),
 \seealso{
     \code{\link{file-backed-matrices}} for more information on file-backed
     matrices. \code{\link{multi-level-parallelism}} for more information on
-    multi-level parallelism.
+    multi-level parallelism. \code{\link{BGData-class}} for more information on
+    the \code{BGData} class. \code{\link[stats]{lsfit}},
+    \code{\link[stats]{lm}}, \code{\link[stats]{lm.fit}},
+    \code{\link[stats]{glm}}, \code{\link[lme4]{lmer}}, and
+    \code{\link[SKAT]{SKAT}} for more information on regression methods.
 }
 \examples{
 # Restrict number of cores to 1 on Windows
