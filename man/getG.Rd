@@ -1,6 +1,11 @@
 \name{getG}
 \alias{getG}
 \title{Computes a Genomic Relationship Matrix}
+\description{
+    Computes a positive semi-definite symmetric genomic relation matrix G=XX'
+    offering options for centering and scaling the columns of \code{X}
+    beforehand.
+}
 \usage{
 getG(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05,
   i = seq_len(nrow(X)), j = seq_len(ncol(X)), i2 = NULL,
@@ -8,89 +13,99 @@ getG(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05,
   verbose = FALSE)
 }
 \arguments{
-\item{X}{A matrix-like object, typically \code{@geno} of a \linkS4class{BGData}
-object.}
-
-\item{center}{Either a logical value or a numeric vector of length equal to
-the number of columns of \code{X}. Numeric vector required if \code{i2} is used. If
-\code{FALSE}, no centering is done. Defaults to \code{TRUE}.}
-
-\item{scale}{Either a logical value or a numeric vector of length equal to
-the number of columns of \code{X}. Numeric vector required if \code{i2} is used. If
-\code{FALSE}, no scaling is done. Defaults to \code{TRUE}.}
-
-\item{scaleG}{Whether XX' should be scaled. Defaults to \code{TRUE}.}
-
-\item{minVar}{Columns with variance lower than this value will not be used
-in the computation (only if \code{scale} is not \code{FALSE}).}
-
-\item{i}{Indicates which rows of \code{X} should be used. Can be integer,
-boolean, or character. By default, all rows are used.}
-
-\item{j}{Indicates which columns of \code{X} should be used. Can be integer,
-boolean, or character. By default, all columns are used.}
-
-\item{i2}{Indicates which rows should be used to compute a block of the
-genomic relationship matrix. Will compute XY' where X is determined by \code{i}
-and \code{j} and Y by \code{i2} and \code{j}. Can be integer, boolean, or character. If
-\code{NULL}, the whole genomic relationship matrix XX' is computed. Defaults to
-\code{NULL}.}
-
-\item{chunkSize}{The number of columns of \code{X} that are brought into physical
-memory for processing per core. If \code{NULL}, all columns of \code{X} are used.
-Defaults to 5000.}
-
-\item{nCores}{The number of cores (passed to \code{\link[parallel:mclapply]{parallel::mclapply()}}).
-Defaults to the number of cores as detected by \code{\link[parallel:detectCores]{parallel::detectCores()}}.}
-
-\item{verbose}{Whether progress updates will be posted. Defaults to \code{FALSE}.}
-}
-\value{
-A positive semi-definite symmetric numeric matrix.
-}
-\description{
-Computes a positive semi-definite symmetric genomic relation matrix G=XX'
-offering options for centering and scaling the columns of \code{X} beforehand.
+    \item{X}{
+        A matrix-like object, typically \code{@geno} of a \linkS4class{BGData}
+        object.
+    }
+    \item{center}{
+        Either a logical value or a numeric vector of length equal to the
+        number of columns of \code{X}. Numeric vector required if \code{i2} is
+        used. If \code{FALSE}, no centering is done. Defaults to \code{TRUE}.
+    }
+    \item{scale}{
+        Either a logical value or a numeric vector of length equal to the
+        number of columns of \code{X}. Numeric vector required if \code{i2} is
+        used. If \code{FALSE}, no scaling is done. Defaults to \code{TRUE}.
+    }
+    \item{scaleG}{
+        Whether XX' should be scaled. Defaults to \code{TRUE}.
+    }
+    \item{minVar}{
+        Columns with variance lower than this value will not be used in the
+        computation (only if \code{scale} is not \code{FALSE}).
+    }
+    \item{i}{
+        Indicates which rows of \code{X} should be used. Can be integer,
+        boolean, or character. By default, all rows are used.
+    }
+    \item{j}{
+        Indicates which columns of \code{X} should be used. Can be integer,
+        boolean, or character. By default, all columns are used.
+    }
+    \item{i2}{
+        Indicates which rows should be used to compute a block of the genomic
+        relationship matrix. Will compute XY' where X is determined by \code{i}
+        and \code{j} and Y by \code{i2} and \code{j}. Can be integer, boolean,
+        or character. If \code{NULL}, the whole genomic relationship matrix XX'
+        is computed. Defaults to \code{NULL}.
+    }
+    \item{chunkSize}{
+        The number of columns of \code{X} that are brought into physical memory
+        for processing per core. If \code{NULL}, all columns of \code{X} are
+        used.  Defaults to 5000.
+    }
+    \item{nCores}{
+        The number of cores (passed to
+        \code{\link[parallel:mclapply]{parallel::mclapply()}}).  Defaults to
+        the number of cores as detected by
+        \code{\link[parallel:detectCores]{parallel::detectCores()}}.
+    }
+    \item{verbose}{
+        Whether progress updates will be posted. Defaults to \code{FALSE}.
+    }
 }
 \details{
-If \code{center = FALSE}, \code{scale = FALSE} and \code{scaleG = FALSE}, \code{\link[=getG]{getG()}} produces
-the same outcome than \code{\link[base:tcrossprod]{base::tcrossprod()}}.
+    If \code{center = FALSE}, \code{scale = FALSE} and \code{scaleG = FALSE},
+    \code{\link[=getG]{getG()}} produces the same outcome than
+    \code{\link[base:tcrossprod]{base::tcrossprod()}}.
+}
+\value{
+    A positive semi-definite symmetric numeric matrix.
 }
 \section{File-backed matrices}{
-
-Functions with the \code{chunkSize} parameter work best with file-backed matrices
-such as \link[BEDMatrix:BEDMatrix-class]{BEDMatrix::BEDMatrix} objects. To avoid loading the whole,
-potentially very large matrix into memory, these functions will load chunks
-of the file-backed matrix into memory and perform the operations on one
-chunk at a time. The size of the chunks is determined by the \code{chunkSize}
-parameter. Care must be taken to not set \code{chunkSize} too high to avoid
-memory shortage, particularly when combined with parallel computing.
+    Functions with the \code{chunkSize} parameter work best with file-backed
+    matrices such as \link[BEDMatrix:BEDMatrix-class]{BEDMatrix::BEDMatrix}
+    objects. To avoid loading the whole, potentially very large matrix into
+    memory, these functions will load chunks of the file-backed matrix into
+    memory and perform the operations on one chunk at a time. The size of the
+    chunks is determined by the \code{chunkSize} parameter. Care must be taken
+    to not set \code{chunkSize} too high to avoid memory shortage, particularly
+    when combined with parallel computing.
 }
-
 \section{Multi-level parallelism}{
+    Functions with the \code{nCores}, \code{i}, and \code{j} parameters provide
+    capabilities for both parallel and distributed computing.
 
-Functions with the \code{nCores}, \code{i}, and \code{j} parameters provide
-capabilities for both parallel and distributed computing.
+    For parallel computing, \code{nCores} determines the number of cores the
+    code is run on. Memory usage can be an issue for higher values of
+    \code{nCores} as R is not particularly memory-efficient. As a rule of
+    thumb, at least around \code{(nCores * object_size(chunk)) +
+    object_size(result)} MB of total memory will be needed for operations
+    on file-backed matrices, not including potential copies of your data that
+    might be created (for example \code{\link[stats:lsfit]{stats::lsfit()}}
+    runs \code{cbind(1, X)}). \code{i} and \code{j} can be used to include or
+    exclude certain rows or columns. Internally, the
+    \code{\link[parallel:mclapply]{parallel::mclapply()}} function is used and
+    therefore parallel computing will not work on Windows machines.
 
-For parallel computing, \code{nCores} determines the number of cores the code is
-run on. Memory usage can be an issue for higher values of \code{nCores} as R is
-not particularly memory-efficient. As a rule of thumb, at least around
-\code{(nCores * object_size(chunk)) + object_size(result)} MB of total memory
-will be needed for operations on file-backed matrices, not including
-potential copies of your data that might be created (for example
-\code{\link[stats:lsfit]{stats::lsfit()}} runs \code{cbind(1, X)}). \code{i} and \code{j} can be used to include or
-exclude certain rows or columns. Internally, the \code{\link[parallel:mclapply]{parallel::mclapply()}}
-function is used and therefore parallel computing will not work on Windows
-machines.
-
-For distributed computing, \code{i} and \code{j} determine the subset of the input
-matrix that the code runs on. In an HPC environment, this can be used not
-just to include or exclude certain rows or columns, but also to partition
-the task among many nodes rather than cores. Scheduler-specific code and
-code to aggregate the results need to be written by the user. It is
-recommended to set \code{nCores} to \code{1} as nodes are often cheaper than cores.
+    For distributed computing, \code{i} and \code{j} determine the subset of
+    the input matrix that the code runs on. In an HPC environment, this can be
+    used not just to include or exclude certain rows or columns, but also to
+    partition the task among many nodes rather than cores. Scheduler-specific
+    code and code to aggregate the results need to be written by the user. It
+    is recommended to set \code{nCores} to \code{1} as nodes are often cheaper
+    than cores.
 }
-
 \examples{
 # Restrict number of cores to 1 on Windows
 if (.Platform$OS.type == "windows") {

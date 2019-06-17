@@ -3,6 +3,9 @@
 \alias{findRelated.matrix}
 \alias{findRelated.symDMatrix}
 \title{Find related individuals in a relationship matrix}
+\description{
+    Find related individuals in a relationship matrix.
+}
 \usage{
 findRelated(x, ...)
 
@@ -12,28 +15,29 @@ findRelated(x, ...)
   ...)
 }
 \arguments{
-\item{x}{A matrix-like object with dimnames.}
-
-\item{...}{Additional arguments for methods.}
-
-\item{cutoff}{The cutoff between 0 and 1 for related individuals to be included
-in the output. Defaults to 0.03.}
-
-\item{verbose}{Whether progress updates will be posted. Defaults to \code{FALSE}.}
+    \item{x}{
+        A matrix-like object with dimnames.
+    }
+    \item{...}{
+        Additional arguments for methods.
+    }
+    \item{cutoff}{
+        The cutoff between 0 and 1 for related individuals to be included in
+        the output. Defaults to 0.03.
+    }
+    \item{verbose}{
+        Whether progress updates will be posted. Defaults to \code{FALSE}.
+    }
 }
 \value{
-A vector of names or indices of related individuals.
-}
-\description{
-Find related individuals in a relationship matrix.
+    A vector of names or indices of related individuals.
 }
 \section{Methods (by class)}{
-\itemize{
-\item \code{matrix}: Find related individuals in matrices
-
-\item \code{symDMatrix}: Find related individuals in symDMatrix objects
-}}
-
+    \itemize{
+        \item \code{matrix}: Find related individuals in matrices
+        \item \code{symDMatrix}: Find related individuals in symDMatrix objects
+    }
+}
 \examples{
 # Load example data
 bg <- BGData:::loadExample()
