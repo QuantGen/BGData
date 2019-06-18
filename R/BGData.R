@@ -3,13 +3,13 @@ setOldClass("ff_matrix")
 
 setClassUnion("geno", c("LinkedMatrix", "BEDMatrix", "big.matrix", "ff_matrix", "matrix"))
 
-BGData <- setClass("BGData", slots = c(geno = "geno", pheno = "data.frame", map = "data.frame"))
+setClass("BGData", slots = c(geno = "geno", pheno = "data.frame", map = "data.frame"))
 
-setMethod("initialize", "BGData", function(.Object, geno, pheno, map) {
+BGData <- function(geno, pheno = NULL, map = NULL) {
     if (!is(geno, "geno")) {
         stop("Only LinkedMatrix, BEDMatrix, big.matrix, ff_matrix, or regular matrix objects are allowed for geno.")
     }
-    if (missing(pheno)) {
+    if (is.null(pheno)) {
         if (is.null(rownames(geno))) {
             sampleIDs <- as.character(1:nrow(geno))
         } else {
@@ -19,15 +19,7 @@ setMethod("initialize", "BGData", function(.Object, geno, pheno, map) {
     } else if (!is.data.frame(pheno)) {
         stop("pheno needs to be a data.frame.")
     }
-    if (nrow(geno) != nrow(pheno)) {
-        stop("Number of rows of geno and number of rows of pheno do not match.")
-    }
-    # We should not assume that geno has row names, but if it does, it should
-    # match the row names of pheno
-    if (!is.null(rownames(geno)) && any(rownames(geno) != rownames(pheno))) {
-        warning("Row names of geno and row names of pheno do not match.")
-    }
-    if (missing(map)) {
+    if (is.null(map)) {
         if (is.null(colnames(geno))) {
             variantIDs <- as.character(1:ncol(geno))
         } else {
@@ -37,18 +29,28 @@ setMethod("initialize", "BGData", function(.Object, geno, pheno, map) {
     } else if (!is.data.frame(map)) {
         stop("map needs to be a data.frame.")
     }
-    if (ncol(geno) != nrow(map)) {
-        stop("Number of columns of geno and number of rows of map do not match.")
+    obj <- new("BGData", geno = geno, pheno = pheno, map = map)
+    return(obj)
+}
+
+setValidity("BGData", function(object) {
+    if (nrow(object@geno) != nrow(object@pheno)) {
+        return("Number of rows of geno and number of rows of pheno do not match.")
+    }
+    # We should not assume that geno has row names, but if it does, it should
+    # match the row names of pheno
+    if (!is.null(rownames(object@geno)) && any(rownames(object@geno) != rownames(object@pheno))) {
+        warning("Row names of geno and row names of pheno do not match.")
+    }
+    if (ncol(object@geno) != nrow(object@map)) {
+        return("Number of columns of geno and number of rows of map do not match.")
     }
     # We should not assume that geno has column names, but if it does, it should
     # match the row names of map
-    if (!is.null(colnames(geno)) && any(colnames(geno) != rownames(map))) {
+    if (!is.null(colnames(object@geno)) && any(colnames(object@geno) != rownames(object@map))) {
         warning("Column names of geno and row names of map do not match.")
     }
-    .Object@geno <- geno
-    .Object@pheno <- pheno
-    .Object@map <- map
-    return(.Object)
+    return(TRUE)
 })
 
 pedDims <- function(fileIn, header, n, p, sep = "", nColSkip = 6L) {
@@ -149,7 +151,7 @@ readRAW <- function(fileIn, header = TRUE, dataType = integer(), n = NULL, p = N
     pheno <- as.data.frame(matrix(nrow = dims$n, ncol = nColSkip), stringsAsFactors = FALSE)
 
     # Construct BGData object
-    BGData <- new("BGData", geno = geno, pheno = pheno)
+    BGData <- BGData(geno = geno, pheno = pheno)
 
     # Parse .raw file
     BGData <- parseRAW(BGData = BGData, fileIn = fileIn, header = header, dataType = dataType, nColSkip = nColSkip, idCol = idCol, sep = sep, na.strings = na.strings, verbose = verbose)
@@ -175,7 +177,7 @@ readRAW_matrix <- function(fileIn, header = TRUE, dataType = integer(), n = NULL
     pheno <- as.data.frame(matrix(nrow = dims$n, ncol = nColSkip), stringsAsFactors = FALSE)
 
     # Construct BGData object
-    BGData <- new("BGData", geno = geno, pheno = pheno)
+    BGData <- BGData(geno = geno, pheno = pheno)
 
     # Parse .raw file
     BGData <- parseRAW(BGData = BGData, fileIn = fileIn, header = header, dataType = dataType, nColSkip = nColSkip, idCol = idCol, sep = sep, na.strings = na.strings, verbose = verbose)
@@ -209,7 +211,7 @@ readRAW_big.matrix <- function(fileIn, header = TRUE, dataType = integer(), n = 
     pheno <- as.data.frame(matrix(nrow = dims$n, ncol = nColSkip), stringsAsFactors = FALSE)
 
     # Construct BGData object
-    BGData <- new("BGData", geno = geno, pheno = pheno)
+    BGData <- BGData(geno = geno, pheno = pheno)
 
     # Parse .raw file
     BGData <- parseRAW(BGData = BGData, fileIn = fileIn, header = header, dataType = dataType, nColSkip = nColSkip, idCol = idCol, sep = sep, na.strings = na.strings, verbose = verbose)

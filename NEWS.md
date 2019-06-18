@@ -1,16 +1,19 @@
 # BGData 2.1.0.9000
 
-- When creating a BGData object:
+- Follow [Bioconductor S4 practices][1]. If you have used `new()` to create
+  `BGData` instances, please use the `BGData()` constructor function instead.
+- `BGData()`:
   - Check if `pheno` and `map` are data.frames.
-  - Check if number of rows of `geno` matches number of rows of `pheno`.
-  - Check if number of columns of `geno` matches number of rows of `map`.
-  - Warn if the row names of `pheno` do not match the row names of `geno`.
-  - Warn if the row names of `map` do not match the column names of `geno`.
   - Do not create dimnames for `geno` as this object is likely shared.
   - Check if `geno` has row names before creating `pheno` stub.
   - Check if `geno` has column names before creating `map` stub.
   - Rename `IID` in `pheno` stub to `sample_id`.
   - Rename `mrk` in `map` stub to `variant_id`.
+- Add validity tests for `BGData` objects:
+  - Check if number of rows of `geno` matches number of rows of `pheno`.
+  - Check if number of columns of `geno` matches number of rows of `map`.
+  - Warn if the row names of `pheno` do not match the row names of `geno`.
+  - Warn if the row names of `map` do not match the column names of `geno`.
 - Update citation instructions.
 
 
@@ -67,3 +70,5 @@
 # BGData 1.0.0
 
 Initial release.
+
+[1]: https://bioconductor.org/help/course-materials/2017/Zurich/S4-classes-and-methods.html

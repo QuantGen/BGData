@@ -1,19 +1,13 @@
-\docType{methods}
-\name{initialize,BGData-method}
-\alias{initialize,BGData-method}
+\name{BGData}
+\alias{BGData}
 \title{Creates a New BGData Instance}
 \description{
-    This method is run when a \code{BGData} object is created using
-    \code{BGData(...)} or \code{new("BGData", ...)}.
+    This function constructs a new \code{BGData} object.
 }
 \usage{
-\S4method{initialize}{BGData}(.Object, geno, pheno, map)
+BGData(geno, pheno = NULL, map = NULL)
 }
 \arguments{
-    \item{.Object}{
-        The \code{BGData} instance to be initialized. This argument is passed
-        in by R and can be ignored, but still needs to be documented.
-    }
     \item{geno}{
         A \code{geno} object that contains genotypes.
     }
@@ -21,12 +15,12 @@
         A \code{data.frame} that contains sample information (including
         phenotypes). A stub that only contains a \code{sample_id} column
         populated with either the rownames of \code{@geno} or a sequence will
-        be generated if missing.
+        be generated if \code{NULL}
     }
     \item{map}{
         A \code{data.frame} that contains variant information. A stub that only
         contains a \code{variant_id} column populated with either the colnames
-        of \code{@geno} or a sequence will be generated if missing.
+        of \code{@geno} or a sequence will be generated if \code{NULL}
     }
 }
 \seealso{

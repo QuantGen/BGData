@@ -1,7 +1,6 @@
 \docType{class}
 \name{BGData-class}
 \alias{BGData-class}
-\alias{BGData}
 \title{An S4 Class to Represent Phenotype and Genotype Data}
 \description{
     This class is inspired by the phenotype/genotype file format .raw and its
@@ -15,9 +14,8 @@
     There are several ways to create an instance of this class:
 
     \itemize{
-        \item from arbitrary phenotype/genotype data using one of the
-            constructors \code{[BGData(...)][initialize,BGData-method]} or
-            \code{[new("BGData", ...)][initialize,BGData-method]}.
+        \item from arbitrary phenotype/genotype data using the \code{BGData}
+            constructor function.
         \item from a BED file using \code{as.BGData} and \code{BEDMatrix}.
         \item from a previously saved \code{BGData} object using
             \code{load.BGData}.
@@ -50,9 +48,8 @@
     }
 }
 \seealso{
-    \code{\link{initialize,BGData-method}}, \code{\link{as.BGData}},
-    \code{\link{load.BGData}}, \code{\link{readRAW}} to create \code{BGData}
-    objects.
+    \code{\link{BGData}}, \code{\link{as.BGData}}, \code{\link{load.BGData}},
+    \code{\link{readRAW}} to create \code{BGData} objects.
 
     \code{\link[LinkedMatrix]{LinkedMatrix-class}} and
     \code{\link[BEDMatrix]{BEDMatrix-class}} for more information on the above
