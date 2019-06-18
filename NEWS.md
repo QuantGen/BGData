@@ -3,7 +3,6 @@
 - Follow [Bioconductor S4 practices][1]. If you have used `new()` to create
   `BGData` instances, please use the `BGData()` constructor function instead.
 - `BGData()`:
-  - Check if `pheno` and `map` are data.frames.
   - Do not create dimnames for `geno` as this object is likely shared.
   - Check if `geno` has row names before creating `pheno` stub.
   - Check if `geno` has column names before creating `map` stub.

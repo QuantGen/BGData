@@ -16,8 +16,6 @@ BGData <- function(geno, pheno = NULL, map = NULL) {
             sampleIDs <- rownames(geno)
         }
         pheno <- data.frame(sample_id = sampleIDs, row.names = sampleIDs, stringsAsFactors = FALSE)
-    } else if (!is.data.frame(pheno)) {
-        stop("pheno needs to be a data.frame.")
     }
     if (is.null(map)) {
         if (is.null(colnames(geno))) {
@@ -26,8 +24,6 @@ BGData <- function(geno, pheno = NULL, map = NULL) {
             variantIDs <- colnames(geno)
         }
         map <- data.frame(variant_id = variantIDs, row.names = variantIDs, stringsAsFactors = FALSE)
-    } else if (!is.data.frame(map)) {
-        stop("map needs to be a data.frame.")
     }
     obj <- new("BGData", geno = geno, pheno = pheno, map = map)
     return(obj)
