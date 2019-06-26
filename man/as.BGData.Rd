@@ -6,8 +6,8 @@
 \title{Convert Other Objects to BGData Objects}
 \description{
     Converts other objects to \code{BGData} objects by loading supplementary
-    phenotypes and map files referenced by the object to be used for the
-    \code{@pheno} and \code{@map} slot, respectively.
+    phenotypes and map files referenced by the object to be used for the sample
+    information and variant information, respectively.
 
     Currently supported are \code{BEDMatrix} objects, plain or nested in
     \code{ColumnLinkedMatrix} objects.
@@ -44,22 +44,23 @@ as.BGData(x, alternatePhenotypeFile = NULL, ...)
     phenotypes are required it is possible to store them in an
     \href{https://www.cog-genomics.org/plink2/input#pheno}{alternate phenotype
     file}. The path to such a file can be provided with
-    \code{alternatePhenotypeFile} and will be merged with the data in the
-    \code{@pheno} slot. The first and second columns of that file must contain
-    family and within-family IDs, respectively.
+    \code{alternatePhenotypeFile} and will be merged with the existing sample
+    information. The first and second columns of that file must contain family
+    and within-family IDs, respectively.
 
     For \code{BEDMatrix} objects: If a .fam file (which corresponds to the
     first six columns of a .ped or .raw file) of the same name and in the same
-    directory as the BED file exists, the \code{@pheno} slot will be populated
+    directory as the BED file exists, the sample information will be populated
     with the data stored in that file. Otherwise a stub that only contains an
-    \code{IID} column populated with the rownames of \code{@geno} will be
-    generated. The same will happen for a .bim file for the \code{@map} slot.
+    \code{IID} column populated with the rownames of \code{geno(x)} will be
+    generated. The same will happen for a .bim file for the variant
+    information.
 
     For \code{ColumnLinkedMatrix} objects: See the case for \code{BEDMatrix}
     objects, but only the .fam file of the first node of the
-    \code{LinkedMatrix} will be read and used for the \code{@pheno} slot, and
-    the .bim files of all nodes will be combined and used for the \code{@map}
-    slot.
+    \code{LinkedMatrix} will be read and used for the sample information, and
+    the .bim files of all nodes will be combined and used for the variant
+    information.
 }
 \value{
     A \code{BGData} object.

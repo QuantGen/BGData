@@ -16,5 +16,5 @@
     \code{\link[base]{matrix}} for more information on each matrix-like type.
 
     \code{\link{BGData-class}} for more information on the \code{BGData} class,
-    in particular its \code{@geno} slot that accepts \code{geno} objects.
+    in particular its \code{geno} accessor that accepts \code{geno} objects.
 }

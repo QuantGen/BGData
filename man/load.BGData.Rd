@@ -3,8 +3,7 @@
 \title{Loads BGData (and Other) Objects from .RData Files}
 \description{
     This function is similar to \code{load}, but also initializes the different
-    types of objects that the \code{@geno} slot of a \code{BGData} object can
-    take.
+    types of objects that can be used as genotypes in a \code{BGData} object.
 
     Currently supported are \code{ff_matrix}, \code{big.matrix}, and
     \code{BEDMatrix} objects. If the object is of type \code{LinkedMatrix}, all

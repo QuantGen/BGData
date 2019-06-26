@@ -16,7 +16,8 @@ chunkedApply(X, MARGIN, FUN, i = seq_len(nrow(X)),
 }
 \arguments{
     \item{X}{
-        A file-backed matrix, typically \code{@geno} of a \code{BGData} object.
+        A file-backed matrix, typically the genotypes of a \code{BGData}
+        object.
     }
     \item{MARGIN}{
         The subscripts which the function will be applied over. 1 indicates
@@ -65,5 +66,5 @@ if (.Platform$OS.type == "windows") {
 bg <- BGData:::loadExample()
 
 # Compute standard deviation of columns
-chunkedApply(X = bg@geno, MARGIN = 2, FUN = sd)
+chunkedApply(X = geno(bg), MARGIN = 2, FUN = sd)
 }

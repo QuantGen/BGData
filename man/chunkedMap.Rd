@@ -15,7 +15,7 @@ chunkedMap(X, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(X)),
 }
 \arguments{
     \item{X}{
-        A file-backed matrix, typically \code{@geno} of a \code{BGData}
+        A file-backed matrix, typically the genotypes of a \code{BGData}
         object.
     }
     \item{FUN}{
@@ -66,5 +66,5 @@ if (.Platform$OS.type == "windows") {
 bg <- BGData:::loadExample()
 
 # Compute column sums of each chunk
-chunkedMap(X = bg@geno, FUN = colSums)
+chunkedMap(X = geno(bg), FUN = colSums)
 }

@@ -30,9 +30,9 @@
     packages: \code{BEDMatrix}, \code{LinkedMatrix}, and \code{symDMatrix}. It
     features scalable and efficient computational methods for large genomic
     datasets such as genome-wide association studies (GWAS) or genomic
-    relationship matrices (G matrix). It also contains a data structure called
-    \code{BGData} that holds genotypes in the \code{@geno} slot, phenotypes in
-    the \code{@pheno} slot, and additional information in the \code{@map} slot.
+    relationship matrices (G matrix). It also contains a container class called
+    \code{BGData} that holds genotypes, sample information, and variant
+    information.
 }
 \section{Example dataset}{
     The \code{extdata} folder contains example files that were generated from

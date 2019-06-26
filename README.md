@@ -7,7 +7,7 @@ BGData: A Suite of Packages for Analysis of Big Genomic Data
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/8xac0jfmwhrj0gc3?svg=true)](https://ci.appveyor.com/project/agrueneberg/bgdata)
 [![Coverage status](https://codecov.io/gh/QuantGen/BGData/branch/master/graph/badge.svg)](https://codecov.io/github/QuantGen/BGData?branch=master)
 
-BGData is an R package that provides scalable and efficient computational methods for large genomic datasets, e.g., genome-wide association studies (GWAS) or genomic relationship matrices (G matrices). It also contains a data structure called `BGData` that holds genotypes in the `@geno` slot, phenotypes in the `@pheno` slot, and additional information in the `@map` slot.
+BGData is an R package that provides scalable and efficient computational methods for large genomic datasets, e.g., genome-wide association studies (GWAS) or genomic relationship matrices (G matrices). It also contains a container class called `BGData` that holds genotypes, sample information, and variant information.
 
 Modern genomic datasets are big (large *n*), high-dimensional (large *p*), and multi-layered. The challenges that need to be addressed are memory requirements and computational demands. Our goal is to develop software that will enable researchers to carry out analyses with big genomic data within the R environment.
 
@@ -117,7 +117,7 @@ bg <- as.BGData(wg, alternatePhenotypeFile = paste0(path, "/pheno.txt"))
 #> Merging alternate phenotype file...
 ```
 
-The `bg` object will have the `LinkedMatrix` object in the `@geno` slot, the .fam file augmented by the `FT10` phenotype in the `@pheno` slot, and the .bim file in the `@map` slot.
+The `bg` object will use the `LinkedMatrix` object as genotypes, the .fam file augmented by the `FT10` phenotype as sample information, and the .bim file as variant information.
 
 ```R
 str(bg)
@@ -166,18 +166,18 @@ load.BGData("BGData.RData")
 Use `chunkedApply` to count missing values (among others):
 
 ```R
-countNAs <- chunkedApply(X = bg@geno, MARGIN = 2, FUN = function(x) sum(is.na(x)))
+countNAs <- chunkedApply(X = geno(bg), MARGIN = 2, FUN = function(x) sum(is.na(x)))
 ```
 
 Use the `summarize` function to calculate minor allele frequencies and frequency of missing values:
 
 ```R
-summarize(bg@geno)
+summarize(geno(bg))
 ```
 
 ### Running GWASes with different regression methods
 
-A data structure for genomic data is useful when defining methods that act on both phenotype and genotype information. We have implemented a `GWAS` function that supports various regression methods. The formula takes phenotypes from `@pheno` and inserts one marker at a time.
+A data structure for genomic data is useful when defining methods that act on both phenotype and genotype information. We have implemented a `GWAS` function that supports various regression methods. The formula takes phenotypes from the sample information of the `BGData` object and inserts one marker at a time.
 
 ```R
 gwas <- GWAS(formula = FT10 ~ 1, data = bg)
@@ -186,7 +186,7 @@ gwas <- GWAS(formula = FT10 ~ 1, data = bg)
 ### Generating the G Matrix
 
 ```R
-G <- getG(bg@geno)
+G <- getG(geno(bg))
 ```
 
 

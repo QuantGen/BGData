@@ -97,12 +97,12 @@ readRAW_big.matrix(fileIn, header = TRUE, dataType = integer(),
 }
 \details{
     The data included in the first couple of columns (up to \code{nColSkip}) is
-    used to populate the \code{@pheno} slot of a \code{BGData} object, and the
-    remaining columns are used to fill the \code{@geno} slot. If the first row
-    contains a header (\code{header = TRUE}), data in this row is used to
-    determine the column names for \code{@pheno} and \code{@geno}.
+    used to populate the sample information of a \code{BGData} object, and the
+    remaining columns are used to fill the genotypes. If the first row contains
+    a header (\code{header = TRUE}), data in this row is used to determine the
+    column names for sample information and genotypes.
 
-    \code{@geno} can take several forms, depending on the function that is
+    The genotypes can take several forms, depending on the function that is
     called (\code{readRAW}, \code{readRAW_matrix}, or
     \code{readRAW_big.matrix}). The following sections illustrate each function
     in detail.
@@ -115,11 +115,11 @@ readRAW_big.matrix(fileIn, header = TRUE, dataType = integer(),
     data this limitation is often exceeded. The \code{LinkedMatrix} package
     makes it possible to link several \code{ff} files together by columns or by
     rows and treat them similarly to a single matrix. By default a
-    \code{ColumnLinkedMatrix} is used for \code{@geno}, but the user can modify
-    this using the \code{linked.by} argument. The number of nodes to generate
-    is either specified by the user using the \code{nNodes} argument or
-    determined internally so that each \code{ff} object has a number of cells
-    that is smaller than \code{.Machine$integer.max / 1.2}. A folder (see
+    \code{ColumnLinkedMatrix} is used for the genotypes, but the user can
+    modify this using the \code{linked.by} argument. The number of nodes to
+    generate is either specified by the user using the \code{nNodes} argument
+    or determined internally so that each \code{ff} object has a number of
+    cells that is smaller than \code{.Machine$integer.max / 1.2}. A folder (see
     \code{folderOut}) that contains the binary flat files (named
     \code{geno_*.bin}) and an external representation of the \code{BGData}
     object in \code{BGData.RData} is created.

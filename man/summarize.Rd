@@ -12,7 +12,8 @@ summarize(X, i = seq_len(nrow(X)), j = seq_len(ncol(X)),
 }
 \arguments{
     \item{X}{
-        A matrix-like object, typically \code{@geno} of a \code{BGData} object.
+        A matrix-like object, typically the genotypes of a \code{BGData}
+        object.
     }
     \item{i}{
         Indicates which rows of \code{X} should be used. Can be integer,
@@ -56,17 +57,17 @@ if (.Platform$OS.type == "windows") {
 bg <- BGData:::loadExample()
 
 # Summarize the whole dataset
-sum1 <- summarize(X = bg@geno)
+sum1 <- summarize(X = geno(bg))
 
 # Summarize the first 50 individuals
-sum2 <- summarize(X = bg@geno, i = 1:50)
+sum2 <- summarize(X = geno(bg), i = 1:50)
 
 # Summarize the first 1000 markers (useful for distributed computing)
-sum3 <- summarize(X = bg@geno, j = 1:100)
+sum3 <- summarize(X = geno(bg), j = 1:100)
 
 # Summarize the first 50 individuals on the first 1000 markers
-sum4 <- summarize(X = bg@geno, i = 1:50, j = 1:100)
+sum4 <- summarize(X = geno(bg), i = 1:50, j = 1:100)
 
 # Summarize by names
-sum5 <- summarize(X = bg@geno, j = c("snp81233_C", "snp81234_C", "snp81235_T"))
+sum5 <- summarize(X = geno(bg), j = c("snp81233_C", "snp81234_C", "snp81235_T"))
 }

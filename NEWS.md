@@ -1,7 +1,10 @@
 # BGData 2.1.0.9000
 
-- Follow [Bioconductor S4 practices][1]. If you have used `new()` to create
-  `BGData` instances, please use the `BGData()` constructor function instead.
+- Follow [Bioconductor S4 practices][1].
+  - If you have used `new()` to create `BGData` instances, please use the
+    `BGData()` constructor function instead.
+  - If you have used `@` to access the slots of `BGData` instances, please use
+    the `geno()`, `pheno()`, and `map()` accessors instead.
 - `BGData()`:
   - Do not create dimnames for `geno` as this object is likely shared.
   - Check if `geno` has row names before creating `pheno` stub.

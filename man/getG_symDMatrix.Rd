@@ -15,7 +15,8 @@ getG_symDMatrix(X, center = TRUE, scale = TRUE, scaleG = TRUE,
 }
 \arguments{
     \item{X}{
-        A matrix-like object, typically \code{@geno} of a \code{BGData} object.
+        A matrix-like object, typically the genotypes of a \code{BGData}
+        object.
     }
     \item{center}{
         Either a logical value or a numeric vector of length equal to the

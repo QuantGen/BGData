@@ -49,6 +49,36 @@ setValidity("BGData", function(object) {
     return(TRUE)
 })
 
+setGeneric("geno", function(x) standardGeneric("geno"))
+setMethod("geno", "BGData", function(x) x@geno)
+
+setGeneric("geno<-", function(x, value) standardGeneric("geno<-"))
+setMethod("geno<-", "BGData", function(x, value) {
+    x@geno <- value
+    validObject(x)
+    x
+})
+
+setGeneric("pheno", function(x) standardGeneric("pheno"))
+setMethod("pheno", "BGData", function(x) x@pheno)
+
+setGeneric("pheno<-", function(x, value) standardGeneric("pheno<-"))
+setMethod("pheno<-", "BGData", function(x, value) {
+    x@pheno <- value
+    validObject(x)
+    x
+})
+
+setGeneric("map", function(x) standardGeneric("map"))
+setMethod("map", "BGData", function(x) x@map)
+
+setGeneric("map<-", function(x, value) standardGeneric("map<-"))
+setMethod("map<-", "BGData", function(x, value) {
+    x@map <- value
+    validObject(x)
+    x
+})
+
 pedDims <- function(fileIn, header, n, p, sep = "", nColSkip = 6L) {
     if (is.null(n)) {
         n <- getLineCount(fileIn, header)
@@ -66,35 +96,35 @@ pedDims <- function(fileIn, header, n, p, sep = "", nColSkip = 6L) {
 
 parseRAW <- function(BGData, fileIn, header, dataType, nColSkip = 6L, idCol = c(1L, 2L), sep = "", na.strings = "NA", verbose = FALSE) {
 
-    p <- ncol(BGData@geno)
+    p <- ncol(geno(BGData))
     pedFile <- file(fileIn, open = "r")
 
     # Update colnames
     if (header) {
         headerLine <- scan(pedFile, nlines = 1L, what = character(), sep = sep, quiet = TRUE)
-        colnames(BGData@pheno) <- headerLine[seq_len(nColSkip)]
-        colnames(BGData@geno) <- headerLine[-(seq_len(nColSkip))]
+        colnames(pheno(BGData)) <- headerLine[seq_len(nColSkip)]
+        colnames(geno(BGData)) <- headerLine[-(seq_len(nColSkip))]
     }
 
     # Parse file
-    for (i in seq_len(nrow(BGData@geno))) {
+    for (i in seq_len(nrow(geno(BGData)))) {
         xSkip <- scan(pedFile, n = nColSkip, what = character(), sep = sep, quiet = TRUE)
         x <- scan(pedFile, n = p, what = dataType, sep = sep, na.strings = na.strings, quiet = TRUE)
-        BGData@pheno[i, ] <- xSkip
-        BGData@geno[i, ] <- x
+        pheno(BGData)[i, ] <- xSkip
+        geno(BGData)[i, ] <- x
         if (verbose) {
-            message("Subject ", i, " / ", nrow(BGData@geno))
+            message("Subject ", i, " / ", nrow(geno(BGData)))
         }
     }
     close(pedFile)
 
     # Update rownames
-    IDs <- apply(BGData@pheno[, idCol, drop = FALSE], 1L, paste, collapse = "_")
-    rownames(BGData@pheno) <- IDs
-    rownames(BGData@geno) <- IDs
+    IDs <- apply(pheno(BGData)[, idCol, drop = FALSE], 1L, paste, collapse = "_")
+    rownames(pheno(BGData)) <- IDs
+    rownames(geno(BGData)) <- IDs
 
     # Convert types in pheno
-    BGData@pheno[] <- lapply(BGData@pheno, utils::type.convert, as.is = TRUE)
+    pheno(BGData)[] <- lapply(pheno(BGData), utils::type.convert, as.is = TRUE)
 
     return(BGData)
 }
@@ -431,7 +461,7 @@ load.BGData <- function(file, envir = parent.frame()) {
         object <- get(name, envir = loadingEnv)
         # Initialize genotypes of BGData objects
         if (class(object) == "BGData") {
-            object@geno <- initializeGeno(object@geno, path = dirname(file))
+            geno(object) <- initializeGeno(geno(object), path = dirname(file))
         }
         # Assign object to envir
         assign(name, object, envir = envir)

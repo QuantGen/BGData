@@ -42,6 +42,6 @@ findRelated(x, ...)
 # Load example data
 bg <- BGData:::loadExample()
 
-G <- getG(bg@geno)
+G <- getG(geno(bg))
 findRelated(G)
 }

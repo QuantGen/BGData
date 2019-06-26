@@ -1,11 +1,18 @@
 \docType{class}
 \name{BGData-class}
 \alias{BGData-class}
-\title{An S4 Class to Represent Phenotype and Genotype Data}
+\alias{geno,BGData-method}
+\alias{geno<-,BGData-method}
+\alias{pheno,BGData-method}
+\alias{pheno<-,BGData-method}
+\alias{map,BGData-method}
+\alias{map<-,BGData-method}
+\title{Container for Phenotype and Genotype Data}
 \description{
-    This class is inspired by the phenotype/genotype file format .raw and its
-    binary companion (also known as .bed) of
-    \href{https://www.cog-genomics.org/plink2}{PLINK}. It is used by several
+    The BGData class is a container for genotypes, sample information, and
+    variant information. The class is inspired by the \code{.bed/.fam/.bim}
+    (binary) and \code{.ped/.fam/.map} (text) phenotype/genotype file formats
+    of \href{https://www.cog-genomics.org/plink2}{PLINK}. It is used by several
     functions of this package such as \code{GWAS} for performing a Genome Wide
     Association Study or \code{getG} for calculating a genomic relationship
     matrix.
@@ -33,17 +40,17 @@
     .ped file using \code{plink --bfile myfile --recode} or to a .raw file
     using \code{plink --bfile myfile --recodeA} without losing information.
 }
-\section{Slots}{
+\section{Accessors}{
+    In the following code snippets, \code{x} is a BGData object.
     \describe{
-        \item{\code{geno}}{
-            A \code{geno} object that contains genotypes.
+        \item{\code{geno(x)}, \code{geno(x) <- value}:}{
+            Get or set genotypes.
         }
-        \item{\code{pheno}}{
-            A \code{data.frame} that contains sample information (including
-            phenotypes).
+        \item{\code{pheno(x)}, \code{pheno(x) <- value}:}{
+            Get or set sample information.
         }
-        \item{\code{map}}{
-            A \code{data.frame} that contains variant information.
+        \item{\code{map(x)}, \code{map(x) <- value}:}{
+            Get or set variant information.
         }
     }
 }
@@ -61,7 +68,7 @@ Y <- data.frame(y = runif(10))
 MAP <- data.frame(means = colMeans(X), freqNA = colMeans(is.na(X)))
 DATA <- BGData(geno = X, pheno = Y, map = MAP)
 
-dim(DATA@geno)
-head(DATA@pheno)
-head(DATA@map)
+dim(geno(DATA))
+head(pheno(DATA))
+head(map(DATA))
 }
