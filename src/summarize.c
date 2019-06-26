@@ -70,7 +70,7 @@ SEXP summarize_integer(SEXP X) {
         // Compute column sum (xt1), and
         // Compute column sum of squares (xtx)
         R_xlen_t n = 0;
-        long int xt1 = 0;
+        double xt1 = 0;
         double xtx = 0;
         for (row_idx = 0; row_idx < nrow; row_idx++) {
             int x_val = X_data[row_idx + (col_idx * nrow)];
@@ -85,10 +85,10 @@ SEXP summarize_integer(SEXP X) {
         double sd;
         if (n) {
             // Center xtx
-            xtx -= (xt1 * xt1) / (double) n;
+            xtx -= (xt1 * xt1) / n;
             // Compute summary statistics
             freq_na = (nrow - n) / (double) nrow;
-            allele_freq = xt1 / (double) n / 2;
+            allele_freq = xt1 / n / 2;
             sd = sqrt(xtx / (n - 1));
         } else {
             freq_na = 1;
