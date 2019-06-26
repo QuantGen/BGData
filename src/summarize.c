@@ -19,7 +19,7 @@ SEXP summarize_real(SEXP X) {
         // Compute number of non-missing values (n), and
         // Compute column sum (xt1), and
         // Compute column sum of squares (xtx)
-        int n = 0;
+        R_xlen_t n = 0;
         double xt1 = 0;
         double xtx = 0;
         for (row_idx = 0; row_idx < nrow; row_idx++) {
@@ -69,7 +69,7 @@ SEXP summarize_integer(SEXP X) {
         // Compute number of non-missing values (n), and
         // Compute column sum (xt1), and
         // Compute column sum of squares (xtx)
-        int n = 0;
+        R_xlen_t n = 0;
         long int xt1 = 0;
         double xtx = 0;
         for (row_idx = 0; row_idx < nrow; row_idx++) {
