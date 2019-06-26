@@ -59,8 +59,8 @@ test_that("GWAS without covariates", {
 
                 GWAS_res <- suppressWarnings(GWAS(formula = y ~ 1, data = DATA, method = method, nCores = nCores))
 
-                expect_equivalent(GWAS_res, lsfit_res)
-                expect_equivalent(GWAS_res, lm_res)
+                expect_equivalent(GWAS_res[, 1:4], lsfit_res)
+                expect_equivalent(GWAS_res[, 1:4], lm_res)
 
             }
 

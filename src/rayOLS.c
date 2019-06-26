@@ -14,7 +14,7 @@ SEXP rayOLS_real(SEXP X, SEXP y) {
         Rf_error("The number of rows in X and the length of y need to match\n");
     }
     // Allocate output matrix
-    SEXP out = PROTECT(Rf_allocMatrix(REALSXP, X_ncol, 4));
+    SEXP out = PROTECT(Rf_allocMatrix(REALSXP, X_ncol, 5));
     // Get data pointers
     double *X_data = REAL(X);
     double *y_data = REAL(y);
@@ -60,6 +60,7 @@ SEXP rayOLS_real(SEXP X, SEXP y) {
         REAL(out)[col_idx + X_ncol] = se;
         REAL(out)[col_idx + (2 * X_ncol)] = z_stat;
         REAL(out)[col_idx + (3 * X_ncol)] = p_value;
+        REAL(out)[col_idx + (4 * X_ncol)] = n;
     }
     UNPROTECT(1);
     return out;
@@ -75,7 +76,7 @@ SEXP rayOLS_integer(SEXP X, SEXP y) {
         Rf_error("The number of rows in X and the length of y need to match\n");
     }
     // Allocate output matrix
-    SEXP out = PROTECT(Rf_allocMatrix(REALSXP, X_ncol, 4));
+    SEXP out = PROTECT(Rf_allocMatrix(REALSXP, X_ncol, 5));
     // Get data pointers
     int *X_data = INTEGER(X);
     double *y_data = REAL(y);
@@ -121,6 +122,7 @@ SEXP rayOLS_integer(SEXP X, SEXP y) {
         REAL(out)[col_idx + X_ncol] = se;
         REAL(out)[col_idx + (2 * X_ncol)] = z_stat;
         REAL(out)[col_idx + (3 * X_ncol)] = p_value;
+        REAL(out)[col_idx + (4 * X_ncol)] = n;
     }
     UNPROTECT(1);
     return out;

@@ -51,7 +51,7 @@ GWAS.rayOLS <- function(formula, data, i = seq_len(nrow(geno(data))), j = seq_le
     y <- as.numeric(y)
     res <- chunkedMap(X = geno(data), FUN = rayOLS, i = i, j = j, chunkSize = chunkSize, nCores = nCores, verbose = verbose, y = y, ...)
     res <- do.call(rbind, res)
-    colnames(res) <- c("Estimate", "Std.Err", "t-value", "Pr(>|t|)")
+    colnames(res) <- c("Estimate", "Std.Err", "t-value", "Pr(>|t|)", "n")
     rownames(res) <- colnames(geno(data))[j]
     return(res)
 }
