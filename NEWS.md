@@ -16,7 +16,8 @@
   - Check if number of columns of `geno` matches number of rows of `map`.
   - Warn if the row names of `pheno` do not match the row names of `geno`.
   - Warn if the row names of `map` do not match the column names of `geno`.
-- `GWAS()`: Return number of records used for each variant in `rayOLS`.
+- `GWAS()`: Return number of records used for each variant and allele
+  frequencies in `rayOLS`.
 - Update citation instructions.
 
 
