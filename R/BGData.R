@@ -102,8 +102,10 @@ parseRAW <- function(BGData, fileIn, header, dataType, nColSkip = 6L, idCol = c(
     # Update colnames
     if (header) {
         headerLine <- scan(pedFile, nlines = 1L, what = character(), sep = sep, quiet = TRUE)
-        colnames(pheno(BGData)) <- headerLine[seq_len(nColSkip)]
-        colnames(geno(BGData)) <- headerLine[-(seq_len(nColSkip))]
+        # Suppress warnings here to not get in trouble with validity method
+        suppressWarnings(colnames(pheno(BGData)) <- headerLine[seq_len(nColSkip)])
+        suppressWarnings(colnames(geno(BGData)) <- headerLine[-(seq_len(nColSkip))])
+        suppressWarnings(rownames(map(BGData)) <- colnames(geno(BGData)))
     }
 
     # Parse file
