@@ -11,6 +11,10 @@
   - Check if `geno` has column names before creating `map` stub.
   - Rename `IID` in `pheno` stub to `sample_id`.
   - Rename `mrk` in `map` stub to `variant_id`.
+- `as.BGData()`:
+  - Force column classes when loading .fam and .bim files.
+  - Force `FID` and `IID` columns to be of type `character` when loading
+    alternate phenotype files.
 - Add validity tests for `BGData` objects:
   - Check if number of rows of `geno` matches number of rows of `pheno`.
   - Check if number of columns of `geno` matches number of rows of `map`.

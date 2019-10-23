@@ -265,7 +265,7 @@ loadFamFile <- function(path) {
             "MAT",
             "SEX",
             "PHENOTYPE"
-        ), data.table = FALSE, showProgress = FALSE)
+        ), colClasses = "character", data.table = FALSE, showProgress = FALSE)
     } else {
         pheno <- utils::read.table(path, col.names = c(
             "FID",
@@ -274,7 +274,7 @@ loadFamFile <- function(path) {
             "MAT",
             "SEX",
             "PHENOTYPE"
-        ), stringsAsFactors = FALSE)
+        ), colClasses = "character", stringsAsFactors = FALSE)
     }
     return(pheno)
 }
@@ -314,6 +314,13 @@ loadBimFile <- function(path) {
             "base_pair_position",
             "allele_1",
             "allele_2"
+        ), colClasses = c(
+            "character",
+            "character",
+            "integer",
+            "integer",
+            "character",
+            "character"
         ), data.table = FALSE, showProgress = FALSE)
     } else {
         map <- utils::read.table(path, col.names = c(
@@ -323,6 +330,13 @@ loadBimFile <- function(path) {
             "base_pair_position",
             "allele_1",
             "allele_2"
+        ), colClasses = c(
+            "character",
+            "character",
+            "integer",
+            "integer",
+            "character",
+            "character"
         ), stringsAsFactors = FALSE)
     }
     return(map)
@@ -364,7 +378,9 @@ loadAlternatePhenotypeFile <- function(path, ...) {
     } else {
         message("Merging alternate phenotype file...")
         if (requireNamespace("data.table", quietly = TRUE)) {
-            alternatePhenotypes <- data.table::fread(path, data.table = FALSE, showProgress = FALSE, ...)
+            alternatePhenotypes <- data.table::fread(path, colClasses = list(
+                character = 1:2
+            ), data.table = FALSE, showProgress = FALSE, ...)
         } else {
             # Check if the file has a header, i.e. if the first row starts with
             # an FID and an IID entry
@@ -373,6 +389,8 @@ loadAlternatePhenotypeFile <- function(path, ...) {
                 hasHeader = TRUE
             }
             alternatePhenotypes <- utils::read.table(path, header = hasHeader, stringsAsFactors = FALSE, ...)
+            alternatePhenotypes[[1]] <- as.character(alternatePhenotypes[[1]]) # FID
+            alternatePhenotypes[[2]] <- as.character(alternatePhenotypes[[2]]) # IID
         }
     }
     return(alternatePhenotypes)
