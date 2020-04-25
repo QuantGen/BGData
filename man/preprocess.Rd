@@ -38,5 +38,5 @@ preprocess(X, center = FALSE, scale = FALSE, impute = FALSE)
 bg <- BGData:::loadExample()
 
 # Center and scale genotypes
-W <- preprocess(bg@geno[], center = TRUE, scale = TRUE)
+W <- preprocess(as.matrix(geno(bg)), center = TRUE, scale = TRUE)
 }
