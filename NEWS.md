@@ -1,6 +1,5 @@
 # BGData 2.1.0.9000
 
-- Add `preprocess()` function for fast centering, scaling, and imputation.
 - Follow [Bioconductor S4 practices][1].
   - If you have used `new()` to create `BGData` instances, please use the
     `BGData()` constructor function instead.
@@ -21,6 +20,7 @@
   - Check if number of columns of `geno` matches number of rows of `map`.
   - Warn if the row names of `pheno` do not match the row names of `geno`.
   - Warn if the row names of `map` do not match the column names of `geno`.
+- Add `preprocess()` function for fast centering, scaling, and imputation.
 - `GWAS()`: Return number of records used for each variant and allele
   frequencies in `rayOLS`.
 - Update citation instructions.
