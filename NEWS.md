@@ -18,6 +18,8 @@
   - Force column classes when loading .fam and .bim files.
   - Force `FID` and `IID` columns to be of type `character` when loading
     alternate phenotype files.
+  - Do not make assumptions about the structure of dimnames of a BEDMatrix
+    object if it is passed without .fam and .bim file unless they are `NULL`.
 - Add validity tests for `BGData` objects:
   - Check if number of rows of `geno` matches number of rows of `pheno`.
   - Check if number of columns of `geno` matches number of rows of `map`.

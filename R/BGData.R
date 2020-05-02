@@ -292,8 +292,9 @@ generatePheno <- function(x) {
         if (is.null(rownames(x))) {
             pheno <- data.frame(FID = "0", IID = as.character(1:nrow(x)), stringsAsFactors = FALSE)
         } else {
-            splits <- strsplit(rownames(x), "_")
-            pheno <- data.frame(FID = sapply(splits, "[", 1L), IID = sapply(splits, "[", 2L), stringsAsFactors = FALSE)
+            # Make no assumptions about the structure of the rownames of x
+            # here, i.e., do not try to extract FID and IID.
+            pheno <- data.frame(FID = "0", IID = rownames(x), stringsAsFactors = FALSE)
         }
     }
     # Preserve rownames of x (if not NULL)
@@ -355,16 +356,9 @@ generateMap <- function(x) {
         if (is.null(colnames(x))) {
             map <- data.frame(snp_id = as.character(1:ncol(x)), stringsAsFactors = FALSE)
         } else {
-            splits <- strsplit(colnames(x), "_")
-            map <- data.frame(
-                snp_id = sapply(splits, function(x) {
-                    paste0(x[seq_len(length(x) - 1L)], collapse = "_")
-                }),
-                allele_1 = sapply(splits, function(x) {
-                    x[length(x)]
-                }),
-                stringsAsFactors = FALSE
-            )
+            # Make no assumptions about the structure of the colnames of x
+            # here, i.e., do not try to extract minor allele.
+            map <- data.frame(snp_id = colnames(x), stringsAsFactors = FALSE)
         }
     }
     # Preserve colnames of x (if not NULL)
