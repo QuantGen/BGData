@@ -257,6 +257,8 @@ loadFamFile <- function(path) {
         stop(path, " not found")
     }
     message("Extracting phenotypes from .fam file...")
+    # It was considered to read the PHENOTYPE column as double, but the PLINK
+    # documentation mentions non-numeric case/control values.
     if (requireNamespace("data.table", quietly = TRUE)) {
         pheno <- data.table::fread(path, col.names = c(
             "FID",
