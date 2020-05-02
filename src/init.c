@@ -10,7 +10,7 @@ extern SEXP preprocess(SEXP, SEXP, SEXP, SEXP, SEXP);
 static const R_CallMethodDef callMethods[] = {
     {"summarize", (DL_FUNC) &summarize, 1},
     {"rayOLS", (DL_FUNC) &rayOLS, 2},
-    {"preprocess", (DL_FUNC) &preprocess, 5},
+    {"preprocess", (DL_FUNC) &preprocess, 4},
     {NULL, NULL, 0}
 };
 

@@ -11,5 +11,5 @@ preprocess <- function(X, center = FALSE, scale = FALSE, impute = FALSE) {
     if (!(is.logical(impute) && length(impute) == 1L)) {
         stop("'impute' needs to be a logical vector of size 1")
     }
-    .Call(C_preprocess, X, center, scale, impute, FALSE)
+    .Call(C_preprocess, X, center, scale, impute)
 }

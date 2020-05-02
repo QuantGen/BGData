@@ -105,33 +105,9 @@ void preprocess_real(double *in, int nrows, int ncols, double *out, int center, 
     }
 }
 
-SEXP lazy_coerce_to_real(SEXP sIn, SEXP sInPlace) {
-    R_xlen_t length = Rf_xlength(sIn);
-    int inplace = Rf_asLogical(sInPlace);
-    SEXP sOut;
-    switch(TYPEOF(sIn)) {
-    case REALSXP:
-        if (inplace) {
-            sOut = PROTECT(sIn); // protection only needed for UNPROTECT count
-        } else {
-            sOut = PROTECT(Rf_allocVector(REALSXP, length));
-            DUPLICATE_ATTRIB(sOut, sIn);
-        }
-        break;
-    case INTSXP:
-        if (inplace) {
-            Rf_warning("inplace is not supported for integer vectors");
-        }
-        sOut = PROTECT(Rf_allocVector(REALSXP, length));
-        DUPLICATE_ATTRIB(sOut, sIn);
-        break;
-    }
-    UNPROTECT(1); // sOut
-    return sOut;
-}
-
-SEXP preprocess(SEXP sIn, SEXP sCenter, SEXP sScale, SEXP sImpute, SEXP sInPlace) {
+SEXP preprocess(SEXP sIn, SEXP sCenter, SEXP sScale, SEXP sImpute) {
     int nprotect = 0;
+    R_xlen_t length = Rf_xlength(sIn);
     int nrows = Rf_nrows(sIn);
     int ncols = Rf_ncols(sIn);
     int center;
@@ -185,7 +161,8 @@ SEXP preprocess(SEXP sIn, SEXP sCenter, SEXP sScale, SEXP sImpute, SEXP sInPlace
         break;
     }
     int impute = Rf_asLogical(sImpute);
-    SEXP sOut = PROTECT(lazy_coerce_to_real(sIn, sInPlace));
+ // Allocate output vector
+    SEXP sOut = PROTECT(Rf_allocVector(REALSXP, length));
     nprotect++;
     switch(TYPEOF(sIn)) {
     case REALSXP:
@@ -219,6 +196,8 @@ SEXP preprocess(SEXP sIn, SEXP sCenter, SEXP sScale, SEXP sImpute, SEXP sInPlace
         );
         break;
     }
+ // Handle attributes
+    DUPLICATE_ATTRIB(sOut, sIn);
     if (center) {
         Rf_setAttrib(sOut, Rf_install("scaled:center"), sCenters);
     }
