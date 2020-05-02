@@ -111,7 +111,7 @@ SEXP preprocess(SEXP sIn, SEXP sCenter, SEXP sScale, SEXP sImpute) {
     int nrows = Rf_nrows(sIn);
     int ncols = Rf_ncols(sIn);
     int center = 0;
-    SEXP sCenters = R_NilValue;
+    SEXP sCenters = NULL;
     double *centers = NULL;
     int computeCenters = 0;
     switch(TYPEOF(sCenter)) {
@@ -132,7 +132,7 @@ SEXP preprocess(SEXP sIn, SEXP sCenter, SEXP sScale, SEXP sImpute) {
         break;
     }
     int scale = 0;
-    SEXP sScales = R_NilValue;
+    SEXP sScales = NULL;
     double *scales = NULL;
     int computeScales = 0;
     switch(TYPEOF(sScale)) {
