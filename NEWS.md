@@ -26,6 +26,8 @@
   - Warn if the row names of `pheno` do not match the row names of `geno`.
   - Warn if the row names of `map` do not match the column names of `geno`.
 - Add `preprocess()` function for fast centering, scaling, and imputation.
+- Add `getSegments()` function for finding non-overlapping segments based on a
+  summary statistic.
 - `GWAS()`: Return number of records used for each variant and allele
   frequencies in `rayOLS`.
 - Update citation instructions.
