@@ -110,10 +110,10 @@ SEXP preprocess(SEXP sIn, SEXP sCenter, SEXP sScale, SEXP sImpute) {
     R_xlen_t length = Rf_xlength(sIn);
     int nrows = Rf_nrows(sIn);
     int ncols = Rf_ncols(sIn);
-    int center;
-    SEXP sCenters;
-    double *centers;
-    int computeCenters;
+    int center = 0;
+    SEXP sCenters = R_NilValue;
+    double *centers = NULL;
+    int computeCenters = 0;
     switch(TYPEOF(sCenter)) {
     case LGLSXP:
         center = Rf_asLogical(sCenter);
@@ -122,9 +122,6 @@ SEXP preprocess(SEXP sIn, SEXP sCenter, SEXP sScale, SEXP sImpute) {
             nprotect++;
             centers = REAL(sCenters);
             computeCenters = 1;
-        } else {
-            centers = NULL;
-            computeCenters = 0;
         }
         break;
     case REALSXP:
@@ -132,13 +129,12 @@ SEXP preprocess(SEXP sIn, SEXP sCenter, SEXP sScale, SEXP sImpute) {
         sCenters = PROTECT(Rf_duplicate(sCenter));
         nprotect++;
         centers = REAL(sCenters);
-        computeCenters = 0;
         break;
     }
-    int scale;
-    SEXP sScales;
-    double *scales;
-    int computeScales;
+    int scale = 0;
+    SEXP sScales = R_NilValue;
+    double *scales = NULL;
+    int computeScales = 0;
     switch(TYPEOF(sScale)) {
     case LGLSXP:
         scale = Rf_asLogical(sScale);
@@ -147,9 +143,6 @@ SEXP preprocess(SEXP sIn, SEXP sCenter, SEXP sScale, SEXP sImpute) {
             nprotect++;
             scales = REAL(sScales);
             computeScales = 1;
-        } else {
-            scales = NULL;
-            computeScales = 0;
         }
         break;
     case REALSXP:
@@ -157,7 +150,6 @@ SEXP preprocess(SEXP sIn, SEXP sCenter, SEXP sScale, SEXP sImpute) {
         sScales = PROTECT(Rf_duplicate(sScale));
         nprotect++;
         scales = REAL(sScales);
-        computeScales = 0;
         break;
     }
     int impute = Rf_asLogical(sImpute);
