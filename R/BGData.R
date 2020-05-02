@@ -346,7 +346,7 @@ loadBimFile <- function(path) {
 generateMap <- function(x) {
     # Extract path to BED file
     bedPath <- attr(x, "path")
-    # Try to load .fam file, generate pheno otherwise
+    # Try to load .bim file, generate map otherwise
     ex <- try({
         map <- loadBimFile(sub("\\.bed", "\\.bim", bedPath))
     }, silent = TRUE)
