@@ -153,17 +153,10 @@ SEXP preprocess(SEXP sIn, SEXP sCenter, SEXP sScale, SEXP sImpute, SEXP sInPlace
         break;
     case REALSXP:
         center = 1;
-        R_xlen_t ncenters = Rf_xlength(sCenter);
-        if (ncenters != ncols) {
-            Rf_error("Length of 'centers' has to match the number of columns of 'X'");
-        }
         sCenters = PROTECT(Rf_duplicate(sCenter));
         nprotect++;
         centers = REAL(sCenters);
         computeCenters = 0;
-        break;
-    default:
-        Rf_error("Unsupported type for 'center'");
         break;
     }
     int scale;
@@ -185,17 +178,10 @@ SEXP preprocess(SEXP sIn, SEXP sCenter, SEXP sScale, SEXP sImpute, SEXP sInPlace
         break;
     case REALSXP:
         scale = 1;
-        R_xlen_t nscales = Rf_xlength(sScale);
-        if (nscales != ncols) {
-            Rf_error("Length of 'scales' has to match the number of columns of 'X'");
-        }
         sScales = PROTECT(Rf_duplicate(sScale));
         nprotect++;
         scales = REAL(sScales);
         computeScales = 0;
-        break;
-    default:
-        Rf_error("Unsupported type for 'scale'");
         break;
     }
     int impute = Rf_asLogical(sImpute);
