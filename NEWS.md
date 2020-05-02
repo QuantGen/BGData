@@ -11,6 +11,9 @@
   - Check if `geno` has column names before creating `map` stub.
   - Rename `IID` in `pheno` stub to `sample_id`.
   - Rename `mrk` in `map` stub to `variant_id`.
+  - Change format of rownames for `pheno` stub to a sequence starting with
+    `sample_` and rownames for `map` stub to a sequence starting with
+    `variant_` if `geno` does not have dimnames.
 - `as.BGData()`:
   - Force column classes when loading .fam and .bim files.
   - Force `FID` and `IID` columns to be of type `character` when loading

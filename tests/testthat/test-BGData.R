@@ -59,6 +59,20 @@ test_that("it warns if the row names of map do not match the columns names of ge
     expect_warning(BGData(geno = genotypes, map = map))
 })
 
+test_that("it generates a sequence as rownames for pheno if geno does not have rownames", {
+    rownames(genotypes) <- NULL
+    DATA <- BGData(geno = genotypes)
+    expect_equal(rownames(pheno(DATA)), paste0("sample_", seq_len(nrow(pheno(DATA)))))
+    genotypes <- restoreGenotypes()
+})
+
+test_that("it generates a sequence as rownames for map if geno does not have colnames", {
+    colnames(genotypes) <- NULL
+    DATA <- BGData(geno = genotypes)
+    expect_equal(rownames(map(DATA)), paste0("variant_", seq_len(nrow(map(DATA)))))
+    genotypes <- restoreGenotypes()
+})
+
 
 context("readRAW")
 

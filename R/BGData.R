@@ -11,7 +11,7 @@ BGData <- function(geno, pheno = NULL, map = NULL) {
     }
     if (is.null(pheno)) {
         if (is.null(rownames(geno))) {
-            sampleIDs <- as.character(1:nrow(geno))
+            sampleIDs <- paste0("sample_", seq_len(nrow(geno)))
         } else {
             sampleIDs <- rownames(geno)
         }
@@ -19,7 +19,7 @@ BGData <- function(geno, pheno = NULL, map = NULL) {
     }
     if (is.null(map)) {
         if (is.null(colnames(geno))) {
-            variantIDs <- as.character(1:ncol(geno))
+            variantIDs <- paste0("variant_", seq_len(ncol(geno)))
         } else {
             variantIDs <- colnames(geno)
         }

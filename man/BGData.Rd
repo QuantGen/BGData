@@ -14,13 +14,14 @@ BGData(geno, pheno = NULL, map = NULL)
     \item{pheno}{
         A \code{data.frame} that contains sample information (including
         phenotypes). A stub that only contains a \code{sample_id} column
-        populated with either the rownames of \code{geno} or a sequence will be
-        generated if \code{NULL}
+        populated with either the rownames of \code{geno} or a sequence
+        starting with \code{sample_} will be generated if \code{NULL}
     }
     \item{map}{
         A \code{data.frame} that contains variant information. A stub that only
         contains a \code{variant_id} column populated with either the colnames
-        of \code{geno} or a sequence will be generated if \code{NULL}
+        of \code{geno} or a sequence starting with \code{variant_} will be
+        generated if \code{NULL}
     }
 }
 \seealso{
