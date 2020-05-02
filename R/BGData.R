@@ -33,16 +33,16 @@ setValidity("BGData", function(object) {
     if (nrow(object@geno) != nrow(object@pheno)) {
         return("Number of rows of geno and number of rows of pheno do not match.")
     }
-    # We should not assume that geno has row names, but if it does, it should
-    # match the row names of pheno
+    # Do not assume that geno has row names, but if it does, it should match
+    # the row names of pheno
     if (!is.null(rownames(object@geno)) && any(rownames(object@geno) != rownames(object@pheno))) {
         warning("Row names of geno and row names of pheno do not match.")
     }
     if (ncol(object@geno) != nrow(object@map)) {
         return("Number of columns of geno and number of rows of map do not match.")
     }
-    # We should not assume that geno has column names, but if it does, it should
-    # match the row names of map
+    # Do not assume that geno has column names, but if it does, it should match
+    # the row names of map
     if (!is.null(colnames(object@geno)) && any(colnames(object@geno) != rownames(object@map))) {
         warning("Column names of geno and row names of map do not match.")
     }

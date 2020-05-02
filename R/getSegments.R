@@ -59,7 +59,7 @@ getSegments <- function(x, chr, bp, names, threshold, lag, trim = FALSE, verbose
         # to extract)
         xStart <- chrFilter[runStart]
         xEnd <- chrFilter[runEnd]
-        # Prepare chromosome summary (there might be no segments, so we cannot
+        # Prepare chromosome summary (there might be no segments, so do not
         # rely on recycling)
         outChr <- data.frame(
             chr = rep(curChr, times = length(runStart)),
