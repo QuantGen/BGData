@@ -1,4 +1,25 @@
 getSegments <- function(x, chr, bp, names, threshold, lag, trim = FALSE, verbose = FALSE) {
+    if (length(unique(c(length(x), length(chr), length(bp), length(names)))) != 1) {
+        stop("x, chr, bp, and names need to match in length")
+    }
+    if (!is.numeric(x)) {
+        stop("'x' needs to be a numeric vector")
+    }
+    if (!(is.numeric(chr) || is.character(chr))) {
+        stop("'chr' needs to be a either a character or numeric vector")
+    }
+    if (!is.numeric(bp)) {
+        stop("'bp' needs to be a numeric vector")
+    }
+    if (!is.character(names)) {
+        stop("'names' needs to be a character vector")
+    }
+    if (!(is.numeric(threshold) && length(threshold) == 2)) {
+        stop("'threshold' needs to be a numeric vector of size 2")
+    }
+    if (!is.numeric(lag)) {
+        stop("'lag' needs to a number")
+    }
     uniqueChr <- unique(chr)
     out <- vector(mode = "list", length = length(uniqueChr))
     for (curChr in uniqueChr) {
