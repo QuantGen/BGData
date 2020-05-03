@@ -1,7 +1,5 @@
-#define R_NO_REMAP
+#include "rayOLS.h"
 
-#include <R.h>
-#include <Rinternals.h>
 #include <Rmath.h>
 
 SEXP rayOLS_real(SEXP X, SEXP y) {

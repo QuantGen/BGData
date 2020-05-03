@@ -1,7 +1,5 @@
-#define R_NO_REMAP
+#include "summarize.h"
 
-#include <R.h>
-#include <Rinternals.h>
 #include <Rmath.h>
 
 SEXP summarize_real(SEXP X) {

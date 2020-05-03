@@ -1,10 +1,8 @@
-#define R_NO_REMAP
+#include "preprocess.h"
 
 #ifdef _OPENMP
 #include <omp.h>
 #endif
-#include <R.h>
-#include <Rinternals.h>
 #include <stddef.h>
 
 void preprocess_int(int *in, int nrows, int ncols, double *out, int center, double *centers, int computeCenters, int scale, double *scales, int computeScales, int impute) {
