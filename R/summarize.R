@@ -5,6 +5,6 @@ summarize <- function(X, i = seq_len(nrow(X)), j = seq_len(ncol(X)), chunkSize =
         colnames(summaries) <- c("freq_na", "allele_freq", "sd")
         return(summaries)
     }, i = i, j = j, chunkSize = chunkSize, nCores = nCores, verbose = verbose)
-    res <- do.call("rbind", res)
+    res <- do.call(rbind, res)
     as.data.frame(res)
 }

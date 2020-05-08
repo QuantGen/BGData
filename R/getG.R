@@ -167,7 +167,7 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
 
     if (scaleG) {
         if (hasY) {
-            K <- do.call(base::sum, res)
+            K <- do.call(sum, res)
         } else {
             # Use seq instead of diag to avoid copy as it does not increase ref count
             K <- mean(G[seq(from = 1L, to = n * n, by = n + 1L)])

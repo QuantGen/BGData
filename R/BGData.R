@@ -435,7 +435,7 @@ as.BGData.ColumnLinkedMatrix <- function(x, alternatePhenotypeFile = NULL, ...) 
     fam <- suppressMessages(generatePheno(x[[1L]]))
     # Read in map files
     message("Extracting map from .bim files...")
-    map <- do.call(base::rbind, lapply(x, function(node) {
+    map <- do.call(rbind, lapply(x, function(node) {
         suppressMessages(generateMap(node))
     }))
     # Load and merge alternate phenotype file
@@ -454,7 +454,7 @@ as.BGData.RowLinkedMatrix <- function(x, alternatePhenotypeFile = NULL, ...) {
     }
     # Read in the fam files
     message("Extracting phenotypes from .fam files...")
-    fam <- do.call(base::rbind, lapply(x, function(node) {
+    fam <- do.call(rbind, lapply(x, function(node) {
         suppressMessages(generatePheno(node))
     }))
     # Read in the map file of the first node

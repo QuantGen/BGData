@@ -29,7 +29,7 @@ findRelated.symDMatrix <- function(x, cutoff = 0.03, verbose = FALSE, ...) {
             return(remap)
         })
     })
-    pairs <- do.call("rbind", lapply(pairs, function(x) do.call("rbind", x)))
+    pairs <- do.call(rbind, lapply(pairs, function(x) do.call(rbind, x)))
     individuals <- unique(pairs[, 1L])
     return(individuals)
 }
