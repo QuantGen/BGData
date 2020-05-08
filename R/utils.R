@@ -34,7 +34,7 @@ normalizeType <- function(val) {
     if (type == "character" && length(val) > 0L) {
         # convert to type if type and value match
         convert <- try(vector(mode = val), silent = TRUE)
-        if (class(convert) == "try-error") {
+        if (inherits(convert, "try-error")) {
             # return a character type if conversion failed
             warning("could no convert type, using character instead")
             character()

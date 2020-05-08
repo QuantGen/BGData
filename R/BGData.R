@@ -288,7 +288,7 @@ generatePheno <- function(x) {
     ex <- try({
         pheno <- loadFamFile(sub("\\.bed", "\\.fam", bedPath))
     }, silent = TRUE)
-    if (class(ex) == "try-error") {
+    if (inherits(ex, "try-error")) {
         # x may not have rownames (e.g., when a BEDMatrix is created using the
         # n parameter)
         if (is.null(rownames(x))) {
@@ -352,7 +352,7 @@ generateMap <- function(x) {
     ex <- try({
         map <- loadBimFile(sub("\\.bed", "\\.bim", bedPath))
     }, silent = TRUE)
-    if (class(ex) == "try-error") {
+    if (inherits(ex, "try-error")) {
         # x may not have colnames (e.g., when a BEDMatrix is created using the
         # p parameter)
         if (is.null(colnames(x))) {
@@ -427,7 +427,7 @@ as.BGData.BEDMatrix <- function(x, alternatePhenotypeFile = NULL, ...) {
 as.BGData.ColumnLinkedMatrix <- function(x, alternatePhenotypeFile = NULL, ...) {
     n <- LinkedMatrix::nNodes(x)
     # For now, all elements have to be of type BEDMatrix
-    if (!all(sapply(x, function(node) class(node)) == "BEDMatrix")) {
+    if (!all(vapply(x, inherits, TRUE, "BEDMatrix"))) {
         stop("Only BEDMatrix instances are supported as elements of the LinkedMatrix right now.")
     }
     # Read in the fam file of the first node
@@ -449,7 +449,7 @@ as.BGData.ColumnLinkedMatrix <- function(x, alternatePhenotypeFile = NULL, ...) 
 as.BGData.RowLinkedMatrix <- function(x, alternatePhenotypeFile = NULL, ...) {
     n <- LinkedMatrix::nNodes(x)
     # For now, all elements have to be of type BEDMatrix
-    if (!all(sapply(x, function(node) class(node)) == "BEDMatrix")) {
+    if (!all(vapply(x, inherits, TRUE, "BEDMatrix"))) {
         stop("Only BEDMatrix instances are supported as elements of the LinkedMatrix right now.")
     }
     # Read in the fam files
@@ -476,7 +476,7 @@ load.BGData <- function(file, envir = parent.frame()) {
     for (name in names) {
         object <- get(name, envir = loadingEnv)
         # Initialize genotypes of BGData objects
-        if (class(object) == "BGData") {
+        if (inherits(object, "BGData")) {
             geno(object) <- initializeGeno(geno(object), path = dirname(file))
         }
         # Assign object to envir

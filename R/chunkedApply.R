@@ -35,7 +35,7 @@ chunkedMap <- function(X, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(X)), chunk
     } else {
         # Suppress warnings because of custom error handling
         res <- suppressWarnings(parallel::mclapply(X = seq_len(nChunks), FUN = chunkApply, ..., mc.cores = nCores)) #
-        errors <- which(sapply(res, class) == "try-error")
+        errors <- which(vapply(res, inherits, TRUE, "try-error"))
         if (length(errors) > 0L) {
             # With mc.preschedule = TRUE (the default), if a job fails, the
             # remaining jobs will fail as well with the same error message.

@@ -1,6 +1,6 @@
 GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(geno(data))), j = seq_len(ncol(geno(data))), chunkSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE, ...) {
 
-    if (class(data) != "BGData") {
+    if (!inherits(data, "BGData")) {
         stop("data must BGData")
     }
 
