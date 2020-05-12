@@ -28,10 +28,11 @@
 - Add `preprocess()` function for fast centering, scaling, and imputation.
 - Add `getSegments()` function for finding non-overlapping segments based on a
   summary statistic.
+- Add `FWD()` function for forward regressions.
 - `GWAS()`: Return number of records used for each variant and allele
   frequencies in `rayOLS`.
 - Update citation instructions.
-* Use `inherits(., *)` instead of `class(.) == *` (R4 compat).
+- Use `inherits(., *)` instead of `class(.) == *` (R4 compat).
 
 
 # BGData 2.1.0
