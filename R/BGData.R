@@ -144,21 +144,21 @@ readRAW <- function(fileIn, header = TRUE, dataType = integer(), n = NULL, p = N
     # Determine number of nodes
     if (is.null(nNodes)) {
         if (linked.by == "columns") {
-            chunkSize <- min(dims$p, floor(.Machine$integer.max / dims$n / 1.2))
-            nNodes <- ceiling(dims$p / chunkSize)
+            chunkSize <- min(dims[["p"]], floor(.Machine[["integer.max"]] / dims[["n"]] / 1.2))
+            nNodes <- ceiling(dims[["p"]] / chunkSize)
         } else {
-            chunkSize <- min(dims$n, floor(.Machine$integer.max / dims$p / 1.2))
-            nNodes <- ceiling(dims$n / chunkSize)
+            chunkSize <- min(dims[["n"]], floor(.Machine[["integer.max"]] / dims[["p"]] / 1.2))
+            nNodes <- ceiling(dims[["n"]] / chunkSize)
         }
     } else {
         if (linked.by == "columns") {
-            chunkSize <- ceiling(dims$p / nNodes)
-            if (chunkSize * dims$n >= .Machine$integer.max / 1.2) {
+            chunkSize <- ceiling(dims[["p"]] / nNodes)
+            if (chunkSize * dims[["n"]] >= .Machine[["integer.max"]] / 1.2) {
               stop("More nodes are needed")
             }
         } else {
-            chunkSize <- ceiling(dims$n / nNodes)
-            if (chunkSize * dims$p >= .Machine$integer.max / 1.2) {
+            chunkSize <- ceiling(dims[["n"]] / nNodes)
+            if (chunkSize * dims[["p"]] >= .Machine[["integer.max"]] / 1.2) {
               stop("More nodes are needed")
             }
         }
@@ -173,10 +173,10 @@ readRAW <- function(fileIn, header = TRUE, dataType = integer(), n = NULL, p = N
     }
 
     # Prepare geno
-    geno <- LinkedMatrix::LinkedMatrix(nrow = dims$n, ncol = dims$p, nNodes = nNodes, linkedBy = linked.by, nodeInitializer = ffNodeInitializer, vmode = outputType, folderOut = folderOut, dimorder = dimorder)
+    geno <- LinkedMatrix::LinkedMatrix(nrow = dims[["n"]], ncol = dims[["p"]], nNodes = nNodes, linkedBy = linked.by, nodeInitializer = ffNodeInitializer, vmode = outputType, folderOut = folderOut, dimorder = dimorder)
 
     # Prepare pheno
-    pheno <- as.data.frame(matrix(nrow = dims$n, ncol = nColSkip), stringsAsFactors = FALSE)
+    pheno <- as.data.frame(matrix(nrow = dims[["n"]], ncol = nColSkip), stringsAsFactors = FALSE)
 
     # Construct BGData object
     BGData <- BGData(geno = geno, pheno = pheno)
@@ -199,10 +199,10 @@ readRAW_matrix <- function(fileIn, header = TRUE, dataType = integer(), n = NULL
     dataType <- normalizeType(dataType)
 
     # Prepare geno
-    geno <- matrix(nrow = dims$n, ncol = dims$p)
+    geno <- matrix(nrow = dims[["n"]], ncol = dims[["p"]])
 
     # Prepare pheno
-    pheno <- as.data.frame(matrix(nrow = dims$n, ncol = nColSkip), stringsAsFactors = FALSE)
+    pheno <- as.data.frame(matrix(nrow = dims[["n"]], ncol = nColSkip), stringsAsFactors = FALSE)
 
     # Construct BGData object
     BGData <- BGData(geno = geno, pheno = pheno)
@@ -233,10 +233,10 @@ readRAW_big.matrix <- function(fileIn, header = TRUE, dataType = integer(), n = 
     dir.create(folderOut)
 
     # Prepare geno
-    geno <- bigmemory::filebacked.big.matrix(nrow = dims$n, ncol = dims$p, type = outputType, backingpath = folderOut, backingfile = "BGData.bin", descriptorfile = "BGData.desc")
+    geno <- bigmemory::filebacked.big.matrix(nrow = dims[["n"]], ncol = dims[["p"]], type = outputType, backingpath = folderOut, backingfile = "BGData.bin", descriptorfile = "BGData.desc")
 
     # Prepare pheno
-    pheno <- as.data.frame(matrix(nrow = dims$n, ncol = nColSkip), stringsAsFactors = FALSE)
+    pheno <- as.data.frame(matrix(nrow = dims[["n"]], ncol = nColSkip), stringsAsFactors = FALSE)
 
     # Construct BGData object
     BGData <- BGData(geno = geno, pheno = pheno)
@@ -395,12 +395,12 @@ loadAlternatePhenotypeFile <- function(path, ...) {
 orderedMerge <- function(x, y, by = c(1L, 2L)) {
     # Add artificial sort column to preserve order after merging
     # (merge's `sort = FALSE` order is unspecified)
-    x$.sortColumn <- seq_len(nrow(x))
+    x[[".sortColumn"]] <- seq_len(nrow(x))
     # Merge phenotypes and alternate phenotypes
     merged <- merge(x, y, by = by, all.x = TRUE)
     # Reorder phenotypes to match original order and delete artificial
     # column
-    merged <- merged[order(merged$.sortColumn), ]
+    merged <- merged[order(merged[[".sortColumn"]]), ]
     merged <- merged[, names(merged) != ".sortColumn"]
     # Restore rownames (assuming order is retained and no rows disappear...)
     rownames(merged) <- rownames(x)
@@ -530,6 +530,6 @@ ffNodeInitializer <- function(nodeIndex, nrow, ncol, vmode, folderOut, ...) {
     filename <- paste0("geno_", nodeIndex, ".bin")
     node <- ff::ff(dim = c(nrow, ncol), vmode = vmode, filename = paste0(folderOut, "/", filename), ...)
     # Change ff path to a relative one
-    bit::physical(node)$filename <- filename
+    bit::physical(node)[["filename"]] <- filename
     return(node)
 }

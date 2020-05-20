@@ -35,7 +35,7 @@ GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(geno(data))),
         GWAS.model <- stats::update(formula, ".~z+.")
         OUT <- chunkedApply(X = geno(data), MARGIN = 2L, FUN = function(col, ...) {
             df <- pheno(data)[i, , drop = FALSE]
-            df$z <- col
+            df[["z"]] <- col
             fm <- FUN(GWAS.model, data = df, ...)
             getCoefficients(fm)
         }, i = i, j = j, chunkSize = chunkSize, nCores = nCores, verbose = verbose, ...)
@@ -67,7 +67,7 @@ GWAS.lsfit <- function(formula, data, i = seq_len(nrow(geno(data))), j = seq_len
 
     res <- chunkedApply(X = geno(data), MARGIN = 2L, FUN = function(col, ...) {
         fm <- stats::lsfit(x = cbind(col, model), y = y, intercept = FALSE)
-        stats::ls.print(fm, print.it = FALSE)$coef.table[[1L]][1L, ]
+        stats::ls.print(fm, print.it = FALSE)[["coef.table"]][[1L]][1L, ]
     }, i = i, j = j, chunkSize = chunkSize, nCores = nCores, verbose = verbose, ...)
     res <- t(res)
     rownames(res) <- colnames(geno(data))[j]
@@ -94,7 +94,7 @@ GWAS.SKAT <- function(formula, data, groups, i = seq_len(nrow(geno(data))), j = 
     for (group in seq_along(uniqueGroups)) {
         Z <- geno(data)[i, groups == uniqueGroups[group], drop = FALSE]
         fm <- SKAT::SKAT(Z = Z, obj = H0, ...)
-        OUT[group, ] <- c(ncol(Z), fm$p.value)
+        OUT[group, ] <- c(ncol(Z), fm[["p.value"]])
         if (verbose) {
             message("Group ", group, " of ", length(uniqueGroups), " ...")
         }
@@ -112,15 +112,15 @@ getCoefficients <- function(x) {
 }
 
 getCoefficients.lm <- function(x) {
-    summary(x)$coef[2L, ]
+    stats::coef(summary(x))[2L, ]
 }
 
 getCoefficients.glm <- function(x) {
-    summary(x)$coef[2L, ]
+    stats::coef(summary(x))[2L, ]
 }
 
 getCoefficients.lmerMod <- function(x) {
-    ans <- summary(x)$coef[2L, ]
+    ans <- stats::coef(summary(x))[2L, ]
     ans <- c(ans, c(1L - stats::pnorm(ans[3L])))
     return(ans)
 }

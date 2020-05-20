@@ -41,7 +41,7 @@ chunkedMap <- function(X, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(X)), chunk
             # remaining jobs will fail as well with the same error message.
             # Therefore, the number of errors does not tell how many errors
             # actually occurred and only the first error message is forwarded.
-            errorMessage <- attr(res[[errors[1L]]], "condition")$message
+            errorMessage <- attr(res[[errors[1L]]], "condition")[["message"]]
             stop("in chunk ", errors[1L], " (only first error is shown)", ": ", errorMessage, call. = FALSE)
         }
     }

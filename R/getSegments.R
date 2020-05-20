@@ -42,11 +42,11 @@ getSegments <- function(x, chr, bp, names, threshold, lag, trim = FALSE, verbose
         runs <- rle(signal)
         # Determine at what positions within the chromosome the runs start and
         # end while removing 0-runs
-        runStart <- c(1, cumsum(runs$length[-length(runs$length)]) + 1)
-        withinSegment <- runs$values == 1
+        runStart <- c(1, cumsum(runs[["lengths"]][-length(runs[["lengths"]])]) + 1)
+        withinSegment <- runs[["values"]] == 1
         runStart <- runStart[withinSegment]
-        runEnd <- runStart + runs$length[withinSegment] - 1
-        runLength <- runs$length[withinSegment]
+        runEnd <- runStart + runs[["lengths"]][withinSegment] - 1
+        runLength <- runs[["lengths"]][withinSegment]
         # Determine name and value of smallest variant within segment, and
         # optionally trim segment (i.e., remove variants that are not internal
         # to the segment containing GWAS-significant variants)

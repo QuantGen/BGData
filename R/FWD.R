@@ -39,14 +39,14 @@ FWD <- function(y, X, df = 20, tol = 1e-7, verbose = TRUE, maxIter = 1000, cente
         tmpB <- B[, i - 1]
         tmpRSS <- RSS[i - 1]
         tmp <- addOne(C, rhs, b = tmpB, RSS = tmpRSS, tol = tol, maxIter = maxIter)
-        B[, i] <- tmp$b
-        if (length(tmp$newPred) > 0) {
-            path[i] <- colNames[tmp$newPred]
+        B[, i] <- tmp[["b"]]
+        if (length(tmp[["newPred"]]) > 0) {
+            path[i] <- colNames[tmp[["newPred"]]]
         } else {
             path[i] <- NA
         }
-        RSS[i] <- tmp$RSS
-        DF[i] <- sum(tmp$b != 0)
+        RSS[i] <- tmp[["RSS"]]
+        DF[i] <- sum(tmp[["b"]] != 0)
         VARE[i] <- RSS[i] / (n - DF[i])
         LogLik[i] <- -(n / 2) * log(2 * pi * VARE[i]) - RSS[i] / VARE[i] / 2
         AIC[i] <- -2 * LogLik[i] + 2 * (DF[i] + 1)
@@ -81,13 +81,13 @@ addOne <- function(C, rhs, RSS, b, tol = 1e-5, maxIter = 100) {
             RSS <- RSS0 + 0.0
             b <- b0 + 0.0
             fm <- fitSYS(C = C, rhs = rhs, RSS = RSS, b = b, tol = tol, maxIter = maxIter, active = c(notActive[i], active))
-            RSSNew[i] <- fm$RSS
+            RSSNew[i] <- fm[["RSS"]]
         }
         k <- which.min(RSSNew)
         b <- b0 + 0.0
         RSS <- RSS0 + 0.0
         fm <- fitSYS(C = C, rhs = rhs, RSS = RSS, b = b, tol = tol, maxIter = maxIter, active = c(notActive[k], active))
-        ans <- list(b = fm$b, newPred = notActive[k], RSS = fm$RSS)
+        ans <- list(b = fm[["b"]], newPred = notActive[k], RSS = fm[["RSS"]])
     }
     return(ans)
 }
