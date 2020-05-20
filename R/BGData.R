@@ -30,51 +30,51 @@ BGData <- function(geno, pheno = NULL, map = NULL) {
 }
 
 setValidity("BGData", function(object) {
-    if (nrow(object@geno) != nrow(object@pheno)) {
+    if (nrow(slot(object, "geno")) != nrow(slot(object, "pheno"))) {
         return("Number of rows of geno and number of rows of pheno do not match.")
     }
     # Do not assume that geno has row names, but if it does, it should match
     # the row names of pheno
-    if (!is.null(rownames(object@geno)) && any(rownames(object@geno) != rownames(object@pheno))) {
+    if (!is.null(rownames(slot(object, "geno"))) && any(rownames(slot(object, "geno")) != rownames(slot(object, "pheno")))) {
         warning("Row names of geno and row names of pheno do not match.")
     }
-    if (ncol(object@geno) != nrow(object@map)) {
+    if (ncol(slot(object, "geno")) != nrow(slot(object, "map"))) {
         return("Number of columns of geno and number of rows of map do not match.")
     }
     # Do not assume that geno has column names, but if it does, it should match
     # the row names of map
-    if (!is.null(colnames(object@geno)) && any(colnames(object@geno) != rownames(object@map))) {
+    if (!is.null(colnames(slot(object, "geno"))) && any(colnames(slot(object, "geno")) != rownames(slot(object, "map")))) {
         warning("Column names of geno and row names of map do not match.")
     }
     return(TRUE)
 })
 
 setGeneric("geno", function(x) standardGeneric("geno"))
-setMethod("geno", "BGData", function(x) x@geno)
+setMethod("geno", "BGData", function(x) slot(x, "geno"))
 
 setGeneric("geno<-", function(x, value) standardGeneric("geno<-"))
 setMethod("geno<-", "BGData", function(x, value) {
-    x@geno <- value
+    slot(x, "geno") <- value
     validObject(x)
     x
 })
 
 setGeneric("pheno", function(x) standardGeneric("pheno"))
-setMethod("pheno", "BGData", function(x) x@pheno)
+setMethod("pheno", "BGData", function(x) slot(x, "pheno"))
 
 setGeneric("pheno<-", function(x, value) standardGeneric("pheno<-"))
 setMethod("pheno<-", "BGData", function(x, value) {
-    x@pheno <- value
+    slot(x, "pheno") <- value
     validObject(x)
     x
 })
 
 setGeneric("map", function(x) standardGeneric("map"))
-setMethod("map", "BGData", function(x) x@map)
+setMethod("map", "BGData", function(x) slot(x, "map"))
 
 setGeneric("map<-", function(x, value) standardGeneric("map<-"))
 setMethod("map<-", "BGData", function(x, value) {
-    x@map <- value
+    slot(x, "map") <- value
     validObject(x)
     x
 })
