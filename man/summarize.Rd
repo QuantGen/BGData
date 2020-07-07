@@ -38,8 +38,8 @@ summarize(X, i = seq_len(nrow(X)), j = seq_len(ncol(X)),
 }
 \value{
     A \code{data.frame} with three columns: \code{freq_na} for frequencies of
-    missing values, \code{allele_freq} for (minor) allele frequencies, and
-    \code{sd} for standard deviations.
+    missing values, \code{allele_freq} for allele frequencies of the counted
+    allele, and \code{sd} for standard deviations.
 }
 \seealso{
     \code{\link{file-backed-matrices}} for more information on file-backed
