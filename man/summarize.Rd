@@ -70,4 +70,8 @@ sum4 <- summarize(X = geno(bg), i = 1:50, j = 1:100)
 
 # Summarize by names
 sum5 <- summarize(X = geno(bg), j = c("snp81233_C", "snp81234_C", "snp81235_T"))
+
+# Convert to minor allele frequencies (useful if the counted alleles are not
+# the minor alleles)
+maf <- ifelse(sum1$allele_freq > 0.5, 1 - sum1$allele_freq, sum1$allele_freq)
 }
