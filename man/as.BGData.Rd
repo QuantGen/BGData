@@ -50,7 +50,7 @@ as.BGData(x, alternatePhenotypeFile = NULL, ...)
 
     For \code{BEDMatrix} objects: If a .fam file (which corresponds to the
     first six columns of a .ped or .raw file) of the same name and in the same
-    directory as the BED file exists, the sample information will be populated
+    directory as the .bed file exists, the sample information will be populated
     with the data stored in that file. Otherwise a stub that only contains an
     \code{IID} column populated with the rownames of \code{geno(x)} will be
     generated. The same will happen for a .bim file for the variant

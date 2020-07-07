@@ -50,7 +50,7 @@ normalizeType <- function(val) {
 
 loadExample <- function() {
     path <- system.file("extdata", package = "BGData")
-    message("Loading chromosomes as BED files...")
+    message("Loading chromosomes as .bed files...")
     m <- do.call(LinkedMatrix::ColumnLinkedMatrix, lapply(c("chr1", "chr2", "chr3"), function(chr) {
         suppressMessages(BEDMatrix::BEDMatrix(paste0(path, "/", chr)))
     }))

@@ -282,7 +282,7 @@ loadFamFile <- function(path) {
 }
 
 generatePheno <- function(x) {
-    # Extract path to BED file
+    # Extract path to .bed file
     bedPath <- attr(x, "path")
     # Try to load .fam file, generate pheno otherwise
     ex <- try({
@@ -346,7 +346,7 @@ loadBimFile <- function(path) {
 }
 
 generateMap <- function(x) {
-    # Extract path to BED file
+    # Extract path to .bed file
     bedPath <- attr(x, "path")
     # Try to load .bim file, generate map otherwise
     ex <- try({

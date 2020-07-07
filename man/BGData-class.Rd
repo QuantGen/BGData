@@ -23,7 +23,7 @@
     \itemize{
         \item from arbitrary phenotype/genotype data using the \code{BGData}
             constructor function.
-        \item from a BED file using \code{as.BGData} and \code{BEDMatrix}.
+        \item from a .bed file using \code{as.BGData} and \code{BEDMatrix}.
         \item from a previously saved \code{BGData} object using
             \code{load.BGData}.
         \item from multiple files (even a mixture of different file types)
@@ -35,8 +35,8 @@
 
     A .ped file can be recoded to a .raw file in
     \href{https://www.cog-genomics.org/plink2}{PLINK} using \code{plink --file
-    myfile --recodeA}, or converted to a BED file using \code{plink --file
-    myfile --make-bed}. Conversely, a BED file can be transformed back to a
+    myfile --recodeA}, or converted to a .bed file using \code{plink --file
+    myfile --make-bed}. Conversely, a .bed file can be transformed back to a
     .ped file using \code{plink --bfile myfile --recode} or to a .raw file
     using \code{plink --bfile myfile --recodeA} without losing information.
 }

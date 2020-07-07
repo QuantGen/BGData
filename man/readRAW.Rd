@@ -145,7 +145,7 @@ readRAW_big.matrix(fileIn, header = TRUE, dataType = integer(),
 \seealso{
     \code{\link[=load.BGData]{load.BGData()}} to load a previously saved
     \code{BGData} object, \code{\link[=as.BGData]{as.BGData()}} to create
-    \code{BGData} objects from non-text files (e.g. BED files).
+    \code{BGData} objects from non-text files (e.g. .bed files).
     \code{\link{BGData-class}},
     \code{\link[LinkedMatrix]{ColumnLinkedMatrix-class}},
     \code{\link[LinkedMatrix]{RowLinkedMatrix-class}},
