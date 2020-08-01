@@ -16,10 +16,10 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
         }
     }
 
-    i <- crochet::convertIndex(X, i, "i")
-    j <- crochet::convertIndex(X, j, "j")
+    i <- convertIndex(X, i, "i")
+    j <- convertIndex(X, j, "j")
     if (hasY) {
-        i2 <- crochet::convertIndex(X, i2, "i")
+        i2 <- convertIndex(X, i2, "i")
     }
 
     nX <- nrow(X)
@@ -51,12 +51,12 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
     }
 
     if (hasY) {
-        G <- bigmemory::big.matrix(nrow = n, ncol = n2, type = "double", init = 0.0, dimnames = list(rownames(X)[i], rownames(X)[i2]))
+        G <- big.matrix(nrow = n, ncol = n2, type = "double", init = 0.0, dimnames = list(rownames(X)[i], rownames(X)[i2]))
     } else {
-        G <- bigmemory::big.matrix(nrow = n, ncol = n, type = "double", init = 0.0, dimnames = list(rownames(X)[i], rownames(X)[i]))
+        G <- big.matrix(nrow = n, ncol = n, type = "double", init = 0.0, dimnames = list(rownames(X)[i], rownames(X)[i]))
     }
 
-    mutex <- synchronicity::boost.mutex()
+    mutex <- boost.mutex()
 
     chunkApply <- function(curChunk) {
 
@@ -89,7 +89,7 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
 
         # compute scales
         if (is.logical(scale) && scale == TRUE) {
-            scale.chunk <- apply(X = X1, MARGIN = 2L, FUN = stats::sd, na.rm = TRUE)
+            scale.chunk <- apply(X = X1, MARGIN = 2L, FUN = sd, na.rm = TRUE)
         } else if (is.numeric(scale)) {
             scale.chunk <- scale[j[range]]
         } else {
@@ -146,9 +146,9 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
                 G_chunk <- tcrossprod(X1)
             }
 
-            synchronicity::lock(mutex)
+            lock(mutex)
             G[] <- G[] + G_chunk
-            synchronicity::unlock(mutex)
+            unlock(mutex)
 
         }
 
@@ -159,7 +159,7 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
     if (nCores == 1L) {
         res <- lapply(X = seq_len(nChunks), FUN = chunkApply)
     } else {
-        res <- parallel::mclapply(X = seq_len(nChunks), FUN = chunkApply, mc.cores = nCores)
+        res <- mclapply(X = seq_len(nChunks), FUN = chunkApply, mc.cores = nCores)
     }
 
     # Convert big.matrix to matrix
@@ -181,8 +181,8 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
 
 getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, blockSize = 5000L, folderOut = paste0("symDMatrix_", randomString()), vmode = "double", i = seq_len(nrow(X)), j = seq_len(ncol(X)), chunkSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE) {
 
-    i <- crochet::convertIndex(X, i, "i")
-    j <- crochet::convertIndex(X, j, "j")
+    i <- convertIndex(X, i, "i")
+    j <- convertIndex(X, j, "j")
 
     nX <- nrow(X)
     pX <- ncol(X)
@@ -219,7 +219,7 @@ getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVa
         }
         scale <- rep(1, pX)
         names(scale) <- colnames(X)
-        scale[j] <- chunkedApply(X = X, MARGIN = 2L, FUN = stats::sd, i = i, j = j, chunkSize = chunkSize, nCores = nCores, verbose = FALSE, na.rm = TRUE)
+        scale[j] <- chunkedApply(X = X, MARGIN = 2L, FUN = sd, i = i, j = j, chunkSize = chunkSize, nCores = nCores, verbose = FALSE, na.rm = TRUE)
     }
 
     if (file.exists(folderOut)) {
@@ -245,19 +245,19 @@ getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVa
             }
             if (colIndex >= rowIndex) {
                 blockName <- paste0("data_", padDigits(rowIndex, nBlocks), "_", padDigits(colIndex, nBlocks), ".bin")
-                block <- ff::as.ff(getG(X, center = center, scale = scale, scaleG = FALSE, minVar = minVar, i = blockIndices[[rowIndex]], j = j, i2 = blockIndices[[colIndex]], chunkSize = chunkSize, nCores = nCores, verbose = FALSE), filename = paste0(folderOut, "/", blockName), vmode = vmode)
+                block <- as.ff(getG(X, center = center, scale = scale, scaleG = FALSE, minVar = minVar, i = blockIndices[[rowIndex]], j = j, i2 = blockIndices[[colIndex]], chunkSize = chunkSize, nCores = nCores, verbose = FALSE), filename = paste0(folderOut, "/", blockName), vmode = vmode)
                 # Change ff path to a relative one
-                bit::physical(block)[["filename"]] <- blockName
+                physical(block)[["filename"]] <- blockName
                 rowArgs[[colIndex]] <- block
                 counter <- counter + 1L
             } else {
-                rowArgs[[colIndex]] <- ff::vt(args[[colIndex]][[rowIndex]])
+                rowArgs[[colIndex]] <- vt(args[[colIndex]][[rowIndex]])
             }
         }
-        args[[rowIndex]] <- do.call(LinkedMatrix::ColumnLinkedMatrix, rowArgs)
+        args[[rowIndex]] <- do.call(ColumnLinkedMatrix, rowArgs)
     }
 
-    G <- do.call(symDMatrix::symDMatrix, args)
+    G <- do.call(symDMatrix, args)
 
     if (scaleG) {
         K <- mean(diag(G))

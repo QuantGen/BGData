@@ -51,8 +51,8 @@ normalizeType <- function(val) {
 loadExample <- function() {
     path <- system.file("extdata", package = "BGData")
     message("Loading chromosomes as .bed files...")
-    m <- do.call(LinkedMatrix::ColumnLinkedMatrix, lapply(c("chr1", "chr2", "chr3"), function(chr) {
-        suppressMessages(BEDMatrix::BEDMatrix(paste0(path, "/", chr)))
+    m <- do.call(ColumnLinkedMatrix, lapply(c("chr1", "chr2", "chr3"), function(chr) {
+        suppressMessages(BEDMatrix(paste0(path, "/", chr)))
     }))
     as.BGData(m, alternatePhenotypeFile = paste0(path, "/pheno.txt"))
 }

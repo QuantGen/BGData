@@ -8,11 +8,11 @@ GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(geno(data))),
         stop("Only rayOLS, lsfit, lm, lm.fit, glm, lmer, and SKAT have been implemented so far.")
     }
 
-    i <- crochet::convertIndex(geno(data), i, "i")
-    j <- crochet::convertIndex(geno(data), j, "j")
+    i <- convertIndex(geno(data), i, "i")
+    j <- convertIndex(geno(data), j, "j")
 
     if (method == "rayOLS") {
-        if (length(labels(stats::terms(formula))) > 0L) {
+        if (length(labels(terms(formula))) > 0L) {
             stop("method rayOLS can only be used with y~1 formula, if you want to add covariates pre-adjust your phenotype.")
         }
         OUT <- GWAS.rayOLS(formula = formula, data = data, i = i, j = j, chunkSize = chunkSize, nCores = nCores, verbose = verbose, ...)
@@ -32,7 +32,7 @@ GWAS <- function(formula, data, method = "lsfit", i = seq_len(nrow(geno(data))),
         } else {
             FUN <- match.fun(method)
         }
-        GWAS.model <- stats::update(formula, ".~z+.")
+        GWAS.model <- update(formula, ".~z+.")
         OUT <- chunkedApply(X = geno(data), MARGIN = 2L, FUN = function(col, ...) {
             df <- pheno(data)[i, , drop = FALSE]
             df[["z"]] <- col
@@ -60,14 +60,14 @@ GWAS.lsfit <- function(formula, data, i = seq_len(nrow(geno(data))), j = seq_len
 
     # The subset argument of model.frame is evaluated in the environment of the
     # formula, therefore subset after building the frame.
-    frame <- stats::model.frame(formula = formula, data = pheno(data), na.action = stats::na.pass)[i, , drop = FALSE]
-    model <- stats::model.matrix(formula, frame)
+    frame <- model.frame(formula = formula, data = pheno(data), na.action = na.pass)[i, , drop = FALSE]
+    model <- model.matrix(formula, frame)
 
     y <- pheno(data)[i, getResponse(formula)]
 
     res <- chunkedApply(X = geno(data), MARGIN = 2L, FUN = function(col, ...) {
-        fm <- stats::lsfit(x = cbind(col, model), y = y, intercept = FALSE)
-        stats::ls.print(fm, print.it = FALSE)[["coef.table"]][[1L]][1L, ]
+        fm <- lsfit(x = cbind(col, model), y = y, intercept = FALSE)
+        ls.print(fm, print.it = FALSE)[["coef.table"]][[1L]][1L, ]
     }, i = i, j = j, chunkSize = chunkSize, nCores = nCores, verbose = verbose, ...)
     res <- t(res)
     rownames(res) <- colnames(geno(data))[j]
@@ -112,16 +112,16 @@ getCoefficients <- function(x) {
 }
 
 getCoefficients.lm <- function(x) {
-    stats::coef(summary(x))[2L, ]
+    coef(summary(x))[2L, ]
 }
 
 getCoefficients.glm <- function(x) {
-    stats::coef(summary(x))[2L, ]
+    coef(summary(x))[2L, ]
 }
 
 getCoefficients.lmerMod <- function(x) {
-    ans <- stats::coef(summary(x))[2L, ]
-    ans <- c(ans, c(1L - stats::pnorm(ans[3L])))
+    ans <- coef(summary(x))[2L, ]
+    ans <- c(ans, c(1L - pnorm(ans[3L])))
     return(ans)
 }
 

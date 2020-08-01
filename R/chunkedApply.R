@@ -2,8 +2,8 @@ chunkedMap <- function(X, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(X)), chunk
     if (length(dim(X)) != 2L) {
         stop("X must be a matrix-like object")
     }
-    i <- crochet::convertIndex(X, i, "i")
-    j <- crochet::convertIndex(X, j, "j")
+    i <- convertIndex(X, i, "i")
+    j <- convertIndex(X, j, "j")
     dim <- c(length(i), length(j))
     if (is.null(chunkSize)) {
         chunkSize <- dim[chunkBy]
@@ -34,7 +34,7 @@ chunkedMap <- function(X, FUN, i = seq_len(nrow(X)), j = seq_len(ncol(X)), chunk
         res <- lapply(X = seq_len(nChunks), FUN = chunkApply, ...)
     } else {
         # Suppress warnings because of custom error handling
-        res <- suppressWarnings(parallel::mclapply(X = seq_len(nChunks), FUN = chunkApply, ..., mc.cores = nCores))
+        res <- suppressWarnings(mclapply(X = seq_len(nChunks), FUN = chunkApply, ..., mc.cores = nCores))
         errors <- which(vapply(res, inherits, TRUE, "try-error"))
         if (length(errors) > 0L) {
             # With mc.preschedule = TRUE (the default), if a job fails, the

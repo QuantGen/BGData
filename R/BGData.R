@@ -126,7 +126,7 @@ parseRAW <- function(BGData, fileIn, header, dataType, nColSkip = 6L, idCol = c(
     rownames(geno(BGData)) <- IDs
 
     # Convert types in pheno
-    pheno(BGData)[] <- lapply(pheno(BGData), utils::type.convert, as.is = TRUE)
+    pheno(BGData)[] <- lapply(pheno(BGData), type.convert, as.is = TRUE)
 
     return(BGData)
 }
@@ -173,7 +173,7 @@ readRAW <- function(fileIn, header = TRUE, dataType = integer(), n = NULL, p = N
     }
 
     # Prepare geno
-    geno <- LinkedMatrix::LinkedMatrix(nrow = dims[["n"]], ncol = dims[["p"]], nNodes = nNodes, linkedBy = linked.by, nodeInitializer = ffNodeInitializer, vmode = outputType, folderOut = folderOut, dimorder = dimorder)
+    geno <- LinkedMatrix(nrow = dims[["n"]], ncol = dims[["p"]], nNodes = nNodes, linkedBy = linked.by, nodeInitializer = ffNodeInitializer, vmode = outputType, folderOut = folderOut, dimorder = dimorder)
 
     # Prepare pheno
     pheno <- as.data.frame(matrix(nrow = dims[["n"]], ncol = nColSkip), stringsAsFactors = FALSE)
@@ -233,7 +233,7 @@ readRAW_big.matrix <- function(fileIn, header = TRUE, dataType = integer(), n = 
     dir.create(folderOut)
 
     # Prepare geno
-    geno <- bigmemory::filebacked.big.matrix(nrow = dims[["n"]], ncol = dims[["p"]], type = outputType, backingpath = folderOut, backingfile = "BGData.bin", descriptorfile = "BGData.desc")
+    geno <- filebacked.big.matrix(nrow = dims[["n"]], ncol = dims[["p"]], type = outputType, backingpath = folderOut, backingfile = "BGData.bin", descriptorfile = "BGData.desc")
 
     # Prepare pheno
     pheno <- as.data.frame(matrix(nrow = dims[["n"]], ncol = nColSkip), stringsAsFactors = FALSE)
@@ -269,7 +269,7 @@ loadFamFile <- function(path) {
             "PHENOTYPE"
         ), colClasses = "character", data.table = FALSE, showProgress = FALSE)
     } else {
-        pheno <- utils::read.table(path, col.names = c(
+        pheno <- read.table(path, col.names = c(
             "FID",
             "IID",
             "PAT",
@@ -326,7 +326,7 @@ loadBimFile <- function(path) {
             "character"
         ), data.table = FALSE, showProgress = FALSE)
     } else {
-        map <- utils::read.table(path, col.names = c(
+        map <- read.table(path, col.names = c(
             "chromosome",
             "snp_id",
             "genetic_distance",
@@ -384,7 +384,7 @@ loadAlternatePhenotypeFile <- function(path, ...) {
             if (grepl("FID\\s+IID", readLines(path, n = 1L))) {
                 hasHeader = TRUE
             }
-            alternatePhenotypes <- utils::read.table(path, header = hasHeader, stringsAsFactors = FALSE, ...)
+            alternatePhenotypes <- read.table(path, header = hasHeader, stringsAsFactors = FALSE, ...)
             alternatePhenotypes[[1]] <- as.character(alternatePhenotypes[[1]]) # FID
             alternatePhenotypes[[2]] <- as.character(alternatePhenotypes[[2]]) # IID
         }
@@ -425,7 +425,7 @@ as.BGData.BEDMatrix <- function(x, alternatePhenotypeFile = NULL, ...) {
 }
 
 as.BGData.ColumnLinkedMatrix <- function(x, alternatePhenotypeFile = NULL, ...) {
-    n <- LinkedMatrix::nNodes(x)
+    n <- nNodes(x)
     # For now, all elements have to be of type BEDMatrix
     if (!all(vapply(x, inherits, TRUE, "BEDMatrix"))) {
         stop("Only BEDMatrix instances are supported as elements of the LinkedMatrix right now.")
@@ -447,7 +447,7 @@ as.BGData.ColumnLinkedMatrix <- function(x, alternatePhenotypeFile = NULL, ...) 
 }
 
 as.BGData.RowLinkedMatrix <- function(x, alternatePhenotypeFile = NULL, ...) {
-    n <- LinkedMatrix::nNodes(x)
+    n <- nNodes(x)
     # For now, all elements have to be of type BEDMatrix
     if (!all(vapply(x, inherits, TRUE, "BEDMatrix"))) {
         stop("Only BEDMatrix instances are supported as elements of the LinkedMatrix right now.")
@@ -490,7 +490,7 @@ initializeGeno <- function(x, ...) {
 }
 
 initializeGeno.LinkedMatrix <- function(x, path, ...) {
-    for (i in seq_len(LinkedMatrix::nNodes(x))) {
+    for (i in seq_len(nNodes(x))) {
         x[[i]] <- initializeGeno(x[[i]], path = path)
     }
     return(x)
@@ -503,21 +503,21 @@ initializeGeno.ff_matrix <- function(x, path, ...) {
     cwd <- getwd()
     setwd(path)
     # Open ff object
-    ff::open.ff(x)
+    open(x)
     # Restore the working directory
     setwd(cwd)
     return(x)
 }
 
 initializeGeno.big.matrix <- function(x, path, ...) {
-    return(bigmemory::attach.big.matrix(paste0(path, "/BGData.desc")))
+    return(attach.big.matrix(paste0(path, "/BGData.desc")))
 }
 
 initializeGeno.BEDMatrix <- function(x, ...) {
     dnames <- attr(x, "dnames")
     dims <- attr(x, "dims")
     path <- attr(x, "path")
-    x <- BEDMatrix::BEDMatrix(path = path, n = dims[1L], p = dims[2L])
+    x <- BEDMatrix(path = path, n = dims[1L], p = dims[2L])
     dimnames(x) <- dnames
     return(x)
 }
@@ -528,8 +528,8 @@ initializeGeno.default <- function(x, ...) {
 
 ffNodeInitializer <- function(nodeIndex, nrow, ncol, vmode, folderOut, ...) {
     filename <- paste0("geno_", nodeIndex, ".bin")
-    node <- ff::ff(dim = c(nrow, ncol), vmode = vmode, filename = paste0(folderOut, "/", filename), ...)
+    node <- ff(dim = c(nrow, ncol), vmode = vmode, filename = paste0(folderOut, "/", filename), ...)
     # Change ff path to a relative one
-    bit::physical(node)[["filename"]] <- filename
+    physical(node)[["filename"]] <- filename
     return(node)
 }

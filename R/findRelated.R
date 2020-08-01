@@ -10,7 +10,7 @@ findRelated.matrix <- function(x, cutoff = 0.03, ...) {
 }
 
 findRelated.symDMatrix <- function(x, cutoff = 0.03, verbose = FALSE, ...) {
-    n <- symDMatrix::nBlocks(x)
+    n <- nBlocks(x)
     pairs <- lapply(seq_len(n), function(i) {
         lapply(seq(i, n), function(j) {
             if (verbose) {
