@@ -8,7 +8,7 @@ Description: An umbrella package providing a phenotype/genotype data structure
     and 'symDMatrix'.
 Authors@R: c(
     person("Gustavo", "de los Campos", email = "gustavoc@msu.edu", role = c("aut")),
-    person("Alexander", "Grueneberg", email = "alexander.grueneberg@googlemail.com", role = c("aut", "cre")),
+    person("Alexander", "Grueneberg", email = "cran@agrueneberg.info", role = c("aut", "cre")),
     person("Paulino", "Perez", email = "perpdgo@gmail.com", role = c("ctb")),
     person("Ana", "Vazquez", email = "avazquez@epi.msu.edu", role = c("ctb")))
 URL: https://github.com/QuantGen/BGData
