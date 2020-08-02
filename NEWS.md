@@ -1,4 +1,4 @@
-# BGData 2.1.0.9000
+# BGData 2.2.0
 
 - Follow [Bioconductor S4 practices][1].
   - If you have used `new()` to create `BGData` instances, please use the
