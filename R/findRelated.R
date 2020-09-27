@@ -4,9 +4,9 @@ findRelated <- function(x, ...) {
 
 findRelated.matrix <- function(x, cutoff = 0.03, ...) {
     x[lower.tri(x, diag = TRUE)] <- 0
-    pairs <- which(x > cutoff, arr.ind = TRUE)
-    individuals <- unique(pairs[, 1L])
-    return(individuals)
+    pairs <- which(x > cutoff, arr.ind = TRUE, useNames = FALSE)
+    samples <- unique(pairs[, 1L])
+    rownames(x)[samples]
 }
 
 findRelated.symDMatrix <- function(x, cutoff = 0.03, verbose = FALSE, ...) {
