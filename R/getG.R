@@ -114,30 +114,11 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
         # compute XX'
         if (p > 0L) {
 
-            # scale and impute without duplications
-            for (nCol in seq_len(ncol(X1))) {
-                col <- X1[, nCol]
-                if (is.numeric(center.chunk)) {
-                    col <- col - center.chunk[nCol]
-                }
-                if (is.numeric(scale.chunk)) {
-                    col <- col / scale.chunk[nCol]
-                }
-                col[is.na(col)] <- 0
-                X1[, nCol] <- col
-            }
+            # center, scale and impute without duplications
+            # set nCores to 1 here because section is already parallelized
+            X1 <- preprocess(X1, center = center.chunk, scale = scale.chunk, impute = TRUE, nCores = 1)
             if (hasY) {
-                for (nCol in seq_len(ncol(X2))) {
-                    col <- X2[, nCol]
-                    if (is.numeric(center.chunk)) {
-                        col <- col - center.chunk[nCol]
-                    }
-                    if (is.numeric(scale.chunk)) {
-                        col <- col / scale.chunk[nCol]
-                    }
-                    col[is.na(col)] <- 0
-                    X2[, nCol] <- col
-                }
+                X2 <- preprocess(X2, center = center.chunk, scale = scale.chunk, impute = TRUE, nCores = 1)
             }
 
             if (hasY) {
