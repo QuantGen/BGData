@@ -1,5 +1,6 @@
 # BGData 2.2.0.9000
 
+- `preprocess()`: Add `nCores` parameter.
 
 
 

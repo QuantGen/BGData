@@ -5,8 +5,8 @@
 #endif
 #include <stddef.h>
 
-void preprocess_int(int *in, int nrows, int ncols, double *out, int center, double *centers, int computeCenters, int scale, double *scales, int computeScales, int impute) {
-    #pragma omp parallel for schedule(static) default(none) shared(NA_INTEGER, NA_REAL, in, nrows, ncols, out, center, centers, computeCenters, scale, scales, computeScales, impute)
+void preprocess_int(int *in, int nrows, int ncols, double *out, int center, double *centers, int computeCenters, int scale, double *scales, int computeScales, int impute, int numCores) {
+    #pragma omp parallel for schedule(static) default(none) shared(NA_INTEGER, NA_REAL, in, nrows, ncols, out, center, centers, computeCenters, scale, scales, computeScales, impute) num_threads(numCores)
     for (ptrdiff_t j = 0; j < ncols; j++) {
         double mean;
         if (computeCenters || computeScales || impute) {
@@ -55,8 +55,8 @@ void preprocess_int(int *in, int nrows, int ncols, double *out, int center, doub
     }
 }
 
-void preprocess_real(double *in, int nrows, int ncols, double *out, int center, double *centers, int computeCenters, int scale, double *scales, int computeScales, int impute) {
-    #pragma omp parallel for schedule(static) default(none) shared(NA_REAL, in, nrows, ncols, out, center, centers, computeCenters, scale, scales, computeScales, impute)
+void preprocess_real(double *in, int nrows, int ncols, double *out, int center, double *centers, int computeCenters, int scale, double *scales, int computeScales, int impute, int numCores) {
+    #pragma omp parallel for schedule(static) default(none) shared(NA_REAL, in, nrows, ncols, out, center, centers, computeCenters, scale, scales, computeScales, impute) num_threads(numCores)
     for (ptrdiff_t j = 0; j < ncols; j++) {
         double mean;
         if (computeCenters || computeScales || impute) {
@@ -103,7 +103,7 @@ void preprocess_real(double *in, int nrows, int ncols, double *out, int center, 
     }
 }
 
-SEXP preprocess(SEXP sIn, SEXP sCenter, SEXP sScale, SEXP sImpute) {
+SEXP preprocess(SEXP sIn, SEXP sCenter, SEXP sScale, SEXP sImpute, SEXP sNumCores) {
     int nprotect = 0;
     R_xlen_t length = Rf_xlength(sIn);
     int nrows = Rf_nrows(sIn);
@@ -151,6 +151,7 @@ SEXP preprocess(SEXP sIn, SEXP sCenter, SEXP sScale, SEXP sImpute) {
         break;
     }
     int impute = Rf_asLogical(sImpute);
+    int numCores = Rf_asInteger(sNumCores);
  // Allocate output vector
     SEXP sOut = PROTECT(Rf_allocVector(REALSXP, length));
     nprotect++;
@@ -167,7 +168,8 @@ SEXP preprocess(SEXP sIn, SEXP sCenter, SEXP sScale, SEXP sImpute) {
             scale,
             scales,
             computeScales,
-            impute
+            impute,
+            numCores
         );
         break;
     case INTSXP:
@@ -182,7 +184,8 @@ SEXP preprocess(SEXP sIn, SEXP sCenter, SEXP sScale, SEXP sImpute) {
             scale,
             scales,
             computeScales,
-            impute
+            impute,
+            numCores
         );
         break;
     }

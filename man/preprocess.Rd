@@ -9,7 +9,8 @@
     the mean of the column that contains the value.
 }
 \usage{
-preprocess(X, center = FALSE, scale = FALSE, impute = FALSE)
+preprocess(X, center = FALSE, scale = FALSE, impute = FALSE,
+  nCores = getOption("mc.cores", 2L))
 }
 \arguments{
     \item{X}{
@@ -25,6 +26,10 @@ preprocess(X, center = FALSE, scale = FALSE, impute = FALSE)
     }
     \item{impute}{
         Indicates whether missing values should be imputed.
+    }
+    \item{nCores}{
+        The number of cores (passed to \code{mclapply}). Defaults to the number
+        of cores as detected by \code{detectCores}.
     }
 }
 \value{
