@@ -21,8 +21,8 @@ findRelated.symDMatrix <- function(x, cutoff = 0.03, verbose = FALSE, ...) {
             if (i == j) {
                 block[lower.tri(block, diag = TRUE)] <- 0
             }
-            pairs <- which(block > cutoff, arr.ind = TRUE)
-            # Remap local indices to individual names
+            pairs <- which(block > cutoff, arr.ind = TRUE, useNames = FALSE)
+            # Remap local indices to sample names
             remap <- matrix(character(), nrow = nrow(pairs), ncol = ncol(pairs))
             remap[, 1L] <- rownames(block)[pairs[, 1L]]
             remap[, 2L] <- colnames(block)[pairs[, 2L]]
@@ -30,6 +30,5 @@ findRelated.symDMatrix <- function(x, cutoff = 0.03, verbose = FALSE, ...) {
         })
     })
     pairs <- do.call(rbind, lapply(pairs, function(x) do.call(rbind, x)))
-    individuals <- unique(pairs[, 1L])
-    return(individuals)
+    unique(pairs[, 1L])
 }
