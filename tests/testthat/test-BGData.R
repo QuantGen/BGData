@@ -5,9 +5,12 @@ testPath <- paste0(tempdir(), "/BGData-", BGData:::randomString(), "/")
 dir.create(testPath)
 
 restoreGenotypes <- function() {
-    genotypes <- matrix(c(4, 4, 4, 3, 2, 3, 1, 2, 1), nrow = nRows, ncol = nCols)
-    colnames(genotypes) <- paste0("mrk_", 1:3)
-    rownames(genotypes) <- paste0("1_", 1:3)
+    set.seed(4711)
+    data <- sample(c(1, 2, 3, 4), size = nRows * nCols, replace = TRUE)
+    set.seed(NULL)
+    genotypes <- matrix(data = data, nrow = nRows, ncol = nCols)
+    rownames(genotypes) <- paste0("1_", seq_len(nRows))
+    colnames(genotypes) <- paste0("mrk_", seq_len(nCols))
     return(genotypes)
 }
 
