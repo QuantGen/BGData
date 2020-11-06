@@ -7,7 +7,7 @@ BGData: A Suite of Packages for Analysis of Big Genomic Data
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/8xac0jfmwhrj0gc3?svg=true)](https://ci.appveyor.com/project/agrueneberg/bgdata)
 [![Coverage status](https://codecov.io/gh/QuantGen/BGData/branch/master/graph/badge.svg)](https://codecov.io/github/QuantGen/BGData?branch=master)
 
-BGData is an R package that provides scalable and efficient computational methods for large genomic datasets, e.g., genome-wide association studies (GWAS) or genomic relationship matrices (G matrices). It also contains a container class called `BGData` that holds genotypes, sample information, and variant information.
+BGData ([Grueneberg & de los Campos, 2019](https://www.g3journal.org/content/9/5/1377)) is an R package that provides scalable and efficient computational methods for large genomic datasets, e.g., genome-wide association studies (GWAS) or genomic relationship matrices (G matrices). It also contains a container class called `BGData` that holds genotypes, sample information, and variant information.
 
 Modern genomic datasets are big (large *n*), high-dimensional (large *p*), and multi-layered. The challenges that need to be addressed are memory requirements and computational demands. Our goal is to develop software that will enable researchers to carry out analyses with big genomic data within the R environment.
 
