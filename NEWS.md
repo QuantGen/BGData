@@ -2,6 +2,7 @@
 
 - `preprocess()`: Add `nCores` parameter.
 - `findRelated()`: Map indices to sample names for matrix inputs.
+- `getG()`: Add `impute` parameter.
 - `getG()`: Impute by mean instead of 0 if `center = FALSE`.
 - `getG()`: Use `preprocess()` internally for better performance.
 

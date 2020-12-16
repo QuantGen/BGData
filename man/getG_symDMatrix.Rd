@@ -7,7 +7,7 @@
     beforehand.
 }
 \usage{
-getG_symDMatrix(X, center = TRUE, scale = TRUE, scaleG = TRUE,
+getG_symDMatrix(X, center = TRUE, scale = TRUE, impute = TRUE, scaleG = TRUE,
   minVar = 1e-05, blockSize = 5000L,
   folderOut = paste0("symDMatrix_", randomString()), vmode = "double",
   i = seq_len(nrow(X)), j = seq_len(ncol(X)), chunkSize = 5000L,
@@ -27,6 +27,10 @@ getG_symDMatrix(X, center = TRUE, scale = TRUE, scaleG = TRUE,
         Either a logical value or a numeric vector of length equal to the
         number of columns of \code{X}. If \code{FALSE}, no scaling is done.
         Defaults to \code{TRUE}.
+    }
+    \item{impute}{
+        Indicates whether missing values should be imputed. Defaults to
+        \code{TRUE}.
     }
     \item{scaleG}{
         TRUE/FALSE whether xx' must be scaled.

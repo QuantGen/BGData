@@ -7,10 +7,9 @@
     beforehand.
 }
 \usage{
-getG(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05,
-  i = seq_len(nrow(X)), j = seq_len(ncol(X)), i2 = NULL,
-  chunkSize = 5000L, nCores = getOption("mc.cores", 2L),
-  verbose = FALSE)
+getG(X, center = TRUE, scale = TRUE, impute = TRUE, scaleG = TRUE,
+  minVar = 1e-05, i = seq_len(nrow(X)), j = seq_len(ncol(X)), i2 = NULL,
+  chunkSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE)
 }
 \arguments{
     \item{X}{
@@ -26,6 +25,10 @@ getG(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05,
         Either a logical value or a numeric vector of length equal to the
         number of columns of \code{X}. Numeric vector required if \code{i2} is
         used. If \code{FALSE}, no scaling is done. Defaults to \code{TRUE}.
+    }
+    \item{impute}{
+        Indicates whether missing values should be imputed. Defaults to
+        \code{TRUE}.
     }
     \item{scaleG}{
         Whether XX' should be scaled. Defaults to \code{TRUE}.

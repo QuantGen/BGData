@@ -2,7 +2,7 @@ padDigits <- function(x, total) {
     formatC(x, width = as.integer(log10(total) + 1L), format = "d", flag = "0")
 }
 
-getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, i = seq_len(nrow(X)), j = seq_len(ncol(X)), i2 = NULL, chunkSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE) {
+getG <- function(X, center = TRUE, scale = TRUE, impute = TRUE, scaleG = TRUE, minVar = 1e-05, i = seq_len(nrow(X)), j = seq_len(ncol(X)), i2 = NULL, chunkSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE) {
 
     # compute XY' rather than XX'
     hasY <- !is.null(i2)
@@ -116,9 +116,9 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
 
             # center, scale and impute without duplications
             # set nCores to 1 here because section is already parallelized
-            X1 <- preprocess(X1, center = center.chunk, scale = scale.chunk, impute = TRUE, nCores = 1)
+            X1 <- preprocess(X1, center = center.chunk, scale = scale.chunk, impute = impute, nCores = 1)
             if (hasY) {
-                X2 <- preprocess(X2, center = center.chunk, scale = scale.chunk, impute = TRUE, nCores = 1)
+                X2 <- preprocess(X2, center = center.chunk, scale = scale.chunk, impute = impute, nCores = 1)
             }
 
             if (hasY) {
@@ -160,7 +160,7 @@ getG <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, 
 
 }
 
-getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVar = 1e-05, blockSize = 5000L, folderOut = paste0("symDMatrix_", randomString()), vmode = "double", i = seq_len(nrow(X)), j = seq_len(ncol(X)), chunkSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE) {
+getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, impute = TRUE, scaleG = TRUE, minVar = 1e-05, blockSize = 5000L, folderOut = paste0("symDMatrix_", randomString()), vmode = "double", i = seq_len(nrow(X)), j = seq_len(ncol(X)), chunkSize = 5000L, nCores = getOption("mc.cores", 2L), verbose = FALSE) {
 
     i <- convertIndex(X, i, "i")
     j <- convertIndex(X, j, "j")
@@ -226,7 +226,7 @@ getG_symDMatrix <- function(X, center = TRUE, scale = TRUE, scaleG = TRUE, minVa
             }
             if (colIndex >= rowIndex) {
                 blockName <- paste0("data_", padDigits(rowIndex, nBlocks), "_", padDigits(colIndex, nBlocks), ".bin")
-                block <- as.ff(getG(X, center = center, scale = scale, scaleG = FALSE, minVar = minVar, i = blockIndices[[rowIndex]], j = j, i2 = blockIndices[[colIndex]], chunkSize = chunkSize, nCores = nCores, verbose = FALSE), filename = paste0(folderOut, "/", blockName), vmode = vmode)
+                block <- as.ff(getG(X, center = center, scale = scale, impute = impute, scaleG = FALSE, minVar = minVar, i = blockIndices[[rowIndex]], j = j, i2 = blockIndices[[colIndex]], chunkSize = chunkSize, nCores = nCores, verbose = FALSE), filename = paste0(folderOut, "/", blockName), vmode = vmode)
                 # Change ff path to a relative one
                 physical(block)[["filename"]] <- blockName
                 rowArgs[[colIndex]] <- block
