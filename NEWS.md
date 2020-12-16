@@ -2,7 +2,8 @@
 
 - `preprocess()`: Add `nCores` parameter.
 - `findRelated()`: Map indices to sample names for matrix inputs.
-
+- `getG()`: Impute by mean instead of 0 if `center = FALSE`.
+- `getG()`: Use `preprocess()` internally for better performance.
 
 
 # BGData 2.2.0
