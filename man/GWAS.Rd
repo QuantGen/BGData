@@ -14,9 +14,10 @@ GWAS(formula, data, method = "lsfit", i = seq_len(nrow(geno(data))),
 }
 \arguments{
     \item{formula}{
-        The formula for the GWAS model without including the marker, e.g.
-        \code{y ~ 1} or \code{y ~ factor(sex) + age}. The variables included in
-        the formula must be in the sample information of the \code{BGData}.
+        The formula for the GWAS model without the variant, e.g. \code{y ~ 1}
+        or \code{y ~ factor(sex) + age}. The variables included in the formula
+        must be column names in the sample information of the \code{BGData}
+        object.
     }
     \item{data}{
         A \code{BGData} object.
@@ -59,6 +60,12 @@ GWAS(formula, data, method = "lsfit", i = seq_len(nrow(geno(data))),
     \code{1} is used as a dummy). If covariates are needed, consider
     preadjustment of \code{y}. Among the provided methods, it is by far the
     fastest.
+
+    Some regression methods may require the data to not contain columns with
+    variance 0 or too many missing values. We suggest running \code{summarize}
+    to detect variants that do not clear the desired minor-allele frequency and
+    rate of missing genotype calls, and filtering these variants out using the
+    \code{j} parameter of the \code{GWAS} function (see example below).
 }
 \value{
     The same matrix that would be returned by \code{coef(summary(model))}.
@@ -81,19 +88,25 @@ if (.Platform$OS.type == "windows") {
 # Load example data
 bg <- BGData:::loadExample()
 
+# Detect variants that do not pass MAF and missingness thresholds
+summaries <- summarize(geno(bg))
+maf <- ifelse(summaries$allele_freq > 0.5, 1 - summaries$allele_freq,
+    summaries$allele_freq)
+exclusions <- maf < 0.01 | summaries$freq_na > 0.05
+
 # Perform a single marker regression
-res1 <- GWAS(formula = FT10 ~ 1, data = bg)
+res1 <- GWAS(formula = FT10 ~ 1, data = bg, j = !exclusions)
 
 # Draw a Manhattan plot
 plot(-log10(res1[, 4]))
 
 # Use lm instead of lsfit (the default)
-res2 <- GWAS(formula = FT10 ~ 1, data = bg, method = "lm")
+res2 <- GWAS(formula = FT10 ~ 1, data = bg, method = "lm", j = !exclusions)
 
 # Use glm instead of lsfit (the default)
 y <- pheno(bg)$FT10
 pheno(bg)$FT10.01 <- y > quantile(y, 0.8, na.rm = TRUE)
-res3 <- GWAS(formula = FT10.01 ~ 1, data = bg, method = "glm")
+res3 <- GWAS(formula = FT10.01 ~ 1, data = bg, method = "glm", j = !exclusions)
 
 # Perform a single marker regression on the first 50 markers (useful for
 # distributed computing)
