@@ -23,8 +23,9 @@ GWAS(formula, data, method = "lsfit", i = seq_len(nrow(geno(data))),
     }
     \item{method}{
         The regression method to be used. Currently, the following methods are
-        implemented: \code{rayOLS}, \code{lsfit}, \code{lm}, \code{lm.fit},
-        \code{glm}, \code{lmer}, and \code{SKAT}. Defaults to \code{lsfit}.
+        implemented: \code{rayOLS} (see below), \code{lsfit}, \code{lm},
+        \code{lm.fit}, \code{glm}, \code{lmer}, and \code{SKAT}. Defaults to
+        \code{lsfit}.
     }
     \item{i}{
         Indicates which rows of the genotypes should be used. Can be integer,
@@ -49,6 +50,15 @@ GWAS(formula, data, method = "lsfit", i = seq_len(nrow(geno(data))),
     \item{...}{
         Additional arguments for chunkedApply and regression method.
     }
+}
+\details{
+    The \code{rayOLS} method is a regression through the origin that can only
+    be used with a \code{y ~ 1} formula, i.e. it only allows for one
+    quantitative response variable \code{y} and one variant at a time as an
+    explanatory variable (the variant is not included in the formula, hence
+    \code{1} is used as a dummy). If covariates are needed, consider
+    preadjustment of \code{y}. Among the provided methods, it is by far the
+    fastest.
 }
 \value{
     The same matrix that would be returned by \code{coef(summary(model))}.
