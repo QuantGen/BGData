@@ -320,7 +320,7 @@ loadBimFile <- function(path) {
         ), colClasses = c(
             "character",
             "character",
-            "integer",
+            "double",
             "integer",
             "character",
             "character"
@@ -336,7 +336,7 @@ loadBimFile <- function(path) {
         ), colClasses = c(
             "character",
             "character",
-            "integer",
+            "double",
             "integer",
             "character",
             "character"

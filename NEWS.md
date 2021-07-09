@@ -5,6 +5,8 @@
 - `getG()`: Add `impute` parameter.
 - `getG()`: Impute by mean instead of 0 if `center = FALSE`.
 - `getG()`: Use `preprocess()` internally for better performance.
+- `as.BGData()`: Read genetic distances in .bim file as double instead of
+  integer.
 
 
 # BGData 2.2.0
