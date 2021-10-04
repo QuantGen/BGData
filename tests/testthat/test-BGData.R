@@ -53,6 +53,18 @@ test_that("it checks if the number of rows of geno match with the number of rows
     expect_error(BGData(geno = genotypes, map = map[-1, ]))
 })
 
+test_that("it checks if the rownames of geno are unique", {
+    rownames(genotypes) <- c("1_1", "1_2", "1_2")
+    expect_error(BGData(geno = genotypes))
+    genotypes <- restoreGenotypes()
+})
+
+test_that("it checks if the colnames of geno are unique", {
+    colnames(genotypes) <- c("mrk_1", "mrk_2", "mrk_2")
+    expect_error(BGData(geno = genotypes))
+    genotypes <- restoreGenotypes()
+})
+
 test_that("it warns if the row names of pheno do not match the row names of geno", {
     expect_warning(BGData(geno = genotypes, pheno = phenotypes[nrow(phenotypes):1, ]))
 })
