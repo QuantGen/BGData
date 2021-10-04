@@ -1,4 +1,4 @@
-# BGData 2.2.0.9000
+# BGData 2.3.0
 
 - Add `segments()` function for finding non-overlapping segments based on a
   summary statistic.
