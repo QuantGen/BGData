@@ -1,5 +1,7 @@
 # BGData 2.2.0.9000
 
+- Add `segments()` function for finding non-overlapping segments based on a
+  summary statistic.
 - `preprocess()`: Add `nCores` parameter.
 - `findRelated()`: Map indices to sample names for matrix inputs.
 - `getG()`: Add `impute` parameter.
