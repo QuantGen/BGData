@@ -37,9 +37,9 @@
 \section{Example dataset}{
     The \code{extdata} folder contains example files that were generated from
     the 250k SNP and phenotype data in
-    \href{http://www.nature.com/nature/journal/v465/n7298/full/nature08800.html}{Atwell
-    et al. (2010)}. Only the first 300 SNPs of chromosome 1, 2, and 3 were
-    included to keep the size of the example dataset small.
+    \href{https://www.nature.com/articles/nature08800}{Atwell et al. (2010)}.
+    Only the first 300 SNPs of chromosome 1, 2, and 3 were included to keep the
+    size of the example dataset small.
     \href{https://www.cog-genomics.org/plink2}{PLINK} was used to convert the
     data to \href{https://www.cog-genomics.org/plink2/input#bed}{.bed} and
     \href{https://www.cog-genomics.org/plink2/input#raw}{.raw} files.
