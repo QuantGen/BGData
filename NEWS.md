@@ -1,5 +1,7 @@
 # BGData 2.3.0.9000
 
+- Add `FWD()` function for performing forward regressions.
+
 
 # BGData 2.3.0
 
