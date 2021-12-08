@@ -1,5 +1,5 @@
 Package: BGData
-Version: 2.3.0.9000
+Version: 2.4.0
 License: MIT + file LICENSE
 Title: A Suite of Packages for Analysis of Big Genomic Data
 Description: An umbrella package providing a phenotype/genotype data structure
