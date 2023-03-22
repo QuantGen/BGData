@@ -1,3 +1,10 @@
+# BGData 2.4.1
+
+- Fixed minor native routine registration issue.
+- Drop defunct CI services.
+- Update link to paper.
+
+
 # BGData 2.4.0
 
 - Add `FWD()` function for performing forward regressions.
