@@ -1,5 +1,5 @@
-citEntry(
-    entry = "Article",
+bibentry(
+    bibtype = "Article",
     textVersion = "Grueneberg, A., and G. de los Campos, 2019 BGData - A Suite of R Packages for Genomic Analysis with Big Data. G3: Genes, Genomes, Genetics 9(5): 1377-1383.",
     title = "BGData - A Suite of R Packages for Genomic Analysis with Big Data",
     author = c(
