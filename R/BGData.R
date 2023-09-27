@@ -5,9 +5,11 @@ setClassUnion("geno", c("LinkedMatrix", "BEDMatrix", "big.matrix", "ff_matrix", 
 
 setClass("BGData", slots = c(geno = "geno", pheno = "data.frame", map = "data.frame"))
 
-BGData <- function(geno, pheno = NULL, map = NULL) {
+ 
+ 
+ BGData <- function(geno, pheno = NULL, map = NULL) {
     if (!is(geno, "geno")) {
-        stop("Only LinkedMatrix, BEDMatrix, big.matrix, ff_matrix, or regular matrix objects are allowed for geno.")
+        stop("  Only LinkedMatrix, BEDMatrix, big.matrix, ff_matrix, or regular matrix objects are allowed for geno.")
     }
     if (is.null(pheno)) {
         if (is.null(rownames(geno))) {
@@ -25,9 +27,37 @@ BGData <- function(geno, pheno = NULL, map = NULL) {
         }
         map <- data.frame(variant_id = variantIDs, row.names = variantIDs, stringsAsFactors = FALSE)
     }
+    
+    ## Matching genotypes and phenotypes
+     if(is.null(rownames(pheno))){
+    	stop('  The phenotype object must have rownames to match it with genotypes')
+     }
+    
+     if(is.null(rownames(geno))){
+    	stop('  The genotype object must have rownames to match it with phenotypes')
+     }
+    
+     tmp=rownames(pheno)%in%rownames(geno)
+     if(sum(tmp==0)){
+    	stop('  No rows of the phenotype object were matched to rows of the gentoype object, compare rownames(pheno) with rownames(geno).')
+     }else{
+        nDropped=nrow(pheno)-sum(tmp)
+        
+        if(nDropped>0 ){
+		    message(nDropped, ' rows of pheno were dropped because of mismatch in rownames with the geno object.')
+    	}
+    	tmp=match(rownames(geno),rownames(pheno))
+    	pheno=pheno[tmp,]
+    	tmp=is.na(rownames(pheno))
+    	rownames(pheno)[tmp]=rownames(geno)[tmp]
+     }
+    ## End of mathcing
+    
     obj <- new("BGData", geno = geno, pheno = pheno, map = map)
     return(obj)
 }
+
+
 
 setValidity("BGData", function(object) {
     if (nrow(slot(object, "geno")) != nrow(slot(object, "pheno"))) {
