@@ -48,8 +48,10 @@ setClass("BGData", slots = c(geno = "geno", pheno = "data.frame", map = "data.fr
     	}
     	tmp=match(rownames(geno),rownames(pheno))
     	pheno=pheno[tmp,]
-    	tmp=is.na(rownames(pheno))
-    	rownames(pheno)[tmp]=rownames(geno)[tmp]
+    	tmp=is.na(tmp)
+	if(any(tmp)){
+    	  rownames(pheno)[tmp]=rownames(geno)[tmp]
+	}
      }
     ## End of mathcing
     
