@@ -89,7 +89,7 @@ segments <- function(statistic, chr, bp, threshold, gap, trim = FALSE, verbose =
             minValueBp=bp[minValuePos]
         )
         if(!is.null(snpid)){
-            minValueID=snpid[minValuePos]
+            outChr$leadSNP=snpid[minValuePos]
         }
         out[[curChr]] <- outChr
     }
