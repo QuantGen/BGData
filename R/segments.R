@@ -1,4 +1,4 @@
-segments <- function(statistic, chr, bp, threshold, gap, trim = FALSE, verbose = FALSE) {
+segments <- function(statistic, chr, bp, threshold, gap, trim = FALSE, verbose = FALSE,snpid=NULL) {
     if (length(unique(c(length(statistic), length(chr), length(bp)))) != 1) {
         stop("statistic, chr, and bp need to match in length")
     }
@@ -85,8 +85,12 @@ segments <- function(statistic, chr, bp, threshold, gap, trim = FALSE, verbose =
             bpEnd = bpEnd,
             bpLength = bpLength,
             minValue = minValue,
-            minValuePos = minValuePos
+            minValuePos = minValuePos,
+            minValueBp=bp[minValuePos]
         )
+        if(!is.null(snpid)){
+            minValueID=snpid[minValuePos]
+        }
         out[[curChr]] <- outChr
     }
     # Combine chromosomes
